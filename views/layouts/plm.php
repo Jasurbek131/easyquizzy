@@ -209,34 +209,32 @@ AppAsset::register($this);
 
             <!-- Sidebar Menu -->
             <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                    <!-- Add icons to the links using the .nav-icon class
-                         with font-awesome or any other icon font library -->
-                    <?php
-                        echo Menu::widget([
-                        'options' => ['class' => 'sidebar-menu tree', 'data-widget' => 'tree'],
-                        'items' => [
-                            ['label' => Yii::t('app', 'Admin'),
-                                'url' => ['#'],
-                                'options' => ['class' => 'treeview'],
-                                'template' => '<a href="{url}"><i class="fas fa-user"></i><span> {label}</span><i class="fas fa-angle-left"></i></a>',
-                               /* 'visible' => P::can('users/index'),*/
-                                /*'items' => [
-                                    [
-                                        'label' => Yii::t('app', 'Users'),
-                                        'url' => '/admin/users/index',
-                                    ],
-                                ],*/
+                <?php
+                echo Menu::widget([
+                    'options' => ['class' => 'nav nav-pills nav-sidebar flex-column tree', 'data-widget' => 'treeview', 'role' => "menu", 'data-accordion' => "false"],
+                    'items' => [
+                        ['label' => Yii::t('app', 'Admin'),
+                            'url' => ['#'],
+                            'options' => ['class' => 'nav-item'],
+                            'template' => '<a href="{url}" class="nav-link"><i class="nav-icon fas fa-user"></i><p> {label}</p><i class="fas fa-angle-left right"></i></a>',
+                            /* 'visible' => P::can('users/index'),*/
+                            'items' => [
+                                [
+                                    'label' => Yii::t('app', 'Users'),
+                                    'url' => '/admin/users/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'template' => '<a href="{url}" class="nav-link"><i class="fa fa-tasks nav-icon"></i><p> {label}</p></a>',
+                                ],
                             ],
-
                         ],
-                        'linkTemplate' => '<a href="{url}"><i class="fas fa-circle-o"></i> {label}</a>',
-                        'submenuTemplate' => "\n<ul class='treeview-menu'>\n{items}\n</ul>\n",
-                        'encodeLabels' => false, //allows you to use html in labels
-                        'activateParents' => true,
-                    ]);
-                    ?>
-                </ul>
+
+                    ],
+                    'linkTemplate' => '<a href="{url}"><i class="fas fa-circle-o"></i> {label}</a>',
+                    'submenuTemplate' => "\n<ul class='nav nav-treeview'>\n{items}\n</ul>\n",
+                    'encodeLabels' => false, //allows you to use html in labels
+                    'activateParents' => true,
+                ]);
+                ?>
             </nav>
             <!-- /.sidebar-menu -->
         </div>
@@ -245,13 +243,11 @@ AppAsset::register($this);
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
 
-        <!-- /.content-header -->
+        <?= Alert::widget() ?>
 
-        <!-- Main content -->
+        <?= $content ?>
 
-        <!-- /.content -->
     </div>
     <footer class="main-footer no-print">
         <strong class="text-orange">&copy; Dataprizma-PLM </strong> <?= date('Y') ?>
