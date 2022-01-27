@@ -18,6 +18,9 @@ $config = [
         'admin' => [
             'class' => 'app\modules\admin\Module',
         ],
+        'references' => [
+            'class' => 'app\modules\references\Module',
+        ],
     ],
     'components' => [
         'authManager' => [
