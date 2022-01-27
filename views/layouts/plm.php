@@ -25,12 +25,22 @@ AppAsset::register($this);
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 </head>
-<body class="hold-transition sidebar-mini skin-blue <?= $this->params['bodyClass'] ?? "" ?>">
+<body class="hold-transition sidebar-mini skin-blue <?= isset($this->params['bodyClass']) ? $this->params['bodyClass'] : "" ?>">
 <!--sidebar-mini-expand-feature fixed-->
 <?php $this->beginBody() ?>
 <!-- Site wrapper -->
 <div class="wrapper">
-
+    <div id="loading" <?= Yii::$app->request->isAjax ? 'style="display:none"' : '' ?>>
+        <!-- begin overlay tags -->
+        <div class="overlay-body show"></div>
+        <div class="spanner-body show">
+            <div class="center__block">
+                <div class="loader-ajax"></div>
+                <p class="spanner-text"><?php echo Yii::t('app', 'Iltimos kuting!..') ?></p>
+            </div>
+        </div>
+        <!-- end overlay tags -->
+    </div>
     <!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
         <?= Html::img('/img/noimage.png', ['style' => 'width:40px']) ?>
@@ -272,8 +282,11 @@ AppAsset::register($this);
 
         <?= Alert::widget() ?>
 
-        <?= $content ?>
-
+        <div class="row">
+            <div class="col-12">
+                <?= $content ?>
+            </div>
+        </div>
     </div>
     <footer class="main-footer no-print">
         <strong class="text-orange">&copy; Dataprizma-PLM </strong> <?= date('Y') ?>
