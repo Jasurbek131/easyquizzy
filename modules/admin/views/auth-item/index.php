@@ -12,36 +12,33 @@ use yii\widgets\Pjax;
 $this->title = Yii::t('app', 'Auth Items');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="auth-item-index">
-<!--    --><?php //if (Yii::$app->user->can('auth-item/create')): ?>
-    <p class="pull-right no-print">
-        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
-        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
-    </p>
-<!--    --><?php //endif; ?>
+    <div class="auth-item-index">
+        <!--    --><?php //if (Yii::$app->user->can('auth-item/create')): ?>
+        <p class="pull-right no-print">
+            <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
+                ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
+        </p>
+        <!--    --><?php //endif; ?>
 
-    <?php Pjax::begin(['id' => 'auth-item_pjax']); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+        <?php Pjax::begin(['id' => 'auth-item_pjax']); ?>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterRowOptions' => ['class' => 'filters no-print'],
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            [
-                'attribute' => 'name',
-                'label' => Yii::t('app', "Roll nomi"),
-                'value' => function($m){
-                    if(!empty($m['name'])){
-                        return $m['name'];
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterRowOptions' => ['class' => 'filters no-print'],
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'attribute' => 'name',
+                    'label' => Yii::t('app', "Roll nomi"),
+                    'value' => function ($m) {
+                        if (!empty($m['name'])) {
+                            return $m['name'];
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            ],
-            'description:ntext',
-
+                ],
+                'description:ntext',
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update} {view} {delete} {change-child}',
@@ -85,19 +82,19 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                         },
 
+                    ],
                 ],
             ],
-        ],
-    ]); ?>
+        ]); ?>
 
-    <?php Pjax::end(); ?>
+        <?php Pjax::end(); ?>
 
-</div>
-<?=  \app\widgets\ModalWindow\ModalWindow::widget([
+    </div>
+<?= \app\widgets\ModalWindow\ModalWindow::widget([
     'model' => 'auth-item',
     'crud_name' => 'auth-item',
     'modal_id' => 'auth-item-modal',
-    'modal_header' => '<h3>'. Yii::t('app', 'Auth Items') . '</h3>',
+    'modal_header' => '<h3>' . Yii::t('app', 'Auth Items') . '</h3>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',
@@ -133,7 +130,7 @@ $js = <<< JS
         }
     });
 JS;
-$this->registerJs($js,\yii\web\View::POS_READY);
+$this->registerJs($js, \yii\web\View::POS_READY);
 $css = <<< CSS
     .modal-header button.close {
         opacity: 1;
