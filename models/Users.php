@@ -72,42 +72,65 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function findIdentity($id)
     {
-        // TODO: Implement findIdentity() method.
+        return self::findOne(['id' => $id]);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public static function findIdentityByAccessToken($token, $type = null)
+    public static function findIdentityByAccessToken($access_token, $type = null)
     {
-        // TODO: Implement findIdentityByAccessToken() method.
+
+        return self::findOne(['access_token' => $access_token]);
     }
 
     /**
-     * @inheritDoc
+     * Finds user by username
+     *
+     * @param string $username
+     * @return static|null
+     */
+    public static function findByUsername($username)
+    {
+        return self::findOne(['username' => $username]);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getId()
     {
-        // TODO: Implement getId() method.
+        return $this->id;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getAuthKey()
     {
-        // TODO: Implement getAuthKey() method.
+        return $this->auth_key;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function validateAuthKey($authKey)
+    public function validateAuthKey($auth_key)
     {
-        // TODO: Implement validateAuthKey() method.
+        return $this->auth_key === $auth_key;
+    }
+
+    /**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return bool if password provided is valid for current user
+     */
+    public function validatePassword($password)
+    {
+        return $this->password === md5($password);
     }
 }
