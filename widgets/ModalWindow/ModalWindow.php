@@ -1,6 +1,6 @@
 <?php
 namespace app\widgets\ModalWindow;
-use yii\bootstrap\Widget;
+use yii\bootstrap4\Widget;
 
 class ModalWindow extends Widget
 {
