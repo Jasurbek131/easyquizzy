@@ -3,6 +3,7 @@
 
 /* @var $content string */
 
+use app\components\Menu\CustomMenu;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -210,30 +211,43 @@ AppAsset::register($this);
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <?php
-                echo Menu::widget([
-                    'options' => ['class' => 'nav nav-pills nav-sidebar flex-column tree', 'data-widget' => 'treeview', 'role' => "menu", 'data-accordion' => "false"],
-                    'items' => [
-                        ['label' => Yii::t('app', 'Admin'),
-                            'url' => ['#'],
-                            'options' => ['class' => 'nav-item'],
-                            'template' => '<a href="{url}" class="nav-link"><i class="nav-icon fas fa-user"></i><p> {label}</p><i class="fas fa-angle-left right"></i></a>',
-                            /* 'visible' => P::can('users/index'),*/
-                            'items' => [
-                                [
-                                    'label' => Yii::t('app', 'Users'),
-                                    'url' => '/admin/users/index',
-                                    'options' => ['class' => 'nav-item'],
-                                    'template' => '<a href="{url}" class="nav-link"><i class="fa fa-tasks nav-icon"></i><p> {label}</p></a>',
+                    echo CustomMenu::widget([
+                        'options' => [
+                            'class' => 'nav nav-pills nav-sidebar flex-column tree',
+                            'data-widget' => 'treeview',
+                            'role' => "menu",
+                            'data-accordion' => "false"
+                        ],
+                        'items' => [
+                            [
+                                'label' => Yii::t('app', 'Admin'),
+                                'url' => ['#'],
+                                'options' => ['class' => 'nav-item'],
+                                'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-user"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
+                                'visible' => true,
+                                'items' => [
+                                    [
+                                        'label' => Yii::t('app', 'Users'),
+                                        'url' => '/admin/users/index',
+                                        'options' => ['class' => 'nav-item'],
+                                        'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
+                                        'active' => true,
+                                    ],
+                                    [
+                                        'label' => Yii::t('app', 'Users'),
+                                        'url' => '/admin/users/index',
+                                        'options' => ['class' => 'nav-item'],
+                                        'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
+                                    ],
                                 ],
                             ],
                         ],
 
-                    ],
-                    'linkTemplate' => '<a href="{url}"><i class="fas fa-circle-o"></i> {label}</a>',
-                    'submenuTemplate' => "\n<ul class='nav nav-treeview'>\n{items}\n</ul>\n",
-                    'encodeLabels' => false, //allows you to use html in labels
-                    'activateParents' => true,
-                ]);
+                        'linkTemplate' => '<a href="{url}"><i class="fas fa-circle-o"></i> {label}</a>',
+                        'submenuTemplate' => "\n<ul class='nav nav-treeview'>\n{items}\n</ul>\n",
+                        'encodeLabels' => false,
+                        'activateParents' => true,
+                    ]);
                 ?>
             </nav>
             <!-- /.sidebar-menu -->
