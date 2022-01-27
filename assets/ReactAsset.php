@@ -24,9 +24,9 @@ class ReactAsset extends AssetBundle
     public $css = [
         'css/adminlte.css',
         'css/font-awesome.min.css',
-//        'reactjs/dist/css/style-react.css',
-//        'reactjs/dist/css/ReactToastify.css',
-//        'reactjs/dist/css/react-datepicker.css',
+        'reactjs/dist/css/style-react.css',
+        'reactjs/dist/css/ReactToastify.css',
+        'reactjs/dist/css/react-datepicker.css',
     ];
     public function init()
     {
