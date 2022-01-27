@@ -7,7 +7,7 @@
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Html;
 
-$this->title = 'Login';
+$this->title = Yii::t('app','Dataprizma-PLM');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
