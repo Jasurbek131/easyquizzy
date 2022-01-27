@@ -7,9 +7,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'pgsql:host=localhost;port=5432;dbname=dataprizma_plm',
+    'dsn' => 'pgsql:host=localhost;port=5433;dbname=dataprizma_plm',
     'username' => 'postgres',
-    'password' => 'postgres',
+    'password' => '1',
     'charset' => 'utf8',
     /*'on afterOpen' => function($event) {
         $event->sender->createCommand("SET sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';")->execute();
