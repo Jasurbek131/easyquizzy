@@ -14,7 +14,18 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'admin' => [
+            'class' => 'app\modules\admin\Module',
+        ],
+    ],
     'components' => [
+        'authManager' => [
+            // Run migration
+            // php yii migrate/up --migrationPath=@yii/rbac/migrations
+            'class' => 'yii\rbac\DbManager',
+            'defaultRoles' => [],
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '1',
