@@ -67,7 +67,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 echo "            [
                 'attribute' => '".$name."',
                 'value' => function(\$model){
-                    \$username = \app\models\Users::findOne(\$model->".$name.")['user_fio'];
+                    \$username = \app\models\Users::findOne(\$model->".$name.")['username'];
                     return isset(\$username)?\$username:\$model->".$name.";
                 }
             ],\n";
@@ -103,7 +103,7 @@ echo "            [
 echo "            [
                 'attribute' => '".$column->name."',
                 'value' => function(\$model){
-                    \$username = \app\models\Users::findOne(\$model->".$column->name.")['user_fio'];
+                    \$username = \app\models\Users::findOne(\$model->".$column->name.")['username'];
                     return isset(\$username)?\$username:\$model->".$column->name.";
                 }
             ],\n";

@@ -271,7 +271,7 @@ AppAsset::register($this);
         <?= Alert::widget() ?>
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-12" style="padding: 5px 15px 10px 15px;">
                 <?= $content ?>
             </div>
         </div>
