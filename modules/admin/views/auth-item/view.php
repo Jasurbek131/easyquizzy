@@ -39,17 +39,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'type',
             'description:ntext',
-//            [
-//                'attribute' => Yii::t('app', 'Roll bollari'),
-//                'tableOptions' => [
-//                    'class' => 'child'
-//                ],
-//                'value' => function ($model) {
-//                    return $model::getPermissionChildSecond($model->name, true);
-//                },
-//                'format' => 'raw'
-//            ],
-//            'data',
             [
                 'attribute' => 'created_at',
                 'value' => function ($model) {
@@ -62,34 +51,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     return (time() - $model->updated_at < (60 * 60 * 24)) ? Yii::$app->formatter->format(date($model->updated_at), 'relativeTime') : date('d.m.Y H:i', $model->updated_at);
                 }
             ],
-            'category',
+//            'category',
         ],
     ]) ?>
 </div>
 <div class="table-responsive">
     <h3 class="text-bold text-center"><?php echo ucfirst($model->name); ?></h3>
     <?php $i = 1;
-        echo '<div class="container" style="border: 1px solid grey;border-radius: 10px; ">';
-            foreach ($model::getPermissionChild($model->name) as $item => $key):?>
-                <?php if ($i != 4): ?>
-                    <div class="col-md-4">
+    echo '<div class="container" style="border: 1px solid grey;border-radius: 10px; ">';
+    foreach ($model::getPermissionChild($model->name) as $item => $key):?>
+        <?php if ($i != 4): ?>
+            <div class="col-md-4">
                         <span class="badge badge-success pt-10">
                             <?php echo $key['child']; ?>
                         </span>
-                    </div>
-                <?php endif; ?>
-                    <?php if ($i == 4){ $i = 0;} $i++; ?>
-            <?php endforeach;
-        echo '</div>';
+            </div>
+        <?php endif; ?>
+        <?php if ($i == 4) {
+            $i = 0;
+        }
+        $i++; ?>
+    <?php endforeach;
+    echo '</div>';
     ?>
 </div>
 <?php
 $css = <<<CSS
-        .badge{
-            background-color: #2ca42c!important;
-        }
-     #w0  > tbody > tr:nth-child(4) > td
-    {
+    .badge{
+        background-color: #2ca42c!important;
+    }
+    #w0  > tbody > tr:nth-child(4) > td{
         display: grid; 
         grid-template-columns: repeat(4,1fr);
         grid-gap: 3px;

@@ -1,15 +1,34 @@
 <?php
 namespace app\widgets\ModalWindow;
-use yii\bootstrap\Modal;
-use yii\helpers\Html;
+use yii\bootstrap4\Modal;
 use Yii;
 use yii\helpers\Url;
 
+/**
+ * @var $modal_id
+ * @var $modal_size
+ * @var $modal_options
+ * @var $crud_name
+ * @var $model
+ * @var $update_button
+ * @var $view_button
+ * @var $delete_button
+ * @var $copy_button
+ * @var $save_button
+ * @var $confirm_message
+ * @var $fail_message
+ * @var $success_message
+ * @var $grid_ajax
+ * @var $active_from_class
+ * @var $create_button
+ * @var $array_model
+ * @var $pretty_url
+ * @var $file_upload
+ */
 ?>
 
 <?php Modal::begin([
     'id' => $modal_id,
-    'header' => $modal_header,
     'size' => $modal_size,
     'options' => $modal_options
 ]); ?>
@@ -47,6 +66,7 @@ $this->registerJsVar('delete_button',$delete_button);
 $this->registerJsVar('copy_button',$copy_button);
 $this->registerJsVar('widget_copy',$widget_copy);
 
+// Save button
 // Save button
 $this->registerJsVar('save_button',$save_button);
 $this->registerJsVar('widget_save',$widget_save);
