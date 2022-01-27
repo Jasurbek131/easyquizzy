@@ -4,12 +4,14 @@
 /* @var $content string */
 
 use app\components\Menu\CustomMenu;
+use app\components\Permission\PermissionHelper as P;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use yii\widgets\Menu;
+
 
 AppAsset::register($this);
 ?>
@@ -196,21 +198,14 @@ AppAsset::register($this);
                 </div>
             </div>
 
-            <!-- SidebarSearch Form -->
-            <!--<div class="form-inline">
-                <div class="input-group" data-widget="sidebar-search">
-                    <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-sidebar">
-                            <i class="fas fa-search fa-fw"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>-->
-
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <?php
+                $module = Yii::$app->controller->module->id;
+                $controller = Yii::$app->controller->id;
+                $action = Yii::$app->controller->action->id;
+                $slug = Yii::$app->request->get('slug');
+
                     echo CustomMenu::widget([
                         'options' => [
                             'class' => 'nav nav-pills nav-sidebar flex-column tree',
@@ -231,13 +226,7 @@ AppAsset::register($this);
                                         'url' => '/admin/users/index',
                                         'options' => ['class' => 'nav-item'],
                                         'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
-                                        'active' => true,
-                                    ],
-                                    [
-                                        'label' => Yii::t('app', 'Users'),
-                                        'url' => '/admin/users/index',
-                                        'options' => ['class' => 'nav-item'],
-                                        'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
+                                        'active' => $controller == 'users' && $action  == 'index',
                                     ],
                                 ],
                             ],
