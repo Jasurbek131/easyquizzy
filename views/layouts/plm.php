@@ -268,18 +268,6 @@ AppAsset::register($this);
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
 
-        <div id="loading" <?= Yii::$app->request->isAjax ? 'style="display:none"' : '' ?>>
-            <!-- begin overlay tags -->
-            <div class="overlay-body show"></div>
-            <div class="spanner-body show">
-                <div class="center__block">
-                    <div class="loader-ajax"></div>
-                    <p class="spanner-text"><?php echo Yii::t('app', 'Iltimos kuting!..') ?></p>
-                </div>
-            </div>
-            <!-- end overlay tags -->
-        </div>
-
         <?= Alert::widget() ?>
 
         <div class="row">

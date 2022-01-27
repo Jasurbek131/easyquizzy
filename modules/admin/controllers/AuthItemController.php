@@ -48,6 +48,9 @@ class AuthItemController extends Controller
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function actionPermissions()
     {
         $searchModel = new AuthItemSearch();
@@ -90,7 +93,7 @@ class AuthItemController extends Controller
             $model->type = 1;
         } else {
             $model->type = 2;
-            $models = [new AuthItem()];
+
             $model->new_permissions = [
                 [
                     'name' => 'index',
@@ -121,7 +124,6 @@ class AuthItemController extends Controller
                 if (!$permission) {
                     if ($model->save()) {
                         $perms = Yii::$app->request->post()['AuthItem']['perms'];
-//                        $parents = Yii::$app->request->post()['AuthItem']['parents'];
                         if ($perms[0] == 1) {
                             ArrayHelper::remove($perms, 0);
                             foreach ($perms as $key => $value) {
@@ -133,14 +135,6 @@ class AuthItemController extends Controller
                                 }
                             }
                         }
-//                        if (!empty($parents)) {
-//                            foreach ($parents as $key => $value) {
-//                                $auth = Yii::$app->authManager;
-//                                $sub_role = Yii::$app->authManager->getRole($value);
-//                                $top_role = Yii::$app->authManager->getRole($model->name);
-//                                $auth->addChild($top_role, $sub_role);
-//                            }
-//                        }
                         $response['status'] = 0;
                     } else {
                         $response['status'] = 1;
@@ -170,7 +164,6 @@ class AuthItemController extends Controller
             }
             if ($model->save()) {
                 $perms = Yii::$app->request->post()['AuthItem']['perms'];
-//                $parents = Yii::$app->request->post()['AuthItem']['parents'];
                 if ($perms[0] == 1) {
                     ArrayHelper::remove($perms, 0);
                     foreach ($perms as $key => $value) {
@@ -182,25 +175,17 @@ class AuthItemController extends Controller
                         }
                     }
                 }
-//                if (!empty($parents)) {
-//                    foreach ($parents as $key => $value) {
-//                        $auth = Yii::$app->authManager;
-//                        $sub_role = Yii::$app->authManager->getRole($value);
-//                        $top_role = Yii::$app->authManager->getRole($model->name);
-//                        $auth->addChild($top_role, $sub_role);
-//                    }
-//                }
                 return $this->redirect(['view', 'id' => $model->name]);
             }
         }
         
-        if (Yii::$app->request->isAjax) {
+        if (Yii::$app->request->isAjax)
             return $this->renderAjax('create', [
                 'model' => $model,
                 'perms' => (!$permission) ? $perms : null,
                 'permission' => $permission,
             ]);
-        }
+
         return $this->render('create', [
             'model' => $model,
             'perms' => (!$permission) ? $perms : null,
@@ -274,7 +259,7 @@ class AuthItemController extends Controller
      * @param $id
      * @return array|string|Response
      * @throws NotFoundHttpException
-     * @throws yii\base\Exception
+     * @throws \Throwable
      */
     public function actionUpdate($id)
     {

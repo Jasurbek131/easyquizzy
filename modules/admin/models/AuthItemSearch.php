@@ -16,7 +16,7 @@ class AuthItemSearch extends AuthItem
     public function rules()
     {
         return [
-            [['name', 'description', 'rule_name', 'data', 'category'], 'safe'],
+            [['name', 'description', 'rule_name', 'data', 'category', 'name_for_user'], 'safe'],
             [['type', 'created_at', 'updated_at'], 'integer'],
         ];
     }
@@ -38,7 +38,8 @@ class AuthItemSearch extends AuthItem
      */
     public function search($params)
     {
-        $query = AuthItem::find();
+        $query = AuthItem::find()
+        ->orderBy(['created_at' => SORT_DESC]);
 
 
         $dataProvider = new ActiveDataProvider([
@@ -56,10 +57,11 @@ class AuthItemSearch extends AuthItem
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'rule_name', $this->rule_name])
-            ->andFilterWhere(['like', 'data', $this->data]);
+        $query->andFilterWhere(['ilike', 'name', $this->name])
+            ->andFilterWhere(['ilike', 'description', $this->description])
+            ->andFilterWhere(['ilike', 'name_for_user', $this->name_for_user])
+            ->andFilterWhere(['ilike', 'rule_name', $this->rule_name])
+            ->andFilterWhere(['ilike', 'data', $this->data]);
 
         return $dataProvider;
     }

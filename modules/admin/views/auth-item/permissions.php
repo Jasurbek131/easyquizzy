@@ -17,23 +17,18 @@ use yii\widgets\Pjax;
 $this->title = Yii::t('app', 'Permissions');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="auth-item-index">
-    <?php if (Yii::$app->user->can('auth-item/create')): ?>
+<div class="auth-item-index card">
+<!--    --><?php //if (Yii::$app->user->can('auth-item/create')): ?>
         <p class="pull-right no-print">
             <?= Html::a('<span class="fa fa-plus"></span>', ['create','permission'=>true],
                 [
                     'class' => 'default_button btn btn-sm btn-success',
                     'default-url' => Url::to(['auth-item/create', 'permission'=>true])
                 ]) ?>
-            <?= Html::a('<i class="fa fa-file-excel-o"></i>',
-                ['export-excel?type=index'], ['class' => 'btn btn-sm btn-info']) ?>
-            <?= Html::button('<i class="fa fa-print print-btn"></i>',
-                ['target' => '_black','class' => 'btn btn-sm btn-primary']) ?>
         </p>
-    <?php endif; ?>
+<!--    --><?php //endif; ?>
 
     <?php Pjax::begin(['id' => 'auth-item_pjax']); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -51,38 +46,36 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
 
             ],
-            //'updated_at',
-
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update}{view}{delete}',
-                'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
-                'visibleButtons' => [
-                    'view' => Yii::$app->user->can('auth-item/view'),
-                    'update' => function($model) {
-                        return Yii::$app->user->can('auth-item/update'); // && $model->status !== $model::STATUS_SAVED;
-                    },
-                    'delete' => function($model) {
-                        return Yii::$app->user->can('auth-item/delete'); // && $model->status !== $model::STATUS_SAVED;
-                    }
-                ],
+                'template' => '{update} {view} {delete}',
+                'contentOptions' => ['class' => 'no-print','style' => 'width:150px;'],
+//                'visibleButtons' => [
+//                    'view' => Yii::$app->user->can('auth-item/view'),
+//                    'update' => function($model) {
+//                        return Yii::$app->user->can('auth-item/update'); // && $model->status !== $model::STATUS_SAVED;
+//                    },
+//                    'delete' => function($model) {
+//                        return Yii::$app->user->can('auth-item/delete'); // && $model->status !== $model::STATUS_SAVED;
+//                    }
+//                ],
                 'buttons' => [
                     'update' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                        return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
                             'title' => Yii::t('app', 'Update'),
                             'class'=> 'update-dialog btn btn-xs btn-success',
                             'data-form-id' => $model->name,
                         ]);
                     },
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                        return Html::a('<span class="fa fa-eye"></span>', $url, [
                             'title' => Yii::t('app', 'View'),
                             'class'=> 'btn btn-xs btn-primary view-dialog',
                             'data-form-id' => $model->name,
                         ]);
                     },
                     'delete' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', '#', [
+                        return Html::a('<span class="fa fa-trash"></span>', '#', [
                             'title' => Yii::t('app', 'Delete'),
                             'class' => 'btn btn-xs btn-danger delete-dialog',
                             'data-form-id' => $model->name,
@@ -110,15 +103,15 @@ $this->params['breadcrumbs'][] = $this->title;
     'modal_size' => 'modal-md',
     'options' => [
         'data-backdrop' => 'static',
+        'data-keyboard' => 'true',
     ],
     'grid_ajax' => 'auth-item_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatan ham ushbu mahsulotni yo\'q qilmoqchimisiz?')
 ]); ?>
 <?php
 $css = <<< CSS
-    .modal-header button.close {
+.modal-header button.close {
     opacity: 1;
-    background: red;
     font-size: 40px;
     width: 55px;
 }

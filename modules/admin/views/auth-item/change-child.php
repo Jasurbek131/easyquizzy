@@ -15,48 +15,54 @@ $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 
-<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class' => 'customAjaxForm']]); ?>
-<?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-<?= $form->field($model, 'description')->textarea(['rows' => 3]) ?>
-<?php
-$child = $model->getCategory($model->name);
-$value = $model->getParenList($model->name, false);
-$childs = $model->getParenList($model->name, true)
-?>
-<div class="box box-solid box-info">
-    <div class="box-header">
-        <div class="form-group small">
-           <h4> <?= Yii::t('app', "Bollarini tanlang") ?></h4>
-            <label class="checkbox-transform">
-                <input type="checkbox" class="checkbox__input" id="select_all">
-                <span class="checkbox__label"><?= Yii::t('app', "Hammasi belgilash") ?> </span>
-            </label>
+<div class="card">
+    <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class' => 'customAjaxForm']]); ?>
+
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'description')->textarea(['rows' => 3]) ?>
+    <?php
+        $child = $model->getCategory($model->name);
+        $value = $model->getParenList($model->name, false);
+        $childs = $model->getParenList($model->name, true)
+    ?>
+    <div class="box box-solid box-info">
+        <div class="box-header">
+            <div class="form-group small">
+                <h4> <?= Yii::t('app', "Bollarini tanlang") ?></h4>
+                <label class="checkbox-transform">
+                    <input type="checkbox" class="checkbox__input" id="select_all">
+                    <span class="checkbox__label"><?= Yii::t('app', "Hammasi belgilash") ?> </span>
+                </label>
+            </div>
         </div>
-    </div>
-    <div class="box-body">
-        <div class="row">
-            <?php foreach ($child as $key => $item) : ?>
-                <?php if (empty($childs[$item])): ?>
-                    <div class="col-md-3 col-sm-3 col-xs-6 col-lg-3 col-xl-2">
-                        <div class="form-group small">
-                            <label class="checkbox-transform">
-                                <input type="checkbox"
-                                       name="AuthItem[parents][<?= $key ?>]"
-                                    <?= $value[$item] !== null ? 'checked' : '' ?>
-                                       class="checkbox__input">
-                                <span class="checkbox__label"><?= $item ?> </span>
-                            </label>
+        <div class="box-body">
+            <div class="row">
+                <?php foreach ($child as $key => $item) : ?>
+                    <?php if (empty($childs[$item])): ?>
+                        <div class="col-md-3 col-sm-3 col-xs-6 col-lg-3 col-xl-2">
+                            <div class="form-group small">
+                                <label class="checkbox-transform">
+                                    <input type="checkbox"
+                                           name="AuthItem[parents][<?= $key ?>]"
+                                        <?= $value[$item] !== null ? 'checked' : '' ?>
+                                           class="checkbox__input">
+                                    <span class="checkbox__label"><?= $item ?> </span>
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                <?php endif; ?>
-            <?php endforeach; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
+    <div class="form-group">
+        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success removedSubmitButton']) ?>
+    </div>
+    <?php ActiveForm::end(); ?>
+
 </div>
-<div class="form-group">
-    <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success removedSubmitButton']) ?>
-</div>
-<?php ActiveForm::end(); ?>
+
 <style>
     .all_selected {
         position: absolute;
@@ -115,7 +121,7 @@ $childs = $model->getParenList($model->name, true)
 
     .checkbox__label {
         margin-right: 2.5rem;
-        margin-left: 15px;
+        margin-left: 35px;
         line-height: .75;
         font-size: 11px;
     }

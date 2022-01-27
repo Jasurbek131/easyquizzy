@@ -22,9 +22,12 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/adminlte.css',
         'css/font-awesome.min.css',
+        'css/pnotify.css',
+        'css/site.css',
     ];
     public $js = [
-        'js/adminlte.js'
+        'js/adminlte.js',
+        'js/pnotify.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
