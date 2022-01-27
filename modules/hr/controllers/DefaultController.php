@@ -5,7 +5,7 @@ namespace app\modules\hr\controllers;
 use yii\web\Controller;
 
 /**
- * Default controller for the `admin` module
+ * Default controller for the `hr` module
  */
 class DefaultController extends Controller
 {
