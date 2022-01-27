@@ -12,9 +12,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=textile_yii3',
-    'username' => 'root',
-    'password' => 'root',
+    'dsn' => 'pgsql:host=localhost;port=5432;dbname=db_name',
+    'username' => 'postgres',
+    'password' => 'postgres',
     'charset' => 'utf8',
     'attributes' => [
         PDO::MYSQL_ATTR_INIT_COMMAND => "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));",
