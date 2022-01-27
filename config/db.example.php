@@ -7,7 +7,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'pgsql:host=localhost;port=5432;dbname=dataprizma_plm',
+    'dsn' => 'pgsql:host=localhost;port=5432;dbname=db_name',
     'username' => 'postgres',
     'password' => 'postgres',
     'charset' => 'utf8',
