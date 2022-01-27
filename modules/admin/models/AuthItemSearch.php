@@ -16,7 +16,7 @@ class AuthItemSearch extends AuthItem
     public function rules()
     {
         return [
-            [['name', 'description', 'rule_name', 'data', 'category'], 'safe'],
+            [['name', 'description', 'rule_name', 'data', 'category', 'name_for_user'], 'safe'],
             [['type', 'created_at', 'updated_at'], 'integer'],
         ];
     }
@@ -26,7 +26,6 @@ class AuthItemSearch extends AuthItem
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -39,9 +38,9 @@ class AuthItemSearch extends AuthItem
      */
     public function search($params)
     {
-        $query = AuthItem::find();
+        $query = AuthItem::find()
+        ->orderBy(['created_at' => SORT_DESC]);
 
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -49,24 +48,20 @@ class AuthItemSearch extends AuthItem
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+        if (!$this->validate())
             return $dataProvider;
-        }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'type' => $this->type,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'rule_name', $this->rule_name])
-            ->andFilterWhere(['like', 'data', $this->data])
-            ->andFilterWhere(['like', 'category', $this->category]);
+        $query->andFilterWhere(['ilike', 'name', $this->name])
+            ->andFilterWhere(['ilike', 'description', $this->description])
+            ->andFilterWhere(['ilike', 'name_for_user', $this->name_for_user])
+            ->andFilterWhere(['ilike', 'rule_name', $this->rule_name])
+            ->andFilterWhere(['ilike', 'data', $this->data]);
 
         return $dataProvider;
     }
