@@ -2,14 +2,20 @@
 /* @var $this yii\web\View */
 
 
-use yii\helpers\Html; ?>
+use app\assets\ReactAsset;
 
+ReactAsset::$reactFileName = 'index';
+ReactAsset::$reactCssFileName = 'index';
+ReactAsset::register($this);
+?>
 <?php
 $this->title = Yii::t('app','welcome');
 ?>
+
     <div class="card">
         <div class="card-body">
-            Index
+            <div id="root"></div>
+            IndexBy
         </div>
     </div>
 <?php
