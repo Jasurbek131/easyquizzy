@@ -245,13 +245,11 @@ AppAsset::register($this);
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-
-        <!-- /.content-header -->
-
-        <!-- Main content -->
-
-        <!-- /.content -->
+        <?= Breadcrumbs::widget([
+            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+        ]) ?>
+        <?= Alert::widget() ?>
+        <?= $content ?>
     </div>
     <footer class="main-footer no-print">
         <strong class="text-orange">&copy; Dataprizma-PLM </strong> <?= date('Y') ?>
