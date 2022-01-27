@@ -259,11 +259,8 @@ AppAsset::register($this);
 
         <?= Alert::widget() ?>
 
-        <div class="row">
-            <div class="col-12">
-                <?= $content ?>
-            </div>
-        </div>
+        <?= $content ?>
+
     </div>
     <footer class="main-footer no-print">
         <strong class="text-orange">&copy; Dataprizma-PLM </strong> <?= date('Y') ?>
