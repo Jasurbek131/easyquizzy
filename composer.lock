@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "659de14afdb1f0ef31c011a377bf437a",
+    "content-hash": "2ec2a46438eaa54753c8e73f0cde78e1",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -1035,6 +1035,59 @@
                 }
             ],
             "time": "2021-05-27T09:17:38+00:00"
+        },
+        {
+            "name": "unclead/yii2-multiple-input",
+            "version": "2.26.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/unclead/yii2-multiple-input.git",
+                "reference": "6c6d00e69ddf93f6eea89da07ec7de372dc2dae3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/unclead/yii2-multiple-input/zipball/6c6d00e69ddf93f6eea89da07ec7de372dc2dae3",
+                "reference": "6c6d00e69ddf93f6eea89da07ec7de372dc2dae3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "yiisoft/yii2": ">=2.0.38"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "5.7.*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "unclead\\multipleinput\\examples\\": "examples/",
+                    "unclead\\multipleinput\\": "src/",
+                    "unclead\\multipleinput\\tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Eugene Tupikov",
+                    "email": "unclead.nsk@gmail.com"
+                }
+            ],
+            "description": "Widget for handle multiple inputs for an attribute of Yii2 framework model",
+            "keywords": [
+                "yii2",
+                "yii2 array input",
+                "yii2 multiple field",
+                "yii2 multiple input",
+                "yii2 tabular input"
+            ],
+            "support": {
+                "issues": "https://github.com/unclead/yii2-multiple-input/issues?state=open",
+                "source": "https://github.com/unclead/yii2-multiple-input"
+            },
+            "time": "2021-10-01T10:05:32+00:00"
         },
         {
             "name": "yiisoft/yii2",
@@ -5492,7 +5545,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.6.0"
+        "php": ">=5.6.0",
+        "ext-pdo": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"

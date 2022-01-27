@@ -7,11 +7,7 @@ use app\components\Menu\CustomMenu;
 use app\components\Permission\PermissionHelper as P;
 use app\widgets\Alert;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
-use yii\widgets\Menu;
-
 
 AppAsset::register($this);
 ?>
@@ -228,6 +224,21 @@ AppAsset::register($this);
                                         'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
                                         'active' => $controller == 'users' && $action  == 'index',
                                     ],
+                                    [
+                                        'label' => Yii::t('app', 'Roles'),
+                                        'url' => '/admin/auth-item/index',
+                                        'active' => $controller == 'auth-item' && $action == 'index',
+                                        'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
+//                                        'visible' => P::can('auth-item/index'),
+                                    ],
+                                    [
+                                        'label' => Yii::t('app', 'Permissions'),
+                                        'url' => '/admin/auth-item/permissions',
+                                        'active' => $controller == 'auth-item' && $action == 'permissions',
+//                                        'visible' => P::can('auth-item/permissions'),
+                                        'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
+
+                                    ],
                                 ],
                             ],
                         ],
@@ -246,6 +257,18 @@ AppAsset::register($this);
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
+
+        <div id="loading" <?= Yii::$app->request->isAjax ? 'style="display:none"' : '' ?>>
+            <!-- begin overlay tags -->
+            <div class="overlay-body show"></div>
+            <div class="spanner-body show">
+                <div class="center__block">
+                    <div class="loader-ajax"></div>
+                    <p class="spanner-text"><?php echo Yii::t('app', 'Iltimos kuting!..') ?></p>
+                </div>
+            </div>
+            <!-- end overlay tags -->
+        </div>
 
         <?= Alert::widget() ?>
 

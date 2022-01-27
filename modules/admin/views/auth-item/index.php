@@ -13,16 +13,12 @@ $this->title = Yii::t('app', 'Auth Items');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="auth-item-index">
-    <?php if (Yii::$app->user->can('auth-item/create')): ?>
+<!--    --><?php //if (Yii::$app->user->can('auth-item/create')): ?>
     <p class="pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
-        <?= Html::a('<i class="fa fa-file-excel-o"></i>',
-        ['export-excel?type=index'], ['class' => 'btn btn-sm btn-info']) ?>
-        <?= Html::button('<i class="fa fa-print print-btn"></i>',
-        ['target' => '_black','class' => 'btn btn-sm btn-primary']) ?>
     </p>
-    <?php endif; ?>
+<!--    --><?php //endif; ?>
 
     <?php Pjax::begin(['id' => 'auth-item_pjax']); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

@@ -20,7 +20,8 @@
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
         "kartik-v/yii2-widget-select2": "@dev",
         "yiisoft/yii2-bootstrap": "^2.0",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "unclead/yii2-multiple-input": "~2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

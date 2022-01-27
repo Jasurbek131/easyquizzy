@@ -1,5 +1,5 @@
 <?php
-namespace app\components;
+namespace app\components\Permission;
 
 use Yii;
 use yii\helpers\ArrayHelper;

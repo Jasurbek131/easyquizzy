@@ -1,6 +1,6 @@
 <?php
 namespace app\widgets\ModalWindow;
-use yii\bootstrap\Modal;
+use yii\bootstrap4\Modal;
 use yii\helpers\Html;
 use Yii;
 use yii\helpers\Url;
@@ -9,7 +9,7 @@ use yii\helpers\Url;
 
 <?php Modal::begin([
     'id' => $modal_id,
-    'header' => $modal_header,
+//    'header' => $modal_header,
     'size' => $modal_size,
     'options' => $modal_options
 ]); ?>

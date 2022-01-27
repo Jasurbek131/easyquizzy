@@ -193,6 +193,7 @@ class AuthItemController extends Controller
                 return $this->redirect(['view', 'id' => $model->name]);
             }
         }
+        
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('create', [
                 'model' => $model,
