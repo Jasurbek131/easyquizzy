@@ -216,7 +216,7 @@ AppAsset::register($this);
                         ['label' => Yii::t('app', 'Admin'),
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
-                            'template' => '<a href="{url}" class="nav-link""><i class="nav-icon fas fa-user"></i><p> {label}</p><i class="fas fa-angle-left right"></i></a>',
+                            'template' => '<a href="{url}" class="nav-link"><i class="nav-icon fas fa-user"></i><p> {label}</p><i class="fas fa-angle-left right"></i></a>',
                             /* 'visible' => P::can('users/index'),*/
                             'items' => [
                                 [
