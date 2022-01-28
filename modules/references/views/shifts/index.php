@@ -11,10 +11,9 @@ $this->title = Yii::t('app', 'Shifts');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card shifts-index">
-    <?php if (Yii::$app->user->can('shifts/create')): ?>
+    <?php if (!Yii::$app->user->can('shifts/create')): ?>
     <div class="card-header pull-right no-print">
-        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
-        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
+        <?= Html::a('<span class="fa fa-plus"></span>', ['create'], ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
     <?php endif; ?>
     <div class="card-body">
@@ -25,19 +24,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'dataProvider' => $dataProvider,
             'filterRowOptions' => ['class' => 'filters no-print'],
             'filterModel' => $searchModel,
-        'columns' => [
+            'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
 
-                'id',
-            'name',
-            'start_time',
-            'end_time',
-            'code',
-            //'status_id',
-            //'created_at',
-            //'created_by',
-            //'updated_at',
-            //'updated_by',
+                'name',
+                'start_time',
+                'end_time',
+                'code',
+                'status_id',
 
                 [
                     'class' => 'yii\grid\ActionColumn',
