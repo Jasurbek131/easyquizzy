@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
             'pluginOptions' => [
                 'allowClear' => true,
             ]
-        ]) ?>
+    ]) ?>
 
     <?= $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
 

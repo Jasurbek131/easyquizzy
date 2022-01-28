@@ -30,15 +30,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
                 'name',
-                'equipment_type_id',
-            [
-                'attribute' => 'equipment_type_id',
-                'format' => 'raw',
-                'value' => function($model) {
-                    return EquipmentTypes::findOne($model->equipment_type_id)->name;
-                },
-                'filter' => EquipmentTypes::getList()
-            ],
+                [
+                    'attribute' => 'equipment_type_id',
+                    'format' => 'raw',
+                    'value' => function($model) {
+                        return EquipmentTypes::findOne($model->equipment_type_id)->name;
+                    },
+                    'filter' => \kartik\select2\Select2::widget([
+                        'model' =>  $searchModel,
+                        'attribute' => 'equipment_type_id',
+                        'data' => EquipmentTypes::getList(),
+                        'language' => Yii::$app->language,
+                        'options' => [
+                            'prompt' => '',
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ])
+                ],
                 [
                     'attribute' => 'status_id',
                     'format' => 'raw',

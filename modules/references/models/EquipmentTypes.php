@@ -18,7 +18,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property Equipments[] $equipments
  */
-class EquipmentTypes extends \yii\db\ActiveRecord
+class EquipmentTypes extends BaseModel
 {
     /**
      * {@inheritdoc}

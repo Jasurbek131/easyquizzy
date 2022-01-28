@@ -41,6 +41,13 @@
 .select2-selection__choice {
     line-height: 1rem!important;
 }
+.select2-container--krajee-bs4 .select2-selection--multiple .select2-selection__clear {
+    margin-top: 0.2rem!important;
+    margin-right: 0.5rem!important;
+}
+
+
+
 .has-error>input {
     border: 1px solid #dd4b39;
 }
