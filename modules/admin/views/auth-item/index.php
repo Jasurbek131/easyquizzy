@@ -12,7 +12,6 @@ use yii\widgets\Pjax;
 $this->title = Yii::t('app', 'Auth Items');
 $this->params['breadcrumbs'][] = $this->title;
 
-echo Yii::t('app', 'Save');
 ?>
     <div class="auth-item-index card">
         <!--    --><?php //if (Yii::$app->user->can('auth-item/create')): ?>
