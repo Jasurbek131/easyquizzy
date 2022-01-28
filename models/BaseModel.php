@@ -42,6 +42,7 @@ class BaseModel extends ActiveRecord
                 }
                 return "<span class='badge badge-success d-block'>".$status["name_{$language}"]."</span>";
             }
+            return "";
         }
         $list = StatusList::find()->asArray()->select(['id as value', "name_{$language} as label"])->all();
         if ($isArray) {
