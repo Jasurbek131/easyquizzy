@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'view' => function ($url, $model) {
                             return Html::a('<span class="fa fa-eye"></span>', $url, [
                                 'title' => Yii::t('app', 'View'),
-                                'class'=> 'btn btn-xs btn-default view-dialog mr1',
+                                'class'=> 'btn btn-xs btn-primary view-dialog mr1',
                                 'data-form-id' => $model->id,
                             ]);
                         },

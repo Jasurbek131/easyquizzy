@@ -267,6 +267,22 @@ AppAsset::register($this);
                                     ],
                                 ],
                             ],
+                            [
+                                'label' => Yii::t('app', 'References'),
+                                'url' => ['#'],
+                                'options' => ['class' => 'nav-item'],
+                                'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-users"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
+                                'visible' => true,
+                                'items' => [
+                                    [
+                                        'label' => Yii::t('app', 'Shifts'),
+                                        'url' => '/references/shifts/index',
+                                        'options' => ['class' => 'nav-item'],
+                                        'active' => $controller == 'shifts' && $action  == 'index',
+                                        'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
+                                    ],
+                                ],
+                            ],
                         ],
 
                         'linkTemplate' => '<a href="{url}"><i class="fas fa-circle-o"></i> {label}</a>',

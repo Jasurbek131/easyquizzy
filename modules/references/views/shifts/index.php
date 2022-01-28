@@ -38,13 +38,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                     'visibleButtons' => [
-                        'view' => Yii::$app->user->can('shifts/view'),
-                        'update' => function($model) {
-                            return Yii::$app->user->can('shifts/update'); // && $model->status < $model::STATUS_SAVED;
-                        },
-                        'delete' => function($model) {
-                            return Yii::$app->user->can('shifts/delete'); // && $model->status < $model::STATUS_SAVED;
-                        }
+//                        'view' => Yii::$app->user->can('shifts/view'),
+//                        'update' => function($model) {
+//                            return Yii::$app->user->can('shifts/update'); // && $model->status < $model::STATUS_SAVED;
+//                        },
+//                        'delete' => function($model) {
+//                            return Yii::$app->user->can('shifts/delete'); // && $model->status < $model::STATUS_SAVED;
+//                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {
@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'view' => function ($url, $model) {
                             return Html::a('<span class="fa fa-eye"></span>', $url, [
                                 'title' => Yii::t('app', 'View'),
-                                'class'=> 'btn btn-xs btn-default view-dialog mr1',
+                                'class'=> 'btn btn-xs btn-primary view-dialog mr1',
                                 'data-form-id' => $model->id,
                             ]);
                         },
