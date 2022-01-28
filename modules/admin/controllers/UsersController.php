@@ -122,7 +122,8 @@ class UsersController extends Controller
 
         if ($request->isPost) {
             if ($model->load($request->post())) {
-                $response = $model->saveUser(true);
+                $model->isUpdate = true;
+                $response = $model->saveUser();
                 if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     if ($response['status'])
