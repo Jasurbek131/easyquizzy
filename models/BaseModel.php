@@ -1,7 +1,10 @@
 <?php
 
+namespace app\models;
+
 use app\components\OurCustomBehavior;
-use app\models\StatusList;
+use app\widgets\Language;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -33,18 +36,18 @@ class BaseModel extends ActiveRecord
     }
 
     public static function getStatusList($key = null, $isArray = false) {
-        $language = Yii::$app->language;
+        $language = Language::widget();
         if (!is_null($key)) {
             $status = StatusList::findOne(['id' => $key]);
             if (!empty($status)) {
                 if ($status['id'] == self::STATUS_INACTIVE) {
-                    return "<span class='badge badge-danger d-block'>".$status["name_{$language}"]."</span>";
+                    return "<span class='badge badge-danger d-block'>".$status[$language]."</span>";
                 }
-                return "<span class='badge badge-success d-block'>".$status["name_{$language}"]."</span>";
+                return "<span class='badge badge-success d-block'>".$status[$language]."</span>";
             }
             return "";
         }
-        $list = StatusList::find()->asArray()->select(['id as value', "name_{$language} as label"])->all();
+        $list = StatusList::find()->asArray()->select(['id as value', "{$language} as label"])->all();
         if ($isArray) {
             return $list;
         }

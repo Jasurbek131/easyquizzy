@@ -1,56 +1,53 @@
 <?php
 
-use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\references\models\ProductsSearch */
+/* @var $searchModel app\modules\references\models\EquipmentTypesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Products');
+$this->title = Yii::t('app', 'Equipment Types');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="card products-index">
-<!--    --><?php //if (Yii::$app->user->can('products/create')): ?>
+<div class="card equipment-types-index">
+<!--    --><?php //if (Yii::$app->user->can('equipment-types/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
 <!--    --><?php //endif; ?>
     <div class="card-body">
-        <?php Pjax::begin(['id' => 'products_pjax']); ?>
+        <?php Pjax::begin(['id' => 'equipment-types_pjax']); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     
-            <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterRowOptions' => ['class' => 'filters no-print'],
-            'filterModel' => $searchModel,
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterRowOptions' => ['class' => 'filters no-print'],
+        'filterModel' => $searchModel,
         'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+            ['class' => 'yii\grid\SerialColumn'],
 
-                'name',
-                'part_number',
-//                'code',
-                [
-                    'attribute' => 'status_id',
-                    'format' => 'raw',
-                    'value' => function($model) {
-                        return BaseModel::getStatusList($model->status_id);
-                    },
-                    'filter' => BaseModel::getStatusList()
-                ],
+            'name',
+            [
+                'attribute' => 'status_id',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return \app\models\BaseModel::getStatusList($model->status_id);
+                },
+                'filter' => \app\models\BaseModel::getStatusList()
+            ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                     'visibleButtons' => [
-//                        'view' => Yii::$app->user->can('products/view'),
+//                        'view' => Yii::$app->user->can('equipment-types/view'),
 //                        'update' => function($model) {
-//                            return Yii::$app->user->can('products/update'); // && $model->status < $model::STATUS_SAVED;
+//                            return Yii::$app->user->can('equipment-types/update'); // && $model->status < $model::STATUS_SAVED;
 //                        },
 //                        'delete' => function($model) {
-//                            return Yii::$app->user->can('products/delete'); // && $model->status < $model::STATUS_SAVED;
+//                            return Yii::$app->user->can('equipment-types/delete'); // && $model->status < $model::STATUS_SAVED;
 //                        }
                     ],
                     'buttons' => [
@@ -76,25 +73,25 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                         },
 
-                    ],
                 ],
             ],
-        ]); ?>
-    
+        ],
+    ]); ?>
+
         <?php Pjax::end(); ?>
     </div>
 </div>
 <?=  \app\widgets\ModalWindow\ModalWindow::widget([
-    'model' => 'products',
-    'crud_name' => 'products',
-    'modal_id' => 'products-modal',
-    'modal_header' => '<h3>'. Yii::t('app', 'Products') . '</h3>',
+    'model' => 'equipment-types',
+    'crud_name' => 'equipment-types',
+    'modal_id' => 'equipment-types-modal',
+    'modal_header' => '<h3>'. Yii::t('app', 'Equipment Types') . '</h3>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',
     'view_button' => 'view-dialog',
     'delete_button' => 'delete-dialog',
     'modal_size' => 'modal-md',
-    'grid_ajax' => 'products_pjax',
+    'grid_ajax' => 'equipment-types_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
 ]); ?>

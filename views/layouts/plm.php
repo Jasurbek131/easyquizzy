@@ -269,6 +269,7 @@ AppAsset::register($this);
                                 [
                                     'label' => Yii::t('app', 'Roles'),
                                     'url' => '/admin/auth-item/index',
+                                    'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'auth-item' && $action == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
 //                                        'visible' => P::can('auth-item/index'),
@@ -276,6 +277,7 @@ AppAsset::register($this);
                                 [
                                     'label' => Yii::t('app', 'Permissions'),
                                     'url' => '/admin/auth-item/permissions',
+                                    'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'auth-item' && $action == 'permissions',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
 //                                        'visible' => P::can('auth-item/permissions'),
@@ -325,6 +327,27 @@ AppAsset::register($this);
                                     'url' => '/references/products/index',
                                     'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'products' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
+                                ],
+                                [
+                                    'label' => Yii::t('app', 'Equipment Types'),
+                                    'url' => '/references/equipment-types/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'equipment-types' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
+                                ],
+                                [
+                                    'label' => Yii::t('app', 'Equipments'),
+                                    'url' => '/references/equipments/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'equipments' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
+                                ],
+                                [
+                                    'label' => Yii::t('app', 'Equipment Group'),
+                                    'url' => '/references/equipment-group/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'equipment-group' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
                             ],

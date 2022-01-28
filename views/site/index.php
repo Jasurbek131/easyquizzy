@@ -11,10 +11,6 @@ ReactAsset::register($this);
 <?php
 $this->title = Yii::t('app','welcome');
 ?>
-
-    <?php
-        echo Yii::t('app','Save');
-    ?>
     <div class="card">
         <div class="card-body">
             <div id="root"></div>

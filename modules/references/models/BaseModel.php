@@ -8,6 +8,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use app\models\BaseModel as Bm;
 
 /**
  * Class BaseModel
@@ -36,20 +37,6 @@ class BaseModel extends ActiveRecord
     }
 
     public static function getStatusList($key = null, $isArray = false) {
-        $language = Yii::$app->language;
-        if (!is_null($key)) {
-            $status = StatusList::findOne(['id' => $key]);
-            if (!empty($status)) {
-                if ($status['id'] == self::STATUS_INACTIVE) {
-                    return "<span class='badge badge-danger d-block'>".$status["name_{$language}"]."</span>";
-                }
-                return "<span class='badge badge-success d-block'>".$status["name_{$language}"]."</span>";
-            }
-        }
-        $list = StatusList::find()->asArray()->select(['id as value', "name_{$language} as label"])->all();
-        if ($isArray) {
-            return $list;
-        }
-        return ArrayHelper::map($list, 'value', 'label');
+        return Bm::getStatusList($key, $isArray);
     }
 }

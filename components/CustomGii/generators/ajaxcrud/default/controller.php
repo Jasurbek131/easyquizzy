@@ -8,49 +8,50 @@ use yii\db\ActiveRecordInterface;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 
-$data = [];
-$data['AuthItem']['category'] = 'admin';
-$data['AuthItem']['name'] = Inflector::camel2id(StringHelper::basename($generator->viewPath));
-$data['AuthItem']['new_permissions'] = [
-    [
-        'name' => 'index',
-        'description' => 'Index',
-    ],
-    [
-        'name' => 'create',
-        'description' => 'Create',
-    ],
-    [
-        'name' => 'update',
-        'description' => 'Update',
-    ],
-    [
-        'name' => 'delete',
-        'description' => 'Delete',
-    ],
-    [
-        'name' => 'view',
-        'description' => 'View',
-    ],
-];
-foreach ($data['AuthItem']['new_permissions'] as $item){
-    $dataAI = [];
-    $authItem = AuthItem::findOne(['name' => $data['AuthItem']['name'].'/'.$item['name'],'category'=>$data['AuthItem']['category']]);
-    if(!$authItem) {
-        $m = new AuthItem();
-        $dataAI['AuthItem']['name'] = $data['AuthItem']['name'] . '/' . $item['name'];
-        $dataAI['AuthItem']['category'] = $data['AuthItem']['category'];
-        $dataAI['AuthItem']['description'] = $item['description'];
-        $dataAI['AuthItem']['type'] = 2;
+//$data = [];
+//$data['AuthItem']['category'] = 'admin';
+//$data['AuthItem']['name'] = Inflector::camel2id(StringHelper::basename($generator->viewPath));
+//$data['AuthItem']['new_permissions'] = [
+//    [
+//        'name' => 'index',
+//        'description' => 'Index',
+//    ],
+//    [
+//        'name' => 'create',
+//        'description' => 'Create',
+//    ],
+//    [
+//        'name' => 'update',
+//        'description' => 'Update',
+//    ],
+//    [
+//        'name' => 'delete',
+//        'description' => 'Delete',
+//    ],
+//    [
+//        'name' => 'view',
+//        'description' => 'View',
+//    ],
+//];
+//foreach ($data['AuthItem']['new_permissions'] as $item){
+//    $dataAI = [];
+//    $authItem = AuthItem::findOne(['name' => $data['AuthItem']['name'].'/'.$item['name'],'category'=>$data['AuthItem']['category']]);
+//    if(!$authItem) {
+//        $m = new AuthItem();
+//        $dataAI['AuthItem']['name'] = $data['AuthItem']['name'] . '/' . $item['name'];
+//        $dataAI['AuthItem']['category'] = $data['AuthItem']['category'];
+//        $dataAI['AuthItem']['description'] = $item['description'];
+//        $dataAI['AuthItem']['type'] = 2;
+//
+//        if ($m->load($dataAI) && $m->save()) {
+//            $auth = Yii::$app->authManager;
+//            $role = Yii::$app->authManager->getRole($m->category);
+//            $permission = Yii::$app->authManager->getPermission($m->name);
+//            $auth->addChild($role, $permission);
+//        }
+//    }
+//}
 
-        if ($m->load($dataAI) && $m->save()) {
-            $auth = Yii::$app->authManager;
-            $role = Yii::$app->authManager->getRole($m->category);
-            $permission = Yii::$app->authManager->getPermission($m->name);
-            $auth->addChild($role, $permission);
-        }
-    }
-}
 /* @var $this yii\web\View */
 /* @var $generator yii\gii\generators\crud\Generator */
 

@@ -3,30 +3,29 @@
 namespace app\modules\references\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
- * This is the model class for table "products".
+ * This is the model class for table "equipment_types".
  *
  * @property int $id
  * @property string $name
- * @property string $code
- * @property string $part_number
  * @property int $status_id
  * @property int $created_at
  * @property int $created_by
  * @property int $updated_at
  * @property int $updated_by
  *
- * @property ProductLifecycle[] $productLifecycles
+ * @property Equipments[] $equipments
  */
-class Products extends BaseModel
+class EquipmentTypes extends BaseModel
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'products';
+        return 'equipment_types';
     }
 
     /**
@@ -35,11 +34,10 @@ class Products extends BaseModel
     public function rules()
     {
         return [
-            [['name', 'part_number', 'status_id'], 'required'],
+            [['name', 'status_id'], 'required'],
             [['created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
-            [['code', 'part_number'], 'string', 'max' => 100],
         ];
     }
 
@@ -51,8 +49,6 @@ class Products extends BaseModel
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
-            'code' => Yii::t('app', 'Code'),
-            'part_number' => Yii::t('app', 'Part Number'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -64,8 +60,16 @@ class Products extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getProductLifecycles()
+    public function getEquipments()
     {
-        return $this->hasMany(ProductLifecycle::className(), ['product_id' => 'id']);
+        return $this->hasMany(Equipments::className(), ['equipment_type_id' => 'id']);
+    }
+
+    public static function getList($key = null, $isArray = false) {
+        $list = self::find()->select(['id as value', 'name as label'])->asArray()->all();
+        if ($isArray) {
+            return $list;
+        }
+        return ArrayHelper::map($list, 'value', 'label');
     }
 }

@@ -1,20 +1,19 @@
 <?php
 
-namespace app\modules\references\controllers;
+namespace app\modules\admin\controllers;
 
-use app\models\BaseModel;
 use Yii;
-use app\modules\references\models\Products;
-use app\modules\references\models\ProductsSearch;
+use app\models\Users;
+use app\modules\admin\models\search\UsersSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * ProductsController implements the CRUD actions for Products model.
+ * UsersController implements the CRUD actions for Users model.
  */
-class ProductsController extends Controller
+class UsersController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -32,12 +31,12 @@ class ProductsController extends Controller
     }
 
     /**
-     * Lists all Products models.
+     * Lists all Users models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ProductsSearch();
+        $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -47,7 +46,7 @@ class ProductsController extends Controller
     }
 
     /**
-     * Displays a single Products model.
+     * Displays a single Users model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,13 +64,13 @@ class ProductsController extends Controller
     }
 
     /**
-     * Creates a new Products model.
+     * Creates a new Users model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Products();
+        $model = new Users();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
@@ -120,7 +119,7 @@ class ProductsController extends Controller
     }
 
     /**
-     * Updates an existing Products model.
+     * Updates an existing Users model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -178,7 +177,7 @@ class ProductsController extends Controller
     }
 
     /**
-     * Deletes an existing Products model.
+     * Deletes an existing Users model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -190,7 +189,6 @@ class ProductsController extends Controller
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            $model->status_id = BaseModel::STATUS_INACTIVE;
             if($model->delete()){
                 $isDeleted = true;
             }
@@ -222,16 +220,34 @@ class ProductsController extends Controller
         }
     }
 
+    public function actionExportExcel(){
+        header('Content-Type: application/vnd.ms-excel');
+        $filename = "users_".date("d-m-Y-His").".xls";
+        header('Content-Disposition: attachment;filename='.$filename .' ');
+        header('Cache-Control: max-age=0');
+        \moonland\phpexcel\Excel::export([
+            'models' => Users::find()->select([
+                'id',
+            ])->all(),
+            'columns' => [
+                'id',
+            ],
+            'headers' => [
+                'id' => 'Id',
+            ],
+            'autoSize' => true,
+        ]);
+    }
     /**
-     * Finds the Products model based on its primary key value.
+     * Finds the Users model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Products the loaded model
+     * @return Users the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Products::findOne($id)) !== null) {
+        if (($model = Users::findOne($id)) !== null) {
             return $model;
         }
 
