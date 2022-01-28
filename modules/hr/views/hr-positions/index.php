@@ -10,17 +10,13 @@ use yii\widgets\Pjax;
 $this->title = Yii::t('app', 'Hr Positions');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="hr-positions-index">
-    <?php if (Yii::$app->user->can('hr-positions/create')): ?>
-    <p class="pull-right no-print">
+<div class="card hr-positions-index">
+<!--    --><?php //if (Yii::$app->user->can('hr-positions/create')): ?>
+    <p class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
-        <?= Html::a('<i class="fa fa-file-excel-o"></i>',
-        ['export-excel?type=index'], ['class' => 'btn btn-sm btn-info']) ?>
-        <?= Html::button('<i class="fa fa-print print-btn"></i>',
-        ['target' => '_black','class' => 'btn btn-sm btn-primary']) ?>
     </p>
-    <?php endif; ?>
+<!--    --><?php //endif; ?>
 
     <?php Pjax::begin(['id' => 'hr-positions_pjax']); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -56,21 +52,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'buttons' => [
                     'update' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                        return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
                             'title' => Yii::t('app', 'Update'),
                             'class'=> 'update-dialog btn btn-xs btn-success mr1',
                             'data-form-id' => $model->id,
                         ]);
                     },
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                        return Html::a('<span class="fa fa-eye-open"></span>', $url, [
                             'title' => Yii::t('app', 'View'),
                             'class'=> 'btn btn-xs btn-default view-dialog mr1',
                             'data-form-id' => $model->id,
                         ]);
                     },
                     'delete' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                        return Html::a('<span class="fa fa-trash"></span>', $url, [
                             'title' => Yii::t('app', 'Delete'),
                             'class' => 'btn btn-xs btn-danger delete-dialog',
                             'data-form-id' => $model->id,

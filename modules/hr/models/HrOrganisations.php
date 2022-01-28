@@ -3,11 +3,10 @@
 namespace app\modules\hr\models;
 
 use app\models\Users;
-use BaseModel;
 use Yii;
 
 /**
- * This is the model class for table "hr_organisations".
+ * This is the model class for table "hr-organisations".
  *
  * @property int $id
  * @property string $name_uz
@@ -29,7 +28,7 @@ class HrOrganisations extends BaseModel
      */
     public static function tableName()
     {
-        return 'hr_organisations';
+        return 'hr-organisations';
     }
 
     /**
@@ -76,5 +75,16 @@ class HrOrganisations extends BaseModel
     public function getUserss()
     {
         return $this->hasMany(Users::className(), ['hr_organisation_id' => 'id']);
+    }
+
+    public static function getOrganisationsList($isArray = false)
+    {
+        $list = self::find()
+            ->addOrderBy('root, lft');
+//            ->filterWhere(['id' => self::getIdListByUser()]);
+        if ($isArray) {
+            return $list->select(['id as value', 'name as label'])->asArray()->all();
+        }
+        return $list;
     }
 }

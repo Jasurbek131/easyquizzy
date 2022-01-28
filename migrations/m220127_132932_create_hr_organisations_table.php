@@ -3,7 +3,7 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%hr_organisations}}`.
+ * Handles the creation of table `{{%hr-organisations}}`.
  */
 class m220127_132932_create_hr_organisations_table extends Migration
 {
@@ -12,7 +12,7 @@ class m220127_132932_create_hr_organisations_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('{{%hr_organisations}}', [
+        $this->createTable('{{%hr-organisations}}', [
             'id' => $this->primaryKey(),
             'name_uz' => $this->string(255),
             'name_ru' => $this->string(255),
@@ -25,8 +25,8 @@ class m220127_132932_create_hr_organisations_table extends Migration
         ]);
         // creates index for column `status_id`
         $this->createIndex(
-            '{{%idx-hr_organisations-status_id}}',
-            '{{%hr_organisations}}',
+            '{{%idx-hr-organisations-status_id}}',
+            '{{%hr-organisations}}',
             'status_id'
         );
     }
@@ -36,6 +36,6 @@ class m220127_132932_create_hr_organisations_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%hr_organisations}}');
+        $this->dropTable('{{%hr-organisations}}');
     }
 }

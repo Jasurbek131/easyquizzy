@@ -1,5 +1,6 @@
 <?php
 
+use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -28,28 +29,29 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
 
-                'id',
-            'name',
-            'code',
-            'part_number',
-            'status_id',
-            //'created_at',
-            //'created_by',
-            //'updated_at',
-            //'updated_by',
-
+                'name',
+                'part_number',
+//                'code',
+                [
+                    'attribute' => 'status_id',
+                    'format' => 'raw',
+                    'value' => function($model) {
+                        return BaseModel::getStatusList($model->status_id);
+                    },
+                    'filter' => BaseModel::getStatusList()
+                ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                     'visibleButtons' => [
-                        'view' => Yii::$app->user->can('products/view'),
-                        'update' => function($model) {
-                            return Yii::$app->user->can('products/update'); // && $model->status < $model::STATUS_SAVED;
-                        },
-                        'delete' => function($model) {
-                            return Yii::$app->user->can('products/delete'); // && $model->status < $model::STATUS_SAVED;
-                        }
+//                        'view' => Yii::$app->user->can('products/view'),
+//                        'update' => function($model) {
+//                            return Yii::$app->user->can('products/update'); // && $model->status < $model::STATUS_SAVED;
+//                        },
+//                        'delete' => function($model) {
+//                            return Yii::$app->user->can('products/delete'); // && $model->status < $model::STATUS_SAVED;
+//                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {

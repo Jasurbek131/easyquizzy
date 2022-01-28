@@ -2,6 +2,7 @@
 
 namespace app\modules\references\controllers;
 
+use app\models\BaseModel;
 use Yii;
 use app\modules\references\models\Products;
 use app\modules\references\models\ProductsSearch;
@@ -189,6 +190,7 @@ class ProductsController extends Controller
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
+            $model->status_id = BaseModel::STATUS_INACTIVE;
             if($model->delete()){
                 $isDeleted = true;
             }

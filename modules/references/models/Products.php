@@ -19,7 +19,7 @@ use Yii;
  *
  * @property ProductLifecycle[] $productLifecycles
  */
-class Products extends \yii\db\ActiveRecord
+class Products extends BaseModel
 {
     /**
      * {@inheritdoc}
