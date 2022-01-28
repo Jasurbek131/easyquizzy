@@ -3,7 +3,6 @@
 namespace app\modules\hr\models;
 
 use app\models\Users;
-use BaseModel;
 use Yii;
 
 /**

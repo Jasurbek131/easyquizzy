@@ -9,15 +9,14 @@ use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Hr Organisations');
 $this->params['breadcrumbs'][] = $this->title;
-
 ?>
 <div class="hr-departments-index">
 
     <?= TreeView::widget([
         // single query fetch to render the tree
         // use the Product model you have in the previous step
-        'query' => HrOrganisations::getOrganisationsList(),
-        'headingOptions' => ['label' => Yii::t('app','Departments')],
+        'query' => HrOrganisations::find()->addOrderBy('root, lft'),
+        'headingOptions' => ['label' => Yii::t('app','Hr Organisations')],
         'fontAwesome' => true,     // optional
         'isAdmin' => false,         // optional (toggle to enable admin mode)
         'displayValue' => 1,        // initial display value
@@ -27,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'showIDAttribute' => false, // if set true show id attribute
         'topRootAsHeading' => true,
-        'rootOptions' => ['label'=>'<span class="text-primary">'.Yii::t('app', 'Organizations and departments').'</span>'],
+        'rootOptions' => ['label'=>'<span class="text-primary">'.Yii::t('app', 'Hr Organisations and departments').'</span>'],
         'iconEditSettings'=> [
             'show' => 'none',
         ],

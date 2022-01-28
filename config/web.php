@@ -27,6 +27,10 @@ $config = [
         'plm' => [
             'class' => 'app\modules\plm\Module',
         ],
+        'treemanager' =>  [
+            'class' => '\kartik\tree\Module',
+            // other module settings, refer detailed documentation
+        ]
     ],
     'components' => [
         'authManager' => [

@@ -3,9 +3,9 @@
 
 namespace app\modules\hr\controllers;
 
-
 use app\modules\hr\models\HrDepartments;
 use kartik\tree\controllers\NodeController;
+use yii\web\Controller;
 use kartik\tree\models\Tree;
 use kartik\tree\Module;
 use kartik\tree\TreeSecurity;
@@ -19,7 +19,7 @@ use yii\web\ForbiddenHttpException;
 use yii\web\UploadedFile;
 use yii\web\View;
 
-class HrDepartmentsController extends NodeController
+class HrOrganisationsController extends NodeController
 {
     /**
      * @param $action
@@ -39,7 +39,6 @@ class HrDepartmentsController extends NodeController
 
     public function actionIndex()
     {
-
         return $this->render('index');
     }
 
