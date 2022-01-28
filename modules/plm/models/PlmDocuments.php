@@ -3,7 +3,6 @@
 namespace app\modules\plm\models;
 
 use app\modules\hr\models\HrDepartments;
-use BaseModel;
 use Yii;
 
 /**

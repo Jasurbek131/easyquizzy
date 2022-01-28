@@ -18,8 +18,14 @@ $config = [
         'admin' => [
             'class' => 'app\modules\admin\Module',
         ],
+        'hr' => [
+            'class' => 'app\modules\hr\Module',
+        ],
         'references' => [
             'class' => 'app\modules\references\Module',
+        ],
+        'plm' => [
+            'class' => 'app\modules\plm\Module',
         ],
     ],
     'components' => [
