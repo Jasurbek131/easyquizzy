@@ -1678,7 +1678,7 @@ pre code {
 
 .table th,
 .table td {
-  padding: 0.75rem;
+   padding: 6px 8px;
   vertical-align: top;
   border-top: 1px solid #dee2e6;
 }
@@ -4840,7 +4840,7 @@ input[type="button"].btn-block {
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   min-height: 1px;
-  padding: 1.25rem;
+  padding: 0.5rem;
 }
 
 .card-title {
@@ -10313,7 +10313,8 @@ a.text-dark:hover, a.text-dark:focus {
     size: a3;
   }
   body {
-    min-width: 992px !important;
+      min-width: 992px !important;
+      overflow-x: hidden;
   }
   .container {
     min-width: 992px !important;
@@ -10662,6 +10663,7 @@ html,
 body,
 .wrapper {
   min-height: 100%;
+    overflow-x: hidden;
 }
 
 .wrapper {
@@ -28696,7 +28698,7 @@ html.maximized-card {
 .card-header {
   background-color: transparent;
   border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-  padding: 0.75rem 1.25rem;
+  padding: 0.75rem 0.5rem;
   position: relative;
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
