@@ -10,7 +10,7 @@ class m220128_114544_add_some_tree_column_to_hr_organisations_table extends Migr
     /**
      * {@inheritdoc}
      */
-    const TABLE_NAME = '{{%hr-organisations}}';
+    const TABLE_NAME = '{{%hr_organisations}}';
 
     /**
      * @inheritdoc
@@ -18,24 +18,24 @@ class m220128_114544_add_some_tree_column_to_hr_organisations_table extends Migr
     public function up()
     {
         $this->addColumn(self::TABLE_NAME, 'root', $this->integer());
-        $this->addColumn(self::TABLE_NAME, 'lft', $this->integer()/*->notNull()*/); // TODO notNull larni o'zgartiramiz ish tugaganda
-        $this->addColumn(self::TABLE_NAME, 'rgt', $this->integer()/*->notNull()*/);
-        $this->addColumn(self::TABLE_NAME, 'lvl', $this->smallInteger(5)/*->notNull()*/);
+        $this->addColumn(self::TABLE_NAME, 'lft', $this->integer());
+        $this->addColumn(self::TABLE_NAME, 'rgt', $this->integer());
+        $this->addColumn(self::TABLE_NAME, 'lvl', $this->smallInteger(5));
         $this->addColumn(self::TABLE_NAME, 'icon', $this->string(255));
-        $this->addColumn(self::TABLE_NAME, 'icon_type', $this->smallInteger(1)/*->notNull()*/ ->defaultValue(1));
-        $this->addColumn(self::TABLE_NAME, 'active', $this->boolean()/*->notNull()*/ ->defaultValue(true));
-        $this->addColumn(self::TABLE_NAME, 'selected', $this->boolean()/*->notNull()*/ ->defaultValue(false));
-        $this->addColumn(self::TABLE_NAME, 'disabled', $this->boolean()/*->notNull()*/ ->defaultValue(false));
-        $this->addColumn(self::TABLE_NAME, 'readonly', $this->boolean()/*->notNull()*/ ->defaultValue(false));
-        $this->addColumn(self::TABLE_NAME, 'visible', $this->boolean()/*->notNull()*/ ->defaultValue(true));
-        $this->addColumn(self::TABLE_NAME, 'collapsed', $this->boolean()/*->notNull()*/ ->defaultValue(false));
-        $this->addColumn(self::TABLE_NAME, 'movable_u', $this->boolean()/*->notNull()*/ ->defaultValue(true));
-        $this->addColumn(self::TABLE_NAME, 'movable_d', $this->boolean()/*->notNull()*/ ->defaultValue(true));
-        $this->addColumn(self::TABLE_NAME, 'movable_l', $this->boolean()/*->notNull()*/ ->defaultValue(true));
-        $this->addColumn(self::TABLE_NAME, 'movable_r', $this->boolean()/*->notNull()*/ ->defaultValue(true));
-        $this->addColumn(self::TABLE_NAME, 'removable', $this->boolean()/*->notNull()*/ ->defaultValue(true));
-        $this->addColumn(self::TABLE_NAME, 'removable_all', $this->boolean()/*->notNull()*/ ->defaultValue(false));
-        $this->addColumn(self::TABLE_NAME, 'child_allowed', $this->boolean()/*->notNull()*/ ->defaultValue(true));
+        $this->addColumn(self::TABLE_NAME, 'icon_type', $this->smallInteger(1) ->defaultValue(1));
+        $this->addColumn(self::TABLE_NAME, 'active', $this->boolean() ->defaultValue(true));
+        $this->addColumn(self::TABLE_NAME, 'selected', $this->boolean() ->defaultValue(false));
+        $this->addColumn(self::TABLE_NAME, 'disabled', $this->boolean() ->defaultValue(false));
+        $this->addColumn(self::TABLE_NAME, 'readonly', $this->boolean() ->defaultValue(false));
+        $this->addColumn(self::TABLE_NAME, 'visible', $this->boolean() ->defaultValue(true));
+        $this->addColumn(self::TABLE_NAME, 'collapsed', $this->boolean() ->defaultValue(false));
+        $this->addColumn(self::TABLE_NAME, 'movable_u', $this->boolean() ->defaultValue(true));
+        $this->addColumn(self::TABLE_NAME, 'movable_d', $this->boolean() ->defaultValue(true));
+        $this->addColumn(self::TABLE_NAME, 'movable_l', $this->boolean() ->defaultValue(true));
+        $this->addColumn(self::TABLE_NAME, 'movable_r', $this->boolean() ->defaultValue(true));
+        $this->addColumn(self::TABLE_NAME, 'removable', $this->boolean() ->defaultValue(true));
+        $this->addColumn(self::TABLE_NAME, 'removable_all', $this->boolean() ->defaultValue(false));
+        $this->addColumn(self::TABLE_NAME, 'child_allowed', $this->boolean() ->defaultValue(true));
 
         $this->createIndex('tree_NK1', self::TABLE_NAME, 'root');
         $this->createIndex('tree_NK2', self::TABLE_NAME, 'lft');
