@@ -1,10 +1,12 @@
 <?php
+
 namespace app\components\Permission;
 
 use Yii;
 use yii\helpers\ArrayHelper;
 
-class PermissionHelper{
+class PermissionHelper
+{
     private static $permissionsAndRoles;
 
     static function per($name){

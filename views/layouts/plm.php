@@ -232,7 +232,7 @@ AppAsset::register($this);
                     <img src="/img/user.jfif" class="img-circle" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block">Foydalanuvchi ismi</a>
+                    <a href="#" class="d-block"><?=Yii::$app->user->identity->username?></a>
                 </div>
             </div>
 
@@ -253,7 +253,7 @@ AppAsset::register($this);
                     ],
                     'items' => [
                         [
-                            'label' => Yii::t('app', 'Admin'),
+                            'label' => Yii::t('app', 'Administrator'),
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-user"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',

@@ -1,20 +1,19 @@
 <?php
 
-namespace app\modules\admin\controllers;
+namespace app\modules\plm\controllers;
 
-use app\modules\admin\models\AuthAssignment;
 use Yii;
-use app\models\Users;
-use app\modules\admin\models\search\UsersSearch;
+use app\modules\plm\models\PlmProcessingTime;
+use app\modules\plm\models\PlmProcessingTimeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * UsersController implements the CRUD actions for Users model.
+ * PlmProcessingTimeController implements the CRUD actions for PlmProcessingTime model.
  */
-class UsersController extends Controller
+class PlmProcessingTimeController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -32,12 +31,12 @@ class UsersController extends Controller
     }
 
     /**
-     * Lists all Users models.
+     * Lists all PlmProcessingTime models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new UsersSearch();
+        $searchModel = new PlmProcessingTimeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -47,7 +46,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Displays a single Users model.
+     * Displays a single PlmProcessingTime model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,48 +64,62 @@ class UsersController extends Controller
     }
 
     /**
-     * Creates a new Users model.
+     * Creates a new PlmProcessingTime model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Users([
-            'scenario' => Users::SCENARIO_CREATE
-        ]);
-
-        $request = Yii::$app->request;
-        if ($request->isPost) {
-            if ($model->load($request->post())) {
-                $response = $model->saveUser();
-                if ($request->isAjax) {
+        $model = new PlmProcessingTime();
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post())) {
+                $transaction = Yii::$app->db->beginTransaction();
+                $saved = false;
+                try {
+                    if($model->save()){
+                        $saved = true;
+                    }else{
+                        $saved = false;
+                    }
+                    if($saved) {
+                        $transaction->commit();
+                    }else{
+                        $transaction->rollBack();
+                    }
+                } catch (\Exception $e) {
+                    Yii::info('Not saved' . $e, 'save');
+                    $transaction->rollBack();
+                }
+                if (Yii::$app->request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    if ($response['status'])
+                    $response = [];
+                    if ($saved) {
                         $response['status'] = 0;
-                    else
+                        $response['message'] = Yii::t('app', 'Saved Successfully');
+                    } else {
                         $response['status'] = 1;
-
+                        $response['errors'] = $model->getErrors();
+                        $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
+                    }
                     return $response;
                 }
-
-                if ($response['status'])
+                if ($saved) {
                     return $this->redirect(['view', 'id' => $model->id]);
-
+                }
             }
         }
-
-        if ($request->isAjax)
+        if (Yii::$app->request->isAjax) {
             return $this->renderAjax('create', [
                 'model' => $model,
             ]);
-
+        }
         return $this->render('create', [
             'model' => $model,
         ]);
     }
 
     /**
-     * Updates an existing Users model.
+     * Updates an existing PlmProcessingTime model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -115,35 +128,48 @@ class UsersController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->hr_employee_id = !empty($model->hrEmployees) ? $model->hrEmployees[0]["hr_employee_id"] : "";
-        $model->roles = AuthAssignment::getUserRoles($id);
-        $model->password = "";
-        $request = Yii::$app->request;
-
-        if ($request->isPost) {
-            if ($model->load($request->post())) {
-                $model->isUpdate = true;
-                $response = $model->saveUser();
-                if ($request->isAjax) {
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post())) {
+                $transaction = Yii::$app->db->beginTransaction();
+                $saved = false;
+                try {
+                    if($model->save()){
+                        $saved = true;
+                    }else{
+                        $saved = false;
+                    }
+                    if($saved) {
+                        $transaction->commit();
+                    }else{
+                        $transaction->rollBack();
+                    }
+                } catch (\Exception $e) {
+                    Yii::info('Not saved' . $e, 'save');
+                    $transaction->rollBack();
+                }
+                if (Yii::$app->request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    if ($response['status'])
+                    $response = [];
+                    if ($saved) {
                         $response['status'] = 0;
-                    else
+                        $response['message'] = Yii::t('app', 'Saved Successfully');
+                    } else {
                         $response['status'] = 1;
-
+                        $response['errors'] = $model->getErrors();
+                        $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
+                    }
                     return $response;
                 }
-
-                if ($response['status'])
+                if ($saved) {
                     return $this->redirect(['view', 'id' => $model->id]);
-
+                }
             }
         }
-
-        if ($request->isAjax)
+        if (Yii::$app->request->isAjax) {
             return $this->renderAjax('update', [
                 'model' => $model,
             ]);
+        }
 
         return $this->render('update', [
             'model' => $model,
@@ -151,7 +177,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Deletes an existing Users model.
+     * Deletes an existing PlmProcessingTime model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -196,11 +222,11 @@ class UsersController extends Controller
 
     public function actionExportExcel(){
         header('Content-Type: application/vnd.ms-excel');
-        $filename = "users_".date("d-m-Y-His").".xls";
+        $filename = "plm-processing-time_".date("d-m-Y-His").".xls";
         header('Content-Disposition: attachment;filename='.$filename .' ');
         header('Cache-Control: max-age=0');
         \moonland\phpexcel\Excel::export([
-            'models' => Users::find()->select([
+            'models' => PlmProcessingTime::find()->select([
                 'id',
             ])->all(),
             'columns' => [
@@ -213,15 +239,15 @@ class UsersController extends Controller
         ]);
     }
     /**
-     * Finds the Users model based on its primary key value.
+     * Finds the PlmProcessingTime model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Users the loaded model
+     * @return PlmProcessingTime the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Users::findOne($id)) !== null) {
+        if (($model = PlmProcessingTime::findOne($id)) !== null) {
             return $model;
         }
 

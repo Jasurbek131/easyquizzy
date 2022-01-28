@@ -2,8 +2,8 @@
 
 namespace app\modules\hr\models;
 
-use BaseModel;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "hr_employee".
@@ -45,8 +45,8 @@ class HrEmployee extends BaseModel
             [['hr_department_id', 'hr_position_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['firstname', 'lastname', 'fathername', 'email'], 'string', 'max' => 255],
             [['phone_number'], 'string', 'max' => 30],
-            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['hr_department_id' => 'id']],
-            [['hr_position_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrPositions::className(), 'targetAttribute' => ['hr_position_id' => 'id']],
+            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
+            [['hr_position_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrPositions::class, 'targetAttribute' => ['hr_position_id' => 'id']],
         ];
     }
 
@@ -77,7 +77,7 @@ class HrEmployee extends BaseModel
      */
     public function getHrDepartments()
     {
-        return $this->hasOne(HrDepartments::className(), ['id' => 'hr_department_id']);
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
 
     /**
@@ -85,6 +85,27 @@ class HrEmployee extends BaseModel
      */
     public function getHrPositions()
     {
-        return $this->hasOne(HrPositions::className(), ['id' => 'hr_position_id']);
+        return $this->hasOne(HrPositions::class, ['id' => 'hr_position_id']);
     }
+
+    /**
+     * @param bool $isMap
+     * @return array
+     */
+    public static function getList($isMap = true):array
+    {
+        $list = self::find()
+            ->where([
+                'status_id' => \app\models\BaseModel::STATUS_ACTIVE
+            ])
+            ->asArray()
+            ->all();
+        if ($isMap && !empty($list))
+            return ArrayHelper::map($list,'id', function ($m){
+                return $m['lastname']." ".$m['lastname']." ".$m['fathername'];
+            });
+
+        return $list;
+    }
+
 }

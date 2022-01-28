@@ -2,13 +2,18 @@
 
 namespace app\models;
 
+use app\modules\admin\models\AuthAssignment;
+use app\modules\hr\models\HrEmployeeRelUsers;
 use Yii;
-use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "users".
  *
  * @property int $id
+ * @property int $hr_employee_id
+ * @property bool $isUpdate
+ * @property int $hr_organisation_id
+ * @property array $roles
  * @property string|null $username
  * @property string|null $password
  * @property string|null $auth_key
@@ -19,9 +24,40 @@ use yii\web\IdentityInterface;
  * @property int|null $updated_by
  *
  * @property StatusList $status
+ * @property HrEmployeeRelUsers $hrEmployees
  */
-class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
+class Users extends BaseModel implements \yii\web\IdentityInterface
 {
+
+    /**
+     * Password yangi foydalanuvchi yaratishda majburiy qilish uchun
+     */
+    const SCENARIO_CREATE = "scenario-create";
+
+    /**
+     * @var bool
+     * Foydalanuvchi malumotlari yangilanayotgan bo'lsa: true bo'ladi
+     */
+    public $isUpdate = false;
+
+    /**
+     * Hr employee bog'lash uchun
+     */
+    public $hr_employee_id;
+
+    /**
+     * @var
+     *
+     * Takroriy password uchun
+     */
+    public $password_repeat;
+
+    /**
+     * @var
+     * Foydalanuchiga rolar biriktirish uchun
+     */
+    public $roles;
+
     /**
      * {@inheritdoc}
      */
@@ -39,8 +75,27 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['status_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['username', 'password', 'auth_key'], 'string', 'max' => 255],
+            [['username'], 'unique'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusList::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['hr_employee_id', 'username'], 'required'],
+            [['password', 'password_repeat'], 'required', 'on' => self::SCENARIO_CREATE],
+            ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ],
+            [['roles'], 'safe'],
         ];
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord && !empty($this->password))
+            $this->setPassword();
+        else
+            unset($this->password);
+        
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -50,6 +105,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return [
             'id' => Yii::t('app', 'ID'),
+            'hr_employee_id' => Yii::t('app', 'Hr Employee'),
             'username' => Yii::t('app', 'Username'),
             'password' => Yii::t('app', 'Password'),
             'auth_key' => Yii::t('app', 'Auth Key'),
@@ -69,6 +125,16 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function getStatus()
     {
         return $this->hasOne(StatusList::class, ['id' => 'status_id']);
+    }
+
+    /**
+     * Gets query for [[Status]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getHrEmployees()
+    {
+        return $this->hasMany(HrEmployeeRelUsers::class, ['user_id' => 'id']);
     }
 
     /**
@@ -132,5 +198,96 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function validatePassword($password)
     {
         return $this->password === md5($password);
+    }
+
+    public function setPassword()
+    {
+        $this->password = md5($this->password);
+    }
+
+    /**
+     * @return array
+     */
+    public function saveUser(): array
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app','Success'),
+        ];
+        try{
+            if (!$this->hr_employee_id)
+                $response = [
+                    'status' => false,
+                    'message' => Yii::t('app', 'Hr employee id required')
+                ];
+
+            if ($this->isUpdate && $response['status']){
+                HrEmployeeRelUsers::deleteAll(['user_id' => $this->id]);
+                AuthAssignment::deleteAll(['user_id' => $this->id]);
+            }
+
+            if ($response['status']){
+                $existsHrEmployeeUser = HrEmployeeRelUsers::checkExistsHrEmployeeUser($this->hr_employee_id);
+                if ($existsHrEmployeeUser)
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app', 'This hr employee has user')
+                    ];
+            }
+
+            if ($response['status'])
+                if (!$this->save())
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app', 'User not saved'),
+                        'errors' => $this->getErrors()
+                    ];
+
+            if ($response['status']){
+                $hrEmployeeRelUsers = new HrEmployeeRelUsers([
+                    'hr_employee_id' => $this->hr_employee_id,
+                    'user_id' => $this->id,
+                ]);
+                if (!$hrEmployeeRelUsers->save())
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app', 'Hr Employee Rel User not saved'),
+                        'errors' => $hrEmployeeRelUsers->getErrors()
+                    ];
+            }
+
+            if ($response['status'] && !empty($this->roles)){
+                foreach ($this->roles as $role)
+                {
+                    $authAssignment = new AuthAssignment([
+                        'item_name' => $role,
+                        'user_id' => (string)$this->id,
+                        'created_at' => time(),
+                    ]);
+                    if (!$authAssignment->save()){
+                        $response = [
+                            'status' => false,
+                            'message' => Yii::t('app', 'Auth assigment not saved'),
+                            'errors' => $authAssignment->getErrors()
+                        ];
+                        break;
+                    }
+                }
+            }
+
+            if($response['status'])
+                $transaction->commit();
+            else
+                $transaction->rollBack();
+            
+        } catch(\Exception $e){
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        return $response;
     }
 }

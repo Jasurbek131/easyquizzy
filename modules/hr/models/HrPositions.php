@@ -2,7 +2,6 @@
 
 namespace app\modules\hr\models;
 
-use BaseModel;
 use Yii;
 
 /**

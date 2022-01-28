@@ -1,9 +1,11 @@
 <?php
 
 use app\models\BaseModel;
+use app\models\Users;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\components\Permission\PermissionHelper as P;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\admin\models\search\UsersSearch */
@@ -13,12 +15,12 @@ $this->title = Yii::t('app', 'Users');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card users-index">
-    <?php if (Yii::$app->user->can('users/create')): ?>
+<!--    --><?php //if (Yii::$app->user->can('users/create')): ?>
         <div class="card-header pull-right no-print">
             <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
                 ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
         </div>
-    <?php endif; ?>
+<!--    --><?php //endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'users_pjax']); ?>
 
@@ -28,6 +30,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'filterModel' => $searchModel,
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'attribute' => 'hr_employee_id',
+                    'value' => function(Users $model){
+                        return !empty($model->hrEmployees) ?
+                            $model->hrEmployees[0]->hrEmployee->lastname." ".
+                            $model->hrEmployees[0]->hrEmployee->firstname." ".
+                            $model->hrEmployees[0]->hrEmployee->fathername
+                            : "";
+                    }
+                ],
                 'username',
                 [
                     'attribute' => 'status_id',
@@ -41,15 +53,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print', 'style' => 'width:100px;'],
-                    'visibleButtons' => [
-                        'view' => Yii::$app->user->can('users/view'),
-                        'update' => function ($model) {
-                            return Yii::$app->user->can('users/update'); // && $model->status < $model::STATUS_SAVED;
-                        },
-                        'delete' => function ($model) {
-                            return Yii::$app->user->can('users/delete'); // && $model->status < $model::STATUS_SAVED;
-                        }
-                    ],
+//                    'visibleButtons' => [
+//                        'view' => Yii::$app->user->can('users/view'),
+//                        'update' => function ($model) {
+//                            return Yii::$app->user->can('users/update'); // && $model->status < $model::STATUS_SAVED;
+//                        },
+//                        'delete' => function ($model) {
+//                            return Yii::$app->user->can('users/delete'); // && $model->status < $model::STATUS_SAVED;
+//                        }
+//                    ],
                     'buttons' => [
                         'update' => function ($url, $model) {
                             return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
