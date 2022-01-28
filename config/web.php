@@ -29,7 +29,6 @@ $config = [
         ],
         'treemanager' =>  [
             'class' => '\kartik\tree\Module',
-            // other module settings, refer detailed documentation
         ]
     ],
     'components' => [
