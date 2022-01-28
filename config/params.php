@@ -14,5 +14,9 @@ return [
             'code' => "RU",
             'name' => "Русский",
         ],
-    ]
+    ],
+    'language_list' => [
+        'uz',
+        'ru',
+    ],
 ];

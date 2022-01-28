@@ -1,8 +1,10 @@
 <?php
 
+use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\admin\models\search\UsersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -12,43 +14,39 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card users-index">
     <?php if (Yii::$app->user->can('users/create')): ?>
-    <div class="card-header pull-right no-print">
-        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
-        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
-    </div>
+        <div class="card-header pull-right no-print">
+            <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
+                ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
+        </div>
     <?php endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'users_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterRowOptions' => ['class' => 'filters no-print'],
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'username',
-            'password',
-            'auth_key',
-            'status_id',
-            //'created_at',
-            //'updated_at',
-            //'created_by',
-            //'updated_by',
-            //'hr_organisation_id',
-
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterRowOptions' => ['class' => 'filters no-print'],
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'username',
+                [
+                    'attribute' => 'status_id',
+                    'value' => function($model) {
+                        return $model['status_id'] ? BaseModel::getStatusList($model['status_id']) : "";
+                    },
+                    'filter' => BaseModel::getStatusList(),
+                    'format' => 'raw'
+                ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
-                    'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
+                    'contentOptions' => ['class' => 'no-print', 'style' => 'width:100px;'],
                     'visibleButtons' => [
                         'view' => Yii::$app->user->can('users/view'),
-                        'update' => function($model) {
+                        'update' => function ($model) {
                             return Yii::$app->user->can('users/update'); // && $model->status < $model::STATUS_SAVED;
                         },
-                        'delete' => function($model) {
+                        'delete' => function ($model) {
                             return Yii::$app->user->can('users/delete'); // && $model->status < $model::STATUS_SAVED;
                         }
                     ],
@@ -56,14 +54,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'update' => function ($url, $model) {
                             return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
                                 'title' => Yii::t('app', 'Update'),
-                                'class'=> 'update-dialog btn btn-xs btn-success mr1',
+                                'class' => 'update-dialog btn btn-xs btn-success mr1',
                                 'data-form-id' => $model->id,
                             ]);
                         },
                         'view' => function ($url, $model) {
                             return Html::a('<span class="fa fa-eye"></span>', $url, [
                                 'title' => Yii::t('app', 'View'),
-                                'class'=> 'btn btn-xs btn-primary view-dialog mr1',
+                                'class' => 'btn btn-xs btn-primary view-dialog mr1',
                                 'data-form-id' => $model->id,
                             ]);
                         },
@@ -75,19 +73,19 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                         },
 
+                    ],
                 ],
             ],
-        ],
-    ]); ?>
+        ]); ?>
 
         <?php Pjax::end(); ?>
     </div>
 </div>
-<?=  \app\widgets\ModalWindow\ModalWindow::widget([
+<?= \app\widgets\ModalWindow\ModalWindow::widget([
     'model' => 'users',
     'crud_name' => 'users',
     'modal_id' => 'users-modal',
-    'modal_header' => '<h3>'. Yii::t('app', 'Users') . '</h3>',
+    'modal_header' => '<h3>' . Yii::t('app', 'Users') . '</h3>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',
