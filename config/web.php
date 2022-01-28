@@ -7,7 +7,7 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
-    'language' => 'uz',
+    'language' => 'uz-UZ',
     'layout' => 'plm',
     'timeZone' => 'Asia/Tashkent',
     'aliases' => [
@@ -26,6 +26,19 @@ $config = [
         'authManager' => [
             // php yii migrate/up --migrationPath=@yii/rbac/migrations
             'class' => 'yii\rbac\DbManager',
+        ],
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/messages',
+                    'sourceLanguage' => 'en-US',
+                    'fileMap' => [
+                        'app' => 'app.php',
+//                        'app/auth' => 'auth.php'
+                    ],
+                ],
+            ],
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -62,10 +75,14 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'languages' => ['uz','ru'],
+            'class' => 'app\widgets\MultiLang\components\UrlManager',
             'rules' => [
                 '' => 'site/index',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
+//            'enableLanguageDetection' => true,
+//            'enableDefaultLanguageUrlCode' => true,
         ],
 
     ],

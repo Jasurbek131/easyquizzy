@@ -46,7 +46,12 @@
 *::after {
   box-sizing: border-box;
 }
-
+.mr1 {
+    margin-right: 5px;
+}
+.help-block {
+    color: #dd4b39!important;
+}
 html {
   font-family: sans-serif;
   line-height: 1.15;
