@@ -133,6 +133,7 @@ class ShiftsController extends Controller
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
+                    $model->code = strtoupper($model->name);
                     if($model->save()){
                         $saved = true;
                     }else{

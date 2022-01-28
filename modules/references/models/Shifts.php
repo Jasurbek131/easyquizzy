@@ -18,7 +18,7 @@ use Yii;
  * @property int $updated_at
  * @property int $updated_by
  */
-class Shifts extends \yii\db\ActiveRecord
+class Shifts extends BaseModel
 {
     /**
      * {@inheritdoc}
@@ -34,6 +34,7 @@ class Shifts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['name', 'start_time', 'end_time', 'status_id'], 'required'],
             [['start_time', 'end_time'], 'safe'],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],

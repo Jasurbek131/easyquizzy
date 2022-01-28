@@ -67,8 +67,11 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 echo "            [
                 'attribute' => '".$name."',
                 'value' => function(\$model){
-                    \$username = \app\models\Users::findOne(\$model->".$name.")['username'];
-                    return isset(\$username)?\$username:\$model->".$name.";
+                    if (\$model->".$name.") {
+                        \$username = \app\models\Users::findOne(\$model->".$name.")['username'];
+                        return \$username ?? \$model->".$name.";
+                    }
+                    return false;
                 }
             ],\n";
             }elseif($name=='created_at' || $name=='updated_at'){
@@ -103,8 +106,11 @@ echo "            [
 echo "            [
                 'attribute' => '".$column->name."',
                 'value' => function(\$model){
-                    \$username = \app\models\Users::findOne(\$model->".$column->name.")['username'];
-                    return isset(\$username)?\$username:\$model->".$column->name.";
+                    if (\$model->".$column->name.") {
+                        \$username = \app\models\Users::findOne(\$model->".$column->name.")['username'];
+                        return \$username ?? \$model->".$column->name.";
+                    }
+                    return false;
                 }
             ],\n";
             }elseif($column->name=='created_at' || $column->name=='updated_at'){
