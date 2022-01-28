@@ -36,34 +36,34 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= "    <?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php endif; ?>
 
-    <?php if ($generator->indexWidgetType === 'grid'): ?>
-        <?= "<?= " ?>GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterRowOptions' => ['class' => 'filters no-print'],
-            <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel,\n        'columns' => [\n" : "'columns' => [\n"; ?>
-                ['class' => 'yii\grid\SerialColumn'],
+<?php if ($generator->indexWidgetType === 'grid'): ?>
+    <?= "<?= " ?>GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterRowOptions' => ['class' => 'filters no-print'],
+        <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel,\n        'columns' => [\n" : "'columns' => [\n"; ?>
+            ['class' => 'yii\grid\SerialColumn'],
 
-    <?php
-    $count = 0;
-    if (($tableSchema = $generator->getTableSchema()) === false) {
-        foreach ($generator->getColumnNames() as $name) {
-            if (++$count < 6) {
-                echo "            '" . $name . "',\n";
-            } else {
-                echo "            //'" . $name . "',\n";
-            }
-        }
-    } else {
-        foreach ($tableSchema->columns as $column) {
-            $format = $generator->generateColumnFormat($column);
-            if (++$count < 6) {
-                echo "            '" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
-            } else {
-                echo "            //'" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
-            }
+<?php
+$count = 0;
+if (($tableSchema = $generator->getTableSchema()) === false) {
+    foreach ($generator->getColumnNames() as $name) {
+        if (++$count < 6) {
+            echo "            '" . $name . "',\n";
+        } else {
+            echo "            //'" . $name . "',\n";
         }
     }
-    ?>
+} else {
+    foreach ($tableSchema->columns as $column) {
+        $format = $generator->generateColumnFormat($column);
+        if (++$count < 6) {
+            echo "            '" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
+        } else {
+            echo "            //'" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
+        }
+    }
+}
+?>
 
                 [
                     'class' => 'yii\grid\ActionColumn',
@@ -101,19 +101,19 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                         },
 
-                    ],
                 ],
             ],
-        ]); ?>
-    <?php else: ?>
-        <?= "<?= " ?>ListView::widget([
-            'dataProvider' => $dataProvider,
-            'itemOptions' => ['class' => 'item'],
-            'itemView' => function ($model, $key, $index, $widget) {
-                return Html::a(Html::encode($model-><?= $nameAttribute ?>), ['view', <?= $urlParams ?>]);
-            },
-        ]) ?>
-    <?php endif; ?>
+        ],
+    ]); ?>
+<?php else: ?>
+    <?= "<?= " ?>ListView::widget([
+        'dataProvider' => $dataProvider,
+        'itemOptions' => ['class' => 'item'],
+        'itemView' => function ($model, $key, $index, $widget) {
+            return Html::a(Html::encode($model-><?= $nameAttribute ?>), ['view', <?= $urlParams ?>]);
+        },
+    ]) ?>
+<?php endif; ?>
 
     <?="    <?php Pjax::end(); ?>\n"?>
     </div>

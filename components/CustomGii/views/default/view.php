@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\gii\components\ActiveField;
+use app\components\CustomGii\components\ActiveField;
 use yii\gii\CodeFile;
 
 /* @var $this yii\web\View */

@@ -305,6 +305,24 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         }
     }
 
+    public function actionExportExcel(){
+        header('Content-Type: application/vnd.ms-excel');
+        $filename = "<?=Inflector::camel2id(StringHelper::basename($generator->viewPath))?>_".date("d-m-Y-His").".xls";
+        header('Content-Disposition: attachment;filename='.$filename .' ');
+        header('Cache-Control: max-age=0');
+        \moonland\phpexcel\Excel::export([
+            'models' => <?= $modelClass ?>::find()->select([
+                'id',
+            ])->all(),
+            'columns' => [
+                'id',
+            ],
+            'headers' => [
+                'id' => 'Id',
+            ],
+            'autoSize' => true,
+        ]);
+    }
     /**
      * Finds the <?= $modelClass ?> model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
