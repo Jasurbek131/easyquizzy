@@ -29,6 +29,15 @@
 .select2-container .select2-selection--multiple .select2-selection__rendered {
     display: block!important;
 }
+.select2-selection--multiple {
+    padding-left: 0.5rem!important;
+}
+.select2-container--krajee-bs4 .select2-selection--multiple .select2-selection__choice {
+    margin: 0.35rem 0.35rem 0 0!important;
+}
+.select2-search__field {
+    margin: 0.5rem 0.5rem 0.5rem 0!important;
+}
 .select2-selection__choice {
     line-height: 1rem!important;
 }

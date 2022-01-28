@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'equipment_type_id')->widget(Select2::classname(), [
             'data' => EquipmentTypes::getList(),
-            'options' => ['placeholder' => 'Select ...', 'multiple' => true],
+            'options' => ['placeholder' => 'Select ...'],
             'pluginOptions' => [
                 'allowClear' => true,
             ]
