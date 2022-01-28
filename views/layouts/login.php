@@ -3,11 +3,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use app\widgets\Alert;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 AppAsset::register($this);
 ?>
@@ -23,12 +19,9 @@ AppAsset::register($this);
         <?php $this->head() ?>
     </head>
     <body class="login-page">
-    <?php $this->beginBody() ?>
-
-
-    <?= $content ?>
-
-    <?php $this->endBody() ?>
+        <?php $this->beginBody() ?>
+            <?= $content ?>
+        <?php $this->endBody() ?>
     </body>
     </html>
 <?php $this->endPage() ?>

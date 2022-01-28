@@ -188,11 +188,10 @@ class AuthItem extends \yii\db\ActiveRecord
      */
     public function getCategory($name = null)
     {
-        if ($name == null) {
+        if ($name == null)
             $models = AuthItem::find()->where(['type' => 1])->orderBy(['name' => SORT_ASC])->all();
-        } else {
+        else
             $models = AuthItem::find()->where(['type' => 1])->orderBy(['name' => SORT_ASC])->andWhere(['!=', 'name', $name])->all();
-        }
 
         return ArrayHelper::map($models, 'name', 'name');
     }
@@ -204,7 +203,6 @@ class AuthItem extends \yii\db\ActiveRecord
      */
     public function getParenList($name = null, $parent = true){
         if(!$parent){
-
             $model = ArrayHelper::index(AuthItemChild::find()
                 ->where(['parent' => $name])
                 ->andWhere(['not like', 'child', '%/%', false])
@@ -226,8 +224,7 @@ class AuthItem extends \yii\db\ActiveRecord
     public function getPermissions()
     {
         $models = AuthItem::find()->where(['type' => 2])->all();
-        $permissions = ArrayHelper::map($models, 'name', 'name');
-        return $permissions;
+        return ArrayHelper::map($models, 'name', 'name');
     }
 
     /**
@@ -244,12 +241,13 @@ class AuthItem extends \yii\db\ActiveRecord
     public static function getRoles($department=false)
     {
         $models = AuthItem::find()->where(['type' => Item::TYPE_ROLE]);
-        if($department){
+
+        if($department)
             $models = $models->andWhere(['department' => $department]);
-        }
+
         $models = $models->all();
-        $permissions = ArrayHelper::map($models, 'name', 'name');
-        return $permissions;
+
+        return ArrayHelper::map($models, 'name', 'name');
     }
 
 
@@ -260,10 +258,11 @@ class AuthItem extends \yii\db\ActiveRecord
     public function getSelectedParents($name)
     {
         $models = AuthItemChild::find()->where(['parent' => $name])->all();
+
         $names = [];
-        foreach ($models as $model) {
+        foreach ($models as $model)
             array_push($names, $model->child);
-        }
+
         return $names;
     }
 
@@ -289,13 +288,9 @@ class AuthItem extends \yii\db\ActiveRecord
      */
     public static function getPermissionChild($id, $child = false)
     {
-        if (!empty($id)) {
-            $allIds = AuthItemChild::find()->where(['parent' => $id])->asArray()->all();
-            foreach ($allIds as $name) {
-                $res .= "<span class='p-1 badge badge-outline-success  mb-1 ml-1'>{$name["child"]}</span>";
-            }
-            return $allIds;
-        }
+        if (!empty($id))
+            return AuthItemChild::find()->where(['parent' => $id])->asArray()->all();
+
         return null;
     }
 
