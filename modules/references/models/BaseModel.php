@@ -11,10 +11,11 @@ use yii\helpers\ArrayHelper;
 
 /**
  * Class BaseModel
- * @package app\modules\toquv\models
+ * @package app\modules\references\models
  */
 class BaseModel extends ActiveRecord
 {
+    const STATUS_DELETE             = 0;
     const STATUS_ACTIVE             = 1;
     const STATUS_INACTIVE           = 2;
     const STATUS_SAVED              = 3;
@@ -37,13 +38,18 @@ class BaseModel extends ActiveRecord
     public static function getStatusList($key = null, $isArray = false) {
         $language = Yii::$app->language;
         if (!is_null($key)) {
-            return StatusList::findOne(['id' => $key]);
-        } else {
-            $list = StatusList::find()->asArray()->select(['id as value', "name_{$language} as label"])->all();
-            if ($isArray) {
-                return $list;
+            $status = StatusList::findOne(['id' => $key]);
+            if (!empty($status)) {
+                if ($status['id'] == self::STATUS_INACTIVE) {
+                    return "<span class='badge badge-danger d-block'>".$status["name_{$language}"]."</span>";
+                }
+                return "<span class='badge badge-success d-block'>".$status["name_{$language}"]."</span>";
             }
-            return ArrayHelper::map($list, 'value', 'label');
         }
+        $list = StatusList::find()->asArray()->select(['id as value', "name_{$language} as label"])->all();
+        if ($isArray) {
+            return $list;
+        }
+        return ArrayHelper::map($list, 'value', 'label');
     }
 }

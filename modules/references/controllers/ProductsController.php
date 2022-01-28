@@ -2,19 +2,18 @@
 
 namespace app\modules\references\controllers;
 
-use app\modules\references\models\BaseModel;
 use Yii;
-use app\modules\references\models\Shifts;
-use app\modules\references\models\ShiftsSearch;
+use app\modules\references\models\Products;
+use app\modules\references\models\ProductsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * ShiftsController implements the CRUD actions for Shifts model.
+ * ProductsController implements the CRUD actions for Products model.
  */
-class ShiftsController extends Controller
+class ProductsController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -32,12 +31,12 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Lists all Shifts models.
+     * Lists all Products models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ShiftsSearch();
+        $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -47,7 +46,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Displays a single Shifts model.
+     * Displays a single Products model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,19 +64,18 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Creates a new Shifts model.
+     * Creates a new Products model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return array|Response|string
+     * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Shifts();
+        $model = new Products();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    $model->code = strtoupper($model->name);
                     if($model->save()){
                         $saved = true;
                     }else{
@@ -121,7 +119,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Updates an existing Shifts model.
+     * Updates an existing Products model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -135,7 +133,6 @@ class ShiftsController extends Controller
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    $model->code = strtoupper($model->name);
                     if($model->save()){
                         $saved = true;
                     }else{
@@ -180,7 +177,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Deletes an existing Shifts model.
+     * Deletes an existing Products model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -192,8 +189,7 @@ class ShiftsController extends Controller
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            $model->status_id = BaseModel::STATUS_INACTIVE;
-            if($model->save()){
+            if($model->delete()){
                 $isDeleted = true;
             }
             if($isDeleted){
@@ -225,15 +221,15 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Finds the Shifts model based on its primary key value.
+     * Finds the Products model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Shifts the loaded model
+     * @return Products the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Shifts::findOne($id)) !== null) {
+        if (($model = Products::findOne($id)) !== null) {
             return $model;
         }
 

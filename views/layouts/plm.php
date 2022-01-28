@@ -320,6 +320,13 @@ AppAsset::register($this);
                                     'active' => $controller == 'time-types-list' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-calendar nav-icon"></i><p>{label}</p></a>',
                                 ],
+                                [
+                                    'label' => Yii::t('app', 'Products'),
+                                    'url' => '/references/products/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'products' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
+                                ],
                             ],
                         ],
                     ],
