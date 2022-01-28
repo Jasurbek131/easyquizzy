@@ -1,5 +1,8 @@
 <?php
 
+use app\modules\admin\models\AuthItem;
+use app\modules\hr\models\HrEmployee;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,18 +15,30 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
-    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'hr_employee_id')->widget(Select2::class,[
+        'data' => HrEmployee::getList(),
+        'options' => [
+            'placeholder' => Yii::t('app','Select')
+        ]
+    ]) ?>
 
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'auth_key')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status_id')->textInput() ?>
+    <?php echo $form->field($model, 'password_repeat')->passwordInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'updated_by')->textInput() ?>
-
+    <?php echo $form->field($model, 'roles')->widget(Select2::class,[
+        'data' => AuthItem::getRoles(),
+        'options' => [
+            'placeholder' => Yii::t('app','Select')
+        ],
+        'pluginOptions' => [
+            'multiple' => true
+        ]
+    ]) ?>
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

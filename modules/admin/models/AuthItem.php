@@ -29,6 +29,7 @@ use yii\rbac\Item;
 class AuthItem extends \yii\db\ActiveRecord
 {
     public $perms = [];
+
     public $parents = [];
 
     public $new_permissions = [];
@@ -53,7 +54,7 @@ class AuthItem extends \yii\db\ActiveRecord
                 return $model->type == 2;
             }],
 
-            ['name', function ($attribute, $params, $validator) {
+            ['name', function ($attribute) {
                 if ($this->type == 2) {
                     if (!strpos($this->$attribute, '/')) {
                         $this->addError($attribute, Yii::t('app', 'In name must be symbol "/" '));
@@ -155,14 +156,14 @@ class AuthItem extends \yii\db\ActiveRecord
         return $this->hasMany(AuthItem::class, ['name' => 'parent'])->viaTable('auth_item_child', ['child' => 'name']);
     }
 
-    /**
-     * @param $parent
-     * @return false|int|string|null
-     */
-    public function havePermittionsChecked($parent)
-    {
-        return AuthItemChild::find()->where(['parent' => $parent])->andWhere(['like', 'child', '%/%', false])->scalar();
-    }
+//    /**
+//     * @param $parent
+//     * @return false|int|string|null
+//     */
+//    public function havePermittionsChecked($parent)
+//    {
+//        return AuthItemChild::find()->where(['parent' => $parent])->andWhere(['like', 'child', '%/%', false])->scalar();
+//    }
 
     /**
      * @param $child
@@ -173,14 +174,14 @@ class AuthItem extends \yii\db\ActiveRecord
         return AuthItemChild::find()->where(['parent' => $this->name])->andWhere(['child' => $child])->scalar();
     }
 
-    /**
-     * @param $parent
-     * @return false|int|string|null
-     */
-    public function haveParent($parent)
-    {
-        return AuthItemChild::find()->where(['parent' => $parent])->scalar();
-    }
+//    /**
+//     * @param $parent
+//     * @return false|int|string|null
+//     */
+//    public function haveParent($parent)
+//    {
+//        return AuthItemChild::find()->where(['parent' => $parent])->scalar();
+//    }
 
     /**
      * @param null $name
@@ -218,68 +219,57 @@ class AuthItem extends \yii\db\ActiveRecord
         return $model;
     }
 
+//    /**
+//     * @return array
+//     */
+//    public function getPermissions()
+//    {
+//        $models = AuthItem::find()->where(['type' => 2])->all();
+//        return ArrayHelper::map($models, 'name', 'name');
+//    }
+
     /**
      * @return array
      */
-    public function getPermissions()
+    public static function getRoles()
     {
-        $models = AuthItem::find()->where(['type' => 2])->all();
-        return ArrayHelper::map($models, 'name', 'name');
-    }
+        $models = AuthItem::find()->where(['type' => Item::TYPE_ROLE])->asArray()->all();
+        if (!empty($models))
+            return ArrayHelper::map($models, 'name', 'name_for_user');
 
-    /**
-     * @return array|\yii\db\ActiveRecord[]
-     */
-    public static function getUserRoles() {
-        return AuthItem::find()->select(['name as label', 'name as value'])->where(['type' => Item::TYPE_ROLE])->asArray()->all();
-    }
-
-    /**
-     * @param bool $department
-     * @return array
-     */
-    public static function getRoles($department=false)
-    {
-        $models = AuthItem::find()->where(['type' => Item::TYPE_ROLE]);
-
-        if($department)
-            $models = $models->andWhere(['department' => $department]);
-
-        $models = $models->all();
-
-        return ArrayHelper::map($models, 'name', 'name');
+        return [];
     }
 
 
-    /**
-     * @param $name
-     * @return array
-     */
-    public function getSelectedParents($name)
-    {
-        $models = AuthItemChild::find()->where(['parent' => $name])->all();
+//    /**
+//     * @param $name
+//     * @return array
+//     */
+//    public function getSelectedParents($name)
+//    {
+//        $models = AuthItemChild::find()->where(['parent' => $name])->all();
+//
+//        $names = [];
+//        foreach ($models as $model)
+//            array_push($names, $model->child);
+//
+//        return $names;
+//    }
 
-        $names = [];
-        foreach ($models as $model)
-            array_push($names, $model->child);
-
-        return $names;
-    }
-
-    /**
-     * @param $name
-     * @return array
-     */
-    public static function getChilds($name)
-    {
-        $models = AuthItemChild::find()->where(['parent' => $name])->all();
-        $names = [];
-        foreach ($models as $model) {
-            if (!strpos($model->child, '/'))
-                array_push($names, $model->child);
-        }
-        return $names;
-    }
+//    /**
+//     * @param $name
+//     * @return array
+//     */
+//    public static function getChilds($name)
+//    {
+//        $models = AuthItemChild::find()->where(['parent' => $name])->all();
+//        $names = [];
+//        foreach ($models as $model) {
+//            if (!strpos($model->child, '/'))
+//                array_push($names, $model->child);
+//        }
+//        return $names;
+//    }
 
     /**
      * @param $id
@@ -294,25 +284,25 @@ class AuthItem extends \yii\db\ActiveRecord
         return null;
     }
 
-    /**
-     * @param $id
-     * @return string|null
-     */
-    public static function getPermissionChildSecond($id)
-    {
-        if (!empty($id)) {
-            $res = "";
-            $allIds = AuthItemChild::find()
-                ->where(['parent' => $id])
-                ->andWhere(['not like', 'child', '%/%', false])
-                ->asArray()
-                ->all();
-            foreach ($allIds as $name) {
-                $res .= "<span class='label-info label' style='font-size:13px;margin-left: 3px;padding: 3px'>{$name["child"]}</span>";
-            }
-            return $res;
-        }
-        return null;
-    }
+//    /**
+//     * @param $id
+//     * @return string|null
+//     */
+//    public static function getPermissionChildSecond($id)
+//    {
+//        if (!empty($id)) {
+//            $res = "";
+//            $allIds = AuthItemChild::find()
+//                ->where(['parent' => $id])
+//                ->andWhere(['not like', 'child', '%/%', false])
+//                ->asArray()
+//                ->all();
+//            foreach ($allIds as $name) {
+//                $res .= "<span class='label-info label' style='font-size:13px;margin-left: 3px;padding: 3px'>{$name["child"]}</span>";
+//            }
+//            return $res;
+//        }
+//        return null;
+//    }
 
 }

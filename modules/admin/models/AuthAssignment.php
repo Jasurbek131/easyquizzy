@@ -3,6 +3,7 @@
 namespace app\modules\admin\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "auth_assignment".
@@ -15,7 +16,6 @@ use Yii;
  */
 class AuthAssignment extends \yii\db\ActiveRecord
 {
-    public $department;
     /**
      * {@inheritdoc}
      */
@@ -33,9 +33,8 @@ class AuthAssignment extends \yii\db\ActiveRecord
             [['item_name', 'user_id'], 'required'],
             [['created_at'], 'integer'],
             [['item_name', 'user_id'], 'string', 'max' => 64],
-            [['department'], 'string', 'max' => 50],
             [['item_name', 'user_id'], 'unique', 'targetAttribute' => ['item_name', 'user_id']],
-            [['item_name'], 'exist', 'skipOnError' => true, 'targetClass' => AuthItem::className(), 'targetAttribute' => ['item_name' => 'name']],
+            [['item_name'], 'exist', 'skipOnError' => true, 'targetClass' => AuthItem::class, 'targetAttribute' => ['item_name' => 'name']],
         ];
     }
 
@@ -56,30 +55,20 @@ class AuthAssignment extends \yii\db\ActiveRecord
      */
     public function getItemName()
     {
-        return $this->hasOne(AuthItem::className(), ['name' => 'item_name']);
-    }
-    public static function getUserRoles($id){
-        $data = self::find()->select('item_name')->where(['user_id' => $id])->asArray()->all();
-        if(!empty($data)){
-            return $data;
-        }else{
-            return '';
-        }
+        return $this->hasOne(AuthItem::class, ['name' => 'item_name']);
     }
 
     /**
      * @param $id
-     * @return AuthAssignment[]|array|yii\db\ActiveRecord[]
+     * @return array
      */
-    public static function getUserRolesAll($id){
-        return self::find()->select('item_name')
-            ->with([
-                'itemName' => function ($q) {
-                    $q->from(['au' => 'auth_item'])->where(['type' => 1])->with([
-                        'authItemChildren'
-                    ]);
-                },
-            ])
-            ->where(['user_id' => $id])->asArray()->all();
+    public static function getUserRoles($id): array
+    {
+        $data = self::find()->select(["item_name"])->where(['user_id' => $id])->asArray()->all();
+
+        if(!empty($data))
+            return ArrayHelper::getColumn($data, 'item_name');
+
+        return [];
     }
 }
