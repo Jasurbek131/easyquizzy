@@ -7,7 +7,6 @@ use app\modules\admin\models\AuthItemSearch;
 use Yii;
 use app\modules\admin\models\AuthItem;
 use yii\helpers\ArrayHelper;
-use yii\rbac\DbManager;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -129,8 +128,8 @@ class AuthItemController extends Controller
                             foreach ($perms as $key => $value) {
                                 if ((int)$value == 1) {
                                     $auth = Yii::$app->authManager;
-                                    $role = Yii::$app->authManager->getRole($model->name);
-                                    $perm = Yii::$app->authManager->getPermission($key);
+                                    $role = $auth->getRole($model->name);
+                                    $perm = $auth->getPermission($key);
                                     $auth->addChild($role, $perm);
                                 }
                             }
@@ -152,8 +151,8 @@ class AuthItemController extends Controller
                             $dataAI['AuthItem']['type'] = 2;
                             if ($m->load($dataAI) && $m->save()) {
                                 $auth = Yii::$app->authManager;
-                                $role = Yii::$app->authManager->getRole($m->category);
-                                $permission = Yii::$app->authManager->getPermission($m->name);
+                                $role = $auth->getRole($m->category);
+                                $permission = $auth->getPermission($m->name);
                                 $auth->addChild($role, $permission);
                             }
                         }
@@ -169,8 +168,8 @@ class AuthItemController extends Controller
                     foreach ($perms as $key => $value) {
                         if ((int)$value == 1) {
                             $auth = Yii::$app->authManager;
-                            $role = Yii::$app->authManager->getRole($model->name);
-                            $perm = Yii::$app->authManager->getPermission($key);
+                            $role = $auth->getRole($model->name);
+                            $perm = $auth->getPermission($key);
                             $auth->addChild($role, $perm);
                         }
                     }
@@ -241,14 +240,6 @@ class AuthItemController extends Controller
             }
             return $this->redirect(['permissions']);
         }
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            $auth = Yii::$app->authManager;
-//            $role = Yii::$app->authManager->getRole($model->category);
-//            $permission = Yii::$app->authManager->getPermission($model->name);
-//            $auth->addChild($role,$permission);
-//
-//            return $this->redirect(['view', 'id' => $model->name]);
-//        }
 
         return $this->render('create_permission', [
             'model' => $model,
@@ -285,29 +276,18 @@ class AuthItemController extends Controller
                                 if ((int)$value == 1) {
 
                                     $auth = Yii::$app->authManager;
-                                    $role = Yii::$app->authManager->getRole($model->name);
-                                    $perm = Yii::$app->authManager->getPermission($key);
+                                    $role = $auth->getRole($model->name);
+                                    $perm = $auth->getPermission($key);
                                     $auth->addChild($role, $perm);
                                 }
                             }
-
-//                            $this->deleteParents($model->name);
-//                            if (!empty($parents)) {
-//                                foreach ($parents as $key => $value) {
-//                                    $auth = Yii::$app->authManager;
-//                                    $sub_role = Yii::$app->authManager->getRole($value);
-//                                    $top_role = Yii::$app->authManager->getRole($model->name);
-//                                    $auth->addChild($top_role, $sub_role);
-//                                }
-//                            }
-
                         }
 
                         if ($model->type == 2) {
                             $auth = Yii::$app->authManager;
                             $this->deletePermission($model->name);
-                            $role = Yii::$app->authManager->getRole($model->category);
-                            $permission = Yii::$app->authManager->getPermission($model->name);
+                            $role = $auth->getRole($model->category);
+                            $permission = $auth->getPermission($model->name);
                             $auth->addChild($role, $permission);
                         }
                         $response['status'] = 0;
@@ -331,30 +311,19 @@ class AuthItemController extends Controller
                                 if ((int)$value == 1) {
 
                                     $auth = Yii::$app->authManager;
-                                    $role = Yii::$app->authManager->getRole($model->name);
-                                    $perm = Yii::$app->authManager->getPermission($key);
+                                    $role = $auth->getRole($model->name);
+                                    $perm = $auth->getPermission($key);
                                     $auth->addChild($role, $perm);
                                 }
                             }
                         }
-
-//                        $this->deleteParents($model->name);
-//                        if (!empty($parents)) {
-//                            foreach ($parents as $key => $value) {
-//                                $auth = Yii::$app->authManager;
-//                                $sub_role = Yii::$app->authManager->getRole($value);
-//                                $top_role = Yii::$app->authManager->getRole($model->name);
-//                                $auth->addChild($top_role, $sub_role);
-//                            }
-//                        }
-
                     }
 
                     if ($model->type == 2) {
                         $auth = Yii::$app->authManager;
                         $this->deletePermission($model->name);
-                        $role = Yii::$app->authManager->getRole($model->category);
-                        $permission = Yii::$app->authManager->getPermission($model->name);
+                        $role = $auth->getRole($model->category);
+                        $permission = $auth->getPermission($model->name);
                         $auth->addChild($role, $permission);
                     }
                     return $this->redirect(['view', 'id' => $model->name]);
@@ -436,26 +405,6 @@ class AuthItemController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionExportExcel()
-    {
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "auth-items_" . date("d-m-Y-His") . ".xls";
-        header('Content-Disposition: attachment;filename=' . $filename . ' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => AuthItem::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
-
     /**
      * @param $id
      * @return AuthItem|null
@@ -520,7 +469,7 @@ class AuthItemController extends Controller
      * @param AuthItem|null $model
      * @throws \yii\base\Exception
      */
-    public function saveChildRoll(array $oldValue, $parents, ?AuthItem $model): void
+    public function saveChildRoll(array $oldValue, $parents, AuthItem $model): void
     {
         foreach ($oldValue as $key => $item) {
             if ($parents[$key] != 'on') {
