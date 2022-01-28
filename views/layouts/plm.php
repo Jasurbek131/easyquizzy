@@ -303,7 +303,7 @@ AppAsset::register($this);
                             'label' => Yii::t('app', 'References'),
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
-                            'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-users"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
+                            'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fa fa-book"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
                             'visible' => true,
                             'items' => [
                                 [
@@ -312,6 +312,13 @@ AppAsset::register($this);
                                     'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'shifts' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
+                                ],
+                                [
+                                    'label' => Yii::t('app', 'Time Types List'),
+                                    'url' => '/references/time-types-list/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'time-types-list' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-calendar nav-icon"></i><p>{label}</p></a>',
                                 ],
                             ],
                         ],

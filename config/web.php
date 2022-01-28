@@ -81,8 +81,8 @@ $config = [
                 '' => 'site/index',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
-//            'enableLanguageDetection' => true,
-//            'enableDefaultLanguageUrlCode' => true,
+            'enableLanguageDetection' => true,
+            'enableDefaultLanguageUrlCode' => true,
         ],
 
     ],

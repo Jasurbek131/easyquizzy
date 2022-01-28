@@ -3,17 +3,17 @@
 namespace app\modules\references\controllers;
 
 use Yii;
-use app\modules\references\models\Shifts;
-use app\modules\references\models\ShiftsSearch;
+use app\modules\references\models\TimeTypesList;
+use app\modules\references\models\TimeTypesListSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * ShiftsController implements the CRUD actions for Shifts model.
+ * TimeTypesListController implements the CRUD actions for TimeTypesList model.
  */
-class ShiftsController extends Controller
+class TimeTypesListController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -31,12 +31,12 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Lists all Shifts models.
+     * Lists all TimeTypesList models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ShiftsSearch();
+        $searchModel = new TimeTypesListSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -46,7 +46,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Displays a single Shifts model.
+     * Displays a single TimeTypesList model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -64,19 +64,18 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Creates a new Shifts model.
+     * Creates a new TimeTypesList model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Shifts();
+        $model = new TimeTypesList();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    $model->code = strtoupper($model->name);
                     if($model->save()){
                         $saved = true;
                     }else{
@@ -120,7 +119,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Updates an existing Shifts model.
+     * Updates an existing TimeTypesList model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -134,7 +133,6 @@ class ShiftsController extends Controller
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    $model->code = strtoupper($model->name);
                     if($model->save()){
                         $saved = true;
                     }else{
@@ -179,7 +177,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Deletes an existing Shifts model.
+     * Deletes an existing TimeTypesList model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -223,15 +221,15 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Finds the Shifts model based on its primary key value.
+     * Finds the TimeTypesList model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Shifts the loaded model
+     * @return TimeTypesList the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Shifts::findOne($id)) !== null) {
+        if (($model = TimeTypesList::findOne($id)) !== null) {
             return $model;
         }
 
