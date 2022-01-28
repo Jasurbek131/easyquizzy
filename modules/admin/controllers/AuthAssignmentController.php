@@ -104,6 +104,7 @@ class AuthAssignmentController extends Controller
      * @param string $user_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($item_name, $user_id)
     {
