@@ -1,7 +1,9 @@
 <?php
 
+namespace app\models;
+
 use app\components\OurCustomBehavior;
-use app\models\StatusList;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
