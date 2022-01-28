@@ -69,7 +69,7 @@ class m220127_133553_create_hr_departments_table extends Migration
             '{{%hr_departments}}'
         );
         //drop index for column `status_id`
-        $this->createIndex(
+        $this->dropIndex(
             '{{%idx-hr_departments-status_id}}',
             '{{%hr_departments}}',
             'status_id'

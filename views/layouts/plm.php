@@ -269,6 +269,7 @@ AppAsset::register($this);
                                 [
                                     'label' => Yii::t('app', 'Roles'),
                                     'url' => '/admin/auth-item/index',
+                                    'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'auth-item' && $action == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
 //                                        'visible' => P::can('auth-item/index'),
@@ -276,6 +277,7 @@ AppAsset::register($this);
                                 [
                                     'label' => Yii::t('app', 'Permissions'),
                                     'url' => '/admin/auth-item/permissions',
+                                    'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'auth-item' && $action == 'permissions',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-tasks nav-icon"></i><p>{label}</p></a>',
 //                                        'visible' => P::can('auth-item/permissions'),
