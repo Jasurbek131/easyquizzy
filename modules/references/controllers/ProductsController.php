@@ -191,7 +191,7 @@ class ProductsController extends Controller
         $model = $this->findModel($id);
         try {
             $model->status_id = BaseModel::STATUS_INACTIVE;
-            if($model->delete()){
+            if($model->save()){
                 $isDeleted = true;
             }
             if($isDeleted){

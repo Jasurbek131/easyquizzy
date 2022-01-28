@@ -3,6 +3,7 @@
 namespace app\modules\references\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "equipment_group".
@@ -18,7 +19,7 @@ use Yii;
  * @property EquipmentGroupRelationEquipment[] $equipmentGroupRelationEquipments
  * @property ProductLifecycle[] $productLifecycles
  */
-class EquipmentGroup extends \yii\db\ActiveRecord
+class EquipmentGroup extends BaseModel
 {
     public $equipments;
     /**
@@ -35,6 +36,7 @@ class EquipmentGroup extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['name', 'status_id'], 'required'],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
@@ -72,5 +74,24 @@ class EquipmentGroup extends \yii\db\ActiveRecord
     public function getProductLifecycles()
     {
         return $this->hasMany(ProductLifecycle::className(), ['equipment_group_id' => 'id']);
+    }
+
+    public static function getList($key = null, $isArray = false) {
+        if (!is_null($key)){
+            $one = self::findOne($key);
+            if (!empty($one)) {
+                return $one['name'];
+            }
+            return "";
+        }
+        $list = self::find()
+            ->select(['id as value', "name as label"])
+            ->asArray()
+            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->all();
+        if ($isArray) {
+            return $list;
+        }
+        return ArrayHelper::map($list, 'value', 'label');
     }
 }

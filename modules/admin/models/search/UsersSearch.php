@@ -44,7 +44,7 @@ class UsersSearch extends Users
             ->select([
                 "u.id",
                 "u.username",
-                "u.username",
+                "u.status_id",
             ])
             ->orderBy(["u.id" => SORT_DESC]);
 

@@ -11,6 +11,7 @@ use Yii;
  *
  * @property int $id
  * @property int $hr_employee_id
+ * @property bool $isUpdate
  * @property int $hr_organisation_id
  * @property array $roles
  * @property string|null $username
@@ -32,6 +33,12 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
      * Password yangi foydalanuvchi yaratishda majburiy qilish uchun
      */
     const SCENARIO_CREATE = "scenario-create";
+
+    /**
+     * @var bool
+     * Foydalanuvchi malumotlari yangilanayotgan bo'lsa: true bo'ladi
+     */
+    public $isUpdate = false;
 
     /**
      * Hr employee bog'lash uchun
@@ -199,10 +206,9 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
     }
 
     /**
-     * @param $isUpdate
      * @return array
      */
-    public function saveUser($isUpdate = false): array
+    public function saveUser(): array
     {
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
@@ -216,7 +222,7 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
                     'message' => Yii::t('app', 'Hr employee id required')
                 ];
 
-            if ($isUpdate && $response['status']){
+            if ($this->isUpdate && $response['status']){
                 HrEmployeeRelUsers::deleteAll(['user_id' => $this->id]);
                 AuthAssignment::deleteAll(['user_id' => $this->id]);
             }
