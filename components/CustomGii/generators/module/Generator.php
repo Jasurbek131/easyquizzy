@@ -16,6 +16,7 @@ use yii\helpers\StringHelper;
  * This generator will generate the skeleton code needed by a module.
  *
  * @property string $controllerNamespace The controller namespace of the module. This property is read-only.
+ * @property-read string $name
  * @property bool $modulePath The directory that contains the module class. This property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
@@ -128,7 +129,7 @@ EOD;
             $this->render("module.php")
         );
         $files[] = new CodeFile(
-            $modulePath . '/controllers/DefaultController.php',
+            $modulePath . '/controllers/BaseController.php',
             $this->render("controller.php")
         );
         $files[] = new CodeFile(

@@ -608,7 +608,7 @@ class Generator extends \app\components\CustomGii\Generator
             foreach ($schemaNames as $schemaName) {
                 // Add relation for the referenced table
                 $hasMany = $tableName == $schemaName['parenttable'];
-                $link = $hasMany ? '['.$schemaName['childcolumnname'].' => '.$schemaName['parentcolumnname'].']' : '['.$schemaName['parentcolumnname'].' => '.$schemaName['childcolumnname'].']';
+                $link = $hasMany ? '[\''.$schemaName['childcolumnname'].'\' => \''.$schemaName['parentcolumnname'].'\']' : '[\''.$schemaName['parentcolumnname'].'\' => \''.$schemaName['childcolumnname'].'\']';
                 $className = $hasMany ? Inflector::id2camel($schemaName['childtable'],'_') : Inflector::id2camel($schemaName['parenttable'],'_');
                 $relationName = $hasMany ? $className.'s' : $className;
                 $relations[$this->tableName][$relationName] = [

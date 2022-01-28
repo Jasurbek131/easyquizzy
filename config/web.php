@@ -7,7 +7,7 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
-    'language' => 'uz-UZ',
+    'language' => 'uz',
     'layout' => 'plm',
     'timeZone' => 'Asia/Tashkent',
     'aliases' => [
@@ -81,8 +81,8 @@ $config = [
                 '' => 'site/index',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
-//            'enableLanguageDetection' => true,
-//            'enableDefaultLanguageUrlCode' => true,
+            'enableLanguageDetection' => true,
+            'enableDefaultLanguageUrlCode' => true,
         ],
 
     ],

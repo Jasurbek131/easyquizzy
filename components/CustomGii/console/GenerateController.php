@@ -24,6 +24,8 @@ use yii\console\Controller;
  * @author Tobias Munk <schmunk@usrbin.de>
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
+ *
+ * @property-read mixed $uniqueID
  */
 class GenerateController extends Controller
 {
