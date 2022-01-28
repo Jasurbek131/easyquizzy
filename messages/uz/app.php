@@ -71,6 +71,7 @@ return [
     'Hr Department ID' => '',
     'Hr Organisation ID' => '',
     'Hr Organisations' => 'Tashkilotlar',
+    'Hr Organisations and departments' => 'Tashkilotlar va bo\'limlar',
     'Hr Position ID' => '',
     'Hr Positions' => 'Lavozimlar',
     'ID' => '',
