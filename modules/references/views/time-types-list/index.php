@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\modules\references\models\BaseModel;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\references\models\TimeTypesListSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -11,12 +13,12 @@ $this->title = Yii::t('app', 'Time Types Lists');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card time-types-list-index">
-    <?php if (Yii::$app->user->can('time-types-list/create')): ?>
+<!--    --><?php //if (Yii::$app->user->can('time-types-list/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
-    <?php endif; ?>
+<!--    --><?php //endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'time-types-list_pjax']); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -27,28 +29,27 @@ $this->params['breadcrumbs'][] = $this->title;
             'filterModel' => $searchModel,
         'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-
-                'id',
-            'name',
-            'code',
-            'status_id',
-            'created_at',
-            //'created_by',
-            //'updated_at',
-            //'updated_by',
-
+                'name',
+                [
+                    'attribute' => 'status_id',
+                    'format' => 'raw',
+                    'value' => function($model) {
+                        return BaseModel::getStatusList($model->status_id);
+                    },
+                    'filter' => BaseModel::getStatusList()
+                ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                     'visibleButtons' => [
-                        'view' => Yii::$app->user->can('time-types-list/view'),
-                        'update' => function($model) {
-                            return Yii::$app->user->can('time-types-list/update'); // && $model->status < $model::STATUS_SAVED;
-                        },
-                        'delete' => function($model) {
-                            return Yii::$app->user->can('time-types-list/delete'); // && $model->status < $model::STATUS_SAVED;
-                        }
+//                        'view' => Yii::$app->user->can('time-types-list/view'),
+//                        'update' => function($model) {
+//                            return Yii::$app->user->can('time-types-list/update'); // && $model->status < $model::STATUS_SAVED;
+//                        },
+//                        'delete' => function($model) {
+//                            return Yii::$app->user->can('time-types-list/delete'); // && $model->status < $model::STATUS_SAVED;
+//                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {

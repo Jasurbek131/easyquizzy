@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\models;
 
+use BaseModel;
 use Yii;
 
 /**
@@ -18,7 +19,7 @@ use Yii;
  *
  * @property HrEmployee[] $hrEmployees
  */
-class HrPositions extends \yii\db\ActiveRecord
+class HrPositions extends BaseModel
 {
     /**
      * {@inheritdoc}
@@ -62,6 +63,6 @@ class HrPositions extends \yii\db\ActiveRecord
      */
     public function getHrEmployees()
     {
-        return $this->hasMany(HrEmployee::className(), [hr_position_id => id]);
+        return $this->hasMany(HrEmployee::className(), ['hr_position_id' => 'id']);
     }
 }

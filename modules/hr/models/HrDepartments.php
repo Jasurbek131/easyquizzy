@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\models;
 
+use BaseModel;
 use Yii;
 
 /**
@@ -21,7 +22,7 @@ use Yii;
  * @property HrOrganisations $hrOrganisations
  * @property HrEmployee[] $hrEmployees
  */
-class HrDepartments extends \yii\db\ActiveRecord
+class HrDepartments extends BaseModel
 {
     /**
      * {@inheritdoc}
@@ -68,7 +69,7 @@ class HrDepartments extends \yii\db\ActiveRecord
      */
     public function getHrOrganisations()
     {
-        return $this->hasOne(HrOrganisations::className(), [id => hr_organisation_id]);
+        return $this->hasOne(HrOrganisations::className(), ['id' => 'hr_organisation_id']);
     }
 
     /**
@@ -76,6 +77,6 @@ class HrDepartments extends \yii\db\ActiveRecord
      */
     public function getHrEmployees()
     {
-        return $this->hasMany(HrEmployee::className(), [hr_department_id => id]);
+        return $this->hasMany(HrEmployee::className(), ['hr_department_id' => 'id']);
     }
 }

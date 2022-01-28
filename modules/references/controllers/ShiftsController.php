@@ -2,6 +2,7 @@
 
 namespace app\modules\references\controllers;
 
+use app\modules\references\models\BaseModel;
 use Yii;
 use app\modules\references\models\Shifts;
 use app\modules\references\models\ShiftsSearch;
@@ -66,7 +67,7 @@ class ShiftsController extends Controller
     /**
      * Creates a new Shifts model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return array|Response|string
      */
     public function actionCreate()
     {
@@ -191,7 +192,8 @@ class ShiftsController extends Controller
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->delete()){
+            $model->status_id = BaseModel::STATUS_INACTIVE;
+            if($model->save()){
                 $isDeleted = true;
             }
             if($isDeleted){

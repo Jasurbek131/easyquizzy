@@ -34,7 +34,9 @@ class TimeTypesList extends BaseModel
     public function rules()
     {
         return [
-            [['code', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
+            [['name', 'status_id'], 'required'],
+            [['code'], 'default', 'value' => 1],
+            [['created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['code', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 50],
         ];
@@ -48,7 +50,7 @@ class TimeTypesList extends BaseModel
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
-            'code' => Yii::t('app', 'Code'),
+            'code' => Yii::t('app', 'In Seconds'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -62,6 +64,6 @@ class TimeTypesList extends BaseModel
      */
     public function getProductLifecycles()
     {
-        return $this->hasMany(ProductLifecycle::className(), [time_type_id => id]);
+        return $this->hasMany(ProductLifecycle::className(), ['time_type_id' => 'id']);
     }
 }

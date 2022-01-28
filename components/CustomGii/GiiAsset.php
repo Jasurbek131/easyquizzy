@@ -17,7 +17,7 @@ use yii\web\AssetBundle;
  */
 class GiiAsset extends AssetBundle
 {
-    public $sourcePath = '@yii/gii/assets';
+    public $sourcePath = '@app/components/CustomGii/assets';
     public $css = [
         'css/main.css',
     ];

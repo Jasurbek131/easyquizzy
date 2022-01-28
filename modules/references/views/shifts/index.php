@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\modules\references\models\BaseModel;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\references\models\ShiftsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -28,15 +30,33 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['class' => 'yii\grid\SerialColumn'],
 
                 'name',
-                'start_time',
-                'end_time',
-                'code',
-                'status_id',
+                [
+                    'attribute' => 'start_time',
+                    'value' => function($model) {
+                        return date('H:i', strtotime($model->start_time));
+                    },
+                    'filter' => false
+                ],
+                [
+                    'attribute' => 'end_time',
+                    'value' => function($model) {
+                        return date('H:i', strtotime($model->end_time));
+                    },
+                    'filter'  => false
+                ],
+                [
+                     'attribute' => 'status_id',
+                     'format' => 'raw',
+                     'value' => function($model) {
+                         return BaseModel::getStatusList($model->status_id);
+                     },
+                     'filter' => BaseModel::getStatusList()
+                ],
 
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
-                    'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
+                    'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
 //                        'view' => Yii::$app->user->can('shifts/view'),
 //                        'update' => function($model) {

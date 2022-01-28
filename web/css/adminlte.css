@@ -1683,13 +1683,13 @@ pre code {
 
 .table th,
 .table td {
-   padding: 6px 8px;
-  vertical-align: top;
+   padding: 3px 6px;
+  vertical-align: middle!important;
   border-top: 1px solid #dee2e6;
 }
 
 .table thead th {
-  vertical-align: bottom;
+  vertical-align: middle!important;
   border-bottom: 2px solid #dee2e6;
 }
 
@@ -2021,8 +2021,8 @@ pre code {
 .form-control {
   display: block;
   width: 100%;
-    height: calc(2rem + 1px);
-    padding: 0.25rem 0.5rem;
+    height: calc(1.8rem + 1px);
+    padding: 0.3rem 0.5rem;
   font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.5;
