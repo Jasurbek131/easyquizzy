@@ -5,4 +5,14 @@ return [
     'adminEmail' => 'admin@example.com',
     'senderEmail' => 'noreply@example.com',
     'senderName' => 'Example.com mailer',
+    'languages' => [
+        'uz' => [
+            'code' => "UZ",
+            'name' => "O'zbek",
+        ],
+        'ru' => [
+            'code' => "RU",
+            'name' => "Русский",
+        ],
+    ]
 ];
