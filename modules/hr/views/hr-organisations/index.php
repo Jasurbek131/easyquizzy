@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= TreeView::widget([
         // single query fetch to render the tree
         // use the Product model you have in the previous step
-        'query' => HrOrganisations::find()->addOrderBy('root, lft'),
+        'query' => HrOrganisations::getOrganisationsList(),
         'headingOptions' => ['label' => Yii::t('app','Hr Organisations')],
         'fontAwesome' => true,     // optional
         'isAdmin' => false,         // optional (toggle to enable admin mode)

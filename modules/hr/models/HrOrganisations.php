@@ -84,7 +84,7 @@ class HrOrganisations extends Tree
             ->addOrderBy('root, lft');
 //            ->filterWhere(['id' => self::getIdListByUser()]);
         if ($isArray) {
-            return $list->select(['id as value', 'name as label'])->asArray()->all();
+            return $list->select(['id as value', 'name_uz as label'])->asArray()->all();
         }
         return $list;
     }
