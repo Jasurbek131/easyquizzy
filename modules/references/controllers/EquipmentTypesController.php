@@ -2,6 +2,7 @@
 
 namespace app\modules\references\controllers;
 
+use app\models\BaseModel;
 use Yii;
 use app\modules\references\models\EquipmentTypes;
 use app\modules\references\models\EquipmentTypesSearch;
@@ -189,7 +190,8 @@ class EquipmentTypesController extends Controller
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->delete()){
+            $model->status_id = BaseModel::STATUS_INACTIVE;
+            if($model->save()){
                 $isDeleted = true;
             }
             if($isDeleted){

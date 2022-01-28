@@ -3,6 +3,7 @@
 namespace app\modules\references\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "products".
@@ -67,5 +68,24 @@ class Products extends BaseModel
     public function getProductLifecycles()
     {
         return $this->hasMany(ProductLifecycle::className(), ['product_id' => 'id']);
+    }
+
+    public static function getList($key = null, $isArray = false) {
+        if (!is_null($key)){
+            $product = self::findOne($key);
+            if (!empty($product)) {
+                return $product['name'] . ' (' . $product['part_number'] . ')';
+            }
+            return "";
+        }
+        $list = self::find()
+            ->select(['id as value', "CONCAT(name, ' (', part_number, ')') as label"])
+            ->asArray()
+            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->all();
+        if ($isArray) {
+            return $list;
+        }
+        return ArrayHelper::map($list, 'value', 'label');
     }
 }

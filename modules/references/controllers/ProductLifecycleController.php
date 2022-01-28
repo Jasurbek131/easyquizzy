@@ -3,19 +3,18 @@
 namespace app\modules\references\controllers;
 
 use app\models\BaseModel;
-use app\modules\references\models\EquipmentGroupRelationEquipment;
 use Yii;
-use app\modules\references\models\EquipmentGroup;
-use app\modules\references\models\EquipmentGroupSearch;
+use app\modules\references\models\ProductLifecycle;
+use app\modules\references\models\ProductLifecycleSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * EquipmentGroupController implements the CRUD actions for EquipmentGroup model.
+ * ProductLifecycleController implements the CRUD actions for ProductLifecycle model.
  */
-class EquipmentGroupController extends Controller
+class ProductLifecycleController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -33,12 +32,12 @@ class EquipmentGroupController extends Controller
     }
 
     /**
-     * Lists all EquipmentGroup models.
+     * Lists all ProductLifecycle models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new EquipmentGroupSearch();
+        $searchModel = new ProductLifecycleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -48,7 +47,7 @@ class EquipmentGroupController extends Controller
     }
 
     /**
-     * Displays a single EquipmentGroup model.
+     * Displays a single ProductLifecycle model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -66,14 +65,13 @@ class EquipmentGroupController extends Controller
     }
 
     /**
-     * Creates a new EquipmentGroup model.
+     * Creates a new ProductLifecycle model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new EquipmentGroup();
-        $models = [new EquipmentGroupRelationEquipment()];
+        $model = new ProductLifecycle();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
@@ -81,31 +79,8 @@ class EquipmentGroupController extends Controller
                 try {
                     if($model->save()){
                         $saved = true;
-                        $eqGroupRelEq = Yii::$app->request->post('EquipmentGroupRelationEquipment');
-                        if (!empty($eqGroupRelEq)) {
-                            $i = 1;
-                            foreach ($eqGroupRelEq as $item) {
-                                $newEqGrRelEq = new EquipmentGroupRelationEquipment();
-                                $newEqGrRelEq->setAttributes([
-                                    'equipment_group_id' => $model->id,
-                                    'equipment_id' => $item['equipment_id'],
-                                    'work_order' => $i++,
-                                    'status_id' => BaseModel::STATUS_ACTIVE
-                                ]);
-                                if ($newEqGrRelEq->save()) {
-                                    $saved = true;
-                                } else {
-                                    $saved = false;
-                                    $response['errors'] = $newEqGrRelEq->getErrors();
-                                    break;
-                                }
-                            }
-                        } else {
-                            $saved = false;
-                        }
-                    } else {
+                    }else{
                         $saved = false;
-                        $response['errors'] = $model->getErrors();
                     }
                     if($saved) {
                         $transaction->commit();
@@ -124,6 +99,7 @@ class EquipmentGroupController extends Controller
                         $response['message'] = Yii::t('app', 'Saved Successfully');
                     } else {
                         $response['status'] = 1;
+                        $response['errors'] = $model->getErrors();
                         $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
                     }
                     return $response;
@@ -136,17 +112,15 @@ class EquipmentGroupController extends Controller
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('create', [
                 'model' => $model,
-                'models' => $models
             ]);
         }
         return $this->render('create', [
             'model' => $model,
-            'models' => $models
         ]);
     }
 
     /**
-     * Updates an existing EquipmentGroup model.
+     * Updates an existing ProductLifecycle model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -155,9 +129,6 @@ class EquipmentGroupController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $models = EquipmentGroupRelationEquipment::find()
-            ->where(['equipment_group_id' => $model->id])->all();
-
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
@@ -165,29 +136,6 @@ class EquipmentGroupController extends Controller
                 try {
                     if($model->save()){
                         $saved = true;
-                        $eqGroupRelEq = Yii::$app->request->post('EquipmentGroupRelationEquipment');
-                        EquipmentGroupRelationEquipment::deleteAll(['equipment_group_id' => $model->id]);
-                        if (!empty($eqGroupRelEq)) {
-                            $i = 1;
-                            foreach ($eqGroupRelEq as $item) {
-                                $updateEqGrRelEq = new EquipmentGroupRelationEquipment();
-                                $updateEqGrRelEq->setAttributes([
-                                    'equipment_group_id' => $model->id,
-                                    'equipment_id' => $item['equipment_id'],
-                                    'work_order' => $i++,
-                                    'status_id' => BaseModel::STATUS_ACTIVE
-                                ]);
-                                if ($updateEqGrRelEq->save()) {
-                                    $saved = true;
-                                } else {
-                                    $saved = false;
-                                    $response['errors'] = $updateEqGrRelEq->getErrors();
-                                    break;
-                                }
-                            }
-                        } else {
-                            $saved = false;
-                        }
                     }else{
                         $saved = false;
                     }
@@ -221,18 +169,16 @@ class EquipmentGroupController extends Controller
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('update', [
                 'model' => $model,
-                'models' => $models
             ]);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'models' => $models
         ]);
     }
 
     /**
-     * Deletes an existing EquipmentGroup model.
+     * Deletes an existing ProductLifecycle model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -276,16 +222,34 @@ class EquipmentGroupController extends Controller
         }
     }
 
+    public function actionExportExcel(){
+        header('Content-Type: application/vnd.ms-excel');
+        $filename = "product-lifecycle_".date("d-m-Y-His").".xls";
+        header('Content-Disposition: attachment;filename='.$filename .' ');
+        header('Cache-Control: max-age=0');
+        \moonland\phpexcel\Excel::export([
+            'models' => ProductLifecycle::find()->select([
+                'id',
+            ])->all(),
+            'columns' => [
+                'id',
+            ],
+            'headers' => [
+                'id' => 'Id',
+            ],
+            'autoSize' => true,
+        ]);
+    }
     /**
-     * Finds the EquipmentGroup model based on its primary key value.
+     * Finds the ProductLifecycle model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return EquipmentGroup the loaded model
+     * @return ProductLifecycle the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = EquipmentGroup::findOne($id)) !== null) {
+        if (($model = ProductLifecycle::findOne($id)) !== null) {
             return $model;
         }
 

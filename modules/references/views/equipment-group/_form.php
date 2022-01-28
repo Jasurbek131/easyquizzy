@@ -1,6 +1,9 @@
 <?php
 
+use app\components\TabularInput\CustomTabularInput;
+use app\models\BaseModel;
 use app\modules\references\models\Equipments;
+use kartik\select2\Select2;
 use unclead\multipleinput\MultipleInput;
 use yii\helpers\Html;
 use yii\web\JsExpression;
@@ -18,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= \app\components\TabularInput\CustomTabularInput::widget([
+    <?= CustomTabularInput::widget([
             'id' => 'equipment_relation_equipment_group',
             'form' => $form,
             'models' => $models,
@@ -35,23 +38,28 @@ use yii\widgets\ActiveForm;
             'cloneButton' => false,
             'columns' => [
                 [
-                    'name' => 'id',
-                    'type' => "hiddenInput"
-                ],
-                [
                     'name' => 'equipment_group_id',
                     'type' => "hiddenInput",
-                    'value' => $model->id
+                    'defaultValue' => $model->id ?? 0
+                ],
+                [
+                    'name' => 'status_id',
+                    'type' => "hiddenInput",
+                    'defaultValue' => BaseModel::STATUS_ACTIVE
+                ],
+                [
+                    'name' => 'work_order',
+                    'type' => "hiddenInput",
+                    'defaultValue' => true
                 ],
                 [
                     'name' => 'equipment_id',
-                    'type' => \kartik\select2\Select2::class,
-                    'title' => Yii::t('app', 'Baski Desen'),
+                    'type' => Select2::class,
+                    'title' => Yii::t('app', 'Equipments'),
                     'options' => [
                         'data' => Equipments::getList(),
                         'options' => [
-                            'prompt' => Yii::t('app', 'Baski Desen'),
-                            'class' => 'toquv_ip_color_id'
+                            'prompt' => Yii::t('app', 'Select ...'),
                         ],
                         'pluginOptions' => [
                             'allowClear' => true,
@@ -64,7 +72,7 @@ use yii\widgets\ActiveForm;
             ]
         ]) ?>
 
-    <?= $form->field($model, 'status_id')->textInput() ?>
+    <?= $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList()) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
@@ -73,3 +81,10 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+<?php
+$css = <<<CSS
+.list-cell__equipment_id {
+    padding-left: 0!important;
+}
+CSS;
+$this->registerCss($css);

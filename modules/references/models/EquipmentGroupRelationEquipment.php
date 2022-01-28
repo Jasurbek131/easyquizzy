@@ -20,7 +20,7 @@ use Yii;
  * @property EquipmentGroup $equipmentGroup
  * @property Equipments $equipments
  */
-class EquipmentGroupRelationEquipment extends \yii\db\ActiveRecord
+class EquipmentGroupRelationEquipment extends BaseModel
 {
     /**
      * {@inheritdoc}
@@ -36,7 +36,8 @@ class EquipmentGroupRelationEquipment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['equipment_group_id', 'equipment_id', 'work_order', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
+            [['equipment_group_id', 'equipment_id', 'work_order', 'status_id'], 'required'],
+            [['created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['equipment_group_id', 'equipment_id', 'work_order', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::className(), 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['equipment_id'], 'exist', 'skipOnError' => true, 'targetClass' => Equipments::className(), 'targetAttribute' => ['equipment_id' => 'id']],
@@ -66,7 +67,7 @@ class EquipmentGroupRelationEquipment extends \yii\db\ActiveRecord
      */
     public function getEquipmentGroup()
     {
-        return $this->hasOne(EquipmentGroup::className(), [id => equipment_group_id]);
+        return $this->hasOne(EquipmentGroup::className(), ['id' => 'equipment_group_id']);
     }
 
     /**
@@ -74,6 +75,25 @@ class EquipmentGroupRelationEquipment extends \yii\db\ActiveRecord
      */
     public function getEquipments()
     {
-        return $this->hasOne(Equipments::className(), [id => equipment_id]);
+        return $this->hasOne(Equipments::className(), ['id' => 'equipment_id']);
+    }
+
+    public static function getGroupEquipments($id) {
+        $list = EquipmentGroupRelationEquipment::find()->alias('egr')->select([
+            'egr.id','e.name'
+        ])
+            ->leftJoin('equipments e', 'egr.equipment_id = e.id')
+            ->where(['egr.equipment_group_id' => $id])
+            ->andWhere(['egr.status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->asArray()
+            ->orderBy(['egr.work_order' => SORT_ASC])
+            ->all();
+        $text = "";
+        if (!empty($list)) {
+            foreach ($list as $item) {
+                $text .= "<span class='badge badge-primary mr-1'>".$item['name']."</span>";
+            }
+        }
+        return $text;
     }
 }

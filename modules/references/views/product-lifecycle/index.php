@@ -1,26 +1,28 @@
 <?php
 
 use app\models\BaseModel;
-use app\modules\references\models\EquipmentGroupRelationEquipment;
+use app\modules\references\models\EquipmentGroup;
+use app\modules\references\models\Products;
+use app\modules\references\models\TimeTypesList;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\references\models\EquipmentGroupSearch */
+/* @var $searchModel app\modules\references\models\ProductLifecycleSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Equipment Groups');
+$this->title = Yii::t('app', 'Product Lifecycles');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="card equipment-group-index">
-<!--    --><?php //if (Yii::$app->user->can('equipment-group/create')): ?>
+<div class="card product-lifecycle-index">
+<!--    --><?php //if (Yii::$app->user->can('product-lifecycle/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
 <!--    --><?php //endif; ?>
     <div class="card-body">
-        <?php Pjax::begin(['id' => 'equipment-group_pjax']); ?>
+        <?php Pjax::begin(['id' => 'product-lifecycle_pjax']); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     
     <?= GridView::widget([
@@ -29,14 +31,30 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'name',
             [
-                'attribute' => 'equipments',
+                'attribute' => 'product_id',
                 'format' => 'raw',
                 'value' => function($model) {
-                    return EquipmentGroupRelationEquipment::getGroupEquipments($model->id);
-                }
+                    return Products::getList($model->product_id);
+                },
+                'filter' => Products::getList()
+            ],
+            [
+                'attribute' => 'equipment_group_id',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return EquipmentGroup::getList($model->equipment_group_id);
+                },
+                'filter' => EquipmentGroup::getList()
+            ],
+            'lifecycle',
+            [
+                'attribute' => 'time_type_id',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return TimeTypesList::getList($model->time_type_id);
+                },
+                'filter' => TimeTypesList::getList()
             ],
             [
                 'attribute' => 'status_id',
@@ -51,13 +69,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{update}{view}{delete}',
                 'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                 'visibleButtons' => [
-//                    'view' => Yii::$app->user->can('equipment-group/view'),
-//                    'update' => function($model) {
-//                        return Yii::$app->user->can('equipment-group/update'); // && $model->status < $model::STATUS_SAVED;
-//                    },
-//                    'delete' => function($model) {
-//                        return Yii::$app->user->can('equipment-group/delete'); // && $model->status < $model::STATUS_SAVED;
-//                    }
+//                        'view' => Yii::$app->user->can('product-lifecycle/view'),
+//                        'update' => function($model) {
+//                            return Yii::$app->user->can('product-lifecycle/update'); // && $model->status < $model::STATUS_SAVED;
+//                        },
+//                        'delete' => function($model) {
+//                            return Yii::$app->user->can('product-lifecycle/delete'); // && $model->status < $model::STATUS_SAVED;
+//                        }
                 ],
                 'buttons' => [
                     'update' => function ($url, $model) {
@@ -81,6 +99,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data-form-id' => $model->id,
                         ]);
                     },
+
                 ],
             ],
         ],
@@ -90,16 +109,16 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 <?=  \app\widgets\ModalWindow\ModalWindow::widget([
-    'model' => 'equipment-group',
-    'crud_name' => 'equipment-group',
-    'modal_id' => 'equipment-group-modal',
-    'modal_header' => '<h3>'. Yii::t('app', 'Equipment Group') . '</h3>',
+    'model' => 'product-lifecycle',
+    'crud_name' => 'product-lifecycle',
+    'modal_id' => 'product-lifecycle-modal',
+    'modal_header' => '<h3>'. Yii::t('app', 'Product Lifecycle') . '</h3>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',
     'view_button' => 'view-dialog',
     'delete_button' => 'delete-dialog',
     'modal_size' => 'modal-md',
-    'grid_ajax' => 'equipment-group_pjax',
+    'grid_ajax' => 'product-lifecycle_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
 ]); ?>
