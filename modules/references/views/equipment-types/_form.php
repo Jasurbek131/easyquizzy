@@ -4,19 +4,15 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\references\models\Products */
+/* @var $model app\modules\references\models\EquipmentTypes */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="products-form">
+<div class="equipment-types-form">
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-<!--    --><?php //= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'part_number')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
 

@@ -1,22 +1,28 @@
 <?php
 
+use app\modules\references\models\EquipmentTypes;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\references\models\Products */
+/* @var $model app\modules\references\models\Equipments */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="products-form">
+<div class="equipments-form">
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-<!--    --><?php //= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'part_number')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'equipment_type_id')->widget(Select2::classname(), [
+            'data' => EquipmentTypes::getList(),
+            'options' => ['placeholder' => 'Select ...', 'multiple' => true],
+            'pluginOptions' => [
+                'allowClear' => true,
+            ]
+        ]) ?>
 
     <?= $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
 
