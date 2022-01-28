@@ -3,6 +3,7 @@
 namespace app\modules\hr\models;
 
 use app\models\Users;
+use kartik\tree\models\Tree;
 use Yii;
 
 /**
@@ -21,14 +22,14 @@ use Yii;
  * @property HrDepartments[] $hrDepartmentss
  * @property Users[] $userss
  */
-class HrOrganisations extends BaseModel
+class HrOrganisations extends Tree
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'hr-organisations';
+        return 'hr_organisations';
     }
 
     /**
