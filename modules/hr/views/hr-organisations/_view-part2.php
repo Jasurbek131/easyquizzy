@@ -45,9 +45,6 @@ use yii\web\View;
 ?>
 <div class="row" style="padding-right: 10px;">
     <div class="col-sm-12">
-        <div class="qr-code-style-header">
-            <h5 id="department-area-name" class="text-center"><b><?= $node->name ?></b></h5>
-        </div>
         <div class="text-center">
             <div id="canvas"></div>
         </div>

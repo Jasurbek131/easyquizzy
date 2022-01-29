@@ -1,23 +1,22 @@
 <?php
 
-use kartik\tree\Module;
+use app\components\CustomTreeView\CustomTreeView;
 use app\modules\hr\models\HrOrganisations;
+use kartik\tree\Module;
 use kartik\tree\TreeView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
+/* @var $query HrOrganisations */
 
-$this->title = Yii::t('app', 'Hr Organisations');
-$this->params['breadcrumbs'][] = $this->title;
-
+$this->title = Yii::t('app', 'Ombor Sektorlari');
+$this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 ?>
-<div class="hr-departments-index">
 
-    <?= TreeView::widget([
-        // single query fetch to render the tree
-        // use the Product model you have in the previous step
-        'query' => HrOrganisations::find()->addOrderBy('root, lft'),
-        'headingOptions' => ['label' => Yii::t('app','Hr Organisations')],
+<div>
+    <?php echo CustomTreeView::widget([
+        'query' => $query,
+        'headingOptions' => ['label' => Yii::t('app', $this->title)],
         'fontAwesome' => true,     // optional
         'isAdmin' => false,         // optional (toggle to enable admin mode)
         'displayValue' => 1,        // initial display value
@@ -25,28 +24,32 @@ $this->params['breadcrumbs'][] = $this->title;
         'cacheSettings' => [
             'enableCache' => true   // defaults to true
         ],
+        'showFormButtons' => false,
         'showIDAttribute' => false, // if set true show id attribute
-        'topRootAsHeading' => true,
-        'rootOptions' => ['label'=>'<span class="text-primary">'.Yii::t('app', 'Hr Organisations and departments').'</span>'],
-        'iconEditSettings'=> [
-            'show' => 'none',
+        'emptyNodeMsg' => "Ma'lumot topilmadi",
+        'nodeActions' => [
+            Module::NODE_MANAGE => Url::to(['/treemanager/node/manage']),
+            Module::NODE_SAVE => Url::to(['/hr/hr-organisations/save']),
+            Module::NODE_REMOVE => Url::to(['/treemanager/node/remove']),
+            Module::NODE_MOVE => Url::to(['/treemanager/node/move']),
         ],
         'nodeAddlViews' => [
-            Module::VIEW_PART_2 => '@app/modules/hr/views/hr-organisations/index_right',
+            Module::VIEW_PART_2 => '@app/modules/hr/views/hr-organisations/_view-part2',
         ],
-        'nodeActions' => [
-            Module::NODE_MANAGE => Url::to(['/hr/hr-organisations/manage']),
-            Module::NODE_SAVE => Url::to(['/hr/hr-organisations/save']),
-            Module::NODE_REMOVE => Url::to(['/hr/hr-organisations/remove']),
-            Module::NODE_MOVE => Url::to(['/hr/hr-organisations/move']),
+        'nodeView' => '@app/components/CustomTreeView/views/view',
+        'rootOptions' => ['label' => '<span class="text-primary">' . Yii::t('app', 'Sektorlar') . '</span>'],
+        'topRootAsHeading' => true,
+        'iconEditSettings' => [
+            'show' => 'none',
         ],
-        'nodeView' => '@kvtree/views/_form',
+        'defaultChildNodeIcon' => '<i class="fa fa-square"></i>',
+        'defaultParentNodeOpenIcon' => '<i class="fa fa-square"></i>',
         'clientMessages' => [
-            'invalidCreateNode' => Yii::t('app', "Could not create department or organization"),
-            'emptyNode' => Yii::t('app', '(New)'),
-            'removeNode' => Yii::t('app', 'Siz rostdan ham bu bo\'lim yoki tashkilotni o\'chirmoqchimisiz?'),
-            'nodeRemoved' => Yii::t('app', "Bo'lim yoki tashkilot o'chirildi."),
-            'nodeRemoveError' => Yii::t('app', "Xatolik yuz berdi!"),
+            'invalidCreateNode' => Yii::t('app', 'Cannot create node. Parent node is not saved or is invalid.'),
+            'emptyNode' => Yii::t('app', '(new)'),
+            'removeNode' => Yii::t('app', 'Are you sure you want to remove this node?'),
+            'nodeRemoved' => Yii::t('app', 'The node was removed successfully.'),
+            'nodeRemoveError' => Yii::t('app', 'Error while removing the node. Please try again later.'),
             'nodeNewMove' => Yii::t('app', 'Cannot move this node as the node details are not saved yet.'),
             'nodeTop' => Yii::t('app', 'Already at top-most node in the hierarchy.'),
             'nodeBottom' => Yii::t('app', 'Already at bottom-most node in the hierarchy.'),
@@ -55,43 +58,42 @@ $this->params['breadcrumbs'][] = $this->title;
             'emptyNodeRemoved' => Yii::t('app', 'The untitled node was removed.'),
             'selectNode' => Yii::t('app', 'Select a node by clicking on one of the tree items.'),
         ],
-        'emptyNodeMsg' => Yii::t('app', 'Select afrom the toolbar to view the organization or department'),
         'toolbar' => [
             TreeView::BTN_CREATE => [
                 'icon' => 'plus',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', "Bo'lim qo'shish")]
+                'options' => ['title' => Yii::t('app', "Sektor qo'shish"), 'disabled' => true]
             ],
             TreeView::BTN_CREATE_ROOT => [
                 'icon' => 'building',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', "Tashkilot qo'shish")]
+                'options' => ['title' => Yii::t('app', "Create"), 'disabled' => false]
             ],
             TreeView::BTN_REMOVE => [
                 'icon' => 'trash',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Delete')]
+                'options' => ['title' => Yii::t('app', 'Delete'), 'disabled' => true]
             ],
             TreeView::BTN_SEPARATOR,
             TreeView::BTN_MOVE_UP => [
                 'icon' => 'arrow-up',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Move Up')]
+                'options' => ['title' => Yii::t('app', 'Move Up'), 'disabled' => true]
             ],
             TreeView::BTN_MOVE_DOWN => [
                 'icon' => 'arrow-down',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Move Down')]
+                'options' => ['title' => Yii::t('app', 'Move Down'), 'disabled' => true]
             ],
             TreeView::BTN_MOVE_LEFT => [
                 'icon' => 'arrow-left',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Move Left')]
+                'options' => ['title' => Yii::t('app', 'Move Left'), 'disabled' => true]
             ],
             TreeView::BTN_MOVE_RIGHT => [
                 'icon' => 'arrow-right',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Move Right')]
+                'options' => ['title' => Yii::t('app', 'Move Right'), 'disabled' => true]
             ],
             TreeView::BTN_SEPARATOR,
             TreeView::BTN_REFRESH => [
@@ -108,3 +110,13 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
 </div>
+<?php
+$this->registerCss("
+    .select2-selection__clear{
+        top:0!important
+    }
+    #department-area-name{
+        font-size: 30px;
+    }
+");
+?>
