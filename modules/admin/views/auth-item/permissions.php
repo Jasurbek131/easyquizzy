@@ -108,12 +108,3 @@ $this->params['breadcrumbs'][] = $this->title;
     'grid_ajax' => 'auth-item_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatan ham ushbu mahsulotni yo\'q qilmoqchimisiz?')
 ]); ?>
-<?php
-$css = <<< CSS
-.modal-header button.close {
-    opacity: 1;
-    font-size: 40px;
-    width: 55px;
-}
-CSS;
-$this->registerCss($css);

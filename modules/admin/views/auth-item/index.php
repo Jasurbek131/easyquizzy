@@ -136,12 +136,3 @@ $js = <<< JS
     });
 JS;
 $this->registerJs($js, \yii\web\View::POS_READY);
-$css = <<< CSS
-    .modal-header button.close {
-        opacity: 1;
-        font-size: 40px;
-        width: 55px;
-    }
-   
-CSS;
-$this->registerCss($css);
