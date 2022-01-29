@@ -31,9 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'iconEditSettings'=> [
             'show' => 'none',
         ],
-        /*'nodeAddlViews' => [
-            Module::VIEW_PART_2 => '@app/modules/hr/views/hr-departments/_view-part2',
-        ],*/
+        'nodeAddlViews' => [
+            Module::VIEW_PART_2 => '@app/modules/hr/views/hr-organisations/index_right',
+        ],
         'nodeActions' => [
             Module::NODE_MANAGE => Url::to(['/hr/hr-organisations/manage']),
             Module::NODE_SAVE => Url::to(['/hr/hr-organisations/save']),

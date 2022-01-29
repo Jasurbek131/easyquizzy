@@ -1,5 +1,6 @@
 <?php
 
+use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -28,28 +29,29 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
             'name_uz',
             'name_ru',
-            'status_id',
-            'created_by',
-            //'created_at',
-            //'updated_by',
-            //'updated_at',
-
+            [
+                'attribute' => 'status_id',
+                'value' => function($model) {
+                    return $model['status_id'] ? BaseModel::getStatusList($model['status_id']) : "";
+                },
+                'filter' => BaseModel::getStatusList(),
+                'format' => 'raw'
+            ],
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update}{view}{delete}',
                 'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
-                'visibleButtons' => [
-                    'view' => Yii::$app->user->can('hr-positions/view'),
-                    'update' => function($model) {
-                        return Yii::$app->user->can('hr-positions/update'); // && $model->status < $model::STATUS_SAVED;
-                    },
-                    'delete' => function($model) {
-                        return Yii::$app->user->can('hr-positions/delete'); // && $model->status < $model::STATUS_SAVED;
-                    }
-                ],
+//                'visibleButtons' => [
+//                    'view' => Yii::$app->user->can('hr-positions/view'),
+//                    'update' => function($model) {
+//                        return Yii::$app->user->can('hr-positions/update'); // && $model->status < $model::STATUS_SAVED;
+//                    },
+//                    'delete' => function($model) {
+//                        return Yii::$app->user->can('hr-positions/delete'); // && $model->status < $model::STATUS_SAVED;
+//                    }
+//                ],
                 'buttons' => [
                     'update' => function ($url, $model) {
                         return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
@@ -59,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="fa fa-eye-open"></span>', $url, [
+                        return Html::a('<span class="fa fa-eye"></span>', $url, [
                             'title' => Yii::t('app', 'View'),
                             'class'=> 'btn btn-xs btn-default view-dialog mr1',
                             'data-form-id' => $model->id,

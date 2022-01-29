@@ -36,6 +36,7 @@ class HrPositions extends BaseModel
         return [
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['name_uz','name_ru'],'required'],
             [['name_uz', 'name_ru'], 'string', 'max' => 255],
         ];
     }
@@ -62,6 +63,14 @@ class HrPositions extends BaseModel
      */
     public function getHrEmployees()
     {
-        return $this->hasMany(HrEmployee::className(), ['hr_position_id' => 'id']);
+        return $this->hasMany(HrEmployee::class, ['hr_position_id' => 'id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord){
+            $this->status_id = \app\models\BaseModel::STATUS_ACTIVE;
+        }
+        return parent::beforeSave($insert);
     }
 }
