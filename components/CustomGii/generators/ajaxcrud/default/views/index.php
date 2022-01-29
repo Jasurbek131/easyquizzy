@@ -68,7 +68,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
-                    'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
+                    'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
                         'view' => Yii::$app->user->can('<?= Inflector::camel2id(StringHelper::basename($generator->viewPath)) ?>/view'),
                         'update' => function($model) {
