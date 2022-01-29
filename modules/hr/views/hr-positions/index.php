@@ -1,5 +1,6 @@
 <?php
 
+use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -28,11 +29,24 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+//            'id',
             'name_uz',
             'name_ru',
-            'status_id',
-            'created_by',
+            [
+                'attribute' => 'status_id',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return BaseModel::getStatusList($model->status_id);
+                },
+                'filter' => BaseModel::getStatusList()
+            ],
+            [
+                'attribute' => 'created_by',
+                'value' => function($model){
+                    $username = \app\models\Users::findOne($model->created_by)['username'];
+                    return isset($username)?$username:$model->created_by;
+                }
+            ],
             //'created_at',
             //'updated_by',
             //'updated_at',
@@ -44,10 +58,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'visibleButtons' => [
                     'view' => Yii::$app->user->can('hr-positions/view'),
                     'update' => function($model) {
-                        return Yii::$app->user->can('hr-positions/update'); // && $model->status < $model::STATUS_SAVED;
+                        return Yii::$app->user->can('hr-positions/update') && $model->status < BaseModel::STATUS_SAVED;
                     },
                     'delete' => function($model) {
-                        return Yii::$app->user->can('hr-positions/delete'); // && $model->status < $model::STATUS_SAVED;
+                        return Yii::$app->user->can('hr-positions/delete') && $model->status < BaseModel::STATUS_SAVED;
                     }
                 ],
                 'buttons' => [

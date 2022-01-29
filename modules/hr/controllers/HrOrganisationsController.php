@@ -4,6 +4,7 @@
 namespace app\modules\hr\controllers;
 
 use app\modules\hr\models\HrDepartments;
+use app\modules\hr\models\HrOrganisations;
 use kartik\tree\controllers\NodeController;
 use yii\web\Controller;
 use kartik\tree\models\Tree;
@@ -263,19 +264,19 @@ class HrOrganisationsController extends NodeController
                 $node->initDefaults();
 
                 // info model
-                $infoModel = $parentKey == TreeView::ROOT_KEY ? new HrOrganizationInfo() : new HrDepartmentsInfo();
+                $infoModel = $parentKey == TreeView::ROOT_KEY ? new HrOrganisations() : new HrDepartments();
             } else {
                 $node = $treeClass::findOne($id);
 
                 // oldindan
                 if ($node !== null) {
-                    if ($node->type === HrDepartments::TYPE_ORGANIZATION && ($infoModel = HrOrganizationInfo::findOne(['department_id' => $id])) === null) {
-                        $infoModel = new HrOrganizationInfo();
-                    } elseif ($node->type === HrDepartments::TYPE_DEPARTMENT && ($infoModel = HrDepartmentsInfo::findOne(['department_id' => $id])) === null) {
-                        $infoModel = new HrDepartmentsInfo();
+                    if ($node->type === HrDepartments::TYPE_ORGANIZATION && ($infoModel = HrOrganisations::findOne(['department_id' => $id])) === null) {
+                        $infoModel = new HrOrganisations();
+                    } elseif ($node->type === HrDepartments::TYPE_DEPARTMENT && ($infoModel = HrDepartments::findOne(['department_id' => $id])) === null) {
+                        $infoModel = new HrDepartments();
                     }
                 } else {
-                    $infoModel = $parentKey == TreeView::ROOT_KEY ? new HrOrganizationInfo() : new HrDepartmentsInfo();
+                    $infoModel = $parentKey == TreeView::ROOT_KEY ? new HrOrganisations() : new HrDepartments();
                 }
 
                 Yii::debug($infoModel, 'infoModel'); // TODO: bu qatorni o'chirish kerak

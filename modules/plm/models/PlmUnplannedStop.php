@@ -2,7 +2,6 @@
 
 namespace app\modules\plm\models;
 
-use BaseModel;
 use Yii;
 
 /**

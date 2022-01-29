@@ -20,7 +20,7 @@ use Yii;
  *
  * @property PlmDocuments $plmDocuments
  */
-class PlmScheduledStop extends BaseModel
+class PlmPlannedStop extends BaseModel
 {
     /**
      * {@inheritdoc}

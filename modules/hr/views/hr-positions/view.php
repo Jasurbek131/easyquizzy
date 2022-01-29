@@ -1,5 +1,6 @@
 <?php
 
+use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -37,9 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'attribute' => 'id',
-            ],
-            [
                 'attribute' => 'name_uz',
             ],
             [
@@ -47,6 +45,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'status_id',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return BaseModel::getStatusList($model->status_id);
+                },
+                'filter' => BaseModel::getStatusList()
             ],
             [
                 'attribute' => 'created_by',
