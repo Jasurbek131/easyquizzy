@@ -1,5 +1,6 @@
 <?php
 
+use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -37,9 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'attribute' => 'id',
-            ],
-            [
                 'attribute' => 'name_uz',
             ],
             [
@@ -47,11 +45,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'status_id',
+                'value' => function($model) {
+                    return $model['status_id'] ? BaseModel::getStatusList($model['status_id']) : "";
+                },
+                'format' => 'raw'
             ],
             [
                 'attribute' => 'created_by',
                 'value' => function($model){
-                    $username = \app\models\Users::findOne($model->created_by)['user_fio'];
+                    $username = \app\models\Users::findOne($model->created_by)['username'];
                     return isset($username)?$username:$model->created_by;
                 }
             ],
@@ -64,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'updated_by',
                 'value' => function($model){
-                    $username = \app\models\Users::findOne($model->updated_by)['user_fio'];
+                    $username = \app\models\Users::findOne($model->updated_by)['username'];
                     return isset($username)?$username:$model->updated_by;
                 }
             ],
