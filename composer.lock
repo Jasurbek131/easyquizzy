@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73c9138724be0d6ea3b597c14f70ac2f",
+    "content-hash": "731bcaf47ea014ac3f6b3ebe0fb0f916",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -495,16 +495,16 @@
         },
         {
             "name": "kartik-v/yii2-tree-manager",
-            "version": "dev-master",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-tree-manager.git",
-                "reference": "203312467a29f6e3b8a67a4163cc8aa138b3ee57"
+                "reference": "e09c47108b51a42ba3dc3c54d5c82ba6907cd25b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-tree-manager/zipball/203312467a29f6e3b8a67a4163cc8aa138b3ee57",
-                "reference": "203312467a29f6e3b8a67a4163cc8aa138b3ee57",
+                "url": "https://api.github.com/repos/kartik-v/yii2-tree-manager/zipball/e09c47108b51a42ba3dc3c54d5c82ba6907cd25b",
+                "reference": "e09c47108b51a42ba3dc3c54d5c82ba6907cd25b",
                 "shasum": ""
             },
             "require": {
@@ -548,7 +548,7 @@
                 "tree",
                 "treeview"
             ],
-            "time": "2021-06-03T09:48:41+00:00"
+            "time": "2019-03-13T17:21:14+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-activeform",
@@ -5813,8 +5813,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "kartik-v/yii2-widget-select2": 20,
-        "kartik-v/yii2-widget-timepicker": 20,
-        "kartik-v/yii2-tree-manager": 20
+        "kartik-v/yii2-widget-timepicker": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
