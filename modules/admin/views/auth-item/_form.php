@@ -1,7 +1,7 @@
 <?php
 
+use app\components\TabularInput\CustomMultipleInput;
 use kartik\select2\Select2;
-use unclead\multipleinput\MultipleInput;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -67,11 +67,11 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model,'name')->textInput()?>
 
-        <?= $form->field($model, 'new_permissions')->widget(MultipleInput::class, [
+        <?= $form->field($model, 'new_permissions')->widget(CustomMultipleInput::class, [
             'max' => 30,
             'min' => 0,
             'cloneButton' => true,
-            'iconSource' => MultipleInput::ICONS_SOURCE_FONTAWESOME,
+            'iconSource' => CustomMultipleInput::ICONS_SOURCE_FONTAWESOME,
             'columns' => [
                 [
                     'name'  => 'name',

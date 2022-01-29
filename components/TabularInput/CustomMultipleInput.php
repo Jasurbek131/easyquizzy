@@ -31,16 +31,36 @@ class CustomMultipleInput extends MultipleInput
      * @var array attribute names
      */
     public $attributes = [];
-   /**
+    /**
      * @return object|TableRenderer
      * @throws InvalidConfigException
      */
+
+    /**
+     * @var array
+     * --icon library classes mapped for various controls
+     */
+    public $iconMap = [
+        self::ICONS_SOURCE_GLYPHICONS => [
+            'drag-handle' => 'glyphicon glyphicon-menu-hamburger',
+            'remove' => 'glyphicon glyphicon-remove',
+            'add' => 'glyphicon glyphicon-plus',
+            'clone' => 'glyphicon glyphicon-duplicate',
+        ],
+        self::ICONS_SOURCE_FONTAWESOME => [
+            'drag-handle' => 'fa fa-bars',
+            'remove' => 'fa fa-times',
+            'add' => 'fa fa-plus',
+            'clone' => 'fa fa-clone',
+        ],
+    ];
+
     public function createRenderer()
     {
-        if($this->sortable) {
+        if ($this->sortable) {
             $drag = [
-                'name'  => 'drag',
-                'type'  => BaseColumn::TYPE_DRAGCOLUMN,
+                'name' => 'drag',
+                'type' => BaseColumn::TYPE_DRAGCOLUMN,
                 'headerOptions' => [
                     'style' => 'width: 20px;',
                 ]
@@ -66,26 +86,26 @@ class CustomMultipleInput extends MultipleInput
             : $this->iconMap[self::ICONS_SOURCE_GLYPHICONS];
 
         $config = [
-            'id'                => $this->getId(),
-            'columns'           => $this->columns,
-            'min'               => $this->min,
-            'max'               => $this->max,
-            'attributeOptions'  => $this->attributeOptions,
-            'data'              => $this->data,
-            'columnClass'       => $this->columnClass !== null ? $this->columnClass : MultipleInputColumn::className(),
-            'allowEmptyList'    => $this->allowEmptyList,
+            'id' => $this->getId(),
+            'columns' => $this->columns,
+            'min' => $this->min,
+            'max' => $this->max,
+            'attributeOptions' => $this->attributeOptions,
+            'data' => $this->data,
+            'columnClass' => $this->columnClass !== null ? $this->columnClass : MultipleInputColumn::className(),
+            'allowEmptyList' => $this->allowEmptyList,
             'addButtonPosition' => $this->addButtonPosition,
-            'rowOptions'        => $this->rowOptions,
-            'context'           => $this,
-            'form'              => $this->form,
-            'sortable'          => $this->sortable,
-            'enableError'       => $this->enableError,
-            'cloneButton'       => $this->cloneButton,
-            'extraButtons'      => $this->extraButtons,
-            'layoutConfig'      => $this->layoutConfig,
-            'iconMap'           => $iconMap,
-            'theme'             => $this->theme,
-            'prepend'           => $this->prepend,
+            'rowOptions' => $this->rowOptions,
+            'context' => $this,
+            'form' => $this->form,
+            'sortable' => $this->sortable,
+            'enableError' => $this->enableError,
+            'cloneButton' => $this->cloneButton,
+            'extraButtons' => $this->extraButtons,
+            'layoutConfig' => $this->layoutConfig,
+            'iconMap' => $iconMap,
+            'theme' => $this->theme,
+            'prepend' => $this->prepend,
         ];
 
         if ($this->showGeneralError) {
@@ -106,10 +126,10 @@ class CustomMultipleInput extends MultipleInput
             $config['cloneButtonOptions'] = $this->cloneButtonOptions;
         }
 
-        if($this->showFooter){
+        if ($this->showFooter) {
             $config['class'] = $this->rendererClass ?: CustomTableRender::className();
             $config['attributes'] = $this->attributes;
-        }else{
+        } else {
             $config['class'] = $this->rendererClass ?: TableRenderer::className();
         }
 
