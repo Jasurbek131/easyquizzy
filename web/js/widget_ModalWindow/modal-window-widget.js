@@ -1,3 +1,6 @@
+const button = modal_header+'<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>';
+$('#' + modal_id).find('.modal-header').html(button);
+
 $("body").on("submit", "." + active_from_class, function (e) {
     e.preventDefault();
     var self = $(this);
@@ -18,19 +21,16 @@ $("body").on("submit", "." + active_from_class, function (e) {
         if (file_upload) {
             var formData = new FormData($(this)[0]);
             $.ajax({
-                url: url,  //Server script to process data
+                url: url,
                 type: 'POST',
-                // Form data
                 data: formData,
-                // beforeSend: beforeSendHandler, // its a function which you have to define
                 success: function (response) {
                     if (response.status == 0) {
                         $.fn.eventSubmitSuccess(response);
                         $('#' + modal_id).modal("hide");
-                        if(response.message){
-                            success_message = response.message;
+                        if(response.message) {
+                            call_pnotify('success', response.message);
                         }
-                        call_pnotify('success', success_message);
                         $.pjax.reload({container: "#" + grid_ajax});
                     } else {
                         let tekst = (response.message) ? response.message : fail_message;
@@ -69,14 +69,12 @@ $("body").on("submit", "." + active_from_class, function (e) {
                     if (response.status == 0) {
                         $.fn.eventSubmitSuccess(response);
                         $('#' + modal_id).modal("hide");
-                        if(response.message){
-                            success_message = response.message;
+                        if(response.message) {
+                            call_pnotify('success', response.message);
                         }
-                        call_pnotify('success', success_message);
                         $.pjax.reload({container: "#" + grid_ajax});
                     } else {
                         $.fn.eventSubmitError(response);
-                        let tekst = (response.message) ? response.message : fail_message;
                         let error = response.errors;
                         if(typeof error == 'object') {
                             $.each(error, function (key, val) {
@@ -89,8 +87,10 @@ $("body").on("submit", "." + active_from_class, function (e) {
                                     });
                                 }
                             });
-                        }else{
-                            call_pnotify('fail',error);
+                        } else {
+                            if (error) {
+                                call_pnotify('fail', error);
+                            }
                         }
                         let list_error = response.list_errors;
                         if(typeof list_error == 'object') {
@@ -108,24 +108,28 @@ $("body").on("submit", "." + active_from_class, function (e) {
                                                         self.find(".field-" + table + "-" + key+"-"+num).find(".help-block").html(text);
                                                         call_pnotify('fail',text);
                                                     });
-                                                }else{
+                                                } else {
                                                     call_pnotify('fail',val);
                                                 }
                                             });
-                                        }else{
+                                        } else {
                                             call_pnotify('fail',val);
                                         }
                                     });
-                                }else{
+                                } else {
                                     call_pnotify('fail',item);
                                 }
                             });
-                        }else{
-                            call_pnotify('fail',list_error);
+                        } else {
+                            if (list_error) {
+                                call_pnotify('fail', list_error);
+                            }
                         }
                         self.find("button[type=submit]").show();
                         //.attr("disabled", false);
-                        call_pnotify('fail', tekst);
+                        if (response.message) {
+                            call_pnotify('fail', response.message);
+                        }
                     }
                 },
                 error: function () {
@@ -228,12 +232,11 @@ $.fn.deleteItem = function () {
                         }else{
                             call_pnotify('fail',result.message);
                         }
-                    }
-                    else{
+                    } else {
                         if(result == 'success'){
                             call_pnotify('success', 'Success');
                             t.remove();
-                        }else{
+                        } else {
                             call_pnotify('fail', 'Fail');
                         }
                     }
@@ -311,7 +314,7 @@ function call_pnotify(status,text) {
     switch (status) {
         case 'success':
             if(!text){
-                text = 'Success!';
+                text = 'Muvaffaqiyatli bajarildi!';
             }
             PNotify.defaults.styling = "bootstrap4";
             PNotify.defaults.delay = 2000;
@@ -320,7 +323,7 @@ function call_pnotify(status,text) {
 
         case 'fail':
             if(!text){
-                text = 'Fail!';
+                text = 'ERROR!';
             }
             PNotify.defaults.styling = "bootstrap4";
             PNotify.defaults.delay = 2000;

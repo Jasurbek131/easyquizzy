@@ -96,7 +96,6 @@ AppAsset::register($this);
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
                                     Brad Diesel
@@ -112,7 +111,6 @@ AppAsset::register($this);
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
                                     John Pierce
@@ -128,7 +126,6 @@ AppAsset::register($this);
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
                                     Nora Silvester
@@ -218,9 +215,8 @@ AppAsset::register($this);
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="/" class="brand-link">
-            <img src="dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3"
-                 style="opacity: .8">
+        <a class="brand-link">
+            <img src="/web/img/noimage.png" alt="Logo" class="brand-image img-circle elevation-3">
             <span class="brand-text font-weight-light">PLM</span>
         </a>
 
@@ -229,7 +225,7 @@ AppAsset::register($this);
             <!-- Sidebar user panel (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
-                    <img src="/img/user.jfif" class="img-circle" alt="User Image">
+                    <img src="/web/img/user.jfif" class="img-circle" alt="User Image">
                 </div>
                 <div class="info">
                     <a href="#" class="d-block"><?=Yii::$app->user->identity->username?></a>
