@@ -22,7 +22,7 @@ use Yii;
  * @property Products $products
  * @property TimeTypesList $timeTypesList
  */
-class ProductLifecycle extends \yii\db\ActiveRecord
+class ProductLifecycle extends BaseModel
 {
     /**
      * {@inheritdoc}
@@ -38,7 +38,7 @@ class ProductLifecycle extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
+            [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id'], 'required'],
             [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::className(), 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::className(), 'targetAttribute' => ['product_id' => 'id']],

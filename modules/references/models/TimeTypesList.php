@@ -3,6 +3,7 @@
 namespace app\modules\references\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "time_types_list".
@@ -65,5 +66,24 @@ class TimeTypesList extends BaseModel
     public function getProductLifecycles()
     {
         return $this->hasMany(ProductLifecycle::className(), ['time_type_id' => 'id']);
+    }
+
+    public static function getList($key = null, $isArray = false) {
+        if (!is_null($key)){
+            $one = self::findOne($key);
+            if (!empty($one)) {
+                return $one['name'];
+            }
+            return "";
+        }
+        $list = self::find()
+            ->select(['id as value', 'name as label'])
+            ->asArray()
+            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->all();
+        if ($isArray) {
+            return $list;
+        }
+        return ArrayHelper::map($list, 'value', 'label');
     }
 }

@@ -9,6 +9,7 @@ use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Hr Organisations');
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="hr-departments-index">
 
@@ -59,42 +60,42 @@ $this->params['breadcrumbs'][] = $this->title;
             TreeView::BTN_CREATE => [
                 'icon' => 'plus',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', "Bo'lim qo'shish"), 'disabled' => true]
+                'options' => ['title' => Yii::t('app', "Bo'lim qo'shish")]
             ],
             TreeView::BTN_CREATE_ROOT => [
-                'icon' => 'building-o',
+                'icon' => 'building',
                 'alwaysDisabled' => false,
                 'options' => ['title' => Yii::t('app', "Tashkilot qo'shish")]
             ],
             TreeView::BTN_REMOVE => [
                 'icon' => 'trash',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Delete'), 'disabled' => true]
+                'options' => ['title' => Yii::t('app', 'Delete')]
             ],
             TreeView::BTN_SEPARATOR,
             TreeView::BTN_MOVE_UP => [
                 'icon' => 'arrow-up',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Move Up'), 'disabled' => true]
+                'options' => ['title' => Yii::t('app', 'Move Up')]
             ],
             TreeView::BTN_MOVE_DOWN => [
                 'icon' => 'arrow-down',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Move Down'), 'disabled' => true]
+                'options' => ['title' => Yii::t('app', 'Move Down')]
             ],
             TreeView::BTN_MOVE_LEFT => [
                 'icon' => 'arrow-left',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Move Left'), 'disabled' => true]
+                'options' => ['title' => Yii::t('app', 'Move Left')]
             ],
             TreeView::BTN_MOVE_RIGHT => [
                 'icon' => 'arrow-right',
                 'alwaysDisabled' => false,
-                'options' => ['title' => Yii::t('app', 'Move Right'), 'disabled' => true]
+                'options' => ['title' => Yii::t('app', 'Move Right')]
             ],
             TreeView::BTN_SEPARATOR,
             TreeView::BTN_REFRESH => [
-                'icon' => 'refresh',
+                'icon' => 'retweet',
                 'alwaysDisabled' => false,
                 'options' => ['title' => Yii::t('app', 'Refresh')],
                 'url' => Yii::$app->request->url

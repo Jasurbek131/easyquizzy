@@ -232,9 +232,11 @@ th {
 
 label {
   display: inline-block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.1rem;
 }
-
+.multiple-input {
+    margin-bottom: 1rem;
+}
 button {
   border-radius: 0;
 }
