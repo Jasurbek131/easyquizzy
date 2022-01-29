@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'created_by',
                 'value' => function($model){
-                    $username = \app\models\Users::findOne($model->created_by)['user_fio'];
+                    $username = \app\models\Users::findOne($model->created_by)['username'];
                     return isset($username)?$username:$model->created_by;
                 }
             ],
@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'updated_by',
                 'value' => function($model){
-                    $username = \app\models\Users::findOne($model->updated_by)['user_fio'];
+                    $username = \app\models\Users::findOne($model->updated_by)['username'];
                     return isset($username)?$username:$model->updated_by;
                 }
             ],

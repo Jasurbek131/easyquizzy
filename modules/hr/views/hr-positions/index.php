@@ -29,41 +29,29 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-//            'id',
             'name_uz',
             'name_ru',
             [
                 'attribute' => 'status_id',
-                'format' => 'raw',
                 'value' => function($model) {
-                    return BaseModel::getStatusList($model->status_id);
+                    return $model['status_id'] ? BaseModel::getStatusList($model['status_id']) : "";
                 },
-                'filter' => BaseModel::getStatusList()
+                'filter' => BaseModel::getStatusList(),
+                'format' => 'raw'
             ],
-            [
-                'attribute' => 'created_by',
-                'value' => function($model){
-                    $username = \app\models\Users::findOne($model->created_by)['username'];
-                    return isset($username)?$username:$model->created_by;
-                }
-            ],
-            //'created_at',
-            //'updated_by',
-            //'updated_at',
-
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update}{view}{delete}',
                 'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
-                'visibleButtons' => [
-                    'view' => Yii::$app->user->can('hr-positions/view'),
-                    'update' => function($model) {
-                        return Yii::$app->user->can('hr-positions/update') && $model->status < BaseModel::STATUS_SAVED;
-                    },
-                    'delete' => function($model) {
-                        return Yii::$app->user->can('hr-positions/delete') && $model->status < BaseModel::STATUS_SAVED;
-                    }
-                ],
+//                'visibleButtons' => [
+//                    'view' => Yii::$app->user->can('hr-positions/view'),
+//                    'update' => function($model) {
+//                        return Yii::$app->user->can('hr-positions/update'); // && $model->status < $model::STATUS_SAVED;
+//                    },
+//                    'delete' => function($model) {
+//                        return Yii::$app->user->can('hr-positions/delete'); // && $model->status < $model::STATUS_SAVED;
+//                    }
+//                ],
                 'buttons' => [
                     'update' => function ($url, $model) {
                         return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
@@ -73,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="fa fa-eye-open"></span>', $url, [
+                        return Html::a('<span class="fa fa-eye"></span>', $url, [
                             'title' => Yii::t('app', 'View'),
                             'class'=> 'btn btn-xs btn-default view-dialog mr1',
                             'data-form-id' => $model->id,
