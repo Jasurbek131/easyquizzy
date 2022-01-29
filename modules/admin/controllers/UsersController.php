@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\BaseModel;
 use app\modules\admin\models\AuthAssignment;
 use Yii;
 use app\models\Users;
@@ -160,20 +161,24 @@ class UsersController extends Controller
     public function actionDelete($id)
     {
         $transaction = Yii::$app->db->beginTransaction();
-        $isDeleted = false;
+        $isDeleted = true;
         $model = $this->findModel($id);
+        $model->hr_employee_id = !empty($model->hrEmployees) ? $model->hrEmployees[0]["hr_employee_id"] : "";
         try {
-            if($model->delete()){
-                $isDeleted = true;
-            }
-            if($isDeleted){
+            $model->status_id = BaseModel::STATUS_INACTIVE;
+            if(!$model->save())
+                $isDeleted = false;
+
+            if($isDeleted)
                 $transaction->commit();
-            }else{
+            else
                 $transaction->rollBack();
-            }
+
         }catch (\Exception $e){
             Yii::info('Not saved' . $e, 'save');
+            $isDeleted = false;
         }
+
         if(Yii::$app->request->isAjax){
             Yii::$app->response->format = Response::FORMAT_JSON;
             $response = [];
