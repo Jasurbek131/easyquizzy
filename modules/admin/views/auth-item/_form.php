@@ -71,6 +71,15 @@ use yii\widgets\ActiveForm;
             'max' => 30,
             'min' => 0,
             'cloneButton' => true,
+            'addButtonOptions' => [
+                'class' => 'btn btn-xs btn-success'
+            ],
+            'removeButtonOptions' => [
+                'class' => 'btn btn-xs btn-danger'
+            ],
+            'cloneButtonOptions' => [
+                'class' => 'btn btn-xs btn-info'
+            ],
             'iconSource' => CustomMultipleInput::ICONS_SOURCE_FONTAWESOME,
             'columns' => [
                 [
