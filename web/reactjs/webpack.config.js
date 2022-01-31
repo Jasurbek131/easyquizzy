@@ -49,26 +49,31 @@ let other = {
         ]
     }
 }
-let document = {
-    output: {
-        filename: './app/index.bundle.js',
+let all = {
+    name: 'all',
+    mode: "development",
+    entry: {
+        document: `${SRC_DIR}/app/modules/plm/Document/Document.js`,
     },
-    name: 'index',
-    entry: `./src/app/index.js`,
-    mode: 'development',
+    output: {
+        path: `${DIST_DIR}/app`,
+        filename: '[name].bundle.js',
+        publicPath: "/app/"
+    },
 };
 
-let index = {
+let document = {
     output: {
-        filename: './app/index.bundle.js',
+        filename: './app/document.bundle.js',
     },
     name: 'index',
-    entry: `./src/app/index.js`,
+    entry: `./src/app/modules/plm/Document/Document.js`,
     mode: 'development',
 };
 
 /**  Base Module end*/
 config = [
-    {...index, ...other},
+    {...all, ...other},
+    {...document, ...other},
 ];
 module.exports = config;

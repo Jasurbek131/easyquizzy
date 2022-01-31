@@ -48,6 +48,8 @@ $this->registerCss("
         padding: 5px 30px;
         border-radius: 4px;
         background: white;
+        padding-top: 30px;
+        padding-bottom: 10px;
     }
     body{
         background: #343A40!important;
