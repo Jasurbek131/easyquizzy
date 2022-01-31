@@ -49,17 +49,13 @@ let other = {
         ]
     }
 }
-let all = {
-    name: 'all',
-    mode: "development",
-    entry: {
-        index: `${SRC_DIR}/app/index.js`,
-    },
+let document = {
     output: {
-        path: `${DIST_DIR}/app`,
-        filename: '[name].bundle.js',
-        publicPath: "/app/"
+        filename: './app/index.bundle.js',
     },
+    name: 'index',
+    entry: `./src/app/index.js`,
+    mode: 'development',
 };
 
 let index = {
