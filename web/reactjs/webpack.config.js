@@ -66,7 +66,7 @@ let document = {
     output: {
         filename: './app/document.bundle.js',
     },
-    name: 'index',
+    name: 'document',
     entry: `./src/app/modules/plm/Document/Document.js`,
     mode: 'development',
 };

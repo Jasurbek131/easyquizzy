@@ -1,17 +1,17 @@
 import React from 'react'
 import {render} from "react-dom";
-import Index from 'index';
-import Form from 'form';
+import Index from './index';
+import Form from './form';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-const PATH_NAME = '/uz/plm/models-list/model-list';
-const ModelList = (
-    <Router>
+const PATHNAME = window.location.pathname.substring(0,3);
+const app = (
+    <Router basename={PATHNAME+'/plm/plm-documents/document'}>
         <Switch>
-            <Route path={PATH_NAME+"/index"} component={Index}/>
-            <Route path={PATH_NAME+"/create/"} component={Form}/>
-            <Route path={PATH_NAME+"/update/:id"} component={Form}/>
-            <Route path="/" component={Index}/>
+            <Route path="/index" exact compact component={Index}/>
+            <Route path="/create" exact compact component={Form}/>
+            <Route path="/update/:id" exact compact component={Form}/>
         </Switch>
-    </Router>);
+    </Router>
+);
 
-render(ModelList, window.document.getElementById('root'));
+render(app, window.document.getElementById('root'));

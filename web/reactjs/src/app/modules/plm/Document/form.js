@@ -1,9 +1,8 @@
 import React from "react";
-import {render} from "react-dom";
 import {Flip, ToastContainer} from 'react-toastify';
 
 
-class Root extends React.Component {
+class Form extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -21,9 +20,9 @@ class Root extends React.Component {
                 <div className="no-print">
                     <ToastContainer autoClose={3000} position={'top-right'} transition={Flip} draggablePercent={60} closeOnClick={true} pauseOnHover closeButton={true}/>
                 </div>
-                <div className={'row'}>
-                    <div className={'col-sm-12'}>
-                        REACT JS
+                <div className={'card'}>
+                    <div className={'card-body'}>
+                        Create Update
                     </div>
                 </div>
             </div>
@@ -31,4 +30,4 @@ class Root extends React.Component {
     }
 }
 
-render((<Root/>), window.document.getElementById('root'));
+export default Form;

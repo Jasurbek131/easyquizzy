@@ -34,4 +34,12 @@ class PlmDocumentsController extends Controller
         return $this->render('index');
     }
 
+    /**
+     * @return string
+     */
+    public function actionDocument()
+    {
+        return $this->render('document');
+    }
+
 }
