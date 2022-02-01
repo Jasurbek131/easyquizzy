@@ -21,8 +21,7 @@ use Yii;
  *
  * @property HrDepartments $hrDepartments
  * @property PlmProcessingTime[] $plmProcessingTimes
- * @property PlmPlannedStop[] $plmPlannedStops
- * @property PlmUnplannedStop[] $plmUnplannedStops
+ * @property PlmStops[] $plmStops
  */
 class PlmDocuments extends BaseModel
 {
@@ -89,7 +88,7 @@ class PlmDocuments extends BaseModel
      */
     public function getPlmPlannedStops()
     {
-        return $this->hasMany(PlmPlannedStop::className(), ['doc_id' => 'id']);
+        return $this->hasMany(PlmStops::className(), ['doc_id' => 'id']);
     }
 
     /**
@@ -97,6 +96,6 @@ class PlmDocuments extends BaseModel
      */
     public function getPlmUnplannedStops()
     {
-        return $this->hasMany(PlmUnplannedStop::className(), ['doc_id' => 'id']);
+        return $this->hasMany(PlmStops::className(), ['doc_id' => 'id']);
     }
 }
