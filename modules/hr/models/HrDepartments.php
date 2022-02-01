@@ -39,7 +39,7 @@ class HrDepartments extends Tree
         return [
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['name','name_uz', 'name_ru', 'token'], 'string', 'max' => 255],
+            [['name', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
     }
 
@@ -72,7 +72,7 @@ class HrDepartments extends Tree
     }
 
     public static function getList($key = null, $isArray = false) {
-        $list = self::find()->select(['id as value', 'name_uz as label'])->asArray()->all();
+        $list = self::find()->select(['id as value', 'name as label'])->asArray()->all();
         if ($isArray) {
             return $list;
         }
