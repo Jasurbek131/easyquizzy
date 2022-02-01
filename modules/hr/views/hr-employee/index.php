@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'hr_department_id',
                 'value' => function($model) {
                     if ($model->hr_department_id) {
-                        return $model->hrDepartments->name_uz;
+                        return $model->hrDepartments->name;
                     }
                     return "";
                 }
