@@ -14,6 +14,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'equipment_group_id')->widget(\kartik\select2\Select2::classname(), [
+        'data' => \app\modules\references\models\EquipmentGroup::getList(),
+        'options' => ['placeholder' => 'Select ...'],
+        'pluginOptions' => [
+            'allowClear' => true,
+        ]
+    ]) ?>
+
 <!--    --><?php //= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'part_number')->textInput(['maxlength' => true]) ?>

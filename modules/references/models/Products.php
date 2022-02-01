@@ -19,6 +19,7 @@ use yii\helpers\ArrayHelper;
  * @property int $updated_by
  *
  * @property ProductLifecycle[] $productLifecycles
+ * @property int $equipment_group_id [integer]
  */
 class Products extends BaseModel
 {
@@ -41,6 +42,7 @@ class Products extends BaseModel
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['code', 'part_number'], 'string', 'max' => 100],
+            [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::className(), 'targetAttribute' => ['equipment_group_id' => 'id']],
         ];
     }
 
@@ -62,6 +64,13 @@ class Products extends BaseModel
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEquipmentGroup()
+    {
+        return $this->hasOne(EquipmentGroup::className(), ['id' => 'equipment_group_id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
