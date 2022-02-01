@@ -68,7 +68,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
-                    'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
+                    'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
                         'view' => Yii::$app->user->can('<?= Inflector::camel2id(StringHelper::basename($generator->viewPath)) ?>/view'),
                         'update' => function($model) {
@@ -100,11 +100,10 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
                                 'data-form-id' => $model->id,
                             ]);
                         },
-
+                    ],
                 ],
             ],
-        ],
-    ]); ?>
+        ]) ?>
 <?php else: ?>
     <?= "<?= " ?>ListView::widget([
         'dataProvider' => $dataProvider,
@@ -122,7 +121,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     'model' => '<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>',
     'crud_name' => '<?= Inflector::camel2id(StringHelper::basename($generator->viewPath)) ?>',
     'modal_id' => '<?= Inflector::camel2id(StringHelper::basename($generator->viewPath)) ?>-modal',
-    'modal_header' => '<h3>'. Yii::t('app', '<?=Inflector::camel2words(StringHelper::basename($generator->viewPath)) ?>') . '</h3>',
+    'modal_header' => '<h5>'. Yii::t('app', '<?=Inflector::camel2words(StringHelper::basename($generator->viewPath)) ?>') . '</h5>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',

@@ -34,13 +34,13 @@ if ($slug && $t){
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li class="item-lang">
+        <li class="item-lang dropdown-item">
             <?= Html::a(Html::img('/img/flags/uz.png', ['width'=>'20']). ' UZ', [
                 $url,
                 'language' => 'uz'
             ]); ?>
         </li>
-        <li class="item-lang">
+        <li class="item-lang dropdown-item">
             <?= Html::a(Html::img('/img/flags/ru.png', ['width'=>'20']). ' RU', [
                 $url,
                 'language' => 'ru'
