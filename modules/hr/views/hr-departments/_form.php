@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>s
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'name_ru')->textInput(['maxlength' => true]) ?>
 
