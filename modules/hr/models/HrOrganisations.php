@@ -5,12 +5,12 @@ namespace app\modules\hr\models;
 use app\models\Users;
 use kartik\tree\models\Tree;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "hr-organisations".
  *
  * @property int $id
- * @property string $name
  * @property string $name_ru
  * @property string $slug
  * @property int $status_id
@@ -19,8 +19,8 @@ use Yii;
  * @property int $updated_by
  * @property int $updated_at
  *
- * @property HrDepartments[] $hrDepartmentss
- * @property Users[] $userss
+ * @property string $name_uz [varchar(255)]
+ * @property bool $child_allowed [boolean]
  */
 class HrOrganisations extends Tree
 {
@@ -88,5 +88,25 @@ class HrOrganisations extends Tree
             $this->status_id = \app\models\BaseModel::STATUS_ACTIVE;
 
         return parent::beforeSave($insert);
+    }
+
+
+    public static function getList($key = null, $isArray = false) {
+        if (!is_null($key)){
+            $one = self::findOne($key);
+            if (!empty($one)) {
+                return $one['name'];
+            }
+            return "";
+        }
+        $list = self::find()
+            ->select(['id as value', "name as label"])
+            ->asArray()
+            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->all();
+        if ($isArray) {
+            return $list;
+        }
+        return ArrayHelper::map($list, 'value', 'label');
     }
 }

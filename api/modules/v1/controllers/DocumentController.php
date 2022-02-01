@@ -2,6 +2,10 @@
 
 namespace app\api\modules\v1\controllers;
 
+use app\models\BaseModel;
+use app\models\Users;
+use app\modules\hr\models\HrOrganisations;
+use app\modules\hr\models\UsersRelationHrDepartments;
 use Yii;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -14,7 +18,7 @@ use app\api\modules\v1\components\CorsCustom;
  */
 class DocumentController extends ActiveController
 {
-    public $modelClass = 'app\modules\admin\models\Users';
+    public $modelClass = 'app\models\Users';
 
     public $enableCsrfValidation = false;
 
@@ -96,6 +100,48 @@ class DocumentController extends ActiveController
         $response['status'] = 'true';
         $post = Yii::$app->request->post();
         $response['post'] = $post;
+        return $response;
+    }
+
+    /**
+     * @param $type
+     * @return array
+     */
+    public function actionFetchList($type): array
+    {
+        $response['status'] = false;
+        $language = Yii::$app->language;
+        $response['message'] = Yii::t('app', "Ma'lumotlar yetarli emas!");
+        switch ($type) {
+            case "CREATE_DOCUMENT":
+                $response['status'] = true;
+                $id = Yii::$app->user->id;
+
+                $response['organisationList'] = UsersRelationHrDepartments::find()->alias('urd')->select([
+                    'ho.id as value', 'ho.name as label'
+                ])
+                    ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
+                    ->leftJoin('hr_organisations ho', 'hd.hr_organisation_id = ho.id')
+                    ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
+                    ->andWhere(['urd.user_id' => $id])
+                    ->groupBy('ho.id')
+                    ->asArray()->all();
+
+                $response['departmentList'] = UsersRelationHrDepartments::find()->alias('urd')->select([
+                    'hd.id as value', "hd.name_{$language} as label"
+                ])
+                    ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
+                    ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
+                    ->andWhere(['urd.user_id' => $id])
+                    ->groupBy('hd.id')
+                    ->asArray()->all();
+
+                $response['user_id'] = $id;
+                break;
+            case "UPDATE_DOCUMENT":
+                $response['status'] = true;
+                break;
+        }
         return $response;
     }
 

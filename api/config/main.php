@@ -9,6 +9,7 @@ return [
     'timeZone' => 'Asia/Tashkent',
     'basePath' => dirname(__DIR__) . '/..',
     'bootstrap' => ['log'],
+    'language' => 'uz',
     'components' => [
         'authManager' => [
             // Run migration
@@ -22,7 +23,7 @@ return [
             ]
         ],
         'user' => [
-            'identityClass' => 'app\modules\admin\models\Users',
+            'identityClass' => 'app\models\Users',
             'enableAutoLogin' => false,
         ],
         'log' => [
@@ -48,11 +49,18 @@ return [
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => ['v1/users', 'v2/default'],
+                    'controller' => [
+                        'v1/document',
+                        'v2/default'
+                    ],
                     'extraPatterns' => [
                         'POST index' => 'index',
                         'GET index' => 'index',
                         'OPTIONS index' => 'index',
+
+                        'POST fetch-list' => 'fetch-list',
+                        'GET fetch-list' => 'fetch-list',
+                        'OPTIONS fetch-list' => 'fetch-list',
                     ],
                 ],
                 //  '<controller:\w+>/<action:\w+>' => '<controller>/<action>',

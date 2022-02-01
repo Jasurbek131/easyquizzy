@@ -41,10 +41,7 @@ AppAsset::register($this);
         </div>
         <!-- end overlay tags -->
     </div>
-    <!-- Preloader -->
-    <div class="preloader flex-column justify-content-center align-items-center">
-        <?= Html::img('/img/noimage.png', ['style' => 'width:40px']) ?>
-    </div>
+
 
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -296,6 +293,20 @@ AppAsset::register($this);
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-building nav-icon"></i><p>{label}</p></a>',
                                 ],
                                 [
+                                    'label' => Yii::t('app', 'Hr Employee'),
+                                    'url' => '/hr/hr-employee/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'hr-employee' && $action == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
+                                ],
+                                [
+                                    'label' => Yii::t('app', 'Hr Departments'),
+                                    'url' => '/hr/hr-departments/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'hr-departments' && $action == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
+                                ],
+                                [
                                     'label' => Yii::t('app', 'Hr Positions'),
                                     'url' => '/hr/hr-positions/index',
                                     'options' => ['class' => 'nav-item'],
@@ -394,8 +405,15 @@ AppAsset::register($this);
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-
-        <?= Alert::widget() ?>
+        <?php
+        $message = Alert::widget();
+        if (!empty($message)): ?>
+        <div class="row">
+            <div class="col-12" style="padding: 5px 15px 0 15px;">
+                <?= $message ?>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <div class="row">
             <div class="col-12" style="padding: 5px 15px 10px 15px;">
@@ -418,6 +436,130 @@ AppAsset::register($this);
         document.getElementById("loading").style.display = "none";
     }
 </script>
+<?php
+$css = <<<CSS
+#loading{
+    z-index: 999999;
+}
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu>li:hover>.treeview-menu{
+    top:40px!important;
+}
+#snow{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    display:block;
+    text-align:center;
+    height: 120vh;
+    color: #FFF;
+    z-index: 999;
+}
+.spanner-body{
+    position:fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.6);
+    width: 100%;
+    display:block;
+    text-align:center;
+    height: 100vh;
+    color: #FFF;
+    z-index: 10000;
+    visibility: hidden;
+}
+.center__block{
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.overlay-body{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    visibility: hidden;
+}
+.spanner-body .spanner-text{
+    font-size: 35px;
+}
+.loader-ajax,
+.loader-ajax:before,
+.loader-ajax:after {
+    border-radius: 50%;
+    width: 2.5em;
+    height: 2.5em;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation: load7 1.8s infinite ease-in-out;
+    animation: load7 1.8s infinite ease-in-out;
+}
+.loader-ajax {
+    color: #ffffff;
+    font-size: 14px;
+    margin: 80px auto;
+    position: relative;
+    text-indent: -9999em;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+}
+.loader-ajax:before,
+.loader-ajax:after {
+    content: '';
+    position: absolute;
+    top: 0;
+}
+.loader-ajax:before {
+    left: -3.5em;
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+}
+.loader-ajax:after {
+    left: 3.5em;
+}
+@-webkit-keyframes load7 {
+    0%,
+    80%,
+    100% {
+        box-shadow: 0 2.5em 0 -1.3em;
+    }
+    40% {
+        box-shadow: 0 2.5em 0 0;
+    }
+}
+@keyframes load7 {
+    0%,
+    80%,
+    100% {
+        box-shadow: 0 2.5em 0 -1.3em;
+    }
+    40% {
+        box-shadow: 0 2.5em 0 0;
+    }
+}
+
+.show{
+    visibility: visible;
+}
+
+.spanner-body, .overlay-body{
+    opacity: 0;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+.spanner-body.show, .overlay.show {
+    opacity: 1
+}
+CSS;
+$this->registerCss($css);
+?>
 <?php $this->endBody() ?>
 </body>
 </html>
