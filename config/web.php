@@ -45,6 +45,7 @@ $config = [
                     'sourceLanguage' => 'en-US',
                     'fileMap' => [
                         'app' => 'app.php',
+                        'kvtree'  => 'kvtree.php',
 //                        'app/auth' => 'auth.php'
                     ],
                 ],

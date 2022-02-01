@@ -10,7 +10,7 @@ use Yii;
  * This is the model class for table "hr-organisations".
  *
  * @property int $id
- * @property string $name_uz
+ * @property string $name
  * @property string $name_ru
  * @property string $slug
  * @property int $status_id
@@ -40,7 +40,7 @@ class HrOrganisations extends Tree
         return [
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['name_uz', 'name_ru', 'slug'], 'string', 'max' => 255],
+            [['name', 'name_ru', 'slug'], 'string', 'max' => 255],
         ];
     }
 
@@ -51,7 +51,7 @@ class HrOrganisations extends Tree
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'name_uz' => Yii::t('app', 'Name Uz'),
+            'name' => Yii::t('app', 'Name'),
             'name_ru' => Yii::t('app', 'Name Ru'),
             'slug' => Yii::t('app', 'Slug'),
             'status_id' => Yii::t('app', 'Status ID'),
@@ -65,27 +65,28 @@ class HrOrganisations extends Tree
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getHrDepartmentss()
+    public function getHrDepartments()
     {
-        return $this->hasMany(HrDepartments::className(), ['hr_organisation_id' => 'id']);
+        return $this->hasMany(HrDepartments::class, ['hr_organisation_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUserss()
+    public function getUsers()
     {
-        return $this->hasMany(Users::className(), ['hr_organisation_id' => 'id']);
+        return $this->hasMany(Users::class, ['hr_organisation_id' => 'id']);
     }
 
-    public static function getOrganisationsList($isArray = false)
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
     {
-        $list = self::find()
-            ->addOrderBy('root, lft');
-//            ->filterWhere(['id' => self::getIdListByUser()]);
-        if ($isArray) {
-            return $list->select(['id as value', 'name_uz as label'])->asArray()->all();
-        }
-        return $list;
+        if ($this->isNewRecord)
+            $this->status_id = \app\models\BaseModel::STATUS_ACTIVE;
+
+        return parent::beforeSave($insert);
     }
 }
