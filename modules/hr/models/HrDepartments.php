@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\models;
 
+use kartik\tree\models\Tree;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -9,8 +10,7 @@ use yii\helpers\ArrayHelper;
  * This is the model class for table "hr_departments".
  *
  * @property int $id
- * @property int $hr_organisation_id
- * @property string $name_uz
+ * @property string $name
  * @property string $name_ru
  * @property string $token
  * @property int $status_id
@@ -19,10 +19,9 @@ use yii\helpers\ArrayHelper;
  * @property int $updated_by
  * @property int $updated_at
  *
- * @property HrOrganisations $hrOrganisations
  * @property HrEmployee[] $hrEmployees
  */
-class HrDepartments extends BaseModel
+class HrDepartments extends Tree
 {
     /**
      * {@inheritdoc}
@@ -38,10 +37,9 @@ class HrDepartments extends BaseModel
     public function rules()
     {
         return [
-            [['hr_organisation_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
-            [['hr_organisation_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['name_uz', 'name_ru', 'token'], 'string', 'max' => 255],
-            [['hr_organisation_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrOrganisations::className(), 'targetAttribute' => ['hr_organisation_id' => 'id']],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['name','name_uz', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
     }
 
@@ -52,7 +50,7 @@ class HrDepartments extends BaseModel
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'hr_organisation_id' => Yii::t('app', 'Hr Organisation ID'),
+            'name' => Yii::t('app', 'Name'),
             'name_uz' => Yii::t('app', 'Name Uz'),
             'name_ru' => Yii::t('app', 'Name Ru'),
             'token' => Yii::t('app', 'Token'),
@@ -64,13 +62,6 @@ class HrDepartments extends BaseModel
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getHrOrganisations()
-    {
-        return $this->hasOne(HrOrganisations::className(), ['id' => 'hr_organisation_id']);
-    }
 
     /**
      * @return \yii\db\ActiveQuery

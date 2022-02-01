@@ -10,7 +10,7 @@ use Yii;
  * This is the model class for table "users".
  *
  * @property int $id
- * @property int $hr_organisation_id
+ * @property int $hr_department_id
  * @property string|null $username
  * @property string|null $password
  * @property string|null $auth_key

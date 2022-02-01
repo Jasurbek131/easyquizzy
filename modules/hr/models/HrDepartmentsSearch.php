@@ -17,7 +17,7 @@ class HrDepartmentsSearch extends HrDepartments
     public function rules()
     {
         return [
-            [['id', 'hr_organisation_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['name_uz', 'name_ru', 'token'], 'safe'],
         ];
     }
@@ -59,7 +59,6 @@ class HrDepartmentsSearch extends HrDepartments
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'hr_organisation_id' => $this->hr_organisation_id,
             'status_id' => $this->status_id,
             'created_by' => $this->created_by,
             'created_at' => $this->created_at,
