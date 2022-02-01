@@ -20,13 +20,13 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/adminlte.css',
+        'css/adminlte.min.css',
         'css/font-awesome.min.css',
         'css/pnotify.css',
         'css/site.css',
     ];
     public $js = [
-        'js/adminlte.js',
+        'js/adminlte.min.js',
         'js/pnotify.js',
     ];
     public $depends = [

@@ -15,7 +15,8 @@ $this->title = Yii::t('app', 'Create');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Permissions'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-use kartik\widgets\Select2;
+
+use kartik\select2\Select2;
 use unclead\multipleinput\MultipleInput;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html; ?>

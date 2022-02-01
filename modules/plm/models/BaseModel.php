@@ -3,6 +3,7 @@ namespace app\modules\plm\models;
 
 use app\components\OurCustomBehavior;
 use app\models\StatusList;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -16,6 +17,9 @@ class BaseModel extends ActiveRecord
     const STATUS_ACTIVE             = 1;
     const STATUS_INACTIVE           = 2;
     const STATUS_SAVED              = 3;
+
+    const PLANNED_STOP =  1;
+    const UNPLANNED_STOP =  2;
 
     /**
      * @return array
@@ -49,5 +53,16 @@ class BaseModel extends ActiveRecord
             return $list;
         }
         return ArrayHelper::map($list, 'value', 'label');
+    }
+
+    public static function getStoppingList($key = null){
+        $result = [
+            self::PLANNED_STOP   => Yii::t('app','Planning stop'),
+            self::UNPLANNED_STOP => Yii::t('app','Unplanning stop'),
+        ];
+        if(!empty($key)){
+            return $result[$key];
+        }
+        return $result;
     }
 }

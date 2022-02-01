@@ -30,7 +30,7 @@ class ModalWindow extends Widget
         $fail_message = \Yii::t('app','Fail');
         return $this->render('view', [
             'model' => $this->model,
-            'crud_name' => ($this->crud_name)?$this->crud_name:$this->model,
+            'crud_name' => ($this->crud_name)?:$this->model,
             'modal_id' => $this->modal_id,
             'modal_header' => $this->modal_header,
             'active_from_class' => $this->active_from_class,

@@ -17,17 +17,18 @@ use Yii;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
+ * @property int $stopping_type
  *
  * @property PlmDocuments $plmDocuments
  */
-class PlmPlannedStop extends BaseModel
+class PlmStops extends BaseModel
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'plm_scheduled_stop';
+        return 'plm_stops';
     }
 
     /**
@@ -37,7 +38,7 @@ class PlmPlannedStop extends BaseModel
     {
         return [
             [['doc_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
-            [['doc_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['doc_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','stopping_type'], 'integer'],
             [['begin_date', 'end_time'], 'safe'],
             [['add_info'], 'string'],
             [['doc_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocuments::className(), 'targetAttribute' => ['doc_id' => 'id']],

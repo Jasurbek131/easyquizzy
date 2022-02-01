@@ -35,6 +35,7 @@ $config = [
         'authManager' => [
             // php yii migrate/up --migrationPath=@yii/rbac/migrations
             'class' => 'yii\rbac\DbManager',
+            'defaultRoles' => [],
         ],
         'i18n' => [
             'translations' => [
@@ -85,14 +86,20 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'languages' => ['uz','ru'],
             'class' => 'app\widgets\MultiLang\components\UrlManager',
-            'rules' => [
-                '' => 'site/index',
-                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+            'languages' => ['uz','ru'],
+            'ignoreLanguageUrlPatterns' => [
+                '#^api/#' => '#^api/#',
             ],
             'enableLanguageDetection' => true,
             'enableDefaultLanguageUrlCode' => true,
+            'rules' => [
+                'plm/plm-documents/<action>/<slug:\w+>/<id:\d+>' => 'plm/plm-documents/<action>',
+                'plm/plm-documents/<action>/<slug:\w+>' => 'plm/plm-documents/<action>',
+
+                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+                '' => 'site/index',
+            ],
         ],
 
     ],

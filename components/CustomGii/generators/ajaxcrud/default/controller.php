@@ -185,7 +185,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     } else {
                         $response['status'] = 1;
                         $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
+                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
                     }
                     return $response;
                 }
@@ -242,7 +242,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     } else {
                         $response['status'] = 1;
                         $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
+                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
                     }
                     return $response;
                 }
@@ -290,7 +290,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
             Yii::$app->response->format = Response::FORMAT_JSON;
             $response = [];
             $response['status'] = 1;
-            $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
+            $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
             if($isDeleted){
                 $response['status'] = 0;
                 $response['message'] = Yii::t('app','Deleted Successfully');
@@ -301,7 +301,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
             Yii::$app->session->setFlash('success',Yii::t('app','Deleted Successfully'));
             return $this->redirect(['index']);
         }else{
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Hatolik yuz berdi'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Ma\'lumotlar yetarli emas!'));
             return $this->redirect(['view', 'id' => $model->id]);
         }
     }

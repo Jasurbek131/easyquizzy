@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
     'model' => 'auth-item',
     'crud_name' => 'auth-item',
     'modal_id' => 'auth-item-modal',
-    'modal_header' => '<h3>'. Yii::t('app', 'Auth Items') . '</h3>',
+    'modal_header' => '<h5>'. Yii::t('app', 'Auth Items') . '</h5>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',
@@ -108,12 +108,3 @@ $this->params['breadcrumbs'][] = $this->title;
     'grid_ajax' => 'auth-item_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatan ham ushbu mahsulotni yo\'q qilmoqchimisiz?')
 ]); ?>
-<?php
-$css = <<< CSS
-.modal-header button.close {
-    opacity: 1;
-    font-size: 40px;
-    width: 55px;
-}
-CSS;
-$this->registerCss($css);
