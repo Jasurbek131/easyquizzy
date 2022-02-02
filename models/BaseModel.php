@@ -22,8 +22,13 @@ class BaseModel extends ActiveRecord
     const STATUS_SAVED              = 3;
 
 
+    // defect type
     const DEFECT_REPAIRED = 1; // Tamirlanadigan
     const DEFECT_SCRAPPED = 2; // Yaroqsiz
+
+    // category type
+    const CATEGORY_PLANNED = 1;
+    const CATEGORY_UNPLANNED = 2;
     /**
      * @return array
      */

@@ -109,6 +109,27 @@ class DocumentController extends ActiveController
      * @param $type
      * @return array
      */
+    public function actionSaveProperties($type): array
+    {
+        $response['message'] = Yii::t('app', "Ma'lumotlar yetarli emas!");
+        $response['status'] = false;
+        $post = Yii::$app->request->post();
+        switch ($type) {
+            case "SAVE_DOCUMENT":
+                echo "<pre>";
+                print_r($post);
+                echo "</pre>";exit;
+                break;
+            case "UPDATE":
+                break;
+        }
+        return $response;
+    }
+
+    /**
+     * @param $type
+     * @return array
+     */
     public function actionFetchList($type): array
     {
         $response['status'] = false;
@@ -158,14 +179,15 @@ class DocumentController extends ActiveController
                 $response['reasonList'] = Reasons::find()->select(['id as value', "name_{$language} as label"])
                     ->where(['status_id' => BaseModel::STATUS_ACTIVE])
                     ->asArray()->all();
-                $response['repairedList'] = Defects::find()->select(['id as value', "name_{$language} as label"])
+                $response['repaired'] = Defects::find()->select(['id as value', "name_{$language} as label"])
                     ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_REPAIRED])
                     ->asArray()->all();
-                $response['scrappedList'] = Defects::find()->select(['id as value', "name_{$language} as label"])
+                $response['scrapped'] = Defects::find()->select(['id as value', "name_{$language} as label"])
                     ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_SCRAPPED])
                     ->asArray()->all();
 
                 $response['user_id'] = $id;
+                $response['language'] = $language;
                 break;
             case "UPDATE_DOCUMENT":
                 $response['status'] = true;

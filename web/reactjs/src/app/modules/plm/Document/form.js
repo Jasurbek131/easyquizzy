@@ -1,12 +1,16 @@
 import React from "react";
-import {Flip, ToastContainer} from 'react-toastify';
+import {Flip, toast, ToastContainer} from 'react-toastify';
 import axios from "axios";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import customStyles from "../../../actions/style/customStyle.js";
 import ru from "date-fns/locale/ru/index.js";
+import uz from "date-fns/locale/uz/index.js";
+import {items} from "../../../actions/elements";
+import {removeElement} from "../../../actions/functions";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
+const PATHNAME = window.location.pathname.substring(0,3)+'/plm/plm-documents/document';
 
 class Form extends React.Component {
     constructor(props, context) {
@@ -25,63 +29,36 @@ class Form extends React.Component {
                 hr_organisation_id: "",
                 add_info: ""
             },
-            plm_document_items: [{
-                product_id: "",
-                planned_stop_id: "",
-                unplanned_stop_id: "",
-                repaired_id: "",
-                scrapped_id: "",
-                processing_time_id: "",
-                start_work: 0,
-                end_work: 0,
-                qty: "",
-                fact_qty: "",
-                repaired: {
-                    id: "",
-                    name_uz: "",
-                    category_id: "",
-                },
-                scrapped: {
-                    name_uz: "",
-                    type: "",
-                },
-                planned_stopped: {
-                    begin_date: "",
-                    end_time: "",
-                    add_info: "",
-                    reason_id: ""
-                },
-                unplanned_stopped: {
-                    begin_date: "",
-                    end_time: "",
-                    add_info: "",
-                    reason_id: "",
-                    bypass: ""
-                }
-            }],
-            repairedList: [],
-            scrappedList: [],
+            plm_document_items: [JSON.parse(JSON.stringify(items))],
             organisationList: [],
             departmentList: [],
             reasonList: [],
+            repairedList: [],
+            scrappedList: [],
             productList: [{
                 equipmentGroup: {equipmentGroupRelationEquipments: []}
-            }]
+            }],
+            language: 'uz'
         };
     }
 
     async componentDidMount() {
         this._isMounted = true;
+        let {plm_document_items} = this.state;
         const response = await axios.post(API_URL + 'fetch-list?type=CREATE_DOCUMENT');
         if (response.data.status) {
+            plm_document_items[0]['repaired'] = response.data?.repaired;
+            plm_document_items[0]['scrapped'] = response.data?.scrapped;
             this.setState({
               //  plm_document: response.data.plm_document,
+                plm_document_items: plm_document_items,
                 organisationList: response.data.organisationList,
                 departmentList: response.data.departmentList,
                 productList: response.data.productList,
                 reasonList: response.data.reasonList,
-                repairedList: response.data.repairedList,
-                scrappedList: response.data.scrappedList,
+                repairedList: response.data.repaired,
+                scrappedList: response.data.scrapped,
+                language: response.data.language,
                 isLoading: false
             });
         }
@@ -101,7 +78,7 @@ class Form extends React.Component {
                 break;
         }
 
-        let {plm_document_items} = this.state;
+        let {plm_document_items, modal} = this.state;
         switch (model) {
             case "plm_document":
                 let {plm_document} = this.state;
@@ -112,13 +89,28 @@ class Form extends React.Component {
                 if (name === 'product_id') {
                     plm_document_items[key]['equipmentList'] = e?.equipmentGroup?.equipmentGroupRelationEquipments ?? [];
                 }
+                if (name === "start_work") {
+                    plm_document_items[key]['end_work'] = "";
+                }
                 plm_document_items[key][name] = v;
                 this.setState({plm_document_items: plm_document_items});
                 break;
             case "modal":
-                let {modal} = this.state;
                 plm_document_items[modal.key][modal.type][name] = v;
+                if (name === "begin_date") {
+                    plm_document_items[modal.key][modal.type]['end_time'] = "";
+                }
                 this.setState({plm_document_items: plm_document_items});
+                break;
+            case "repaired":
+                plm_document_items[modal.key][modal.type][index]['count'] = v;
+                modal['model'][index]['count'] = v;
+                this.setState({plm_document_items: plm_document_items, modal: modal});
+                break;
+            case "scrapped":
+                plm_document_items[modal.key][modal.type][index]['count'] = v;
+                modal['model'][index]['count'] = v;
+                this.setState({plm_document_items: plm_document_items, modal: modal});
                 break;
         }
     }
@@ -163,8 +155,48 @@ class Form extends React.Component {
         this.setState({modal: modal});
     }
 
+    onReturnMin = (end, start) => {
+        let m = 0;
+        if (end && start) {
+            m = Math.round((new Date(end).getTime() - new Date(start).getTime())/60000);
+        }
+        return m;
+    }
+
+    onPush = (type, model, key, e) => {
+        let {plm_document_items} = this.state;
+        switch (type) {
+            case "add":
+                plm_document_items.push(JSON.parse(JSON.stringify(items)));
+                break;
+            case "remove":
+                plm_document_items = removeElement(plm_document_items, key);
+                break;
+        }
+        this.setState({plm_document_items: plm_document_items});
+    }
+
+    onSave = async (e) => {
+        let {plm_document, plm_document_items} = this.state;
+        let params = {
+            document: plm_document,
+            document_items: plm_document_items
+        };
+        const response = await axios.post(API_URL + 'save-properties?type=SAVE_DOCUMENT', params);
+        if (response.data.status) {
+            this.setUrl(PATHNAME+'/index');
+        } else {
+            toast.error(response.data.message);
+        }
+    }
+
+    setUrl = (url, e) => {
+        this.props.history.push(url);
+    };
+
     render() {
         const {
+            language,
             isLoading,
             modal,
             plm_document,
@@ -173,9 +205,7 @@ class Form extends React.Component {
             organisationList,
             departmentList,
             productList,
-            reasonList,
-            repairedList,
-            scrappedList
+            reasonList
         } = this.state;
         if (isLoading) {
             document.getElementById("loading").style.display = "block";
@@ -218,13 +248,13 @@ class Form extends React.Component {
                             </div>
                             <div className={'col-sm-3'}>
                                 <div className={'form-group'}>
-                                    <label className={"control-label"}>Reg Date</label>
+                                    <label className={"control-label"}>Sana</label>
                                     <DatePicker
                                         name={"reg_date"}
                                         onChange={(e)=>{
                                             this.onHandleChange('date', 'plm_document', 'reg_date', '', '', '', new Date(e))
                                         }}
-                                        locale={ru}
+                                        locale={language === "uz" ? uz : ru}
                                         id={'reg_date'}
                                         dateFormat="dd.MM.yyyy"
                                         className={"form-control"}
@@ -238,7 +268,7 @@ class Form extends React.Component {
                             </div>
                             <div className={'col-sm-3'}>
                                 <div className={'form-group'}>
-                                    <label className={"control-label"}>Info</label>
+                                    <label className={"control-label"}>Izoh</label>
                                     <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document', 'add_info', '', '', '')}
                                            name={'add_info'} value={plm_document?.add_info} className={'form-control'}/>
                                 </div>
@@ -246,10 +276,26 @@ class Form extends React.Component {
                         </div>
                     </div>
                     <div className={'card-body'}>
+                        <div className={'row'}>
+                            <div className={"col-sm-12 mb-2"}>
+                                <div className={"pull-right"}>
+                                    <button onClick={this.onPush.bind(this, 'add', 'plm_document_items', '')} className={"btn btn-sm btn-primary"}><i className={"fa fa-plus"}/></button>
+                                </div>
+                            </div>
+                        </div>
                         {
                             plm_document_items?.length > 0 && plm_document_items.map((item, key) => {
                                 return (
                                     <div className={"border-block"} key={key}>
+                                        {
+                                            key !== 0 ?
+                                            <div className={"pull-right"}>
+                                                <button onClick={this.onPush.bind(this, 'remove', 'plm_document_items', key)}
+                                                        className={"btn btn-sm btn-danger"}>
+                                                    <i className={"fa fa-time"}/>
+                                                </button>
+                                            </div> : ""
+                                        }
                                         <div className={"row"}>
                                             <div className={'col-sm-2'}>
                                                 <div className={'form-group'}>
@@ -283,28 +329,29 @@ class Form extends React.Component {
                                             <div className={'col-sm-1'}>
                                                 <div className={'row'}>
                                                     <div className={'col-sm-12 text-center'}>
-                                                        <div className={'form-group'}>
-                                                            <label className={"control-label"}>Start work</label>
-                                                            <DatePicker
-                                                                name={"start_work"}
-                                                                onChange={(e)=>{
-                                                                    this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
-                                                                }}
-                                                                locale={ru}
-                                                                id={'start_work'}
-                                                                dateFormat="HH:mm"
-                                                                className={"form-control"}
-                                                                selected={item.start_work ? new Date(item.start_work) : ""}
-                                                                autoComplete={'off'}
-                                                                showTimeSelect
-                                                                showTimeSelectOnly
-                                                                timeIntervals={10}
-                                                                timeCaption="Time"
-                                                            />
-                                                        </div>
+                                                        <label className={"control-label"}>Boshlanishi</label>
+                                                        <DatePicker
+                                                            name={"start_work"}
+                                                            onChange={(e)=>{
+                                                                this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
+                                                            }}
+                                                            locale={ru}
+                                                            id={'start_work'}
+                                                            dateFormat="HH:mm"
+                                                            className={"form-control"}
+                                                            selected={item.start_work ? new Date(item.start_work) : ""}
+                                                            autoComplete={'off'}
+                                                            showTimeSelect
+                                                            showTimeSelectOnly
+                                                            timeIntervals={10}
+                                                            timeCaption="Вақт"
+                                                        />
+                                                    </div>
+                                                    <div className={"col-sm-12 text-center mt-2"}>
+                                                        <label>{this.onReturnMin(item.end_work, item.start_work)} <small>min</small></label>
                                                     </div>
                                                     <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>End work</label>
+                                                        <label className={"control-label"}>Tugashi</label>
                                                         <DatePicker
                                                             name={"end_work"}
                                                             onChange={(e)=>{
@@ -315,54 +362,49 @@ class Form extends React.Component {
                                                             dateFormat="HH:mm"
                                                             className={"form-control"}
                                                             selected={item.end_work ? new Date(item.end_work) : ""}
+                                                            filterTime={(e) => {return new Date(item.start_work).getTime() < new Date(e).getTime()}}
                                                             autoComplete={'off'}
                                                             showTimeSelect
                                                             showTimeSelectOnly
                                                             timeIntervals={10}
-                                                            timeCaption="Time"
+                                                            timeCaption="Вақт"
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className={'col-sm-2'}>
-                                                <div className={'row mb-2'}>
+                                            <div className={'col-sm-2 pt-2'}>
+                                                <div className={'row mb-4'}>
                                                      <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Rejali to'xtalishlar <small>(min)</small></label>
+                                                        <label className={"control-label"}>Rejali to'xtalishlar</label>
                                                      </div>
                                                     <div className={'col-sm-12 text-center'}>
-                                                        <div className={'form-group'}>
-                                                            <label className={'mr-4'}>100</label>
-                                                            <button onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key)}
-                                                                    className={item.planned_stop_id ? "btn btn-xs btn-primary" : "btn btn-xs btn-success"}>
-                                                                {item.planned_stop_id ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                            </button>
-                                                        </div>
+                                                        <label className={'mr-4'}>{this.onReturnMin(item.planned_stopped.end_time, item.planned_stopped.begin_date)} <small>min</small></label>
+                                                        <button onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key)}
+                                                                className={item.planned_stop_id ? "btn btn-xs btn-primary" : "btn btn-xs btn-success"}>
+                                                            {item.planned_stop_id ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div className={'row'}>
+                                                <div className={'row mt-2'}>
                                                     <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Rejasiz to'xtalishlar <small>(min)</small></label>
+                                                        <label className={"control-label"}>Rejasiz to'xtalishlar</label>
                                                     </div>
                                                     <div className={'col-sm-12 text-center'}>
-                                                        <div className={'form-group'}>
-                                                            <label className={'mr-4'}>100</label>
-                                                            <button onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key)}
-                                                                    className={item.unplanned_stop_id ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                                {item.unplanned_stop_id ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                            </button>
-                                                        </div>
+                                                        <label className={'mr-4'}>{this.onReturnMin(item.unplanned_stopped.end_time, item.unplanned_stopped.begin_date)} <small>min</small></label>
+                                                        <button onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key)}
+                                                                className={item.unplanned_stop_id ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
+                                                            {item.unplanned_stop_id ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div className={'col-sm-1'}>
                                                 <div className={'row'}>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <div className={'form-group'}>
-                                                            <label className={"control-label"}>Rejada</label>
-                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'qty', key, '', '')}
+                                                    <div className={'col-sm-12 text-center mb-4'}>
+                                                        <label className={"control-label"}>Rejada</label>
+                                                        <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'qty', key, '', '')}
                                                                    type={'number'} className={'form-control'} value={item.qty}/>
-                                                        </div>
                                                     </div>
                                                     <div className={'col-sm-12 text-center'}>
                                                         <label className={"control-label"}>Ish/chiq</label>
@@ -372,18 +414,17 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
 
-                                            <div className={'col-sm-2'}>
-                                                <div className={'row mb-2'}>
+                                            <div className={'col-sm-2 pt-2'}>
+                                                <div className={'row mb-4'}>
                                                     <div className={'col-sm-12 text-center'}>
                                                         <label className={"control-label"}>Ta'mirlangan</label>
                                                     </div>
                                                     <div className={'col-sm-12 text-center'}>
-                                                        <div className={'form-group'}>
-                                                            <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key)}
-                                                                    className={item.repaired_id ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                                {item.repaired_id ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                            </button>
-                                                        </div>
+                                                        <label className={'mr-4'}>100</label>
+                                                        <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key)}
+                                                                className={item.repaired_id ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
+                                                            {item.repaired_id ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 <div className={'row'}>
@@ -391,12 +432,11 @@ class Form extends React.Component {
                                                         <label className={"control-label"}>Yaroqsiz</label>
                                                     </div>
                                                     <div className={'col-sm-12 text-center'}>
-                                                        <div className={'form-group'}>
-                                                            <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key)}
-                                                                     className={item.scrapped_id ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                                {item.scrapped_id ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                            </button>
-                                                        </div>
+                                                        <label className={'mr-4'}>100</label>
+                                                        <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key)}
+                                                                 className={item.scrapped_id ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
+                                                            {item.scrapped_id ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -407,7 +447,7 @@ class Form extends React.Component {
                         }
                     </div>
                     <div className={'card-footer'}>
-                        <button className={'btn btn-sm btn-success'}>Saqlash</button>
+                        <button onClick={this.onSave.bind(this)} className={'btn btn-sm btn-success'}>Saqlash</button>
                     </div>
                 </div>
 
@@ -458,6 +498,7 @@ class Form extends React.Component {
                                                             showYearDropdown
                                                             showTimeSelect
                                                             dateFormat="dd/MM/yyyy HH:mm"
+                                                            timeCaption="Вақт"
                                                         />
                                                     </div>
                                                 </div>
@@ -465,20 +506,23 @@ class Form extends React.Component {
                                                     <div className={"form-group"}>
                                                         <label className={"control-label"}>Tugadi</label>
                                                         <DatePicker
-                                                            name={"reg_date"}
+                                                            name={"end_time"}
                                                             onChange={(e) => {
                                                                 this.onHandleChange('date', 'modal', 'end_time', '', '', '', new Date(e))
                                                             }}
                                                             locale={ru}
-                                                            id={'reg_date'}
+                                                            id={'end_time'}
                                                             className={"form-control"}
                                                             selected={modal.model?.end_time ? new Date(modal.model?.end_time) : ""}
                                                             autoComplete={'off'}
+                                                            minDate={modal.model?.begin_date ? new Date(modal.model?.begin_date) : ""}
+                                                            filterTime={(e) => {return new Date(modal.model?.begin_date).getTime() < new Date(e).getTime()}}
                                                             peekNextMonth
                                                             showMonthDropdown
                                                             showYearDropdown
                                                             showTimeSelect
                                                             dateFormat="dd/MM/yyyy HH:mm"
+                                                            timeCaption="Вақт"
                                                         />
                                                     </div>
                                                 </div>
@@ -503,24 +547,13 @@ class Form extends React.Component {
                                             :
                                             <div className={'row'}>
                                                 {
-                                                    modal.type === "repaired" && repairedList?.length > 0 && repairedList.map((repaired, repairedKey) => {
+                                                    (modal.type === "repaired" || modal.type === "scrapped") && modal?.model?.length > 0 && modal.model.map((item, itemKey) => {
                                                         return (
-                                                            <div className={"col-sm-6"} key={repairedKey}>
+                                                            <div className={"col-sm-6"} key={itemKey}>
                                                                 <div className={"form-group"}>
-                                                                    <label>{repaired.label}</label>
-                                                                    <input type={"number"} className={"form-control"} value={repaired?.count ?? 0}/>
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
-                                                {
-                                                    modal.type === "scrapped" && scrappedList?.length > 0 && scrappedList.map((scrapped, scrappedKey) => {
-                                                        return (
-                                                            <div className={"col-sm-6"} key={scrappedKey}>
-                                                                <div className={"form-group"}>
-                                                                    <label>{scrapped.label}</label>
-                                                                    <input type={"number"} className={"form-control"} value={scrapped?.count ?? 0}/>
+                                                                    <label>{item.label}</label>
+                                                                    <input onChange={this.onHandleChange.bind(this, 'input', modal.type, 'count', modal.key, itemKey, '')}
+                                                                           type={"number"} className={"form-control"} value={item?.count ?? 0}/>
                                                                 </div>
                                                             </div>
                                                         )

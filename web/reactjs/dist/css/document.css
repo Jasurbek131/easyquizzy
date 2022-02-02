@@ -3,10 +3,17 @@
     border: 2px solid #d3cdcd;
     padding: 10px;
     border-radius: 5px;
+    margin-bottom: 12px;
 }
 .background-white {
     background-color: white!important;
 }
 .none-scroll {
     padding: 20px 30px;
+}
+.pull-right {
+    float: right!important;
+}
+.pull-left {
+    float: left!important;
 }

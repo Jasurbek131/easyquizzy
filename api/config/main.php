@@ -61,6 +61,10 @@ return [
                         'POST fetch-list' => 'fetch-list',
                         'GET fetch-list' => 'fetch-list',
                         'OPTIONS fetch-list' => 'fetch-list',
+
+                        'POST save-properties' => 'save-properties',
+                        'GET save-properties' => 'save-properties',
+                        'OPTIONS save-properties' => 'save-properties',
                     ],
                 ],
                 //  '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
