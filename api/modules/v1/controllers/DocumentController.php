@@ -3,12 +3,11 @@
 namespace app\api\modules\v1\controllers;
 
 use app\models\BaseModel;
-use app\models\Users;
-use app\modules\hr\models\UsersRelationHrDepartments;
-use app\modules\plm\models\PlmStops;
+use app\modules\hr\models\UsersRelationHrDepartments;;
+
+use app\modules\plm\models\Defects;
 use app\modules\plm\models\Reasons;
 use app\modules\references\models\Products;
-use Egulias\EmailValidator\Result\Reason\Reason;
 use Yii;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -124,18 +123,17 @@ class DocumentController extends ActiveController
                     'hd.id as value', 'hd.name as label'
                 ])
                     ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
-//                    ->leftJoin('hr_organisations ho', 'hd.hr_organisation_id = ho.id')
                     ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->andWhere(['urd.user_id' => $id])
-                    ->groupBy('ho.id')
+                    ->andWhere(['urd.user_id' => $id])->andWhere(['urd.is_root' => true])
+                    ->groupBy('hd.id')
                     ->asArray()->all();
 
                 $response['departmentList'] = UsersRelationHrDepartments::find()->alias('urd')->select([
-                    'hd.id as value', "hd.name_{$language} as label"
+                    'hd.id as value', "hd.name as label"
                 ])
                     ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
                     ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->andWhere(['urd.user_id' => $id])
+                    ->andWhere(['urd.user_id' => $id])->andWhere(['urd.is_root' => false])
                     ->groupBy('hd.id')
                     ->asArray()->all();
 
@@ -159,6 +157,12 @@ class DocumentController extends ActiveController
                     ->asArray()->all();
                 $response['reasonList'] = Reasons::find()->select(['id as value', "name_{$language} as label"])
                     ->where(['status_id' => BaseModel::STATUS_ACTIVE])
+                    ->asArray()->all();
+                $response['repairedList'] = Defects::find()->select(['id as value', "name_{$language} as label"])
+                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_REPAIRED])
+                    ->asArray()->all();
+                $response['scrappedList'] = Defects::find()->select(['id as value', "name_{$language} as label"])
+                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_SCRAPPED])
                     ->asArray()->all();
 
                 $response['user_id'] = $id;

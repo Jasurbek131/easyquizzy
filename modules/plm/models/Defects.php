@@ -17,7 +17,7 @@ use Yii;
  * @property int $updated_by
  * @property int $updated_at
  *
- * @property PlmDocumentItems[] $plmDocumentItemss
+ * @property PlmDocumentItems[] $plmDocumentItems
  */
 class Defects extends \yii\db\ActiveRecord
 {
@@ -62,7 +62,7 @@ class Defects extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPlmDocumentItemss()
+    public function getPlmDocumentItems()
     {
         return $this->hasMany(PlmDocumentItems::className(), ['defect_id' => 'id']);
     }

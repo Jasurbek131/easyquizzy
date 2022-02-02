@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\components\OurCustomBehavior;
 use app\widgets\Language;
+use Exception;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -20,6 +21,9 @@ class BaseModel extends ActiveRecord
     const STATUS_INACTIVE           = 2;
     const STATUS_SAVED              = 3;
 
+
+    const DEFECT_REPAIRED = 1; // Tamirlanadigan
+    const DEFECT_SCRAPPED = 2; // Yaroqsiz
     /**
      * @return array
      */
@@ -35,6 +39,9 @@ class BaseModel extends ActiveRecord
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public static function getStatusList($key = null, $isArray = false) {
         $language = Language::widget();
         if (!is_null($key)) {

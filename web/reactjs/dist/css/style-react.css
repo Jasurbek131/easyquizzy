@@ -276,7 +276,7 @@ p.sabu.text-center.sabu-code {
 }
 .modal-body {
     overflow-y: scroll;
-    max-height: 100vh;
+    max-height: 80vh;
 }
 
 .full-name {
