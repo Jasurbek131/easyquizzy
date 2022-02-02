@@ -20,10 +20,11 @@ use Yii;
  * @property int $updated_at
  *
  * @property HrDepartments $hrDepartments
+ * @property PlmDocumentItems[] $plmDocumentItems
  * @property PlmProcessingTime[] $plmProcessingTimes
  * @property PlmStops[] $plmStops
  */
-class PlmDocuments extends BaseModel
+class PlmDocuments extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -76,7 +77,22 @@ class PlmDocuments extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
+     */
+    public function getPlmDocumentItems()
+    {
+        return $this->hasMany(PlmDocumentItems::className(), ['document_id' => 'id']);
+    }
+    /**
+     * @return yii\db\ActiveQuery
+     */
+    public function getPlm_document_items()
+    {
+        return $this->hasMany(PlmDocumentItems::className(), ['document_id' => 'id']);
+    }
+
+    /**
+     * @return yii\db\ActiveQuery
      */
     public function getPlmProcessingTimes()
     {
@@ -84,17 +100,9 @@ class PlmDocuments extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
-    public function getPlmPlannedStops()
-    {
-        return $this->hasMany(PlmStops::className(), ['doc_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPlmUnplannedStops()
+    public function getPlmStops()
     {
         return $this->hasMany(PlmStops::className(), ['doc_id' => 'id']);
     }

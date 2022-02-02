@@ -17,9 +17,14 @@ use Yii;
  * @property int $processing_time_id
  * @property int $qty
  * @property int $fact_qty
+ * @property int $document_id
  *
+ * @property Defects $defects
+ * @property PlmDocuments $plmDocuments
  * @property PlmProcessingTime $plmProcessingTime
+ * @property PlmStops $plmStops
  * @property Products $products
+ * @property PlmDocItemDefects[] $plmDocItemDefects
  */
 class PlmDocumentItems extends \yii\db\ActiveRecord
 {
@@ -37,10 +42,11 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'planned_stop_id', 'unplanned_stop_id', 'repaired_id', 'scrapped_id', 'processing_time_id', 'qty', 'fact_qty'], 'default', 'value' => null],
-            [['product_id', 'planned_stop_id', 'unplanned_stop_id', 'repaired_id', 'scrapped_id', 'processing_time_id', 'qty', 'fact_qty'], 'integer'],
+            [['product_id', 'planned_stop_id', 'unplanned_stop_id', 'repaired_id', 'scrapped_id', 'processing_time_id', 'qty', 'fact_qty', 'document_id'], 'default', 'value' => null],
+            [['product_id', 'planned_stop_id', 'unplanned_stop_id', 'repaired_id', 'scrapped_id', 'processing_time_id', 'qty', 'fact_qty', 'document_id'], 'integer'],
             [['repaired_id'], 'exist', 'skipOnError' => true, 'targetClass' => Defects::className(), 'targetAttribute' => ['repaired_id' => 'id']],
             [['scrapped_id'], 'exist', 'skipOnError' => true, 'targetClass' => Defects::className(), 'targetAttribute' => ['scrapped_id' => 'id']],
+            [['document_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocuments::className(), 'targetAttribute' => ['document_id' => 'id']],
             [['processing_time_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmProcessingTime::className(), 'targetAttribute' => ['processing_time_id' => 'id']],
             [['planned_stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::className(), 'targetAttribute' => ['planned_stop_id' => 'id']],
             [['unplanned_stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::className(), 'targetAttribute' => ['unplanned_stop_id' => 'id']],
@@ -63,25 +69,25 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
             'processing_time_id' => Yii::t('app', 'Processing Time ID'),
             'qty' => Yii::t('app', 'Qty'),
             'fact_qty' => Yii::t('app', 'Fact Qty'),
+            'document_id' => Yii::t('app', 'Document ID'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRepaired()
+    public function getDefects()
     {
-        return $this->hasOne(Defects::className(), ['id' => 'repaired_id']);
+        return $this->hasOne(Defects::className(), ['id' => 'scrapped_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getScrapped()
+    public function getPlmDocuments()
     {
-        return $this->hasOne(Defects::className(), ['id' => 'scrapped_id']);
+        return $this->hasOne(PlmDocuments::className(), ['id' => 'document_id']);
     }
-
 
     /**
      * @return \yii\db\ActiveQuery
@@ -94,19 +100,25 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPlannedStopped()
+    public function getPlmStops()
     {
-        return $this->hasOne(PlmStops::className(), ['id' => 'planned_stop_id']);
+        return $this->hasOne(PlmStops::className(), ['id' => 'unplanned_stop_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnplannedStopped()
+    public function getPlanned_stopped()
+    {
+        return $this->hasOne(PlmStops::className(), ['id' => 'planned_stop_id']);
+    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUnplanned_stopped()
     {
         return $this->hasOne(PlmStops::className(), ['id' => 'unplanned_stop_id']);
     }
-
 
     /**
      * @return \yii\db\ActiveQuery
@@ -115,4 +127,29 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Products::className(), ['id' => 'product_id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlmDocItemDefects()
+    {
+        return $this->hasMany(PlmDocItemDefects::className(), ['doc_item_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRepaired()
+    {
+        return $this->hasMany(PlmDocItemDefects::className(), ['doc_item_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getScrapped()
+    {
+        return $this->hasMany(PlmDocItemDefects::className(), ['doc_item_id' => 'id']);
+    }
+
 }

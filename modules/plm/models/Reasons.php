@@ -20,7 +20,7 @@ use Yii;
  * @property Categories $categories
  * @property PlmDocumentItems[] $plmDocumentItemss
  */
-class Reasons extends \yii\db\ActiveRecord
+class Reasons extends BaseModel
 {
     /**
      * {@inheritdoc}

@@ -6,9 +6,9 @@ use yii\db\Migration;
  * Handles adding columns to table `{{%plm_stops}}`.
  * Has foreign keys to the tables:
  *
- * - `{{%plm_stops}}`
+ * - `{{%reasons}}`
  */
-class m220201_161546_add_reason_id_column_to_plm_stops_table extends Migration
+class m220202_152409_add_reason_id_column_to_plm_stops_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -24,12 +24,12 @@ class m220201_161546_add_reason_id_column_to_plm_stops_table extends Migration
             'reason_id'
         );
 
-        // add foreign key for table `{{%plm_stops}}`
+        // add foreign key for table `{{%reasons}}`
         $this->addForeignKey(
             '{{%fk-plm_stops-reason_id}}',
             '{{%plm_stops}}',
             'reason_id',
-            '{{%plm_stops}}',
+            '{{%reasons}}',
             'id',
             'CASCADE'
         );
@@ -40,7 +40,7 @@ class m220201_161546_add_reason_id_column_to_plm_stops_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%plm_stops}}`
+        // drops foreign key for table `{{%reasons}}`
         $this->dropForeignKey(
             '{{%fk-plm_stops-reason_id}}',
             '{{%plm_stops}}'

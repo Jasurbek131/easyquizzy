@@ -19,7 +19,7 @@ use Yii;
  *
  * @property Reasons[] $reasonss
  */
-class Categories extends \yii\db\ActiveRecord
+class Categories extends BaseModel
 {
     /**
      * {@inheritdoc}

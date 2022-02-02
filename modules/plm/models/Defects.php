@@ -19,7 +19,7 @@ use Yii;
  *
  * @property PlmDocumentItems[] $plmDocumentItems
  */
-class Defects extends \yii\db\ActiveRecord
+class Defects extends BaseModel
 {
     /**
      * {@inheritdoc}
