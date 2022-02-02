@@ -6,6 +6,10 @@ use app\models\BaseModel;
 use app\models\Users;
 use app\modules\hr\models\HrOrganisations;
 use app\modules\hr\models\UsersRelationHrDepartments;
+use app\modules\plm\models\PlmStops;
+use app\modules\plm\models\Reasons;
+use app\modules\references\models\Products;
+use Egulias\EmailValidator\Result\Reason\Reason;
 use Yii;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -134,6 +138,28 @@ class DocumentController extends ActiveController
                     ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
                     ->andWhere(['urd.user_id' => $id])
                     ->groupBy('hd.id')
+                    ->asArray()->all();
+
+                $response['productList'] = Products::find()->alias('p')->select([
+                    'p.id as value', "p.name as label", "p.equipment_group_id"
+                ])
+                    ->with([
+                        'equipmentGroup' => function($q) {
+                            return $q->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
+                                'equipmentGroupRelationEquipments' => function($e) {
+                                    return $e->from(['ere' => 'equipment_group_relation_equipment'])
+                                        ->select(['e.id', 'e.name', 'ere.equipment_group_id', 'ere.equipment_id'])
+                                        ->leftJoin('equipments e', 'ere.equipment_id = e.id')
+                                        ->orderBy(['ere.work_order' => SORT_ASC]);
+                                }
+                            ]);
+                        }
+                    ])
+                    ->where(['p.status_id' => BaseModel::STATUS_ACTIVE])
+                    ->groupBy('p.id')
+                    ->asArray()->all();
+                $response['reasonList'] = Reasons::find()->select(['id as value', "name_{$language} as label"])
+                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])
                     ->asArray()->all();
 
                 $response['user_id'] = $id;

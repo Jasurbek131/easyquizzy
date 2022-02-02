@@ -21,7 +21,7 @@ const customStyles = {
     control: (provided, state) => ({
         ...provided,
         background: '#fff',
-        borderRadius: '0.25rem',
+        borderRadius: '0.15rem',
         borderColor: state.selectProps.borderColor ??'#d2d6de',
         minHeight: '24px',
         boxShadow: state.isFocused ? null : null,

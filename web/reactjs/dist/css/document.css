@@ -1,0 +1,13 @@
+.border-block {
+    display: block;
+    border: 2px solid #d3cdcd;
+    padding: 10px;
+    border-radius: 5px;
+}
+.background-white {
+    background-color: white!important;
+}
+.none-scroll {
+    padding: 20px 30px;
+    overflow-y: visible;
+}
