@@ -286,10 +286,10 @@ AppAsset::register($this);
                             'visible' => true,
                             'items' => [
                                 [
-                                    'label' => Yii::t('app', 'Hr Organisations'),
-                                    'url' => '/hr/hr-organisations/index',
+                                    'label' => Yii::t('app', 'Hr Departments'),
+                                    'url' => '/hr/hr-departments/index',
                                     'options' => ['class' => 'nav-item'],
-                                    'active' => $controller == 'hr-organisations' && $action == 'index',
+                                    'active' => $controller == 'hr-departments' && $action == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-building nav-icon"></i><p>{label}</p></a>',
                                 ],
                                 [
@@ -297,13 +297,6 @@ AppAsset::register($this);
                                     'url' => '/hr/hr-employee/index',
                                     'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'hr-employee' && $action == 'index',
-                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
-                                ],
-                                [
-                                    'label' => Yii::t('app', 'Hr Departments'),
-                                    'url' => '/hr/hr-departments/index',
-                                    'options' => ['class' => 'nav-item'],
-                                    'active' => $controller == 'hr-departments' && $action == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
                                 ],
                                 [

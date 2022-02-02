@@ -4,7 +4,6 @@ namespace app\api\modules\v1\controllers;
 
 use app\models\BaseModel;
 use app\models\Users;
-use app\modules\hr\models\HrOrganisations;
 use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\plm\models\PlmStops;
 use app\modules\plm\models\Reasons;
@@ -122,10 +121,10 @@ class DocumentController extends ActiveController
                 $id = Yii::$app->user->id;
 
                 $response['organisationList'] = UsersRelationHrDepartments::find()->alias('urd')->select([
-                    'ho.id as value', 'ho.name as label'
+                    'hd.id as value', 'hd.name as label'
                 ])
                     ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
-                    ->leftJoin('hr_organisations ho', 'hd.hr_organisation_id = ho.id')
+//                    ->leftJoin('hr_organisations ho', 'hd.hr_organisation_id = ho.id')
                     ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
                     ->andWhere(['urd.user_id' => $id])
                     ->groupBy('ho.id')

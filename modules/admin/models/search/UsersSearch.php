@@ -17,7 +17,7 @@ class UsersSearch extends Users
     public function rules()
     {
         return [
-            [['id', 'status_id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'hr_organisation_id'], 'integer'],
+            [['id', 'status_id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'hr_department_id'], 'integer'],
             [['username', 'password', 'auth_key', 'hr_employee_id'], 'safe'],
         ];
     }
@@ -63,7 +63,7 @@ class UsersSearch extends Users
         // grid filtering conditions
         $query->andFilterWhere([
             "u.status_id" => $this->status_id,
-            "u.hr_organisation_id" => $this->hr_organisation_id,
+            "u.hr_department_id" => $this->hr_department_id,
         ]);
 
         $query->andFilterWhere(['ilike', "u.username", $this->username]);
