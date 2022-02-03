@@ -22,7 +22,7 @@ class ReactAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/adminlte.css',
+        'css/adminlte.min.css',
         'css/font-awesome.min.css',
         'reactjs/dist/css/style-react.css',
         'reactjs/dist/css/ReactToastify.css',
@@ -39,11 +39,12 @@ class ReactAsset extends AssetBundle
         }
     }
     public $js = [
-        'js/adminlte.js'
+        'js/adminlte.min.js',
+        'js/pnotify.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
-//        'yii\bootstrap\BootstrapPluginAsset',
+       // 'yii\bootstrap\BootstrapPluginAsset',
         'yii\bootstrap4\BootstrapAsset',
     ];
 }
