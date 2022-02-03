@@ -5,6 +5,7 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\hr\models\HrEmployee */
+/* @var $hrEmployeeRel app\modules\hr\models\HrEmployeeRelPosition */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Hr Employees', 'url' => ['index']];
@@ -37,9 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'attribute' => 'id',
-            ],
-            [
                 'attribute' => 'firstname',
             ],
             [
@@ -53,15 +51,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'email',
-            ],
-            [
-                'attribute' => 'hr_department_id',
-            ],
-            [
-                'attribute' => 'hr_position_id',
-            ],
-            [
-                'attribute' => 'status_id',
             ],
             [
                 'attribute' => 'created_by',
@@ -79,23 +68,44 @@ $this->params['breadcrumbs'][] = $this->title;
                     return (time()-$model->created_at<(60*60*24))?Yii::$app->formatter->format(date($model->created_at), 'relativeTime'):date('d.m.Y H:i',$model->created_at);
                 }
             ],
-            [
-                'attribute' => 'updated_by',
-                'value' => function($model){
-                    if ($model->updated_by) {
-                        $username = \app\models\Users::findOne($model->updated_by)['username'];
-                        return $username ?? $model->updated_by;
-                    }
-                    return false;
-                }
-            ],
-            [
-                'attribute' => 'updated_at',
-                'value' => function($model){
-                    return (time()-$model->updated_at<(60*60*24))?Yii::$app->formatter->format(date($model->updated_at), 'relativeTime'):date('d.m.Y H:i',$model->updated_at);
-                }
-            ],
         ],
     ]) ?>
-
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="text-center"><?=Yii::t("app","Hodimga shu vaqtgacha biritirgan lavozimlar");?></h5>
+            <?php if($hrEmployeeRel):?>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td class="text-bold"><?=Yii::t("app","№");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Bo'limi");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Lavozimi");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Lavozimga kelgan vaqti");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Lavozimdan ketgan vaqti");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Holati");?></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <?php $i = 1; foreach ($hrEmployeeRel as $item):?>
+                            <?php if($item['status'] == \app\models\BaseModel::STATUS_ACTIVE):
+                                    $class = "background:#B9FEA4";
+                            ?>
+                            <?php else:
+                                    $class = "background:#FFB4A2";
+                            ?>
+                            <?php endif;?>
+                            <tr style="<?=$class?>">
+                                <td><?=$i?></td>
+                                <td><?=$item['department_name']?></td>
+                                <td><?=$item['position_name']?></td>
+                                <td><?=($item['begin_date']) ? date('d.m.Y',strtotime($item['begin_date'])) : ""?></td>
+                                <td><?=($item['end_date']) ? date('d.m.Y',strtotime($item['end_date'])) : ""?></td>
+                                <td><?=$item['status_name']?></td>
+                            </tr>
+                            <?php $i++; endforeach;?>
+                    </tbody>
+                </table>
+            <?php endif;?>
+        </div>
+    </div>
 </div>
