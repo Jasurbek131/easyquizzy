@@ -293,11 +293,11 @@ AppAsset::register($this);
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-building nav-icon"></i><p>{label}</p></a>',
                                 ],
                                 [
-                                    'label' => Yii::t('app', 'Hr Employee'),
+                                    'label' => Yii::t('app', 'Hr Employees'),
                                     'url' => '/hr/hr-employee/index',
                                     'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'hr-employee' && $action == 'index',
-                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-user nav-icon"></i><p>{label}</p></a>',
                                 ],
                                 [
                                     'label' => Yii::t('app', 'Hr Positions'),
