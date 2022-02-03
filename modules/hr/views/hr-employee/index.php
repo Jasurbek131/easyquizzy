@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'fathername',
             'phone_number',
             'email:email',
-            [
+            /*[
                 'attribute' => 'hr_department_id',
                 'value' => function($model) {
                     if ($model->hr_department_id) {
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                     return "";
                 }
-            ],
+            ],*/
 
                 [
                     'class' => 'yii\grid\ActionColumn',
@@ -105,7 +105,13 @@ $this->params['breadcrumbs'][] = $this->title;
     'create_button' => 'create-dialog',
     'view_button' => 'view-dialog',
     'delete_button' => 'delete-dialog',
-    'modal_size' => 'modal-md',
+    'modal_size' => 'modal-lg',
     'grid_ajax' => 'hr-employee_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
-]); ?>
+]);
+$this->registerCss('
+    .modal-lg{
+        max-width:80%;
+    }
+');
+?>

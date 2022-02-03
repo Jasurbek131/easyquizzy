@@ -14,8 +14,6 @@ use yii\helpers\ArrayHelper;
  * @property string $fathername
  * @property string $phone_number
  * @property string $email
- * @property int $hr_department_id
- * @property int $hr_position_id
  * @property int $status_id
  * @property int $created_by
  * @property int $created_at
@@ -23,6 +21,7 @@ use yii\helpers\ArrayHelper;
  * @property int $updated_at
  *
  * @property HrDepartments $hrDepartments
+ * @property HrEmployeeRelPosition[] $hrEmployeeRelPosition
  * @property HrPositions $hrPositions
  */
 class HrEmployee extends BaseModel
@@ -41,12 +40,10 @@ class HrEmployee extends BaseModel
     public function rules()
     {
         return [
-            [['hr_department_id', 'hr_position_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
-            [['hr_department_id', 'hr_position_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['firstname', 'lastname', 'fathername', 'email'], 'string', 'max' => 255],
             [['phone_number'], 'string', 'max' => 30],
-            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
-            [['hr_position_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrPositions::class, 'targetAttribute' => ['hr_position_id' => 'id']],
         ];
     }
 
@@ -62,8 +59,6 @@ class HrEmployee extends BaseModel
             'fathername' => Yii::t('app', 'Fathername'),
             'phone_number' => Yii::t('app', 'Phone Number'),
             'email' => Yii::t('app', 'Email'),
-            'hr_department_id' => Yii::t('app', 'Hr Department ID'),
-            'hr_position_id' => Yii::t('app', 'Hr Position ID'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_by' => Yii::t('app', 'Created By'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -72,20 +67,9 @@ class HrEmployee extends BaseModel
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getHrDepartments()
+    public function getHrEmployeeRelPosition()
     {
-        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getHrPositions()
-    {
-        return $this->hasOne(HrPositions::class, ['id' => 'hr_position_id']);
+        return $this->hasMany(HrEmployeeRelPosition::class, ['hr_employee_id' => 'id']);
     }
 
     /**
