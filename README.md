@@ -1,2 +1,1 @@
-# easyquizzy
-Easy Quizzy
+Til o'rganish uchun qilingan
