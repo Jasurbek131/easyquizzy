@@ -30,5 +30,10 @@ export const items = {
         add_info: "",
         reason_id: "",
         bypass: ""
+    },
+    equipmentGroup: {
+        equipmentGroupRelationEquipments: [
+            { label: "", value: "" }
+        ]
     }
 };

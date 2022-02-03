@@ -24,7 +24,7 @@ use Yii;
  * @property PlmProcessingTime[] $plmProcessingTimes
  * @property PlmStops[] $plmStops
  */
-class PlmDocuments extends \yii\db\ActiveRecord
+class PlmDocuments extends BaseModel
 {
     /**
      * {@inheritdoc}

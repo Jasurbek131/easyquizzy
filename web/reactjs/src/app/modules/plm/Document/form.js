@@ -7,7 +7,7 @@ import customStyles from "../../../actions/style/customStyle.js";
 import ru from "date-fns/locale/ru/index.js";
 import uz from "date-fns/locale/uz/index.js";
 import {items} from "../../../actions/elements";
-import {removeElement} from "../../../actions/functions";
+import {loadingContent, removeElement} from "../../../actions/functions";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
 
@@ -37,6 +37,7 @@ class Form extends React.Component {
             productList: [{
                 equipmentGroup: {equipmentGroupRelationEquipments: []}
             }],
+            equipmentList: [],
             language: 'uz'
         };
     }
@@ -45,6 +46,7 @@ class Form extends React.Component {
         this._isMounted = true;
         let id = "";
         let response;
+        let {history} = this.props;
         if (this.props.match.path === "/update/:id") {
             id = this.props.match.params.id;
             response = await axios.post(API_URL + 'fetch-list?type=CREATE_DOCUMENT&id='+id);
@@ -67,12 +69,18 @@ class Form extends React.Component {
                 organisationList: response.data.organisationList,
                 departmentList: response.data.departmentList,
                 productList: response.data.productList,
+                equipmentList: response.data.equipmentList,
                 reasonList: response.data.reasonList,
                 repairedList: response.data.repaired,
                 scrappedList: response.data.scrapped,
                 language: response.data.language,
                 isLoading: false
             });
+        } else {
+            toast.error(response.data.message);
+            setTimeout(function () {
+                history.goBack()
+            }, 5000);
         }
     }
 
@@ -100,6 +108,10 @@ class Form extends React.Component {
                 let {plm_document} = this.state;
                 plm_document[name] = v;
                 this.setState({plm_document: plm_document});
+                break;
+            case "equipment":
+                plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'][index][name] = v;
+                this.setState({plm_document_items: plm_document_items});
                 break;
             case "plm_document_items":
                 if (name === 'product_id') {
@@ -131,9 +143,43 @@ class Form extends React.Component {
         }
     }
 
+    arrayUnique = (arr1, arr2) => {
+        let a = arr1;
+        if (arr1?.length === 0) {
+            return arr2;
+        }
+        let isYes = true;
+        if (arr2?.length > 0) {
+            arr2.map((item2, key2) => {
+                isYes = true;
+                arr1.map((item1, key1) => {
+                    if (+item2.value === +item1.value) {
+                        isYes = false;
+                    }
+                });
+                if (isYes) {
+                    a.push(item2);
+                }
+            });
+        }
+        return a;
+    }
+
     onOpenModal = (type, title, key) => {
-        let {plm_document_items} = this.state;
+        let {plm_document_items, repairedList, scrappedList} = this.state;
         let model = plm_document_items[key][type];
+        switch (type) {
+            case "repaired":
+                model = this.arrayUnique(model, repairedList);
+                plm_document_items[key][type] = model;
+                this.setState({plm_document_items: plm_document_items});
+                break;
+            case "scrapped":
+                model = this.arrayUnique(model, scrappedList);
+                plm_document_items[key][type] = model;
+                this.setState({plm_document_items: plm_document_items});
+                break;
+        }
         let modal = {
             display: "block",
             title: title,
@@ -179,14 +225,30 @@ class Form extends React.Component {
         return m;
     }
 
-    onPush = (type, model, key, e) => {
+    onPush = (type, model, key, index, e) => {
         let {plm_document_items} = this.state;
         switch (type) {
             case "add":
-                plm_document_items.push(JSON.parse(JSON.stringify(items)));
+                let newItems = items;
+                newItems.repaired = this.state.repairedList;
+                newItems.scrapped = this.state.scrappedList;
+                plm_document_items.push(JSON.parse(JSON.stringify(newItems)));
                 break;
             case "remove":
                 plm_document_items = removeElement(plm_document_items, key);
+                break;
+            case "equipment-plus":
+                let element = {
+                    label: "",
+                    value: ""
+                };
+                plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'].push(element);
+                break;
+            case "equipment-minus":
+                let elements = plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'];
+                let newElements = removeElement(elements, index);
+                plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'] = newElements;
+                this.setState({plm_document_items: plm_document_items});
                 break;
         }
         this.setState({plm_document_items: plm_document_items});
@@ -258,13 +320,11 @@ class Form extends React.Component {
             organisationList,
             departmentList,
             productList,
+            equipmentList,
             reasonList
         } = this.state;
-        if (isLoading) {
-            document.getElementById("loading").style.display = "block";
-        } else {
-            document.getElementById("loading").style.display = "none";
-        }
+        if (isLoading)
+            return loadingContent()
         return (
             <div>
                 <div className="no-print">
@@ -327,161 +387,187 @@ class Form extends React.Component {
                         </div>
                     </div>
                     <div className={'card-body'}>
-                        <div className={'row'}>
-                            <div className={"col-sm-12 mb-2"}>
-                                <div className={"pull-right"}>
-                                    <button onClick={this.onPush.bind(this, 'add', 'plm_document_items', '')} className={"btn btn-sm btn-primary"}><i className={"fa fa-plus"}/></button>
-                                </div>
-                            </div>
-                        </div>
                         {
                             plm_document_items?.length > 0 && plm_document_items.map((item, key) => {
                                 return (
                                     <div className={"border-block"} key={key}>
                                         {
-                                            key !== 0 ?
-                                            <div className={"pull-right"}>
-                                                <button onClick={this.onPush.bind(this, 'remove', 'plm_document_items', key)}
-                                                        className={"btn btn-sm btn-danger"}>
-                                                    <i className={"fa fa-times"}/>
-                                                </button>
-                                            </div> : ""
+                                            key === 0 ?
+                                                <div className={'pull-right'}>
+                                                    <button onClick={this.onPush.bind(this, 'add', 'plm_document_items', '', '')}
+                                                            className={"btn btn-sm btn-primary"}>
+                                                        <i className={"fa fa-plus"}/>
+                                                    </button>
+                                                </div>
+                                                :
+                                                <div className={"pull-right"}>
+                                                    <button onClick={this.onPush.bind(this, 'remove', 'plm_document_items', key, '')}
+                                                            className={"btn btn-sm btn-danger"}>
+                                                        <i className={"fa fa-times"}/>
+                                                    </button>
+                                                </div>
                                         }
                                         <div className={"row"}>
                                             <div className={'col-sm-2'}>
-                                                <div className={'form-group'}>
-                                                    <label className={"control-label"}>Product</label>
-                                                    <Select className={"aria-required"}
-                                                            onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'product_id', key, '', '')}
-                                                            placeholder={"Tanlang ..."}
-                                                            value={productList.filter(({value}) => +value === +item?.product_id)}
-                                                            options={productList}
-                                                            styles={customStyles}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className={'col-sm-2'}>
-                                                <label className={"control-label"}>Equipments</label>
                                                 <div className={'row'}>
+                                                    <div className={'col-sm-10 mb-1'}>
+                                                        <label className={"control-label"}>Qurilmalar</label>
+                                                    </div>
+                                                    <div className={"col-sm-2 mb-1"}>
+                                                        <button onClick={this.onPush.bind(this, 'equipment-plus', 'plm_document_items', key, '')}
+                                                                className={"btn btn-xs btn-info w-100 h-100"}>
+                                                            <i className={"fa fa-plus"}/>
+                                                        </button>
+                                                    </div>
                                                     {
-                                                        item?.products?.equipmentGroup?.equipmentGroupRelationEquipments?.length > 0 &&
-                                                        item.products.equipmentGroup.equipmentGroupRelationEquipments.map((equipment, eqKey) => {
+                                                        item?.equipmentGroup?.equipmentGroupRelationEquipments?.length > 0 &&
+                                                        item.equipmentGroup.equipmentGroupRelationEquipments.map((equipment, eqKey) => {
                                                             return (
-                                                                <div className={'col-sm-12'} key={eqKey}>
-                                                                    <div className={'form-group'}>
-                                                                        <input disabled={true} type={"text"} value={equipment.name} className={'form-control background-white'}/>
+                                                                <React.Fragment key={eqKey}>
+                                                                    <div className={'col-sm-10 pr-0 mb-2'}>
+                                                                        <Select className={"aria-required"}
+                                                                                onChange={this.onHandleChange.bind(this, 'select', 'equipment', 'value', key, eqKey, '')}
+                                                                                placeholder={"Tanlang ..."}
+                                                                                value={equipmentList.filter(({value}) => +value === +equipment?.value)}
+                                                                                options={equipmentList}
+                                                                                styles={customStyles}
+                                                                        />
                                                                     </div>
-                                                                </div>
+                                                                    <div className={'col-sm-2 mb-2'}>
+                                                                        <button onClick={this.onPush.bind(this, 'equipment-minus', 'plm_document_items', key, eqKey)}
+                                                                                className={"btn btn-xs btn-outline-danger w-100 h-100"}>
+                                                                            <i className={"fa fa-times"}/>
+                                                                        </button>
+                                                                    </div>
+                                                                </React.Fragment>
                                                             )
                                                         })
                                                     }
                                                 </div>
                                             </div>
-                                            <div className={'col-sm-1'}>
-                                                <div className={'row'}>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Boshlanishi</label>
-                                                        <DatePicker locale={ru}
-                                                                    dateFormat="HH:mm"
-                                                                    onChange={(e)=>{
-                                                                        this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
-                                                                    }}
-                                                                    className={"form-control aria-required"}
-                                                                    selected={item.start_work ? new Date(item.start_work) : ""}
-                                                                    autoComplete={'off'}
-                                                                    showTimeSelect
-                                                                    showTimeSelectOnly
-                                                                    timeIntervals={10}
-                                                                    timeCaption="Вақт"
-                                                        />
-                                                    </div>
-                                                    <div className={"col-sm-12 text-center mt-2"}>
-                                                        <label>{this.onReturnMin(item.end_work, item.start_work)} <small>min</small></label>
-                                                    </div>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Tugashi</label>
-                                                        <DatePicker locale={ru}
-                                                                    dateFormat="HH:mm"
-                                                                    className={"form-control aria-required"}
-                                                                    onChange={(e)=>{
-                                                                        this.onHandleChange('date', 'plm_document_items', 'end_work', key, '', '', new Date(e))
-                                                                    }}
-                                                                    selected={item.end_work ? new Date(item.end_work) : ""}
-                                                                    filterTime={(e) => {return new Date(item.start_work).getTime() < new Date(e).getTime()}}
-                                                                    autoComplete={'off'}
-                                                                    showTimeSelect
-                                                                    showTimeSelectOnly
-                                                                    timeIntervals={10}
-                                                                    timeCaption="Вақт"
+                                            <div className={'col-sm-2'}>
+                                                <div className={"row"}>
+                                                    <div className={'col-sm-12'}>
+                                                        <label className={"control-label mb-05"}>Maxsulot</label>
+                                                        <Select className={"aria-required"}
+                                                                onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'product_id', key, '', '')}
+                                                                placeholder={"Tanlang ..."}
+                                                                value={productList.filter(({value}) => +value === +item?.product_id)}
+                                                                options={productList}
+                                                                styles={customStyles}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className={'col-sm-2 pt-2'}>
-                                                <div className={'row mb-4'}>
-                                                     <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Rejali to'xtalishlar</label>
-                                                     </div>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={'mr-4'}>{this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date)} <small>min</small></label>
-                                                        <button onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key)}
-                                                                className={item.planned_stop_change ? "btn btn-xs btn-primary" : "btn btn-xs btn-success"}>
-                                                            {item.planned_stop_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                        </button>
+                                            <div className={'col-sm-1'}>
+                                                <div className={"align-center"}>
+                                                    <div className={'row'}>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={"control-label"}>Boshlanishi</label>
+                                                            <DatePicker locale={ru}
+                                                                        dateFormat="HH:mm"
+                                                                        onChange={(e)=>{
+                                                                            this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
+                                                                        }}
+                                                                        className={"form-control aria-required"}
+                                                                        selected={item.start_work ? new Date(item.start_work) : ""}
+                                                                        autoComplete={'off'}
+                                                                        showTimeSelect
+                                                                        showTimeSelectOnly
+                                                                        timeIntervals={10}
+                                                                        timeCaption="Вақт"
+                                                            />
+                                                        </div>
+                                                        <div className={"col-sm-12 text-center mt-2 mb-1"}>
+                                                            <label>{this.onReturnMin(item.end_work, item.start_work)} <small>min</small></label>
+                                                        </div>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={"control-label"}>Tugashi</label>
+                                                            <DatePicker locale={ru}
+                                                                        dateFormat="HH:mm"
+                                                                        className={"form-control aria-required"}
+                                                                        onChange={(e)=>{
+                                                                            this.onHandleChange('date', 'plm_document_items', 'end_work', key, '', '', new Date(e))
+                                                                        }}
+                                                                        selected={item.end_work ? new Date(item.end_work) : ""}
+                                                                        filterTime={(e) => {return new Date(item.start_work).getTime() < new Date(e).getTime()}}
+                                                                        autoComplete={'off'}
+                                                                        showTimeSelect
+                                                                        showTimeSelectOnly
+                                                                        timeIntervals={10}
+                                                                        timeCaption="Вақт"
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className={'row mt-2'}>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Rejasiz to'xtalishlar</label>
-                                                    </div>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={'mr-4'}>{this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date)} <small>min</small></label>
-                                                        <button onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key)}
-                                                                className={item.unplanned_stop_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                            {item.unplanned_stop_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                        </button>
+                                            </div>
+                                            <div className={'col-sm-2'}>
+                                                <div className={"align-center"}>
+                                                    <div className={'row'}>
+                                                         <div className={'col-sm-12 text-center'}>
+                                                            <label className={"control-label"}>Rejali to'xtalishlar</label>
+                                                         </div>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={'mr-4'}>{this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date)} <small>min</small></label>
+                                                            <button onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key)}
+                                                                    className={item.planned_stop_change ? "btn btn-xs btn-primary" : "btn btn-xs btn-success"}>
+                                                                {item.planned_stop_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                            </button>
+                                                        </div>
+                                                        <div className={'col-sm-12 text-center mt-4'}>
+                                                            <label className={"control-label"}>Rejasiz to'xtalishlar</label>
+                                                        </div>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={'mr-4'}>{this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date)} <small>min</small></label>
+                                                            <button onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key)}
+                                                                    className={item.unplanned_stop_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
+                                                                {item.unplanned_stop_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div className={'col-sm-1'}>
-                                                <div className={'row'}>
-                                                    <div className={'col-sm-12 text-center mb-4'}>
-                                                        <label className={"control-label"}>Rejada</label>
-                                                        <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'qty', key, '', '')}
-                                                                   type={'number'} className={'form-control aria-required'} value={item.qty}/>
-                                                    </div>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Ish/chiq</label>
-                                                        <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'fact_qty', key, '', '')}
-                                                               type={'number'} className={'form-control aria-required'} value={item.fact_qty}/>
+                                                <div className={"align-center"}>
+                                                    <div className={'row'}>
+                                                        <div className={'col-sm-12 text-center mb-4'}>
+                                                            <label className={"control-label"}>Rejada</label>
+                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'qty', key, '', '')}
+                                                                       type={'number'} className={'form-control aria-required'} value={item?.qty}/>
+                                                        </div>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={"control-label"}>Ish/chiq</label>
+                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'fact_qty', key, '', '')}
+                                                                   type={'number'} className={'form-control aria-required'} value={item?.fact_qty}/>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className={'col-sm-2 pt-2'}>
-                                                <div className={'row mb-4'}>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Ta'mirlangan</label>
-                                                    </div>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={'mr-4'}>{this.onSumma(item.repaired)}</label>
-                                                        <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key)}
-                                                                className={item.repaired_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                            {item.repaired_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div className={'row'}>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={"control-label"}>Yaroqsiz</label>
-                                                    </div>
-                                                    <div className={'col-sm-12 text-center'}>
-                                                        <label className={'mr-4'}>{this.onSumma(item.scrapped)}</label>
-                                                        <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key)}
-                                                                 className={item.scrapped_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                            {item.scrapped_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                        </button>
+                                            <div className={'col-sm-2'}>
+                                                <div className={"align-center"}>
+                                                    <div className={'row'}>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={"control-label"}>Ta'mirlangan</label>
+                                                        </div>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={'mr-4'}>{this.onSumma(item.repaired)}</label>
+                                                            <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key)}
+                                                                    className={item.repaired_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
+                                                                {item.repaired_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                            </button>
+                                                        </div>
+                                                        <div className={'col-sm-12 text-center mt-4'}>
+                                                            <label className={"control-label"}>Yaroqsiz</label>
+                                                        </div>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={'mr-4'}>{this.onSumma(item.scrapped)}</label>
+                                                            <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key)}
+                                                                     className={item.scrapped_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
+                                                                {item.scrapped_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -569,7 +655,7 @@ class Form extends React.Component {
                                                             <div className={"form-group"}>
                                                                 <label className={"control-label"}>Bypass</label>
                                                                 <input onChange={this.onHandleChange.bind(this, 'input', 'modal', 'bypass', '', '', '')}
-                                                                       className={"form-control"} value={modal.model?.bypass}/>
+                                                                       className={"form-control"} value={modal?.model?.bypass}/>
                                                             </div>
                                                         </div> : ""
                                                 }
@@ -577,7 +663,7 @@ class Form extends React.Component {
                                                     <div className={"form-group"}>
                                                         <label className={"control-label"}>Izoh</label>
                                                         <textarea onChange={this.onHandleChange.bind(this, 'input', 'modal', 'add_info', '', '', '')}
-                                                                  className={"form-control"} rows={4} value={modal.model?.add_info}/>
+                                                                  className={"form-control"} rows={4} value={modal?.model?.add_info}/>
                                                     </div>
                                                 </div>
                                             </div>

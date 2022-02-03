@@ -8,7 +8,6 @@ use Yii;
  * This is the model class for table "plm_stops".
  *
  * @property int $id
- * @property int $doc_id
  * @property string $begin_date
  * @property string $end_time
  * @property string $add_info
@@ -20,8 +19,6 @@ use Yii;
  * @property int $stopping_type
  * @property int $reason_id
  * @property string $bypass
- *
- * @property PlmDocuments $plmDocuments
  * @property Reasons[] $reasons
  * @property PlmDocumentItems[] $plmDocumentItems
  */
@@ -41,12 +38,11 @@ class PlmStops extends BaseModel
     public function rules()
     {
         return [
-            [['doc_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'stopping_type', 'reason_id'], 'default', 'value' => null],
-            [['doc_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'stopping_type', 'reason_id'], 'integer'],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'stopping_type', 'reason_id'], 'default', 'value' => null],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'stopping_type', 'reason_id'], 'integer'],
             [['begin_date', 'end_time'], 'safe'],
             [['add_info'], 'string'],
             [['bypass'], 'string', 'max' => 255],
-            [['doc_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocuments::className(), 'targetAttribute' => ['doc_id' => 'id']],
             [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reasons::className(), 'targetAttribute' => ['reason_id' => 'id']],
         ];
     }
@@ -58,7 +54,6 @@ class PlmStops extends BaseModel
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'doc_id' => Yii::t('app', 'Doc ID'),
             'begin_date' => Yii::t('app', 'Begin Date'),
             'end_time' => Yii::t('app', 'End Time'),
             'add_info' => Yii::t('app', 'Add Info'),
@@ -71,14 +66,6 @@ class PlmStops extends BaseModel
             'reason_id' => Yii::t('app', 'Reason ID'),
             'bypass' => Yii::t('app', 'Bypass'),
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPlmDocuments()
-    {
-        return $this->hasOne(PlmDocuments::className(), ['id' => 'doc_id']);
     }
 
     /**
