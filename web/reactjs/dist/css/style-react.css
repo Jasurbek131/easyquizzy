@@ -1,0 +1,868 @@
+.imageuploader>div>div>div {
+    height: 10vmin!important;
+    width: 20vmin!important;
+}
+.imageuploader{
+    min-height: 200px;
+    background-color:#cbeefc;
+    padding: 10px;
+    display: flow-root;
+}
+.mainBtns {
+    margin-bottom: 5px;
+    min-width: 200px;
+}
+
+
+.listPackageType {
+    padding: 5px;
+    border: 1px solid #aaa;;
+}
+.modelList {
+    padding: 5px;
+    border: 1px solid #aaa;
+}
+span.bagPercentage {
+    display: block;
+    font-size: 3em;
+    color: #fff;
+    clear: both;
+    text-align: center;
+}
+
+
+.tooltip {
+    position: relative;
+    opacity: 1;
+    text-align: center;
+    display: inline-block;
+    z-index: 1!important;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    font-size: 18px;
+    text-align: center;
+    border-radius: 6px;
+    white-space: nowrap;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+/*td.barcode-quantity.editable-custom span:after {*/
+/*    content:" кг."!important;*/
+/*}*/
+
+div#ModalBoxConfirm table tr td:nth-child(4) {
+    display: none;
+}
+div#ModalBoxConfirm .confirm-actions button {
+    margin-right: 15px;
+}
+div#ModalBoxConfirm .confirm-actions {
+    text-align: right;
+}
+.confirm-title {
+    font-weight: bold;
+    padding: 10px
+}
+.listPackageType table td,
+.modelList table td,
+.modelList table th,
+.listAddedPackageBox table td,
+.ready-goods-box table td,
+.ready-goods-box table th {
+    text-align: center;
+    vertical-align: middle !important;
+}
+button.btn.btn-default:hover,
+button.btn.btn-danger:hover,
+button.btn.btn-success:hover,
+button.btn.btn-primary:hover {
+    box-shadow: none!important;
+}
+.listAddedPackageBox button:hover {
+    box-shadow: #000 2px 2px 15px;
+    border-radius: 15%;
+
+}
+.confirm-title strong {
+    color: red;
+    font-size: 1.1em;
+}
+.mb-10 {
+    margin-bottom: 10px !important;
+}
+.text-center.bagPercentage {
+    font-size: 1em;
+}
+.refresh-qty-box {
+    float: right;
+}
+.refresh-qty-box input {
+    width: 50px;
+    padding-left: 5px;
+}
+.refresh-qty-box .glyphicon.glyphicon-refresh {
+    margin-top: -5px;
+    height: 26px;
+    padding: 3px 10px;
+}
+span.refreshQty-text {
+    display: inline-block;
+    margin-right: 10px;
+}
+.listAddedItem--tile {
+    clear: both;
+    padding: 5px 5px 0 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #3c8dbc;
+}
+.progress-bar-vertical {
+    width: 50%;
+    min-height: 100px;
+    display: flex;
+    align-items: flex-end;
+    margin: 15px auto 0 !important;
+    border: 1px solid red;
+}
+
+.progress-bar-vertical .progress-bar {
+    width: 100%;
+    height: 0;
+    -webkit-transition: height 0.6s ease;
+    -o-transition: height 0.6s ease;
+    transition: height 0.6s ease;
+}
+
+.td-col-qty {
+    width: 80px;
+}
+.barcode-model-name,
+.barcode-color-name,
+.barcode-quantity {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.barcode-id {
+    text-align: center;
+    letter-spacing: 15px;
+    margin-top: -5px;
+}
+.mini-barcode-box {
+    width: 58mm;
+    height: 30mm;
+    border: 1px solid;
+    margin-bottom: 15px;
+    padding: 5px;
+    padding-top: 15px;
+}
+.mini-barcode-box * {
+    font-size: 9px;
+    line-height: 0.1px;
+}
+.mini-barcode-box svg {
+    width: 50mm;
+    height: 10mm;
+}
+.barcode-div {
+    width: 64mm;
+    height: 40mm !important;
+    font-family: Verdana, Geneva, sans-serif !important;
+    border: none;
+    padding-left: 8px !important;
+    padding-right: 0px !important;
+    position: relative;
+    margin: auto;
+    padding-top: 1px !important;
+}
+
+.barcode-div p {
+    line-height: 1.2 !important;
+    font-size: 12px;
+    margin: 0 !important;
+    word-break: break-all;
+}
+
+.barcode-div p.sku {
+    font-size: 5.5pt;
+    line-height: 1 !important;
+}
+span.barcode-sostav-name.manufacture-date {
+    padding-left:25px;
+}
+.barcode-div p.sku.sku-main {
+    font-size: 13.2pt;
+    font-weight: bold;
+}
+span.barcode-sostav-name.sku-address,
+span.barcode-sostav-name.sku-phone,
+span.barcode-sostav-name.sku-gost,
+span.barcode-sostav-name.sku-manufacture,
+span.barcode-sostav-name.sku-importor{
+    font-size:4pt !important;
+}
+.nastel-number-box input{
+    padding: 35px !important;
+    font-size: 30pt !important;
+    color: red !important;
+    text-align: center !important;
+}
+.individual-barcode-box{
+    text-align: center;
+    padding-top: 10px !important;
+}
+.individual-barcode-box-value{
+    /*position: absolute;*/
+    /*left: 30px;*/
+    /*bottom: 15px;*/
+}
+.from-department-box {
+    /*position:absolute;*/
+    /*bottom:12px;*/
+    /*right:15px;*/
+}
+.barcode-div p.sku.sku-main span {
+    font-size: 7pt;
+}
+.barcode-div p.little {
+    line-height: 1.1 !important;
+}
+.barcode-div .barcodeImg img, .barcode-div .barcodeImg svg {
+    display: block;
+    height: 30px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+.barcode-div .barcodeImg {
+    /*width: 58mm !important;*/
+    position: absolute;
+    bottom: 0px;
+    /*right: 2mm;*/
+    padding-left: 5mm !important;
+}
+p.sabu.text-center.sabu-code {
+    font-size:1.3em;
+    font-weight:bold;
+}
+.barcode-div .barcodeImgSABU {
+    width: 58mm !important;
+    position: absolute;
+    bottom: 10px;
+    right: 2mm;
+    padding-left: 5mm !important;
+}
+.modal-body {
+    overflow-y: scroll;
+    max-height: 100vh;
+}
+
+.full-name {
+    text-transform: uppercase;
+}
+.qr-code-box {
+    position:absolute;
+    right:0;
+    top:37px;
+}
+.barcode-div .sostav {
+    float: left;
+    margin-top: -1px;
+    width: 100%;
+}
+.barcode-div .img-eac {
+    position: absolute;
+    right: 0;
+    top: 1px;
+}
+.barcode-div .img-eac img {
+    width: 6mm !important;
+    height: 6mm !important;
+}
+img.listModels {
+    width: 100%;
+    height: 75px;
+}
+input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.customer-name-box {
+    font-weight: bold;
+    font-size: 2em;
+}
+tabel > label {
+    cursor: pointer;
+}
+
+.modelList {
+    background: #3c8dbc;
+    color: #fff;
+}
+.ready-goods-box {
+    background: #3c8dbc;
+    color: #fff;
+    padding: 5px 2px;
+}
+.ready-goods-box h4 {
+    padding-bottom: 10px;
+    text-align: center;
+}
+.searchBoxPackageType h4 {
+    padding-bottom: 10px;
+}
+.listPackageType {
+    background: #3c8dbc;
+    color: #fff;
+    padding: 5px 2px;
+}
+.searchBoxPackageType div {
+    color: #000;
+}
+.modelQty {
+    color: red;
+}
+input#capacityPackage {
+    color: red;
+    font-weight: bold;
+}
+.movingBox button,
+.packageTypeBtn button {
+    color: #000 !important;
+    font-weight: bold;
+}
+
+.barcode-div .little {
+    font-size: 7pt;
+}
+.packageTableBox tr.font-size-1-2em {
+    font-size: 1.2em;
+}
+.fontSize14 {
+    font-size: 1.4em;
+}
+.fontSize13 {
+    font-size: 1.3em;
+}
+.fontSize12 {
+    font-size: 1.2em;
+}
+.fontSizeKG {
+    font-size: 1.1em;
+}
+.fontSizeRazmer {
+    font-size: 1.5em;
+}
+.barcode-div .little small {
+    font-size: 100%;
+}
+.barcode-div, .barcode-div p {
+    font-family: Geneva, Tahoma, Verdana, sans-serif !important;
+    color: #000 !important;
+}
+.each-barcode-box {
+    border: 2px solid #000;
+    padding: 15px 15px 0 15px;
+    margin: 15px;
+}
+.barcode-add-info {
+    position: relative;
+}
+.eac-td-box {
+    position: absolute;
+    top: -20px;
+    right: 10px;
+}
+.packageTableBox {
+    font-family: "Times New Roman", Sans-Serif !important;
+}
+.packageTableBox h4 {
+    font-family: "Times New Roman", Sans-Serif !important;
+}
+span.barcode-size {
+    display: inline-block;
+    float: right;
+    position: absolute;
+    right: 0;
+}
+span.barcode-size.color-name {
+    left: 28px;
+}
+table.table tr td.wt,
+table.table tr td.wv {
+    padding-bottom: 8px !important;
+}
+
+p.text-bold.editable-custom {
+    margin: 0 0 5px;
+}
+
+.modal-list-item-td {
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.modal-list-item-td:hover {
+    color: #000;
+}
+
+#printLabelCountPack {
+    font-size: 30px;
+    height: 45px;
+    padding-left: 20px;
+    color: red;
+    border: 2px solid #2196F3;
+}
+
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}
+
+.sostav .sku span {
+    font-size: 6pt;
+}
+
+table#exportToExcel tbody tr td:first-child {
+    width: 20%;
+}
+
+table#exportToExcel tbody tr td:last-child {
+    text-align: center;
+}
+
+.drag-and-dropbox > div {
+    border: 1px solid;
+    height: 50px;
+    vertical-align: middle;
+    padding-top: 15px;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+div.main-nastel-box {
+    border: 1px solid;
+    margin-bottom: 25px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #f39c12;
+    color: #000;
+}
+
+.main-nastel-box .row {
+    height: 40px;
+}
+
+.main-nastel-box .row > div {
+    text-align: center;
+    font-size: 18px;
+    padding-top: 7px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-pointer:hover {
+    color: red;
+}
+
+.drag-and-dropbox {
+    margin: 15px;
+}
+
+table.main-nastel-table {
+    margin: 15px;
+    width: 95%;
+}
+
+span.info-about-list {
+    width: 25px;
+    background-color: #f39c12;
+    color: #000;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+}
+label.radio-inline input {
+    margin-top:-2px;
+}
+label.radio-inline{
+    font-size:0.9em;
+    letter-spacing:1px;
+    color:#000;
+    font-weight:bold;
+}
+label.radio-inline span{
+    dislay:inline-block;
+    margin-left:5px;
+    margin-right:10px;
+}
+td.custom-barcode-td {
+    transform: scale(0.7);
+}
+.btn-violet{
+    background-color: #673AB7!important;
+}
+.mobile-qc-table .input-group input,
+#showBrakModal .input-group input,
+.defect-content .input-group input{
+    height: 35px;
+}
+.fade-scale {
+    transform: scale(0);
+    opacity: 0;
+    -webkit-transition: all .25s linear;
+    -o-transition: all .25s linear;
+    transition: all .25s linear;
+}
+.fade-scale.in {
+    opacity: 1;
+    transform: scale(1);
+}
+#showBrakModal .modal-dialog {
+    width: 98%;
+    height: 92%;
+    padding: 0;
+}
+
+#showBrakModal .modal-content {
+    height: 99%;
+}
+#showModal .modal-content {
+    height: 98%!important;
+    overflow-y: hidden!important;
+    background-color: rgb(0,0,0);
+    text-align: center;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 9999999;
+    vertical-align: baseline;
+}
+.carousel-control {
+    width: 150px;
+}
+
+.carousel-control:hover {
+   background-color: #000000;
+    width: 150px;
+}
+.modal-content-img>img {
+    display: inline;
+    height: 90%!important;
+    margin-top: 15px;
+    padding: 1px;
+}
+.closeButton {
+    position: absolute;
+    top: 10px!important;
+    right: 35px;
+    color: #f1f1f1;
+    z-index: 9999999;
+    font-size: 40px;
+    background: none;
+    border: none;
+    font-weight: bold;
+}
+.closeButton>span {
+    margin-top: 20px!important;
+    display: block;
+}
+.defect-box {
+    margin-bottom:25px;
+}
+.defect-content{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    background: #ccc;
+    padding: 5%;
+}
+.trash-box {
+    position:fixed;
+    right:0;
+    z-index:111;
+    top:30%;
+    boder:1px solid #fff;
+    background-color:#3de70e;
+    width:100px;
+    height:100px;
+    padding:25px;
+    border-radius:10px;
+}
+.trash-box .fa{
+    font-size:3em;
+    cursor: pointer;
+}
+.trash-box span.badge {
+    background-color: #fff;
+    border-radius: 50%;
+    color: red;
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    font-size: 15px;
+}
+span.checkUserBox {
+    display:inline-block;
+    margin-right:15px;
+    font-size:16px;
+    color:red;
+}
+
+span.checkUserBox input{
+    margin-right:10px;
+}
+span.is-easy-type {
+    padding-left:25px;
+    color:#fff;
+    font-weight:bold;
+}
+
+span.is-easy-type input{
+    width:25px;
+    height:25px;
+    margin-bottom:-15px;
+    display:inline-block;
+    margin-top:0;
+}
+
+span.is-easy-type label{
+    display:inline-block;
+    padding-left:15px;
+}
+
+p.sku.sku-main-package.article {
+    font-size:13pt;
+    text-align:center;
+    padding-bottom:10px;
+    font-weight:bold;
+}
+p.sku.sku-main-package.size {
+    font-size:8pt;
+    text-align:center;
+    padding-bottom:5px;
+}
+p.sku.sku-main-package.color {
+    font-size:10pt;
+    text-align:center;
+    padding-bottom:5px;
+}
+p.sku.sku-main-package.title {
+    font-size:15pt;
+    text-align:center;
+    padding-bottom:0px;
+    font-weight:bold;
+}
+p.sku.sku-main-package.quantity {
+    font-size:15pt;
+    text-align:center;
+    padding-bottom:0px;
+    font-weight:bold;
+}
+.active button.btn.custom-active-sort {
+    background:#dd4b39;
+    color:#fff;
+    border:1px solid #000;
+}
+button.btn.custom-active-sort{
+    width:100%;
+    padding: 10px 0;
+}
+.rotate_date{
+    position: absolute;
+    transform: rotate(90deg);
+    font-size: 7px;
+    right: -15px;
+    top: 90px;
+}
+span.barcode-sostav-name.sku-address.font-size-6pt {
+    font-size:6pt !important;
+}
+p.margin-bottom-sku{
+    margin-bottom: 4px!important;
+}
+div div.row.margin-top-20{
+    margin-top: 20px !important;
+}
+.packageTableBox.each-barcode-box.table-responsive.transparent,
+.packageTableBox.each-barcode-box.table-responsive.transparent span{
+    color: #fff;
+    border: 0;
+}
+.packageTableBox.each-barcode-box.table-responsive.transparent img,
+.packageTableBox.each-barcode-box.table-responsive.transparent img{
+    display: none;
+}
+.nastel-number-box span.input-group-addon {
+    font-size:3em;
+    color:red;
+}
+.nastel-number-box {
+    margin-top:15px;
+}
+
+.custom-style-span {
+    font-size: 1.5em!important;
+    padding: 3px 10px 3px 10px!important;
+    display: inline-block!important;
+    width: 25%!important;
+}
+.thBorder {
+    border: 1px solid #d6d6d6!important;
+}
+
+@media print {
+
+    .barcode-div .barcodeImg{
+        bottom: 3px;
+    }
+    div.nastel-number-box {
+        margin-top:0;
+    }
+    .nastel-number-box input{
+        border: 0;
+    }
+    span.barcode-size {
+        display: inline-block;
+        font-size: 7pt;
+        height: 10px;
+    }
+    #print-barcode1 {
+        zoom: 1 !important;
+    }
+
+    .barcode-div {
+        border: 0 !important;
+        padding-left: 10px;
+        padding-right: 0;
+        width: 100% !important;
+    }
+
+    #ModalBox div {
+        border: 0 !important;
+    }
+
+    #packageTableBox table {
+        margin-bottom: 0;
+    }
+
+    .barcode-box.container {
+        padding: 0 !important;
+        width: 98% !important;
+        zoom: 0.95;
+    }
+
+    .barcode-box.container .col-md-6 {
+        padding: 0 !important;
+    }
+
+    svg#barcode2 {
+        width: 100%;
+        text-align: center;
+        padding-right: 5px!important;
+    }
+
+    div.row {
+        margin: 0 !important;
+    }
+
+    h4.text-center {
+        padding: 10px 20px 10px 20px !important;
+        font-weight: bold;
+        font-size: 1.5em;
+        text-transform: uppercase;
+    }
+
+    div.tablePadding {
+        padding: 10px!important;
+        margin-bottom: 20px!important;
+        min-height: 498px;
+    }
+    table.marginBottom {
+        margin-bottom: 10px!important;
+    }
+
+    .thPadding {
+        padding: 5px!important;
+    }
+
+    div.col-xs-12 {
+        margin-bottom: 15px!important;
+    }
+
+    div.each-barcode-box {
+        border: 4px solid #000;
+        text-align: center;
+        width: 95%;
+        margin: 15px 15px 0 15px !important;
+    }
+
+    div.each-barcode-box table tr td {
+        padding: 2px !important;
+        font-size: 1.2em;
+        border: 0;
+    }
+
+    div.each-barcode-box table td.font-size-1-2em {
+        font-size: 2.3em;
+    }
+
+    div.each-barcode-box table td.font-size-1-1em {
+        font-size: 2em;
+        white-space: nowrap;
+        display: block;
+        font-weight: bold;
+    }
+
+    td.barcode-model-name.font-size-1-2em.editable-custom.ab {
+        font-size: 3em !important;
+    }
+
+    section, .box, .box-body {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .barcode-add-info p {
+        margin-bottom: 4px !important;
+        padding: 0 !important;
+    }
+
+    * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        padding: 0!important;
+        margin: 0!important;
+        line-height: 1!important;
+    }
+
+
+    hr {
+        display: none;
+    }
+}
