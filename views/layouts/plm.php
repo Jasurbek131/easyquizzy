@@ -21,6 +21,7 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <link rel="shortcut icon" href="<?php echo Yii::$app->request->baseUrl; ?>/favicon.ico" type="image/x-icon"/>
     <title>Dataprizma-Plm <?= Html::encode($this->title) ?></title>
+    <noembed><?= Html::encode($this->title) ?></noembed>
     <?php $this->head() ?>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -398,6 +399,32 @@ AppAsset::register($this);
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
+        <div class="content-header card" style="margin-bottom: 0!important;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h6 class="m-0 text-dark text-title-all ml-1"><i class="fa fa-spin fa-spinner text-info"></i></h6>
+                    </div>
+                    <div class="col-sm-6">
+                        <?php try {
+                            echo \yii\widgets\Breadcrumbs::widget([
+                                'options' => [
+                                    'class' => 'breadcrumb breadcrumb float-sm-right',
+                                ],
+                                'tag' => 'ul',
+                                'activeItemTemplate' => "<li>&nbsp;/&nbsp;{link}</li>\n",
+                                'itemTemplate' => "<li class='breadcrumb-item'>{link}</li>",
+                                'links' => $this->params['breadcrumbs'] ?? [],
+                            ]);
+                        } catch (Exception $e) {
+                            Yii::info('Error Breadcrumbs Main ' . $e->getMessage(), 'widgets');
+                        } ?>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+
         <?php
         $message = Alert::widget();
         if (!empty($message)): ?>

@@ -35,5 +35,8 @@ export const items = {
         equipmentGroupRelationEquipments: [
             { label: "", value: "" }
         ]
-    }
+    },
+    products: [
+        { label: "", value: "" }
+    ]
 };

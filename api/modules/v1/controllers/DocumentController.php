@@ -3,6 +3,7 @@
 namespace app\api\modules\v1\controllers;
 
 use app\models\BaseModel;
+use app\modules\hr\models\HrEmployee;
 use app\modules\hr\models\UsersRelationHrDepartments;;
 
 use app\modules\plm\models\Defects;
@@ -116,6 +117,7 @@ class DocumentController extends ActiveController
     /**
      * @param $type
      * @return array
+     * @throws yii\db\Exception
      */
     public function actionSaveProperties($type): array
     {
@@ -123,9 +125,6 @@ class DocumentController extends ActiveController
         $response['status'] = false;
         $response['line'] = 0;
         $post = Yii::$app->request->post();
-//        echo "<pre>";
-//        print_r($post);
-//        echo "</pre>";exit;
         switch ($type) {
             case "SAVE_DOCUMENT":
                 $document = $post['document'];
@@ -138,7 +137,7 @@ class DocumentController extends ActiveController
                 }
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
-            //    try {
+                try {
                     $doc = new PlmDocuments();
                     if (!empty($document['id'])) {
                         $doc = PlmDocuments::findOne($document['id']);
@@ -154,41 +153,41 @@ class DocumentController extends ActiveController
                         foreach ($documentItems as $item) {
                             $plannedStopped = $item['planned_stopped'];
                             $unplannedStopped = $item['unplanned_stopped'];
-                            $equipmentGroup = $item['equipmentGroup']['equipmentGroupRelationEquipments'];
-                            if ($equipmentGroup) {
-                                $newGroup = new EquipmentGroup();
-                                $newGroup->setAttributes([
-                                    'name' => $doc->doc_number,
-                                    'status_id' => BaseModel::STATUS_ACTIVE
-                                ]);
-                                if ($newGroup->save()) {
-                                    $i = 1;
-                                    foreach ($equipmentGroup as $equip) {
-                                        if ($equip['value']) {
-                                            $newRelation = new EquipmentGroupRelationEquipment();
-                                            $newRelation->setAttributes([
-                                                'equipment_group_id' => $newGroup->id,
-                                                'equipment_id' => $equip['value'],
-                                                'work_order' => $i++,
-                                                'status_id' => BaseModel::STATUS_ACTIVE
-                                            ]);
-                                            if ($newRelation->save()){
-                                                $saved = true;
-                                            } else {
-                                                $saved = false;
-                                                $response['errors'] = $newRelation->getErrors();
-                                                $response['line'] = __LINE__;
-                                                break 2;
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    $saved = false;
-                                    $response['errors'] = $newGroup->getErrors();
-                                    $response['line'] = __LINE__;
-                                    break;
-                                }
-                            }
+//                            $equipmentGroup = $item['equipmentGroup']['equipmentGroupRelationEquipments'];
+//                            if ($equipmentGroup) {
+//                                $newGroup = new EquipmentGroup();
+//                                $newGroup->setAttributes([
+//                                    'name' => $doc->doc_number,
+//                                    'status_id' => BaseModel::STATUS_ACTIVE
+//                                ]);
+//                                if ($newGroup->save()) {
+//                                    $i = 1;
+//                                    foreach ($equipmentGroup as $equip) {
+//                                        if ($equip['value']) {
+//                                            $newRelation = new EquipmentGroupRelationEquipment();
+//                                            $newRelation->setAttributes([
+//                                                'equipment_group_id' => $newGroup->id,
+//                                                'equipment_id' => $equip['value'],
+//                                                'work_order' => $i++,
+//                                                'status_id' => BaseModel::STATUS_ACTIVE
+//                                            ]);
+//                                            if ($newRelation->save()){
+//                                                $saved = true;
+//                                            } else {
+//                                                $saved = false;
+//                                                $response['errors'] = $newRelation->getErrors();
+//                                                $response['line'] = __LINE__;
+//                                                break 2;
+//                                            }
+//                                        }
+//                                    }
+//                                } else {
+//                                    $saved = false;
+//                                    $response['errors'] = $newGroup->getErrors();
+//                                    $response['line'] = __LINE__;
+//                                    break;
+//                                }
+//                            }
                             if ($plannedStopped) {
                                 $planStop = new PlmStops();
                                 if ($item['planned_stop_id']) {
@@ -264,7 +263,7 @@ class DocumentController extends ActiveController
                                 'planned_stop_id' => $planStop->id ?? "",
                                 'unplanned_stop_id' => $unPlanStop->id ?? "",
                                 'processing_time_id' => $processing->id ?? "",
-                                'equipment_group_id' => $newGroup->id,
+                              //  'equipment_group_id' => $newGroup->id,
                                 'qty' => $item['qty'],
                                 'fact_qty' => $item['fact_qty']
                             ]);
@@ -335,11 +334,11 @@ class DocumentController extends ActiveController
                         $transaction->rollBack();
                         $response['line'] = __LINE__;
                     }
-//                } catch (\Exception $e) {
-//                    $transaction->rollBack();
-//                    $response['errors'] = $e->getMessage();
-//                    $response['line'] = __LINE__;
-//                }
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    $response['errors'] = $e->getMessage();
+                    $response['line'] = __LINE__;
+                }
                 break;
             case "UPDATE":
                 break;
@@ -381,22 +380,22 @@ class DocumentController extends ActiveController
                 $response['productList'] = Products::find()->alias('p')->select([
                     'p.id as value', "p.name as label", "p.equipment_group_id"
                 ])
-//                    ->with([
-//                        'equipmentGroup' => function($q) {
-//                            return $q->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
-//                                'equipmentGroupRelationEquipments' => function($e) {
-//                                    return $e->from(['ere' => 'equipment_group_relation_equipment'])
-//                                        ->select(['e.id', 'e.name', 'ere.equipment_group_id', 'ere.equipment_id'])
-//                                        ->leftJoin('equipments e', 'ere.equipment_id = e.id')
-//                                        ->orderBy(['ere.work_order' => SORT_ASC]);
-//                                }
-//                            ]);
-//                        }
-//                    ])
+                    ->with([
+                        'equipmentGroup' => function($q) {
+                            return $q->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
+                                'equipmentGroupRelationEquipments' => function($e) {
+                                    return $e->from(['ere' => 'equipment_group_relation_equipment'])
+                                        ->select(['e.id as value', 'e.name as label', 'ere.equipment_group_id', 'ere.equipment_id'])
+                                        ->leftJoin('equipments e', 'ere.equipment_id = e.id')
+                                        ->orderBy(['ere.work_order' => SORT_ASC]);
+                                }
+                            ]);
+                        }
+                    ])
                     ->where(['p.status_id' => BaseModel::STATUS_ACTIVE])
                     ->groupBy('p.id')
                     ->asArray()->all();
-
+                $response['operatorList'] = HrEmployee::find()->asArray()->all();
                 $response['equipmentList'] = Equipments::find()->alias('e')->select(['e.id as value', "e.name as label"])
                     ->where(['e.status_id' => BaseModel::STATUS_ACTIVE])
                     ->groupBy('e.id')->asArray()->all();
@@ -413,61 +412,7 @@ class DocumentController extends ActiveController
                     ->groupBy('id')->asArray()->all();
 
                 if (!is_null($id)) {
-                    $plm_document = PlmDocuments::find()->select([
-                        'id', 'doc_number', 'reg_date', 'hr_department_id', 'add_info'
-                    ])->with([
-                        'plm_document_items' => function($q) use ($language) {
-                            $q->from(['pdi' => 'plm_document_items'])
-                                ->select(['pdi.*', 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
-                                    'planned_stopped' => function($e) {
-                                        $e->from(['ps1' => 'plm_stops'])->select([
-                                            'ps1.id', 'ps1.begin_date', 'ps1.end_time', 'ps1.add_info', 'ps1.reason_id'
-                                        ])->where(['ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP]);
-                                    },
-                                    'unplanned_stopped' => function($e) {
-                                        $e->from(['ps2' => 'plm_stops'])->select([
-                                            'ps2.id', 'ps2.begin_date', 'ps2.end_time', 'ps2.add_info', 'ps2.reason_id', 'ps2.bypass'
-                                        ])->where(['ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP]);
-                                    },
-                                    'repaired' => function($r) use ($language) {
-                                        $r->from(['r' => 'plm_doc_item_defects'])->select([
-                                            'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_id'
-                                        ])->leftJoin('defects d', 'r.defect_id = d.id')
-                                        ->where(['r.type' => BaseModel::DEFECT_REPAIRED]);
-                                    },
-                                    'scrapped' => function($r) use ($language) {
-                                        $r->from(['s' => 'plm_doc_item_defects'])->select([
-                                            's.defect_id as value', "d.name_{$language} as label", 's.qty as count', 's.doc_item_id'
-                                        ])->leftJoin('defects d', 's.defect_id = d.id')
-                                            ->where(['s.type' => BaseModel::DEFECT_SCRAPPED]);
-                                    },
-//                                    'products' => function($p) {
-//                                        $p->from(['p' => 'products'])->select(['p.id', 'p.equipment_group_id'])->with([
-//                                            'equipmentGroup' => function($q) {
-//                                                return $q->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
-//                                                    'equipmentGroupRelationEquipments' => function($e) {
-//                                                        return $e->from(['ere' => 'equipment_group_relation_equipment'])
-//                                                            ->select(['e.id', 'e.name', 'ere.equipment_group_id', 'ere.equipment_id'])
-//                                                            ->leftJoin('equipments e', 'ere.equipment_id = e.id')
-//                                                            ->orderBy(['ere.work_order' => SORT_ASC]);
-//                                                    }
-//                                                ]);
-//                                            }
-//                                        ]);
-//                                    },
-                                    'equipmentGroup' => function($eg) {
-                                        $eg->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
-                                            'equipmentGroupRelationEquipments' => function($e) {
-                                                return $e->from(['ere' => 'equipment_group_relation_equipment'])
-                                                    ->select(['e.id as value', 'e.name as label', 'ere.equipment_group_id', 'ere.equipment_id'])
-                                                    ->leftJoin('equipments e', 'ere.equipment_id = e.id')
-                                                    ->orderBy(['ere.work_order' => SORT_ASC]);
-                                            }
-                                        ]);
-                                    }
-                                ])->leftJoin('plm_processing_time ppt', 'pdi.processing_time_id = ppt.id');
-                        },
-                    ])->where(['id' => (integer)$id])->asArray()->limit(1)->one();
+                    $plm_document = \app\api\modules\v1\models\BaseModel::getDocumentElements($id);
                     if (!empty($plm_document)) {
                         $response['plm_document'] = $plm_document;
                     } else {
@@ -479,10 +424,21 @@ class DocumentController extends ActiveController
                 $response['user_id'] = $user_id;
                 $response['language'] = $language;
                 break;
-            case "UPDATE_DOCUMENT":
-                $response['status'] = true;
+            case "INDEX_DOCUMENT":
                 break;
         }
+        return $response;
+    }
+
+    /**
+     * @return array
+     */
+    public function actionSearch(): array
+    {
+        $dataProvider = \app\api\modules\v1\models\BaseModel::getPlmDocuments([]);
+        $response['documents'] = $dataProvider->getModels();
+        $response['pagination'] = $dataProvider->getPagination();
+        $response['status'] = true;
         return $response;
     }
 

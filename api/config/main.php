@@ -62,6 +62,10 @@ return [
                         'GET fetch-list' => 'fetch-list',
                         'OPTIONS fetch-list' => 'fetch-list',
 
+                        'POST search' => 'search',
+                        'GET search' => 'search',
+                        'OPTIONS search' => 'search',
+
                         'POST save-properties' => 'save-properties',
                         'GET save-properties' => 'save-properties',
                         'OPTIONS save-properties' => 'save-properties',

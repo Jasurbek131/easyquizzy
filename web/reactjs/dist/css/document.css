@@ -40,7 +40,9 @@ label {
 .mb-05 {
     margin-bottom: 0.31rem!important;
 }
-
+ul {
+    margin-bottom: 0;
+}
 @media print {
     .no-print {
         display: none!important;
