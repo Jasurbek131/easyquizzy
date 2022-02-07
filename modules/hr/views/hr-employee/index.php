@@ -33,24 +33,22 @@ $this->params['breadcrumbs'][] = $this->title;
             'fathername',
             'phone_number',
             'email:email',
-            /*[
+            [
                 'attribute' => 'hr_department_id',
+                'label' => Yii::t("app","Hr Department"),
                 'value' => function($model) {
-                    if ($model->hr_department_id) {
-                        return $model->hrDepartments->name;
-                    }
-                    return "";
+                    $department = $model::getHrEmployeeRelActive($model->id);
+                    return $department['department'];
                 }
             ],
             [
                 'attribute' => 'hr_position_id',
+                'label' => Yii::t("app","Hr Position"),
                 'value' => function($model) {
-                    if ($model->hr_position_id) {
-                        return $model->hrPositions->name_uz;
-                    }
-                    return "";
+                    $position = $model::getHrEmployeeRelActive($model->id);
+                    return $position['position'];
                 }
-            ],*/
+            ],
 
                 [
                     'class' => 'yii\grid\ActionColumn',

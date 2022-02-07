@@ -18,7 +18,7 @@ class HrDepartmentsSearch extends HrDepartments
     {
         return [
             [['id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['name_uz', 'name_ru', 'token'], 'safe'],
+            [['name', 'name_ru', 'token'], 'safe'],
         ];
     }
 
@@ -66,7 +66,7 @@ class HrDepartmentsSearch extends HrDepartments
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['ilike', 'name_uz', $this->name_uz])
+        $query->andFilterWhere(['ilike', 'name', $this->name])
             ->andFilterWhere(['ilike', 'name_ru', $this->name_ru])
             ->andFilterWhere(['ilike', 'token', $this->token]);
 

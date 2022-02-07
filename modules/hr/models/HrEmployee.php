@@ -26,6 +26,8 @@ use yii\helpers\ArrayHelper;
  */
 class HrEmployee extends BaseModel
 {
+    public $hr_department_id;
+    public $hr_position_id;
     /**
      * {@inheritdoc}
      */
@@ -90,6 +92,23 @@ class HrEmployee extends BaseModel
             });
 
         return $list;
+    }
+
+    public static function getHrEmployeeRelActive($hrEmpId){
+        $query = HrEmployeeRelPosition::find()
+            ->alias('hrerp')
+            ->select(['hrd.name AS department','hrp.name_uz AS position'])
+            ->leftJoin(['hrd' => 'hr_departments'],'hrerp.hr_department_id = hrd.id')
+            ->leftJoin(['hrp' => 'hr_positions'],'hrerp.hr_position_id = hrp.id')
+            ->where(['hrerp.hr_employee_id' => $hrEmpId,'hrerp.status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->orderBy(['hrerp.id' => SORT_DESC])
+            ->limit(1)
+            ->asArray()
+            ->one();
+        if(!empty($query)){
+            return $query;
+        }
+        return [];
     }
 
 }
