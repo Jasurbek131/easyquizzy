@@ -1,5 +1,7 @@
 <?php
 
+use app\modules\hr\models\HrDepartments;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,11 +14,21 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
+    <?php 
+    echo $form->field($model, 'parent_id')->widget(Select2::class, [
+            'data' => HrDepartments::getParentList(),
+            'options' => [
+                'placeholder' => 'Select ...',
+                'disabled' => true
+            ],
+            'pluginOptions' => [
+                'allowClear' => true,
+            ]
+    ])->label(Yii::t("app","Parent ID")); ?>
+
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'name_ru')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'token')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
 

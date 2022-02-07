@@ -2,6 +2,10 @@
 
 namespace app\modules\hr\controllers;
 
+use app\models\BaseModel;
+use app\modules\hr\models\HrDepartmentRelShifts;
+use app\modules\hr\models\HrEmployeeRelUsers;
+use app\modules\references\models\Shifts;
 use kartik\tree\controllers\NodeController;
 use kartik\tree\models\Tree;
 use kartik\tree\TreeSecurity;
@@ -41,12 +45,12 @@ class HrDepartmentsController extends NodeController
      * Lists all HrDepartments models.
      * @return mixed
      */
-    public function actionIndex()
+    /*public function actionIndex()
     {
         return $this->render('index', [
             'query' => HrDepartments::find()->addOrderBy('root, lft')
         ]);
-    }
+    }*/
 
     /**
      * @return \yii\web\Response
@@ -167,6 +171,8 @@ class HrDepartmentsController extends NodeController
     public function actionCreate()
     {
         $model = new HrDepartments();
+//        Yii::$app->response->format = Response::FORMAT_JSON;
+        $data  = Yii::$app->request->get();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
@@ -205,6 +211,7 @@ class HrDepartmentsController extends NodeController
             }
         }
         if (Yii::$app->request->isAjax) {
+            $model->parent_id = $data['department_id']?? null;
             return $this->renderAjax('create', [
                 'model' => $model,
             ]);
@@ -349,4 +356,46 @@ class HrDepartmentsController extends NodeController
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionDepartmentIndex()
+    {
+        $searchModel = new HrDepartmentsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('department-index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionIndex($deb = null)
+    {
+        $tree = HrDepartments::getTreeViewHtmlForm();
+        return $this->render('dep-index',[
+            'tree' => $tree,
+            'deb' => $deb,
+        ]);
+    }
+
+    public function actionGetItemsAjax(){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $id = Yii::$app->request->get('id');
+        $response = [];
+        if (!empty($id)){
+            $child = HrDepartments::find()
+                ->where(['parent_id' => $id])
+                ->andWhere(['status_id' => BaseModel::STATUS_ACTIVE])
+                ->all();
+            $shifts = HrDepartmentRelShifts::getHrRelShift($id);
+            $response['shifts'] = $shifts;
+//            $response['users_group'] = $users_group;
+            $response['delete'] = false;
+            if (!empty($child)) {
+                $response['delete'] = true;
+            }
+            return $response;
+        }
+
+    }
+
 }
