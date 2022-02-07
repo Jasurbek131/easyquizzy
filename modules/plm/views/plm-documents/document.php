@@ -5,6 +5,8 @@ use app\assets\ReactAsset;
 use yii\web\View;
 
 /* @var $this View */
+$this->title = Yii::t('app', 'Documents');
+$this->params['breadcrumbs'][] = $this->title;
 
 ReactAsset::$reactFileName = 'document';
 ReactAsset::$reactCssFileName = 'document';

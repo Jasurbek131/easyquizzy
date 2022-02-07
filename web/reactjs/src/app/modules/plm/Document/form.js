@@ -8,6 +8,7 @@ import ru from "date-fns/locale/ru/index.js";
 import uz from "date-fns/locale/uz/index.js";
 import {items} from "../../../actions/elements";
 import {loadingContent, removeElement} from "../../../actions/functions";
+import {Link} from "react-router-dom";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
 
@@ -115,7 +116,8 @@ class Form extends React.Component {
                 break;
             case "plm_document_items":
                 if (name === 'product_id') {
-                    plm_document_items[key]['products'] = e;
+                 //   plm_document_items[key]['equipmentGroup'] = e?.equipmentGroup ?? [];
+                    plm_document_items[key]['products'][index] = e;
                 }
                 if (name === "start_work") {
                     plm_document_items[key]['end_work'] = "";
@@ -238,17 +240,29 @@ class Form extends React.Component {
                 plm_document_items = removeElement(plm_document_items, key);
                 break;
             case "equipment-plus":
-                let element = {
+                let equipment = {
                     label: "",
                     value: ""
                 };
-                plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'].push(element);
+                plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'].push(equipment);
+                break;
+            case "product-plus":
+                let product = {
+                    label: "",
+                    value: ""
+                };
+                plm_document_items[key]['products'].push(product);
                 break;
             case "equipment-minus":
                 let elements = plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'];
                 let newElements = removeElement(elements, index);
                 plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'] = newElements;
                 this.setState({plm_document_items: plm_document_items});
+                break;
+            case "operator-plus":
+                let document_item_key = key;
+                let equipment_key = index;
+               // plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'];
                 break;
         }
         this.setState({plm_document_items: plm_document_items});
@@ -323,6 +337,7 @@ class Form extends React.Component {
             equipmentList,
             reasonList
         } = this.state;
+        let {history} = this.props;
         if (isLoading)
             return loadingContent()
         return (
@@ -332,6 +347,13 @@ class Form extends React.Component {
                 </div>
                 <div className={'card'}>
                     <div className={'card-header'}>
+                        <div className={'row'}>
+                            <div className={"col-sm-12"}>
+                                <div className={'pull-right'}>
+                                    <Link to={'/index'} className={"btn btn-sm btn-warning"}>Orqaga</Link>
+                                </div>
+                            </div>
+                        </div>
                         <div className={'row'}>
                             <div className={'col-sm-3'}>
                                 <div className={'form-group'}>
@@ -446,17 +468,40 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className={'col-sm-2'}>
-                                                <div className={"row"}>
-                                                    <div className={'col-sm-12'}>
-                                                        <label className={"control-label mb-05"}>Maxsulot</label>
-                                                        <Select className={"aria-required"}
-                                                                onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'product_id', key, '', '')}
-                                                                placeholder={"Tanlang ..."}
-                                                                value={productList.filter(({value}) => +value === +item?.product_id)}
-                                                                options={productList}
-                                                                styles={customStyles}
-                                                        />
+                                                <div className={'row'}>
+                                                    <div className={'col-sm-10 mb-1'}>
+                                                        <label className={"control-label"}>Maxsulotlar</label>
                                                     </div>
+                                                    <div className={"col-sm-2 mb-1"}>
+                                                        <button onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
+                                                                className={"btn btn-xs btn-info w-100 h-100"}>
+                                                            <i className={"fa fa-plus"}/>
+                                                        </button>
+                                                    </div>
+                                                        {
+                                                            item?.products?.length > 0 &&
+                                                            item.products.map((product, prKey) => {
+                                                                return (
+                                                                    <React.Fragment key={prKey}>
+                                                                        <div className={'col-sm-10 pr-0 mb-2'}>
+                                                                            <Select className={"aria-required"}
+                                                                                    onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'product_id', key, prKey, '')}
+                                                                                    placeholder={"Tanlang ..."}
+                                                                                    value={productList.filter(({value}) => +value === +product?.value)}
+                                                                                    options={productList}
+                                                                                    styles={customStyles}
+                                                                            />
+                                                                        </div>
+                                                                        <div className={'col-sm-2 mb-2'}>
+                                                                            <button onClick={this.onPush.bind(this, 'product-minus', 'plm_document_items', key, prKey)}
+                                                                                    className={"btn btn-xs btn-outline-danger w-100 h-100"}>
+                                                                                <i className={"fa fa-times"}/>
+                                                                            </button>
+                                                                        </div>
+                                                                    </React.Fragment>
+                                                                )
+                                                            })
+                                                        }
                                                 </div>
                                             </div>
                                             <div className={'col-sm-1'}>
