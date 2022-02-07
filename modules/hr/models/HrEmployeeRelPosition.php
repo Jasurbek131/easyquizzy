@@ -25,7 +25,6 @@ use Yii;
  */
 class HrEmployeeRelPosition extends BaseModel
 {
-    const SCENARIO_CREATE = 'scenario-create';
     /**
      * {@inheritdoc}
      */
@@ -40,15 +39,14 @@ class HrEmployeeRelPosition extends BaseModel
     public function rules()
     {
         return [
-            [['hr_department_id','hr_position_id'],'required','on' => [self::SCENARIO_CREATE]],
             [['hr_department_id', 'hr_position_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'hr_employee_id'], 'default', 'value' => null],
             [['hr_department_id', 'hr_position_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'hr_employee_id'], 'integer'],
             [['end_date'], 'safe'],
             [['begin_date'],'required'],
             [['status_id'],'default','value' => \app\models\BaseModel::STATUS_ACTIVE],
-            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['hr_department_id' => 'id']],
-            [['hr_employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrEmployee::className(), 'targetAttribute' => ['hr_employee_id' => 'id']],
-            [['hr_position_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrPositions::className(), 'targetAttribute' => ['hr_position_id' => 'id']],
+            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
+            [['hr_employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrEmployee::class, 'targetAttribute' => ['hr_employee_id' => 'id']],
+            [['hr_position_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrPositions::class, 'targetAttribute' => ['hr_position_id' => 'id']],
         ];
     }
 
@@ -77,7 +75,7 @@ class HrEmployeeRelPosition extends BaseModel
      */
     public function getHrDepartments()
     {
-        return $this->hasOne(HrDepartments::className(), ['id' => 'hr_department_id']);
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
 
     /**
@@ -85,7 +83,7 @@ class HrEmployeeRelPosition extends BaseModel
      */
     public function getHrEmployee()
     {
-        return $this->hasOne(HrEmployee::className(), ['id' => 'hr_employee_id']);
+        return $this->hasOne(HrEmployee::class, ['id' => 'hr_employee_id']);
     }
 
     /**
@@ -93,13 +91,14 @@ class HrEmployeeRelPosition extends BaseModel
      */
     public function getHrPositions()
     {
-        return $this->hasOne(HrPositions::className(), ['id' => 'hr_position_id']);
+        return $this->hasOne(HrPositions::class, ['id' => 'hr_position_id']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getHrEmployees()
     {
-        return $this->hasOne(HrEmployee::className(), ['id' => 'hr_employee_id']);
+        return $this->hasOne(HrEmployee::class, ['id' => 'hr_employee_id']);
     }
 }

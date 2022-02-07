@@ -18,7 +18,7 @@ class HrEmployeeSearch extends HrEmployee
     {
         return [
             [['id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['firstname', 'lastname', 'fathername', 'phone_number', 'email'], 'safe'],
+            [['firstname', 'lastname', 'fathername', 'phone_number', 'email', 'hr_department_id','hr_position_id'], 'safe'],
         ];
     }
 
@@ -27,7 +27,6 @@ class HrEmployeeSearch extends HrEmployee
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -40,9 +39,9 @@ class HrEmployeeSearch extends HrEmployee
      */
     public function search($params)
     {
-        $query = HrEmployee::find();
-
-        // add conditions that should always apply here
+        $query = HrEmployee::find()
+            ->alias('he')
+            ->orderBy(['he.id' => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -50,27 +49,18 @@ class HrEmployeeSearch extends HrEmployee
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+        if (!$this->validate())
             return $dataProvider;
-        }
 
-        // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'status_id' => $this->status_id,
-            'created_by' => $this->created_by,
-            'created_at' => $this->created_at,
-            'updated_by' => $this->updated_by,
-            'updated_at' => $this->updated_at,
+            'he.status_id' => $this->status_id,
         ]);
 
-        $query->andFilterWhere(['ilike', 'firstname', $this->firstname])
-            ->andFilterWhere(['ilike', 'lastname', $this->lastname])
-            ->andFilterWhere(['ilike', 'fathername', $this->fathername])
-            ->andFilterWhere(['ilike', 'phone_number', $this->phone_number])
-            ->andFilterWhere(['ilike', 'email', $this->email]);
+        $query->andFilterWhere(['ilike', 'he.firstname', $this->firstname])
+            ->andFilterWhere(['ilike', 'he.lastname', $this->lastname])
+            ->andFilterWhere(['ilike', 'he.fathername', $this->fathername])
+            ->andFilterWhere(['ilike', 'he.phone_number', $this->phone_number])
+            ->andFilterWhere(['ilike', 'he.email', $this->email]);
 
         return $dataProvider;
     }
