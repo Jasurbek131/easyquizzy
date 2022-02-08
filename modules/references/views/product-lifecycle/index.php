@@ -23,8 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <!--    --><?php //endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'product-lifecycle_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterRowOptions' => ['class' => 'filters no-print'],

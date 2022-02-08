@@ -40,9 +40,8 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
-        $query = Products::find();
-
-        // add conditions that should always apply here
+        $query = Products::find()
+            ->orderBy(["id" => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -50,20 +49,11 @@ class ProductsSearch extends Products
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+        if (!$this->validate())
             return $dataProvider;
-        }
 
-        // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
             'status_id' => $this->status_id,
-            'created_at' => $this->created_at,
-            'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
         ]);
 
         $query->andFilterWhere(['ilike', 'name', $this->name])

@@ -13,7 +13,6 @@ use yii\helpers\ArrayHelper;
  * @property string $code
  * @property string $part_number
  * @property int $status_id
- * @property array $equipments
  * @property int $created_at
  * @property int $created_by
  * @property int $updated_at
@@ -24,7 +23,6 @@ use yii\helpers\ArrayHelper;
  */
 class Products extends BaseModel
 {
-
     /**
      * {@inheritdoc}
      */
