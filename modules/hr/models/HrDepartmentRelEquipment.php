@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\models;
 
+use app\modules\references\models\Equipments;
 use Yii;
 
 /**
@@ -19,7 +20,7 @@ use Yii;
  * @property Equipments $equipments
  * @property HrDepartments $hrDepartments
  */
-class HrDepartmentRelEquipment extends \yii\db\ActiveRecord
+class HrDepartmentRelEquipment extends BaseModel
 {
     /**
      * {@inheritdoc}
@@ -64,7 +65,7 @@ class HrDepartmentRelEquipment extends \yii\db\ActiveRecord
      */
     public function getEquipments()
     {
-        return $this->hasOne(Equipments::className(), [id => equipment_id]);
+        return $this->hasOne(Equipments::className(), ['id' => 'equipment_id']);
     }
 
     /**
@@ -72,6 +73,31 @@ class HrDepartmentRelEquipment extends \yii\db\ActiveRecord
      */
     public function getHrDepartments()
     {
-        return $this->hasOne(HrDepartments::className(), [id => hr_department_id]);
+        return $this->hasOne(HrDepartments::className(), ['id' => 'hr_department_id']);
+    }
+
+    public static function getHrRelEquipment($department_id = null){
+        if(!empty($department_id)){
+            $data = self::find()
+                ->alias('here')
+                ->select([
+                    "here.id AS id",
+                    "hrd.name AS dep_name",
+                    "e.name AS equipment_name",
+                    "et.name AS equipment_type_time",
+                    "sl.name_uz as status_name",
+                    "sl.id as status"
+                ])
+                ->leftJoin(['e' => 'equipments'],'here.equipment_id = e.id')
+                ->leftJoin(['et' => 'equipment_types'],'e.equipment_type_id = et.id')
+                ->leftJoin(['hrd' => 'hr_departments'],'here.hr_department_id = hrd.id')
+                ->leftJoin(['sl' => 'status_list'],'here.status_id = sl.id')
+                ->where(['here.hr_department_id' => $department_id])
+                ->andWhere(['here.status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+                ->asArray()
+                ->all();
+            return $data ?? [];
+        }
+        return [];
     }
 }
