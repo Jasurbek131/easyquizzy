@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property HrEmployee[] $hrEmployees
  */
-class HrDepartments extends Tree
+class HrDepartments extends BaseModel
 {
     const ADMINISTRATION_TYPE = 1; // ma'muriyat bo'limlari uchun
     const PRODUCTION_TYPE = 2;     // ishlab chiqarish qismi uchun

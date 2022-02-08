@@ -229,12 +229,13 @@ class AuthItem extends \yii\db\ActiveRecord
 //    }
 
     /**
+     * @param bool $isMap
      * @return array
      */
-    public static function getRoles()
+    public static function getRoles($isMap = false)
     {
         $models = AuthItem::find()->where(['type' => Item::TYPE_ROLE])->asArray()->all();
-        if (!empty($models))
+        if (!empty($models) && $isMap)
             return ArrayHelper::map($models, 'name', 'name_for_user');
 
         return [];

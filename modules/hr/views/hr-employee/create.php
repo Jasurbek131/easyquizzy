@@ -12,8 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="hr-employee-create">
 
     <?= $this->render('_form', [
-        'model' => $model,
-        'hrEmployeeRelPosition' => $hrEmployeeRelPosition,
+        'model' => $model
     ]) ?>
 
 </div>

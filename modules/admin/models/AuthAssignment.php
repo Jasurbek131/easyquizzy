@@ -67,7 +67,7 @@ class AuthAssignment extends \yii\db\ActiveRecord
         $data = self::find()->select(["item_name"])->where(['user_id' => $id])->asArray()->all();
 
         if(!empty($data))
-            return ArrayHelper::getColumn($data, 'item_name');
+            return ArrayHelper::map($data, "item_name", "item_name");
 
         return [];
     }
