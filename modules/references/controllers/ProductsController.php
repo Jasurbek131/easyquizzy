@@ -3,6 +3,7 @@
 namespace app\modules\references\controllers;
 
 use app\models\BaseModel;
+use app\modules\references\models\ReferencesProductRelEquipment;
 use Yii;
 use app\modules\references\models\Products;
 use app\modules\references\models\ProductsSearch;
@@ -23,7 +24,7 @@ class ProductsController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -72,48 +73,32 @@ class ProductsController extends Controller
     public function actionCreate()
     {
         $model = new Products();
-        if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    if($model->save()){
-                        $saved = true;
-                    }else{
-                        $saved = false;
-                    }
-                    if($saved) {
-                        $transaction->commit();
-                    }else{
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    Yii::info('Not saved' . $e, 'save');
-                    $transaction->rollBack();
-                }
-                if (Yii::$app->request->isAjax) {
+
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            if ($model->load($request->post())) {
+                $response = $model->saveProduct();
+                if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    $response = [];
-                    if ($saved) {
+                    if ($response['status'])
                         $response['status'] = 0;
-                        $response['message'] = Yii::t('app', 'Saved Successfully');
-                    } else {
+                    else
                         $response['status'] = 1;
-                        $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
-                    }
+
                     return $response;
                 }
-                if ($saved) {
+
+                if ($response['status'])
                     return $this->redirect(['view', 'id' => $model->id]);
-                }
+
             }
         }
-        if (Yii::$app->request->isAjax) {
+
+        if (Yii::$app->request->isAjax)
             return $this->renderAjax('create', [
                 'model' => $model,
             ]);
-        }
+
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -129,48 +114,31 @@ class ProductsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    if($model->save()){
-                        $saved = true;
-                    }else{
-                        $saved = false;
-                    }
-                    if($saved) {
-                        $transaction->commit();
-                    }else{
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    Yii::info('Not saved' . $e, 'save');
-                    $transaction->rollBack();
-                }
-                if (Yii::$app->request->isAjax) {
+
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            if ($model->load($request->post())) {
+                $response = $model->saveProduct();
+                if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    $response = [];
-                    if ($saved) {
+                    if ($response['status'])
                         $response['status'] = 0;
-                        $response['message'] = Yii::t('app', 'Saved Successfully');
-                    } else {
+                    else
                         $response['status'] = 1;
-                        $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
-                    }
+
                     return $response;
                 }
-                if ($saved) {
+
+                if ($response['status'])
                     return $this->redirect(['view', 'id' => $model->id]);
-                }
+
             }
         }
-        if (Yii::$app->request->isAjax) {
+
+        if (Yii::$app->request->isAjax)
             return $this->renderAjax('update', [
                 'model' => $model,
             ]);
-        }
 
         return $this->render('update', [
             'model' => $model,

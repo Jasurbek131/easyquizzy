@@ -52,29 +52,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update}{view}{delete}',
+                    'template' => '{update} {delete}',
                     'contentOptions' => ['class' => 'no-print', 'style' => 'width:100px;'],
-//                    'visibleButtons' => [
-//                        'view' => Yii::$app->user->can('users/view'),
-//                        'update' => function ($model) {
-//                            return Yii::$app->user->can('users/update'); // && $model->status < $model::STATUS_SAVED;
-//                        },
-//                        'delete' => function ($model) {
-//                            return Yii::$app->user->can('users/delete'); // && $model->status < $model::STATUS_SAVED;
-//                        }
-//                    ],
+                    'visibleButtons' => [
+                        'update' => function (Users $model) {
+                            return Yii::$app->user->can('users/update') || $model->status_id == $model::STATUS_ACTIVE;
+                        },
+                        'delete' => function (Users $model) {
+                            return Yii::$app->user->can('users/delete') || $model->status_id == $model::STATUS_ACTIVE;
+                        }
+                    ],
                     'buttons' => [
                         'update' => function ($url, $model) {
                             return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
                                 'title' => Yii::t('app', 'Update'),
                                 'class' => 'update-dialog btn btn-xs btn-success mr1',
-                                'data-form-id' => $model->id,
-                            ]);
-                        },
-                        'view' => function ($url, $model) {
-                            return Html::a('<span class="fa fa-eye"></span>', $url, [
-                                'title' => Yii::t('app', 'View'),
-                                'class' => 'btn btn-xs btn-primary view-dialog mr1',
                                 'data-form-id' => $model->id,
                             ]);
                         },
@@ -104,7 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
     'create_button' => 'create-dialog',
     'view_button' => 'view-dialog',
     'delete_button' => 'delete-dialog',
-    'modal_size' => 'modal-md',
+    'modal_size' => 'modal-xl',
     'grid_ajax' => 'users_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
 ]); ?>

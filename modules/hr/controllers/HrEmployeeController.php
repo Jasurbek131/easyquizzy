@@ -28,7 +28,7 @@ class HrEmployeeController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -59,28 +59,15 @@ class HrEmployeeController extends Controller
      */
     public function actionView($id)
     {
-        $hrEmployeeRel = HrEmployeeRelPosition::find()
-            ->alias('hrerp')
-            ->select([
-                'hrd.name AS department_name',
-                'hrp.name_uz AS position_name',
-                'hrerp.begin_date AS begin_date',
-                'hrerp.end_date AS end_date',
-                'sl.name_uz status_name',
-                'sl.id status'
-            ])
-            ->leftJoin(['hrd'=>'hr_departments'],'hrerp.hr_department_id = hrd.id')
-            ->leftJoin(['hrp'=>'hr_positions'],'hrerp.hr_position_id = hrp.id')
-            ->leftJoin(['sl' => 'status_list'],'hrerp.status_id = sl.id')
-            ->where(['hr_employee_id' => $id])
-            ->asArray()
-            ->all();
+        $hrEmployeeRel = HrEmployee::getEmployeeData($id);
+
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('view', [
                 'model' => $this->findModel($id),
                 'hrEmployeeRel' => $hrEmployeeRel ?? []
             ]);
         }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -94,64 +81,32 @@ class HrEmployeeController extends Controller
     public function actionCreate()
     {
         $model = new HrEmployee();
-        $hrEmployeeRelPosition = [new HrEmployeeRelPosition(['scenario' => HrEmployeeRelPosition::SCENARIO_CREATE])];
-        if (Yii::$app->request->isPost) {
-            /** begin load multiple input */
-            $responsibleHrEmp = Yii::$app->request->post('HrEmployeeRelPosition', []);
-            foreach (array_keys($responsibleHrEmp) as $index) {
-                $hrEmployeeRelPosition[$index] = new HrEmployeeRelPosition(['scenario' => HrEmployeeRelPosition::SCENARIO_CREATE]);
-            }
-            /** end load multiple input */
-            if ($model->load(Yii::$app->request->post()) && Model::loadMultiple($hrEmployeeRelPosition, Yii::$app->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    if($model->save()){
-                        foreach ($hrEmployeeRelPosition as $item){
-                            $item->setAttributes([
-                                'hr_employee_id' => $model->id,
-                            ]);
-                            if($item->save()){
-                                $saved = true;
-                            }
-                        }
-                    }else{
-                        $saved = false;
-                    }
+        $request = Yii::$app->request;
 
-                    if($saved) {
-                        $transaction->commit();
-                    }else{
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    Yii::info('Not saved' . $e, 'save');
-                    $transaction->rollBack();
-                }
-                if (Yii::$app->request->isAjax) {
+        if ($request->isPost) {
+            if ($model->load($request->post())) {
+
+                $response = $model->saveEmployee();
+                if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    $response = [];
-                    if ($saved) {
+                    if ($response['status'])
                         $response['status'] = 0;
-                        $response['message'] = Yii::t('app', 'Saved Successfully');
-                    } else {
+                    else
                         $response['status'] = 1;
-                        $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
-                    }
+
                     return $response;
                 }
-                if ($saved) {
+
+                if ($response['status'])
                     return $this->redirect(['view', 'id' => $model->id]);
-                }
             }
         }
-        if (Yii::$app->request->isAjax) {
+
+        if (Yii::$app->request->isAjax)
             return $this->renderAjax('create', [
                 'model' => $model,
-                'hrEmployeeRelPosition' => $hrEmployeeRelPosition,
             ]);
-        }
+
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -168,92 +123,36 @@ class HrEmployeeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $hrEmployeeRelPosition = $model->hrEmployeeRelPosition;
-        /** begin load multiple input */
-        $responsibleHrEmp = Yii::$app->request->post('HrEmployeeRelPosition', []);
-        foreach (array_keys($responsibleHrEmp) as $index) {
-            $hrEmployeeRelPosition[$index] = new HrEmployeeRelPosition();
-        }
-        /** end load multiple input */
-        if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post()) && Model::loadMultiple($hrEmployeeRelPosition, Yii::$app->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    if($model->save()){
-                        foreach ($hrEmployeeRelPosition as $item){
-                            if(!empty($item->end_date)){
-                                $oldHrRelPosition = HrEmployeeRelPosition::findOne([
-                                    'hr_employee_id' => $model->id,
-                                    'status_id' => BaseModel::STATUS_ACTIVE
-                                ]);
-                                if(!empty($oldHrRelPosition)){
-                                        $oldHrRelPosition->status_id = BaseModel::STATUS_INACTIVE;
-                                        $oldHrRelPosition->end_date = $item->end_date;
-                                    if($oldHrRelPosition->save()){
-                                        $saved = true;
-                                    }else{
-                                        $user = Yii::$app->user->identity;
-                                        Telegram::sendMultiple([Telegram::FAYZULLO],
-                                            "#hr_employee_rel_position ni update qilshda xatolik \n" .
-                                            "Error: <code>".json_encode($oldHrRelPosition->getErrors(), JSON_PRETTY_PRINT)."</code> \n" .
-                                            "Line: <code>".__LINE__."</code> \n" .
-                                            "Controller: <code>".__CLASS__."</code> \n" .
-                                            "User: <code><b>".$user->username."</b></code> \n",
-                                            [Telegram::FAYZULLO]
-                                        );
-                                    }
-                                }
-                            }else{
-                                if(empty($item->hr_employee_id)){
-                                    $item->setAttributes([
-                                        'hr_employee_id' => $model->id,
-                                    ]);
-                                    if($item->save()){
-                                        $saved = true;
-                                    }
-                                }else{
-                                    $saved = true;
-                                }
-                            }
-                        }
-                    }else{
-                        $saved = false;
-                    }
-                    if($saved) {
-                        $transaction->commit();
-                    }else{
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    \yii\helpers\VarDumper::dump($e->getMessage(),10,true);die();
-                    Yii::info('Not saved' . $e, 'save');
-                    $transaction->rollBack();
-                }
-                if (Yii::$app->request->isAjax) {
+        $position = $model->hrEmployeeActivePosition;
+        $model->hr_department_id = $position->hr_department_id ?? "";
+        $model->hr_position_id = $position->hr_position_id ?? "";
+        $model->begin_date = $position->begin_date ? date('d.m.Y', strtotime($position->begin_date)) : "";
+
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            if ($model->load($request->post())) {
+                $model->isUpdate = true;
+                $response = $model->saveEmployee();
+                if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    $response = [];
-                    if ($saved) {
+                    if ($response['status'])
                         $response['status'] = 0;
-                        $response['message'] = Yii::t('app', 'Saved Successfully');
-                    } else {
+                    else
                         $response['status'] = 1;
-                        $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
-                    }
+
                     return $response;
                 }
-                if ($saved) {
+
+                if ($response['status'])
                     return $this->redirect(['view', 'id' => $model->id]);
-                }
+
             }
         }
-        if (Yii::$app->request->isAjax) {
+
+        if (Yii::$app->request->isAjax)
             return $this->renderAjax('update', [
                 'model' => $model,
-                'hrEmployeeRelPosition' => $hrEmployeeRelPosition,
             ]);
-        }
 
         return $this->render('update', [
             'model' => $model,
@@ -304,24 +203,6 @@ class HrEmployeeController extends Controller
         }
     }
 
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "hr-employee_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => HrEmployee::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
     /**
      * Finds the HrEmployee model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

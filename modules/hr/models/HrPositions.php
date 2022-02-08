@@ -67,6 +67,10 @@ class HrPositions extends BaseModel
         return $this->hasMany(HrEmployee::class, ['hr_position_id' => 'id']);
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if ($this->isNewRecord){
@@ -75,6 +79,11 @@ class HrPositions extends BaseModel
         return parent::beforeSave($insert);
     }
 
+    /**
+     * @param null $key
+     * @param bool $isArray
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public static function getList($key = null, $isArray = false) {
         $list = self::find()->select(['id as value', 'name_uz as label'])->asArray()->all();
         if ($isArray) {

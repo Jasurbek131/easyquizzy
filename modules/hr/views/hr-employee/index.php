@@ -1,5 +1,7 @@
 <?php
 
+use app\modules\hr\models\HrEmployee;
+use app\widgets\Language;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -7,7 +9,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\modules\hr\models\HrEmployeeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Hr Employees';
+$this->title = Yii::t('app', "Hr Employee");
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card hr-employee-index">
@@ -18,9 +20,8 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 <!--    --><?php //endif; ?>
     <div class="card-body">
-        <?php Pjax::begin(['id' => 'hr-employee_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    
+    <?php Pjax::begin(['id' => 'hr-employee_pjax']); ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterRowOptions' => ['class' => 'filters no-print'],
@@ -33,24 +34,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'fathername',
             'phone_number',
             'email:email',
-            /*[
+            [
                 'attribute' => 'hr_department_id',
-                'value' => function($model) {
-                    if ($model->hr_department_id) {
-                        return $model->hrDepartments->name;
-                    }
-                    return "";
+                'label' => Yii::t("app","Hr Department"),
+                'value' => function(HrEmployee $model) {
+                    return $model->hrEmployeeActivePosition ?  ($model->hrEmployeeActivePosition->hrDepartments->name ?? "") : "";
                 }
             ],
             [
                 'attribute' => 'hr_position_id',
-                'value' => function($model) {
-                    if ($model->hr_position_id) {
-                        return $model->hrPositions->name_uz;
-                    }
-                    return "";
+                'label' => Yii::t("app","Hr Position"),
+                'value' => function(HrEmployee $model) {
+                    return $model->hrEmployeeActivePosition ?  ($model->hrEmployeeActivePosition->hrPositions[Language::widget()] ?? "") : "";
                 }
-            ],*/
+            ],
 
                 [
                     'class' => 'yii\grid\ActionColumn',
@@ -107,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
     'delete_button' => 'delete-dialog',
     'modal_size' => 'modal-lg',
     'grid_ajax' => 'hr-employee_pjax',
-    'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
+    'confirm_message' => Yii::t('app', 'Are you sure you want to delete this item?')
 ]);
 $this->registerCss('
     .modal-lg{

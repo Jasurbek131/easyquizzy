@@ -2,6 +2,13 @@
 
 namespace app\modules\hr\controllers;
 
+use app\models\BaseModel;
+use app\modules\hr\models\HrDepartmentRelDefects;
+use app\modules\hr\models\HrDepartmentRelEquipment;
+use app\modules\hr\models\HrDepartmentRelProduct;
+use app\modules\hr\models\HrDepartmentRelShifts;
+use app\modules\hr\models\HrEmployeeRelUsers;
+use app\modules\references\models\Shifts;
 use kartik\tree\controllers\NodeController;
 use kartik\tree\models\Tree;
 use kartik\tree\TreeSecurity;
@@ -41,12 +48,12 @@ class HrDepartmentsController extends NodeController
      * Lists all HrDepartments models.
      * @return mixed
      */
-    public function actionIndex()
+    /*public function actionIndex()
     {
         return $this->render('index', [
             'query' => HrDepartments::find()->addOrderBy('root, lft')
         ]);
-    }
+    }*/
 
     /**
      * @return \yii\web\Response
@@ -166,50 +173,37 @@ class HrDepartmentsController extends NodeController
      */
     public function actionCreate()
     {
+        $data = Yii::$app->request->get();
+        if(!Yii::$app->request->isAjax)
+            return $this->redirect('index');
         $model = new HrDepartments();
-        if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    if($model->save()){
-                        $saved = true;
-                    }else{
-                        $saved = false;
-                    }
-                    if($saved) {
-                        $transaction->commit();
-                    }else{
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    Yii::info('Not saved' . $e, 'save');
-                    $transaction->rollBack();
+        
+        if ($model->load(Yii::$app->request->post())) {
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                $response = [];
+                $model->parent_id = $data['department_id'] ?? null;
+                if ($model->save()) {
+                    $response['status'] = 0;
+                } else {
+                    $response['status'] = 1;
+                    $response['errors'] = $model->getErrors();
                 }
-                if (Yii::$app->request->isAjax) {
-                    Yii::$app->response->format = Response::FORMAT_JSON;
-                    $response = [];
-                    if ($saved) {
-                        $response['status'] = 0;
-                        $response['message'] = Yii::t('app', 'Saved Successfully');
-                    } else {
-                        $response['status'] = 1;
-                        $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
-                    }
-                    return $response;
-                }
-                if ($saved) {
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return $response;
+            }
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         }
         if (Yii::$app->request->isAjax) {
+            $model->parent_id = $data['department_id'] ?? null;
             return $this->renderAjax('create', [
                 'model' => $model,
             ]);
         }
-        return $this->render('create', [
+
+        return $this->renderAjax('create', [
             'model' => $model,
         ]);
     }
@@ -221,9 +215,9 @@ class HrDepartmentsController extends NodeController
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($department_id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($department_id);
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
@@ -248,6 +242,7 @@ class HrDepartmentsController extends NodeController
                     $response = [];
                     if ($saved) {
                         $response['status'] = 0;
+                        $response['model'] = ['name' => $model->name, 'id' => $model->id];
                         $response['message'] = Yii::t('app', 'Saved Successfully');
                     } else {
                         $response['status'] = 1;
@@ -349,4 +344,40 @@ class HrDepartmentsController extends NodeController
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionIndex($deb = null)
+    {
+        $tree = HrDepartments::getTreeViewHtmlForm();
+        return $this->render('dep-index',[
+            'tree' => $tree,
+            'deb' => $deb,
+        ]);
+    }
+
+    public function actionGetItemsAjax(){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $id = Yii::$app->request->get('id');
+        $response = [];
+        if (!empty($id)){
+            $child = HrDepartments::find()
+                ->where(['parent_id' => $id])
+                ->andWhere(['status_id' => BaseModel::STATUS_ACTIVE])
+                ->all();
+            $shifts = HrDepartmentRelShifts::getHrRelShift($id);
+            $equipments = HrDepartmentRelEquipment::getHrRelEquipment($id);
+            $products = HrDepartmentRelProduct::getHrRelProduct($id);
+            $defects = HrDepartmentRelDefects::getHrRelDefect($id);
+            $response['shifts'] = $shifts;
+            $response['equipments'] = $equipments;
+            $response['products'] = $products;
+            $response['defects'] = $defects;
+            $response['delete'] = false;
+            if (!empty($child)) {
+                $response['delete'] = true;
+            }
+            return $response;
+        }
+
+    }
+
 }

@@ -25,13 +25,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'id' => 'login-form',
                 ]); ?>
 
-                <?php echo $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+                <?php echo $form->field($model, 'username')->textInput(['autofocus' => true])->label(Yii::t("app","Login")) ?>
 
-                <?php echo $form->field($model, 'password')->passwordInput() ?>
+                <?php echo $form->field($model, 'password')->passwordInput()->label(Yii::t("app","Password")) ?>
 
                 <div class="form-group">
                     <div class="col-lg-12">
-                        <?= Html::submitButton('Login', ['class' => 'btn btn-info', 'name' => 'login-button']) ?>
+                        <?= Html::submitButton(Yii::t("app","Open"), ['class' => 'btn btn-info','id' => 'open', 'name' => 'login-button']) ?>
                     </div>
                 </div>
 
@@ -53,6 +53,9 @@ $this->registerCss("
     }
     body{
         background: #343A40!important;
+    }
+    #open{
+        width:100%;
     }
 ");
 ?>
