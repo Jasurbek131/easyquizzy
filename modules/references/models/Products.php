@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
  * @property string $code
  * @property string $part_number
  * @property int $status_id
+ * @property array $equipments
  * @property int $created_at
  * @property int $created_by
  * @property int $updated_at
@@ -23,6 +24,19 @@ use yii\helpers\ArrayHelper;
  */
 class Products extends BaseModel
 {
+
+    /**
+     * @var array
+     * Mahsulot uskunalarini olish uchun
+     */
+    public $equipments;
+
+    /**
+     * @var bool
+     * Maxsulot malumotlari yangilanayotgan bo'lsa: true bo'ladi
+     */
+    public $isUpdate = false;
+
     /**
      * {@inheritdoc}
      */
@@ -37,12 +51,12 @@ class Products extends BaseModel
     public function rules()
     {
         return [
-            [['name', 'part_number', 'status_id'], 'required'],
+            [['name', 'part_number', 'status_id', 'equipments'], 'required'],
             [['created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['code', 'part_number'], 'string', 'max' => 100],
-            [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::className(), 'targetAttribute' => ['equipment_group_id' => 'id']],
+            [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
         ];
     }
 
@@ -56,6 +70,7 @@ class Products extends BaseModel
             'name' => Yii::t('app', 'Name'),
             'code' => Yii::t('app', 'Code'),
             'part_number' => Yii::t('app', 'Part Number'),
+            'equipments' => Yii::t('app', 'Equipments'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -69,16 +84,22 @@ class Products extends BaseModel
      */
     public function getEquipmentGroup()
     {
-        return $this->hasOne(EquipmentGroup::className(), ['id' => 'equipment_group_id']);
+        return $this->hasOne(EquipmentGroup::class, ['id' => 'equipment_group_id']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getProductLifecycles()
     {
-        return $this->hasMany(ProductLifecycle::className(), ['product_id' => 'id']);
+        return $this->hasMany(ProductLifecycle::class, ['product_id' => 'id']);
     }
 
+    /**
+     * @param null $key
+     * @param bool $isArray
+     * @return array|string|\yii\db\ActiveRecord[]
+     */
     public static function getList($key = null, $isArray = false) {
         if (!is_null($key)){
             $product = self::findOne($key);
@@ -96,5 +117,60 @@ class Products extends BaseModel
             return $list;
         }
         return ArrayHelper::map($list, 'value', 'label');
+    }
+
+    /**
+     * @return array
+     */
+    public function saveProduct(): array
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app','Success'),
+        ];
+        try{
+
+            if (!$this->save())
+                $response = [
+                    'status' => false,
+                    'message' => 'Product not saved',
+                    'errors' => $this->getErrors()
+                ];
+
+            if ($response['status']){
+
+                if ($this->isUpdate)
+                    ReferencesProductRelEquipment::deleteAll(["product_id" => $this->id]);
+
+                foreach ($this->equipments as $equipment){
+                    $rel = new ReferencesProductRelEquipment([
+                        'product_id' => $this->id,
+                        'equipment_id' => $equipment,
+                    ]);
+                    if (!$rel->save()){
+                        $response = [
+                            'status' => false,
+                            'message' => 'Product rel equipment not saved',
+                            'errors' => $rel->getErrors()
+                        ];
+                        break;
+                    }
+                }
+            }
+
+            if($response['status'])
+                $transaction->commit();
+            else
+                $transaction->rollBack();
+
+        } catch(\Exception $e){
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        return $response;
     }
 }
