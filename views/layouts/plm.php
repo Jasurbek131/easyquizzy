@@ -351,13 +351,13 @@ AppAsset::register($this);
                                     'active' => $controller == 'equipments' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
-                                [
-                                    'label' => Yii::t('app', 'Equipment Group'),
-                                    'url' => '/references/equipment-group/index',
-                                    'options' => ['class' => 'nav-item'],
-                                    'active' => $controller == 'equipment-group' && $action  == 'index',
-                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
-                                ],
+//                                [
+//                                    'label' => Yii::t('app', 'Equipment Group'),
+//                                    'url' => '/references/equipment-group/index',
+//                                    'options' => ['class' => 'nav-item'],
+//                                    'active' => $controller == 'equipment-group' && $action  == 'index',
+//                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
+//                                ],
                                 [
                                     'label' => Yii::t('app', 'Product Lifecycle'),
                                     'url' => '/references/product-lifecycle/index',

@@ -119,9 +119,8 @@ class ProductLifecycleController extends Controller
 
         if ($request->isPost) {
             if ($model->load($request->post())) {
-
                 $model->isUpdate = true;
-                $response = $model->saveProductLifecycle();
+                $response = $model->saveProductLifecycle($model->oldAttributes);
                 if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     if ($response['status'])

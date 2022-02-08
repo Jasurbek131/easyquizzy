@@ -2,6 +2,7 @@
 
 namespace app\modules\references\models;
 
+use app\modules\admin\models\AdminLogs;
 use Yii;
 
 /**
@@ -71,7 +72,7 @@ class ProductLifecycle extends BaseModel
             'equipment_group_id' => Yii::t('app', 'Equipment Group'),
             'equipments' => Yii::t('app', 'Equipments'),
             'lifecycle' => Yii::t('app', 'Lifecycle'),
-            'time_type_id' => Yii::t('app', 'Time Type'),
+            'time_type_id' => Yii::t('app', 'Time Types List'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -113,9 +114,10 @@ class ProductLifecycle extends BaseModel
     }
 
     /**
+     * @param array $oldAttiributes
      * @return array
      */
-    public function saveProductLifecycle(): array
+    public function saveProductLifecycle($oldAttiributes = []): array
     {
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
@@ -133,8 +135,21 @@ class ProductLifecycle extends BaseModel
 
             if ($response['status']){
 
-                if ($this->isUpdate)
+                if ($this->isUpdate){
                     ReferencesProductLifecycleRelEquipment::deleteAll(["product_lifecycle_id" => $this->id]);
+                    if (
+                        $oldAttiributes["product_id"] != $this->attributes["product_id"] ||
+                        $oldAttiributes["lifecycle"] != $this->attributes["lifecycle"] ||
+                        $oldAttiributes["time_type_id"] != $this->attributes["time_type_id"]
+                    ){
+                        $response = AdminLogs::saveLog(
+                            $oldAttiributes,
+                            $this->attributes,
+                            self::tableName(),
+                            self::class
+                        );
+                    }
+                }
 
                 if ($response['status']){
                     $response = ReferencesProductLifecycleRelEquipment::checkExists($this->id, $this->product_id, $this->equipments);
