@@ -21,7 +21,7 @@ class m220201_112441_create_delete_some_column_to_users_table extends Migration
      */
     public function safeDown()
     {
-        $this->addColumn('{{%users}}', 'hr_department_id',$this->integer());
+        $this->addColumn('{{%users}}', 'hr_organisation_id',$this->integer());
         $this->addColumn('{{%hr_departments}}', 'hr_organisation_id',$this->integer());
     }
 }

@@ -45,6 +45,10 @@ class m220203_071926_create_delete_some_column_to_hr_employee_table extends Migr
      */
     public function safeDown()
     {
+
+        $this->addColumn('{{%hr_employee}}','hr_department_id',$this->integer());
+        $this->addColumn('{{%hr_employee}}','hr_position_id',$this->integer());
+
         // creates index for column `hr_department_id`
         $this->createIndex(
             '{{%idx-hr_employee-hr_department_id}}',
@@ -78,7 +82,5 @@ class m220203_071926_create_delete_some_column_to_hr_employee_table extends Migr
             'id',
             'RESTRICT'
         );
-        $this->addColumn('{{%hr_employee}}','hr_department_id',$this->integer());
-        $this->addColumn('{{%hr_employee}}','hr_position_id',$this->integer());
     }
 }
