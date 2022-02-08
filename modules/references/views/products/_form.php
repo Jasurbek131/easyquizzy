@@ -1,7 +1,5 @@
 <?php
 
-use app\modules\references\models\Equipments;
-use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -15,15 +13,6 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
     <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'equipments')->widget(Select2::class, [
-        'data' => Equipments::getListForSelect(true),
-        'options' => ['placeholder' => Yii::t('app','Select')],
-        'pluginOptions' => [
-            'allowClear' => true,
-            'multiple' => true,
-        ]
-    ]) ?>
 
     <?php echo $form->field($model, 'part_number')->textInput(['maxlength' => true]) ?>
 

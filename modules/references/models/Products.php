@@ -26,18 +26,6 @@ class Products extends BaseModel
 {
 
     /**
-     * @var array
-     * Mahsulot uskunalarini olish uchun
-     */
-    public $equipments;
-
-    /**
-     * @var bool
-     * Maxsulot malumotlari yangilanayotgan bo'lsa: true bo'ladi
-     */
-    public $isUpdate = false;
-
-    /**
      * {@inheritdoc}
      */
     public static function tableName()
@@ -51,7 +39,7 @@ class Products extends BaseModel
     public function rules()
     {
         return [
-            [['name', 'part_number', 'status_id', 'equipments'], 'required'],
+            [['name', 'part_number', 'status_id'], 'required'],
             [['created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
@@ -70,7 +58,6 @@ class Products extends BaseModel
             'name' => Yii::t('app', 'Name'),
             'code' => Yii::t('app', 'Code'),
             'part_number' => Yii::t('app', 'Part Number'),
-            'equipments' => Yii::t('app', 'Equipments'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -137,27 +124,6 @@ class Products extends BaseModel
                     'message' => 'Product not saved',
                     'errors' => $this->getErrors()
                 ];
-
-            if ($response['status']){
-
-                if ($this->isUpdate)
-                    ReferencesProductRelEquipment::deleteAll(["product_id" => $this->id]);
-
-                foreach ($this->equipments as $equipment){
-                    $rel = new ReferencesProductRelEquipment([
-                        'product_id' => $this->id,
-                        'equipment_id' => $equipment,
-                    ]);
-                    if (!$rel->save()){
-                        $response = [
-                            'status' => false,
-                            'message' => 'Product rel equipment not saved',
-                            'errors' => $rel->getErrors()
-                        ];
-                        break;
-                    }
-                }
-            }
 
             if($response['status'])
                 $transaction->commit();

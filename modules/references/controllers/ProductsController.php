@@ -114,12 +114,10 @@ class ProductsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->equipments = ReferencesProductRelEquipment::getEquipmentsByProduct($id);
 
         $request = Yii::$app->request;
         if ($request->isPost) {
             if ($model->load($request->post())) {
-                $model->isUpdate = true;
                 $response = $model->saveProduct();
                 if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
