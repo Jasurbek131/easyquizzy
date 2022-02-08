@@ -72,7 +72,6 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
     <div class="row">
         <div class="col-md-12">
-            <h5 class="text-center"><?=Yii::t("app","Hodimga shu vaqtgacha biritirgan lavozimlar");?></h5>
             <?php if($hrEmployeeRel):?>
                 <table class="table table-bordered">
                     <thead>
