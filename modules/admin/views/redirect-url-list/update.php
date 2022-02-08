@@ -3,21 +3,19 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Users */
-/* @var $roles \app\modules\admin\models\AuthItem */
+/* @var $model app\modules\admin\models\RedirectUrlList */
 
-$this->title = Yii::t('app', 'Update Users: {name}', [
+$this->title = Yii::t('app', 'Update Redirect Url List: {name}', [
     'name' => $model->id,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Users'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Redirect Url Lists'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
-<div class="users-update">
+<div class="redirect-url-list-update">
 
     <?= $this->render('_form', [
         'model' => $model,
-        'roles' => $roles,
     ]) ?>
 
 </div>

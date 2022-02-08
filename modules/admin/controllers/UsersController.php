@@ -4,6 +4,7 @@ namespace app\modules\admin\controllers;
 
 use app\models\BaseModel;
 use app\modules\admin\models\AuthAssignment;
+use app\modules\admin\models\AuthItem;
 use Yii;
 use app\models\Users;
 use app\modules\admin\models\search\UsersSearch;
@@ -47,23 +48,6 @@ class UsersController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Users model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('view', [
-                'model' => $this->findModel($id),
-            ]);
-        }
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
 
     /**
      * Creates a new Users model.
@@ -96,13 +80,17 @@ class UsersController extends Controller
             }
         }
 
+        $roles = AuthItem::getRoles(true);
+
         if ($request->isAjax)
             return $this->renderAjax('create', [
                 'model' => $model,
+                'roles' => $roles,
             ]);
 
         return $this->render('create', [
             'model' => $model,
+            'roles' => $roles,
         ]);
     }
 
@@ -141,13 +129,17 @@ class UsersController extends Controller
             }
         }
 
+        $roles = AuthItem::getRoles(true);
+
         if ($request->isAjax)
             return $this->renderAjax('update', [
                 'model' => $model,
+                'roles' => $roles,
             ]);
 
         return $this->render('update', [
             'model' => $model,
+            'roles' => $roles,
         ]);
     }
 

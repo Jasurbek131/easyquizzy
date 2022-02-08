@@ -7,7 +7,6 @@ use yii\filters\AccessControl;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
-use app\models\ContactForm;
 
 class SiteController extends MyController
 {
@@ -62,6 +61,12 @@ class SiteController extends MyController
      */
     public function actionIndex()
     {
+        $user_redirect_url = Yii::$app->user->identity->redirectUrl->url;
+
+        if(!empty($user_redirect_url) && !is_null($user_redirect_url)){
+            return $this->redirect([$user_redirect_url]);
+        }
+
         return $this->render('index');
     }
 

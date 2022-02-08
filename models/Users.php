@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\modules\admin\models\AuthAssignment;
+use app\modules\admin\models\RedirectUrlList;
 use app\modules\hr\models\HrEmployeeRelUsers;
 use Yii;
 
@@ -27,6 +28,7 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
 {
 
     /**
+     * @var string
      * Password yangi foydalanuvchi yaratishda majburiy qilish uchun
      */
     const SCENARIO_CREATE = "scenario-create";
@@ -38,13 +40,13 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
     public $isUpdate = false;
 
     /**
+     * @var string
      * Hr employee bog'lash uchun
      */
     public $hr_employee_id;
 
     /**
-     * @var
-     *
+     * @var string
      * Takroriy password uchun
      */
     public $password_repeat;
@@ -54,6 +56,25 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
      * Foydalanuchiga rolar biriktirish uchun
      */
     public $roles;
+
+    /**
+     * @var string
+     * Bo'limlar nomini chiqarish uchun
+     */
+    public $hr_deparment_name;
+
+    /**
+     * @var string
+     * Telefon raqamini chiqarish uchun
+     */
+    public $phone_number;
+
+    /**
+     * @var string
+     * Elektron pochta chiqarish uchun
+     */
+    public $email;
+
 
     /**
      * {@inheritdoc}
@@ -74,6 +95,7 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
             [['username', 'password', 'auth_key'], 'string', 'max' => 255],
             [['username'], 'unique'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusList::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['redirect_url_id'], 'exist', 'skipOnError' => true, 'targetClass' => RedirectUrlList::class, 'targetAttribute' => ['redirect_url_id' => 'id']],
             [['hr_employee_id', 'username'], 'required'],
             [['password', 'password_repeat'], 'required', 'on' => self::SCENARIO_CREATE],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ],
@@ -87,6 +109,10 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
      */
     public function beforeSave($insert)
     {
+
+        if ($this->isNewRecord)
+            $this->status = BaseModel::STATUS_ACTIVE;
+
         if ($this->isNewRecord && !empty($this->password))
             $this->setPassword();
         else
@@ -103,6 +129,11 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
         return [
             'id' => Yii::t('app', 'ID'),
             'hr_employee_id' => Yii::t('app', 'Hr Employee'),
+            'hr_deparment_name' => Yii::t('app', 'Hr Department'),
+            'phone_number' => Yii::t('app', 'Phone Number'),
+            'redirect_url_id' => Yii::t('app', 'Redirect Url'),
+            'password_repeat' => Yii::t('app', 'Password Repeat'),
+            'email' => Yii::t('app', 'Email'),
             'username' => Yii::t('app', 'Username'),
             'password' => Yii::t('app', 'Password'),
             'auth_key' => Yii::t('app', 'Auth Key'),
@@ -122,6 +153,16 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
     public function getStatus()
     {
         return $this->hasOne(StatusList::class, ['id' => 'status_id']);
+    }
+
+    /**
+     * Gets query for [[Status]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRedirectUrl()
+    {
+        return $this->hasOne(RedirectUrlList::class, ['id' => 'redirect_url_id']);
     }
 
     /**
@@ -255,10 +296,10 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
             }
 
             if ($response['status'] && !empty($this->roles)){
-                foreach ($this->roles as $role)
+                foreach ($this->roles as $key => $role)
                 {
                     $authAssignment = new AuthAssignment([
-                        'item_name' => $role,
+                        'item_name' => $key,
                         'user_id' => (string)$this->id,
                         'created_at' => time(),
                     ]);
