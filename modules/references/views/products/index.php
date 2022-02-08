@@ -31,7 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 'name',
                 'part_number',
-//                'code',
                 [
                     'attribute' => 'status_id',
                     'format' => 'raw',

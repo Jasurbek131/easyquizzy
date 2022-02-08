@@ -3,6 +3,7 @@
 namespace app\modules\plm\models;
 
 use app\modules\hr\models\HrDepartments;
+use app\modules\references\models\Shifts;
 use Yii;
 
 /**
@@ -18,11 +19,11 @@ use Yii;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
+ * @property int $shift_id
  *
  * @property HrDepartments $hrDepartments
+ * @property Shifts $shifts
  * @property PlmDocumentItems[] $plmDocumentItems
- * @property PlmProcessingTime[] $plmProcessingTimes
- * @property PlmStops[] $plmStops
  */
 class PlmDocuments extends BaseModel
 {
@@ -41,11 +42,12 @@ class PlmDocuments extends BaseModel
     {
         return [
             [['reg_date'], 'safe'],
-            [['hr_department_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
-            [['hr_department_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['hr_department_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'shift_id'], 'default', 'value' => null],
+            [['hr_department_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'shift_id'], 'integer'],
             [['add_info'], 'string'],
             [['doc_number'], 'string', 'max' => 255],
             [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['hr_department_id' => 'id']],
+            [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shifts::className(), 'targetAttribute' => ['shift_id' => 'id']],
         ];
     }
 
@@ -65,15 +67,24 @@ class PlmDocuments extends BaseModel
             'created_at' => Yii::t('app', 'Created At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'updated_at' => Yii::t('app', 'Updated At'),
+            'shift_id' => Yii::t('app', 'Shift ID'),
         ];
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
     public function getHrDepartments()
     {
         return $this->hasOne(HrDepartments::className(), ['id' => 'hr_department_id']);
+    }
+
+    /**
+     * @return yii\db\ActiveQuery
+     */
+    public function getShifts()
+    {
+        return $this->hasOne(Shifts::className(), ['id' => 'shift_id']);
     }
 
     /**
@@ -89,21 +100,5 @@ class PlmDocuments extends BaseModel
     public function getPlm_document_items()
     {
         return $this->hasMany(PlmDocumentItems::className(), ['document_id' => 'id']);
-    }
-
-    /**
-     * @return yii\db\ActiveQuery
-     */
-    public function getPlmProcessingTimes()
-    {
-        return $this->hasMany(PlmProcessingTime::className(), ['doc_id' => 'id']);
-    }
-
-    /**
-     * @return yii\db\ActiveQuery
-     */
-    public function getPlmStops()
-    {
-        return $this->hasMany(PlmStops::className(), ['doc_id' => 'id']);
     }
 }

@@ -40,7 +40,7 @@ class Equipments extends BaseModel
             [['created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['equipment_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
-            [['equipment_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentTypes::className(), 'targetAttribute' => ['equipment_type_id' => 'id']],
+            [['equipment_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentTypes::class, 'targetAttribute' => ['equipment_type_id' => 'id']],
         ];
     }
 
@@ -66,7 +66,7 @@ class Equipments extends BaseModel
      */
     public function getEquipmentTypes()
     {
-        return $this->hasOne(EquipmentTypes::className(), ['id' => 'equipment_type_id']);
+        return $this->hasOne(EquipmentTypes::class, ['id' => 'equipment_type_id']);
     }
 
     /**
@@ -74,9 +74,14 @@ class Equipments extends BaseModel
      */
     public function getEquipmentGroupRelationEquipments()
     {
-        return $this->hasMany(EquipmentGroupRelationEquipment::className(), ['equipment_id' => 'id']);
+        return $this->hasMany(EquipmentGroupRelationEquipment::class, ['equipment_id' => 'id']);
     }
 
+    /**
+     * @param null $key
+     * @param bool $isArray
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public static function getList($key = null, $isArray = false) {
         $list = self::find()->select(['id as value', 'name as label'])->asArray()->all();
         if ($isArray) {
@@ -84,4 +89,19 @@ class Equipments extends BaseModel
         }
         return ArrayHelper::map($list, 'value', 'label');
     }
+
+    /**
+     * @param bool $isMap
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getListForSelect($isMap = false)
+    {
+        $list = self::find()->select(["id", "name"])->asArray()->all();
+
+        if ($isMap && !empty($list))
+            return ArrayHelper::map($list, "id", "name");
+
+        return $list;
+    }
+
 }

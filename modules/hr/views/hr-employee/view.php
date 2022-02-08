@@ -72,17 +72,16 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
     <div class="row">
         <div class="col-md-12">
-            <h5 class="text-center"><?=Yii::t("app","Hodimga shu vaqtgacha biritirgan lavozimlar");?></h5>
             <?php if($hrEmployeeRel):?>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <td class="text-bold"><?=Yii::t("app","№");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Bo'limi");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Lavozimi");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Lavozimga kelgan vaqti");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Lavozimdan ketgan vaqti");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Holati");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Hr Departments");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Hr Positions");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Begin Date");?></td>
+                            <td class="text-bold"><?=Yii::t("app","End Date");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Status");?></td>
                         </tr>
                     </thead>
                     <tbody>

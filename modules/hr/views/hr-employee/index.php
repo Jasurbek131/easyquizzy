@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\modules\hr\models\HrEmployeeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Hr Employee';
+$this->title = Yii::t('app', "Hr Employee");
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card hr-employee-index">
@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
     'delete_button' => 'delete-dialog',
     'modal_size' => 'modal-lg',
     'grid_ajax' => 'hr-employee_pjax',
-    'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
+    'confirm_message' => Yii::t('app', 'Are you sure you want to delete this item?')
 ]);
 $this->registerCss('
     .modal-lg{

@@ -111,7 +111,7 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
     {
 
         if ($this->isNewRecord)
-            $this->status = BaseModel::STATUS_ACTIVE;
+            $this->status_id = BaseModel::STATUS_ACTIVE;
 
         if ($this->isNewRecord && !empty($this->password))
             $this->setPassword();

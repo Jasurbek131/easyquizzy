@@ -42,7 +42,7 @@ class Products extends BaseModel
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['code', 'part_number'], 'string', 'max' => 100],
-            [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::className(), 'targetAttribute' => ['equipment_group_id' => 'id']],
+            [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
         ];
     }
 
@@ -69,16 +69,22 @@ class Products extends BaseModel
      */
     public function getEquipmentGroup()
     {
-        return $this->hasOne(EquipmentGroup::className(), ['id' => 'equipment_group_id']);
+        return $this->hasOne(EquipmentGroup::class, ['id' => 'equipment_group_id']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getProductLifecycles()
     {
-        return $this->hasMany(ProductLifecycle::className(), ['product_id' => 'id']);
+        return $this->hasMany(ProductLifecycle::class, ['product_id' => 'id']);
     }
 
+    /**
+     * @param null $key
+     * @param bool $isArray
+     * @return array|string|\yii\db\ActiveRecord[]
+     */
     public static function getList($key = null, $isArray = false) {
         if (!is_null($key)){
             $product = self::findOne($key);
@@ -96,5 +102,39 @@ class Products extends BaseModel
             return $list;
         }
         return ArrayHelper::map($list, 'value', 'label');
+    }
+
+    /**
+     * @return array
+     */
+    public function saveProduct(): array
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app','Success'),
+        ];
+        try{
+
+            if (!$this->save())
+                $response = [
+                    'status' => false,
+                    'message' => 'Product not saved',
+                    'errors' => $this->getErrors()
+                ];
+
+            if($response['status'])
+                $transaction->commit();
+            else
+                $transaction->rollBack();
+
+        } catch(\Exception $e){
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        return $response;
     }
 }

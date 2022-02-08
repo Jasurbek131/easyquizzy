@@ -23,8 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <!--    --><?php //endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'product-lifecycle_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterRowOptions' => ['class' => 'filters no-print'],
@@ -38,14 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Products::getList($model->product_id);
                 },
                 'filter' => Products::getList()
-            ],
-            [
-                'attribute' => 'equipment_group_id',
-                'format' => 'raw',
-                'value' => function($model) {
-                    return EquipmentGroup::getList($model->equipment_group_id);
-                },
-                'filter' => EquipmentGroup::getList()
             ],
             'lifecycle',
             [

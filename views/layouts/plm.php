@@ -351,13 +351,13 @@ AppAsset::register($this);
                                     'active' => $controller == 'equipments' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
-                                [
-                                    'label' => Yii::t('app', 'Equipment Group'),
-                                    'url' => '/references/equipment-group/index',
-                                    'options' => ['class' => 'nav-item'],
-                                    'active' => $controller == 'equipment-group' && $action  == 'index',
-                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
-                                ],
+//                                [
+//                                    'label' => Yii::t('app', 'Equipment Group'),
+//                                    'url' => '/references/equipment-group/index',
+//                                    'options' => ['class' => 'nav-item'],
+//                                    'active' => $controller == 'equipment-group' && $action  == 'index',
+//                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
+//                                ],
                                 [
                                     'label' => Yii::t('app', 'Product Lifecycle'),
                                     'url' => '/references/product-lifecycle/index',
@@ -383,9 +383,9 @@ AppAsset::register($this);
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Plm Documents'),
-                                    'url' => '/plm/plm-documents/index',
+                                    'url' => '/plm/plm-documents/document/index',
                                     'options' => ['class' => 'nav-item'],
-                                    'active' => $controller == 'plm-documents' && $action == 'index',
+                                    'active' => $controller == 'plm-documents' && $action == 'document',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
                                 ],
                             ],

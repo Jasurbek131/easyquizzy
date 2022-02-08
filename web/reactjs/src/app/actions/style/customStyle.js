@@ -11,7 +11,7 @@ const dot = (color = '#ccc') => ({
         backgroundColor: color,
         borderRadius: 10,
         content: '" "',
-        display: 'block',
+        display: 'none',
         marginRight: 8,
         height: 5,
         width: 5,
