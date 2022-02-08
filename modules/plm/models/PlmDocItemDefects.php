@@ -13,8 +13,10 @@ use Yii;
  * @property int $defect_id
  * @property int $qty
  * @property int $status_id
+ * @property int $doc_item_product_id
  *
  * @property Defects $defects
+ * @property PlmDocItemProducts $plmDocItemProducts
  * @property PlmDocumentItems $plmDocumentItems
  */
 class PlmDocItemDefects extends \yii\db\ActiveRecord
@@ -33,9 +35,10 @@ class PlmDocItemDefects extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'doc_item_id', 'defect_id', 'qty', 'status_id'], 'default', 'value' => null],
-            [['type', 'doc_item_id', 'defect_id', 'qty', 'status_id'], 'integer'],
+            [['type', 'doc_item_id', 'defect_id', 'qty', 'status_id', 'doc_item_product_id'], 'default', 'value' => null],
+            [['type', 'doc_item_id', 'defect_id', 'qty', 'status_id', 'doc_item_product_id'], 'integer'],
             [['defect_id'], 'exist', 'skipOnError' => true, 'targetClass' => Defects::className(), 'targetAttribute' => ['defect_id' => 'id']],
+            [['doc_item_product_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocItemProducts::className(), 'targetAttribute' => ['doc_item_product_id' => 'id']],
             [['doc_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::className(), 'targetAttribute' => ['doc_item_id' => 'id']],
         ];
     }
@@ -52,6 +55,7 @@ class PlmDocItemDefects extends \yii\db\ActiveRecord
             'defect_id' => Yii::t('app', 'Defect ID'),
             'qty' => Yii::t('app', 'Qty'),
             'status_id' => Yii::t('app', 'Status ID'),
+            'doc_item_product_id' => Yii::t('app', 'Doc Item Product ID'),
         ];
     }
 
@@ -61,6 +65,14 @@ class PlmDocItemDefects extends \yii\db\ActiveRecord
     public function getDefects()
     {
         return $this->hasOne(Defects::className(), ['id' => 'defect_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlmDocItemProducts()
+    {
+        return $this->hasOne(PlmDocItemProducts::className(), ['id' => 'doc_item_product_id']);
     }
 
     /**

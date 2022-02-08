@@ -2,6 +2,7 @@
 
 namespace app\modules\plm\models;
 
+use app\modules\references\models\Products;
 use Yii;
 
 /**
@@ -16,6 +17,10 @@ use Yii;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
+ *
+ * @property PlmDocumentItems $plmDocumentItem
+ * @property Products $products
+ * @property PlmDocumentItems[] $plmDocumentItems
  */
 class PlmProcessingTime extends BaseModel
 {
@@ -33,10 +38,10 @@ class PlmProcessingTime extends BaseModel
     public function rules()
     {
         return [
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['begin_date', 'end_date'], 'safe'],
             [['add_info'], 'string'],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
         ];
     }
 
@@ -56,5 +61,13 @@ class PlmProcessingTime extends BaseModel
             'updated_by' => Yii::t('app', 'Updated By'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    /**
+     * @return yii\db\ActiveQuery
+     */
+    public function getPlmDocumentItems()
+    {
+        return $this->hasMany(PlmDocumentItems::className(), ['processing_time_id' => 'id']);
     }
 }

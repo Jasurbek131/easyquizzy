@@ -21,10 +21,12 @@ class Form extends React.Component {
                display: "none",
                title: "",
             },
+            displayOperator: 'none',
             plm_document: {
                 id: "",
                 doc_number: "",
                 reg_date: "",
+                shift_id: "",
                 hr_department_id: "",
                 hr_organisation_id: "",
                 add_info: ""
@@ -35,6 +37,8 @@ class Form extends React.Component {
             reasonList: [],
             repairedList: [],
             scrappedList: [],
+            operatorList: [],
+            shiftList: [],
             productList: [{
                 equipmentGroup: {equipmentGroupRelationEquipments: []}
             }],
@@ -60,11 +64,6 @@ class Form extends React.Component {
                     plm_document: response.data?.plm_document,
                     plm_document_items: response.data?.plm_document?.plm_document_items,
                 });
-            } else {
-                let {plm_document_items} = this.state;
-                plm_document_items[0]['repaired'] = response.data?.repaired;
-                plm_document_items[0]['scrapped'] = response.data?.scrapped;
-                this.setState({plm_document_items: plm_document_items});
             }
             this.setState({
                 organisationList: response.data.organisationList,
@@ -74,6 +73,8 @@ class Form extends React.Component {
                 reasonList: response.data.reasonList,
                 repairedList: response.data.repaired,
                 scrappedList: response.data.scrapped,
+                operatorList: response.data.operatorList,
+                shiftList: response.data.shiftList,
                 language: response.data.language,
                 isLoading: false
             });
@@ -102,9 +103,12 @@ class Form extends React.Component {
                 element.css("border", "1px solid #ced4da");
                 break;
         }
-
         let {plm_document_items, modal} = this.state;
         switch (model) {
+            case "products":
+                plm_document_items[key]['products'][index][name] = v;
+                this.setState({plm_document_items: plm_document_items});
+                break;
             case "plm_document":
                 let {plm_document} = this.state;
                 plm_document[name] = v;
@@ -116,31 +120,29 @@ class Form extends React.Component {
                 break;
             case "plm_document_items":
                 if (name === 'product_id') {
-                 //   plm_document_items[key]['equipmentGroup'] = e?.equipmentGroup ?? [];
                     plm_document_items[key]['products'][index] = e;
+                } else {
+                    plm_document_items[key][name] = v;
                 }
                 if (name === "start_work") {
                     plm_document_items[key]['end_work'] = "";
                 }
-                plm_document_items[key][name] = v;
                 this.setState({plm_document_items: plm_document_items});
                 break;
             case "modal":
-                plm_document_items[modal.key][modal.type][name] = v;
+                modal.model[name] = v;
                 if (name === "begin_date") {
-                    plm_document_items[modal.key][modal.type]['end_time'] = "";
+                    modal.model.end_time = "";
                 }
-                this.setState({plm_document_items: plm_document_items});
+                this.setState({modal: modal});
                 break;
             case "repaired":
-                plm_document_items[modal.key][modal.type][index]['count'] = v;
                 modal['model'][index]['count'] = v;
-                this.setState({plm_document_items: plm_document_items, modal: modal});
+                this.setState({modal: modal});
                 break;
             case "scrapped":
-                plm_document_items[modal.key][modal.type][index]['count'] = v;
                 modal['model'][index]['count'] = v;
-                this.setState({plm_document_items: plm_document_items, modal: modal});
+                this.setState({modal: modal});
                 break;
         }
     }
@@ -167,18 +169,26 @@ class Form extends React.Component {
         return a;
     }
 
-    onOpenModal = (type, title, key) => {
+    onOpenModal = (type, title, key, itemKey, e) => {
         let {plm_document_items, repairedList, scrappedList} = this.state;
-        let model = plm_document_items[key][type];
+        let model;
         switch (type) {
+            case "planned_stopped":
+                model = JSON.parse(JSON.stringify(plm_document_items[key][type]));
+                break;
+            case "unplanned_stopped":
+                model = JSON.parse(JSON.stringify(plm_document_items[key][type]));
+                break;
             case "repaired":
-                model = this.arrayUnique(model, repairedList);
-                plm_document_items[key][type] = model;
+                model = JSON.parse(JSON.stringify(plm_document_items[key]['products'][itemKey][type]));
+                model = this.arrayUnique(model, JSON.parse(JSON.stringify(repairedList)));
+                plm_document_items[key]['products'][itemKey][type] = JSON.parse(JSON.stringify(model));
                 this.setState({plm_document_items: plm_document_items});
                 break;
             case "scrapped":
-                model = this.arrayUnique(model, scrappedList);
-                plm_document_items[key][type] = model;
+                model = JSON.parse(JSON.stringify(plm_document_items[key]['products'][itemKey][type]));
+                model = this.arrayUnique(model, JSON.parse(JSON.stringify(scrappedList)));
+                plm_document_items[key]['products'][itemKey][type] = JSON.parse(JSON.stringify(model));
                 this.setState({plm_document_items: plm_document_items});
                 break;
         }
@@ -187,30 +197,21 @@ class Form extends React.Component {
             title: title,
             type: type,
             model: model,
-            key: key
+            key: key,
+            itemKey: itemKey
         }
         this.setState({modal: modal});
     }
 
     onHandleSave = (e) => {
-        let {modal} = this.state;
-        let {plm_document_items} = this.state;
-        switch (modal?.type) {
-            case "repaired":
-                plm_document_items[modal.key]['repaired_change'] = true;
-                break;
-            case "scrapped":
-                plm_document_items[modal.key]['scrapped_change'] = true;
-                break;
-            case "planned_stopped":
-                plm_document_items[modal.key]['planned_stop_change'] = true;
-                break;
-            case "unplanned_stopped":
-                plm_document_items[modal.key]['unplanned_stop_change'] = true;
-                break;
+        let {modal, plm_document_items} = this.state;
+        if (modal.type === 'repaired' || modal.type === 'scrapped') {
+            plm_document_items[modal.key]['products'][modal.itemKey][modal.type] = JSON.parse(JSON.stringify(modal.model));
+        } else if (modal.type === 'planned_stopped' || modal.type === 'unplanned_stopped') {
+            plm_document_items[modal.key][modal.type] = JSON.parse(JSON.stringify(modal.model));
         }
         modal.display = "none";
-        this.setState({plm_document_items: plm_document_items, modal: modal});
+        this.setState({modal: modal, plm_document_items: plm_document_items});
     }
 
     onHandleCancel = (e) => {
@@ -249,20 +250,31 @@ class Form extends React.Component {
             case "product-plus":
                 let product = {
                     label: "",
-                    value: ""
+                    value: "",
+                    repaired: [],
+                    scrapped: []
                 };
-                plm_document_items[key]['products'].push(product);
+                plm_document_items[key]['products'].push(JSON.parse(JSON.stringify(product)));
                 break;
             case "equipment-minus":
-                let elements = plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'];
-                let newElements = removeElement(elements, index);
-                plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'] = newElements;
-                this.setState({plm_document_items: plm_document_items});
+                if (+index > 0) {
+                    let elements = plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'];
+                    plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'] = removeElement(elements, index);
+                    this.setState({plm_document_items: plm_document_items});
+                }
+                break;
+            case "product-minus":
+                if (+index > 0) {
+                    let elements = plm_document_items[key]['products'];
+                    plm_document_items[key]['products'] = removeElement(elements, index);
+                    this.setState({plm_document_items: plm_document_items});
+                }
                 break;
             case "operator-plus":
                 let document_item_key = key;
                 let equipment_key = index;
                // plm_document_items[key]['equipmentGroup']['equipmentGroupRelationEquipments'];
+                this.setState({displayOperator: 'block'});
                 break;
         }
         this.setState({plm_document_items: plm_document_items});
@@ -335,7 +347,10 @@ class Form extends React.Component {
             departmentList,
             productList,
             equipmentList,
-            reasonList
+            reasonList,
+            operatorList,
+            shiftList,
+            displayOperator
         } = this.state;
         let {history} = this.props;
         if (isLoading)
@@ -355,7 +370,7 @@ class Form extends React.Component {
                             </div>
                         </div>
                         <div className={'row'}>
-                            <div className={'col-sm-3'}>
+                            <div className={'col-sm-2'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Organization</label>
                                     <Select className={"aria-required"}
@@ -368,7 +383,7 @@ class Form extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <div className={'col-sm-3'}>
+                            <div className={'col-sm-2'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Department</label>
                                     <Select className={"aria-required"}
@@ -381,7 +396,7 @@ class Form extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <div className={'col-sm-3'}>
+                            <div className={'col-sm-2'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Sana</label>
                                     <DatePicker onChange={(e)=>{
@@ -399,7 +414,20 @@ class Form extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <div className={'col-sm-3'}>
+                            <div className={'col-sm-2'}>
+                                <div className={'form-group'}>
+                                    <label className={"control-label"}>Smena</label>
+                                    <Select className={"aria-required"}
+                                            id={"shift_id"}
+                                            onChange={this.onHandleChange.bind(this, 'select', 'plm_document', 'shift_id', '', '', '')}
+                                            placeholder={"Tanlang ..."}
+                                            value={shiftList.filter(({value}) => +value === +plm_document?.shift_id)}
+                                            options={shiftList}
+                                            styles={customStyles}
+                                    />
+                                </div>
+                            </div>
+                            <div className={'col-sm-4'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Izoh</label>
                                     <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document', 'add_info', '', '', '')}
@@ -417,27 +445,27 @@ class Form extends React.Component {
                                             key === 0 ?
                                                 <div className={'pull-right'}>
                                                     <button onClick={this.onPush.bind(this, 'add', 'plm_document_items', '', '')}
-                                                            className={"btn btn-sm btn-primary"}>
+                                                            className={"btn btn-xs btn-primary"}>
                                                         <i className={"fa fa-plus"}/>
                                                     </button>
                                                 </div>
                                                 :
                                                 <div className={"pull-right"}>
                                                     <button onClick={this.onPush.bind(this, 'remove', 'plm_document_items', key, '')}
-                                                            className={"btn btn-sm btn-danger"}>
+                                                            className={"btn btn-xs btn-danger"}>
                                                         <i className={"fa fa-times"}/>
                                                     </button>
                                                 </div>
                                         }
                                         <div className={"row"}>
-                                            <div className={'col-sm-2'}>
+                                            <div className={'col-sm-3'}>
                                                 <div className={'row'}>
-                                                    <div className={'col-sm-10 mb-1'}>
+                                                    <div className={'col-sm-11 mb-1'}>
                                                         <label className={"control-label"}>Qurilmalar</label>
                                                     </div>
-                                                    <div className={"col-sm-2 mb-1"}>
+                                                    <div className={"col-sm-1 pl-0 mb-1 text-left"}>
                                                         <button onClick={this.onPush.bind(this, 'equipment-plus', 'plm_document_items', key, '')}
-                                                                className={"btn btn-xs btn-info w-100 h-100"}>
+                                                                className={"btn btn-xs wh-28 btn-info"}>
                                                             <i className={"fa fa-plus"}/>
                                                         </button>
                                                     </div>
@@ -446,7 +474,7 @@ class Form extends React.Component {
                                                         item.equipmentGroup.equipmentGroupRelationEquipments.map((equipment, eqKey) => {
                                                             return (
                                                                 <React.Fragment key={eqKey}>
-                                                                    <div className={'col-sm-10 pr-0 mb-2'}>
+                                                                    <div className={'col-sm-9 pr-0 mb-2'}>
                                                                         <Select className={"aria-required"}
                                                                                 onChange={this.onHandleChange.bind(this, 'select', 'equipment', 'value', key, eqKey, '')}
                                                                                 placeholder={"Tanlang ..."}
@@ -455,9 +483,15 @@ class Form extends React.Component {
                                                                                 styles={customStyles}
                                                                         />
                                                                     </div>
-                                                                    <div className={'col-sm-2 mb-2'}>
+                                                                    <div className={'col-sm-2 pl-0 mb-2'}>
+                                                                        <button onClick={this.onPush.bind(this, 'operator-plus', 'plm_document_items', key, eqKey)}
+                                                                                className={"btn btn-xs btn-default w-100 h-100"}>
+                                                                            <i className={"fa fa-user-plus"}/>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div className={'col-sm-1 pl-0 text-left mb-2'}>
                                                                         <button onClick={this.onPush.bind(this, 'equipment-minus', 'plm_document_items', key, eqKey)}
-                                                                                className={"btn btn-xs btn-outline-danger w-100 h-100"}>
+                                                                                className={"btn btn-xs wh-28 btn-outline-danger"}>
                                                                             <i className={"fa fa-times"}/>
                                                                         </button>
                                                                     </div>
@@ -467,43 +501,88 @@ class Form extends React.Component {
                                                     }
                                                 </div>
                                             </div>
-                                            <div className={'col-sm-2'}>
+                                            <div className={'col-sm-6'}>
                                                 <div className={'row'}>
-                                                    <div className={'col-sm-10 mb-1'}>
-                                                        <label className={"control-label"}>Maxsulotlar</label>
+                                                    <div className={'col-sm-4'}>
+                                                        <div className={'row'}>
+                                                            <div className={'col-sm-10 mb-1'}>
+                                                                <label className={"control-label"}>Maxsulotlar</label>
+                                                            </div>
+                                                            <div className={"col-sm-2 mb-1"}>
+                                                                <button onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
+                                                                        className={"btn btn-xs btn-info wh-28"}>
+                                                                    <i className={"fa fa-plus"}/>
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div className={"col-sm-2 mb-1"}>
-                                                        <button onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
-                                                                className={"btn btn-xs btn-info w-100 h-100"}>
-                                                            <i className={"fa fa-plus"}/>
-                                                        </button>
+                                                    <div className={'col-sm-2 text-center'}>
+                                                        <label className={"control-label"}>Rejada</label>
                                                     </div>
-                                                        {
-                                                            item?.products?.length > 0 &&
-                                                            item.products.map((product, prKey) => {
-                                                                return (
-                                                                    <React.Fragment key={prKey}>
+                                                    <div className={'col-sm-2 text-center'}>
+                                                        <label className={"control-label"}>Ish/chiq</label>
+                                                    </div>
+                                                    <div className={'col-sm-2 text-center'}>
+                                                        <label className={"control-label"}>Ta'mirlangan</label>
+                                                    </div>
+                                                    <div className={'col-sm-2 text-center'}>
+                                                        <label className={"control-label"}>Yaroqsiz</label>
+                                                    </div>
+                                                </div>
+
+                                                {
+                                                    item?.products?.length > 0 &&
+                                                    item.products.map((product, prKey) => {
+                                                        return (
+                                                            <div className={'row'} key={prKey}>
+                                                                <div className={'col-sm-4'}>
+                                                                    <div className={'row'}>
                                                                         <div className={'col-sm-10 pr-0 mb-2'}>
                                                                             <Select className={"aria-required"}
-                                                                                    onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'product_id', key, prKey, '')}
+                                                                                    onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
                                                                                     placeholder={"Tanlang ..."}
-                                                                                    value={productList.filter(({value}) => +value === +product?.value)}
+                                                                                    value={productList.filter(({value}) => +value === +product?.product_id)}
                                                                                     options={productList}
                                                                                     styles={customStyles}
                                                                             />
                                                                         </div>
                                                                         <div className={'col-sm-2 mb-2'}>
-                                                                            <button onClick={this.onPush.bind(this, 'product-minus', 'plm_document_items', key, prKey)}
-                                                                                    className={"btn btn-xs btn-outline-danger w-100 h-100"}>
+                                                                            <button onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
+                                                                                    className={"btn btn-xs wh-28 btn-outline-danger"}>
                                                                                 <i className={"fa fa-times"}/>
                                                                             </button>
                                                                         </div>
-                                                                    </React.Fragment>
-                                                                )
-                                                            })
-                                                        }
-                                                </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className={'col-sm-2'}>
+                                                                    <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
+                                                                           type={'number'} className={'form-control aria-required'} value={product?.qty}/>
+                                                                </div>
+                                                                <div className={'col-sm-2'}>
+                                                                    <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
+                                                                           type={'number'} className={'form-control aria-required'} value={product?.fact_qty}/>
+                                                                </div>
+                                                                <div className={'col-sm-2 text-center'}>
+                                                                    <label className={'mr-2'}>{this.onSumma(product.repaired)}</label>
+                                                                    <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
+                                                                            className={'btn btn-success btn-xs wh-28'}>
+                                                                        <i className={'fa fa-plus'}/>
+                                                                    </button>
+                                                                </div>
+
+                                                                <div className={'col-sm-2 text-center'}>
+                                                                    <label className={'mr-2'}>{this.onSumma(product.scrapped)}</label>
+                                                                    <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
+                                                                             className={'btn btn-success btn-xs wh-28'}>
+                                                                        <i className={'fa fa-plus'}/>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
                                             </div>
+
                                             <div className={'col-sm-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row'}>
@@ -546,71 +625,33 @@ class Form extends React.Component {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className={'col-sm-2'}>
+                                            <div className={'col-sm-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row'}>
                                                          <div className={'col-sm-12 text-center'}>
                                                             <label className={"control-label"}>Rejali to'xtalishlar</label>
                                                          </div>
                                                         <div className={'col-sm-12 text-center'}>
-                                                            <label className={'mr-4'}>{this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date)} <small>min</small></label>
-                                                            <button onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key)}
-                                                                    className={item.planned_stop_change ? "btn btn-xs btn-primary" : "btn btn-xs btn-success"}>
-                                                                {item.planned_stop_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                            </button>
-                                                        </div>
-                                                        <div className={'col-sm-12 text-center mt-4'}>
-                                                            <label className={"control-label"}>Rejasiz to'xtalishlar</label>
-                                                        </div>
-                                                        <div className={'col-sm-12 text-center'}>
-                                                            <label className={'mr-4'}>{this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date)} <small>min</small></label>
-                                                            <button onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key)}
-                                                                    className={item.unplanned_stop_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                                {item.unplanned_stop_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                            <label className={'mr-2'}>{this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date)} <small>min</small></label>
+                                                            <button onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key, '')}
+                                                                    className={"btn btn-xs btn-success"}>
+                                                                <i className={'fa fa-plus'}/>
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div className={'col-sm-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row'}>
-                                                        <div className={'col-sm-12 text-center mb-4'}>
-                                                            <label className={"control-label"}>Rejada</label>
-                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'qty', key, '', '')}
-                                                                       type={'number'} className={'form-control aria-required'} value={item?.qty}/>
+                                                        <div className={'col-sm-12 text-center'}>
+                                                            <label className={"control-label"}>Rejasiz to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-sm-12 text-center'}>
-                                                            <label className={"control-label"}>Ish/chiq</label>
-                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'fact_qty', key, '', '')}
-                                                                   type={'number'} className={'form-control aria-required'} value={item?.fact_qty}/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className={'col-sm-2'}>
-                                                <div className={"align-center"}>
-                                                    <div className={'row'}>
-                                                        <div className={'col-sm-12 text-center'}>
-                                                            <label className={"control-label"}>Ta'mirlangan</label>
-                                                        </div>
-                                                        <div className={'col-sm-12 text-center'}>
-                                                            <label className={'mr-4'}>{this.onSumma(item.repaired)}</label>
-                                                            <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key)}
-                                                                    className={item.repaired_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                                {item.repaired_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
-                                                            </button>
-                                                        </div>
-                                                        <div className={'col-sm-12 text-center mt-4'}>
-                                                            <label className={"control-label"}>Yaroqsiz</label>
-                                                        </div>
-                                                        <div className={'col-sm-12 text-center'}>
-                                                            <label className={'mr-4'}>{this.onSumma(item.scrapped)}</label>
-                                                            <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key)}
-                                                                     className={item.scrapped_change ? 'btn btn-primary btn-xs' : 'btn btn-success btn-xs'}>
-                                                                {item.scrapped_change ? <i className={'fas fa-edit'}/> : <i className={'fa fa-plus'}/>}
+                                                            <label className={'mr-2'}>{this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date)} <small>min</small></label>
+                                                            <button onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key, '')}
+                                                                    className={'btn btn-success btn-xs'}>
+                                                                <i className={'fa fa-plus'}/>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -626,6 +667,25 @@ class Form extends React.Component {
                         <button onClick={this.onSave.bind(this)} className={'btn btn-sm btn-success'}>Saqlash</button>
                     </div>
                 </div>
+
+                <div className="fade modal show" role="dialog" tabIndex="-1" style={{display: displayOperator}} aria-modal="true">
+                    <div className="modal-dialog modal-lg" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5>{modal.title}</h5>
+                                <button onClick={(e) => {
+                                    this.setState({displayOperator: 'none'});
+                                }} className="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div className="modal-body none-scroll">
+                                <div className={'card-body'}>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div className="fade modal show" role="dialog" tabIndex="-1" style={{display: modal?.display}} aria-modal="true">
                     <div className="modal-dialog modal-lg" role="document">

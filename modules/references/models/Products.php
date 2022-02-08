@@ -2,6 +2,8 @@
 
 namespace app\modules\references\models;
 
+use app\modules\plm\models\PlmDocumentItems;
+use app\modules\plm\models\PlmProcessingTime;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -17,9 +19,12 @@ use yii\helpers\ArrayHelper;
  * @property int $created_by
  * @property int $updated_at
  * @property int $updated_by
+ * @property int $equipment_group_id
  *
+ * @property EquipmentGroup $equipmentGroup
+ * @property PlmDocumentItems[] $plmDocumentItems
+ * @property PlmProcessingTime[] $plmProcessingTimes
  * @property ProductLifecycle[] $productLifecycles
- * @property int $equipment_group_id [integer]
  */
 class Products extends BaseModel
 {
@@ -37,9 +42,8 @@ class Products extends BaseModel
     public function rules()
     {
         return [
-            [['name', 'part_number', 'status_id'], 'required'],
-            [['created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
-            [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'equipment_group_id'], 'default', 'value' => null],
+            [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'equipment_group_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['code', 'part_number'], 'string', 'max' => 100],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::className(), 'targetAttribute' => ['equipment_group_id' => 'id']],
@@ -61,6 +65,7 @@ class Products extends BaseModel
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'equipment_group_id' => Yii::t('app', 'Equipment Group ID'),
         ];
     }
 
@@ -71,6 +76,23 @@ class Products extends BaseModel
     {
         return $this->hasOne(EquipmentGroup::className(), ['id' => 'equipment_group_id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlmDocumentItems()
+    {
+        return $this->hasMany(PlmDocumentItems::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlmProcessingTimes()
+    {
+        return $this->hasMany(PlmProcessingTime::className(), ['product_id' => 'id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
