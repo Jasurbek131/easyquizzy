@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\modules\hr\models\HrEmployeeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Hr Employee';
+$this->title = Yii::t('app', "Hr Employee");
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card hr-employee-index">

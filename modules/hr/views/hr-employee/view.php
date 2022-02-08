@@ -78,11 +78,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     <thead>
                         <tr>
                             <td class="text-bold"><?=Yii::t("app","№");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Bo'limi");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Lavozimi");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Lavozimga kelgan vaqti");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Lavozimdan ketgan vaqti");?></td>
-                            <td class="text-bold"><?=Yii::t("app","Holati");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Hr Departments");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Hr Positions");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Begin Date");?></td>
+                            <td class="text-bold"><?=Yii::t("app","End Date");?></td>
+                            <td class="text-bold"><?=Yii::t("app","Status");?></td>
                         </tr>
                     </thead>
                     <tbody>

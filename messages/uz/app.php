@@ -189,6 +189,7 @@ return [
     'Slug' => 'Slug',
     'Start Time' => 'Boshlanish vaqti',
     'Status ID' => 'Holat',
+    'Status' => 'Holat',
     'Stopping Type' => '',
     'Success' => 'Muvaffaqiyat',
     'Tashkilot qo\'shish' => '',
