@@ -3,6 +3,7 @@
 namespace app\modules\references\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "references_product_lifecycle_rel_equipment".
@@ -73,5 +74,78 @@ class ReferencesProductLifecycleRelEquipment extends BaseModel
     public function getProductLifecycle()
     {
         return $this->hasOne(ProductLifecycle::class, ['id' => 'product_lifecycle_id']);
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord)
+            $this->status_id = \app\models\BaseModel::STATUS_ACTIVE;
+
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public static function getEquipmentsByProduct($id): array
+    {
+        $equipments = self::find()
+            ->where([
+                "product_lifecycle_id" => $id
+            ])
+            ->asArray()
+            ->all();
+        if (!empty($equipments))
+            return ArrayHelper::getColumn($equipments, "equipment_id");
+        return [];
+    }
+
+    /**
+     * @param $product_id
+     * @param $equipments
+     * @return array
+     */
+    public static function checkExists($id, $product_id, $equipments = []): array
+    {
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app', 'Success'),
+        ];
+
+        $query = self::find()
+            ->alias('rplre')
+            ->select([
+                "CONCAT_WS('_',MAX(pl.product_id)::varchar(255), array_agg(rplre.equipment_id)) as key"
+            ])
+            ->leftJoin(['pl' => "product_lifecycle"], "rplre.product_lifecycle_id = pl.id")
+            ->where([
+                "pl.product_id" => $product_id,
+            ])
+            ->andFilterWhere(['!=', 'rplre.product_lifecycle_id', $id])
+            ->groupBy([
+                "pl.id"
+            ])
+            ->asArray()
+            ->all();
+
+        if (!empty($query))
+            $query = ArrayHelper::index($query, "key");
+        
+        $key = $product_id;
+        if (!empty($equipments))
+            $key .= "_{".join(",", $equipments)."}";
+
+        if (array_key_exists($key, $query) !== false)
+            $response = [
+                'status' => false,
+                'message' => Yii::t('app', 'This item has'),
+            ];
+
+        return $response;
     }
 }

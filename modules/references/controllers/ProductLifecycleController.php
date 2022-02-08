@@ -3,6 +3,7 @@
 namespace app\modules\references\controllers;
 
 use app\models\BaseModel;
+use app\modules\references\models\ReferencesProductLifecycleRelEquipment;
 use Yii;
 use app\modules\references\models\ProductLifecycle;
 use app\modules\references\models\ProductLifecycleSearch;
@@ -113,6 +114,7 @@ class ProductLifecycleController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->equipments = ReferencesProductLifecycleRelEquipment::getEquipmentsByProduct($id);
         $request = Yii::$app->request;
 
         if ($request->isPost) {

@@ -38,14 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => Products::getList()
             ],
-            [
-                'attribute' => 'equipment_group_id',
-                'format' => 'raw',
-                'value' => function($model) {
-                    return EquipmentGroup::getList($model->equipment_group_id);
-                },
-                'filter' => EquipmentGroup::getList()
-            ],
             'lifecycle',
             [
                 'attribute' => 'time_type_id',

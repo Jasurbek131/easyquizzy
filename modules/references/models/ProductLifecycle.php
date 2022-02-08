@@ -20,6 +20,7 @@ use Yii;
  * @property int $updated_by
  *
  * @property EquipmentGroup $equipmentGroup
+ * @property ReferencesProductLifecycleRelEquipment $referencesProductLifecycleRelEquipments
  * @property Products $products
  * @property TimeTypesList $timeTypesList
  */
@@ -51,7 +52,7 @@ class ProductLifecycle extends BaseModel
     public function rules()
     {
         return [
-            [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'equipments'], 'required'],
+            [['product_id', 'lifecycle', 'time_type_id', 'status_id', 'equipments'], 'required'],
             [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
@@ -104,9 +105,17 @@ class ProductLifecycle extends BaseModel
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReferencesProductLifecycleRelEquipments()
+    {
+        return $this->hasMany(ReferencesProductLifecycleRelEquipment::class, ['product_lifecycle_id' => 'id']);
+    }
+
+    /**
      * @return array
      */
-    public function saveProduct(): array
+    public function saveProductLifecycle(): array
     {
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
@@ -118,7 +127,7 @@ class ProductLifecycle extends BaseModel
             if (!$this->save())
                 $response = [
                     'status' => false,
-                    'message' => 'Product not saved',
+                    'message' => 'Product lifecycle not saved',
                     'errors' => $this->getErrors()
                 ];
 
@@ -127,18 +136,24 @@ class ProductLifecycle extends BaseModel
                 if ($this->isUpdate)
                     ReferencesProductLifecycleRelEquipment::deleteAll(["product_lifecycle_id" => $this->id]);
 
-                foreach ($this->equipments as $equipment){
-                    $rel = new ReferencesProductLifecycleRelEquipment([
-                        'product_lifecycle_id' => $this->id,
-                        'equipment_id' => $equipment,
-                    ]);
-                    if (!$rel->save()){
-                        $response = [
-                            'status' => false,
-                            'message' => 'Product rel equipment not saved',
-                            'errors' => $rel->getErrors()
-                        ];
-                        break;
+                if ($response['status']){
+                    $response = ReferencesProductLifecycleRelEquipment::checkExists($this->id, $this->product_id, $this->equipments);
+                }
+
+                if ($response['status']){
+                    foreach ($this->equipments as $equipment){
+                        $rel = new ReferencesProductLifecycleRelEquipment([
+                            'product_lifecycle_id' => $this->id,
+                            'equipment_id' => $equipment,
+                        ]);
+                        if (!$rel->save()){
+                            $response = [
+                                'status' => false,
+                                'message' => 'Product rel equipment not saved',
+                                'errors' => $rel->getErrors()
+                            ];
+                            break;
+                        }
                     }
                 }
             }
