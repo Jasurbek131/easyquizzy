@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
     'delete_button' => 'delete-dialog',
     'modal_size' => 'modal-lg',
     'grid_ajax' => 'hr-employee_pjax',
-    'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
+    'confirm_message' => Yii::t('app', 'Are you sure you want to delete this item?')
 ]);
 $this->registerCss('
     .modal-lg{
