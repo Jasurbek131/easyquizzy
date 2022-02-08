@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
 
     <?php echo $form->field($model, 'product_id')->widget(Select2::class, [
         'data' => Products::getList(),
-        'options' => ['placeholder' => 'Select ...'],
+        'options' => ['placeholder' => Yii::t('app', 'Select')],
         'pluginOptions' => [
             'allowClear' => true,
         ]
