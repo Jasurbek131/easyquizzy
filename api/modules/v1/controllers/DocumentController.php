@@ -6,7 +6,7 @@ use app\models\BaseModel;
 use app\modules\hr\models\HrEmployee;
 use app\modules\hr\models\UsersRelationHrDepartments;;
 
-use app\modules\plm\models\Defects;
+use app\modules\references\models\Defects;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocumentItems;
 use app\modules\plm\models\PlmDocuments;

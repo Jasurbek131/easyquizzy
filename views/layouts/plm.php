@@ -365,6 +365,13 @@ AppAsset::register($this);
                                     'active' => $controller == 'product-lifecycle' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
+                                [
+                                    'label' => Yii::t('app', 'Defects'),
+                                    'url' => '/references/defects/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'defects' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-exclamation nav-icon"></i><p>{label}</p></a>',
+                                ],
                             ],
                         ],
                         [
