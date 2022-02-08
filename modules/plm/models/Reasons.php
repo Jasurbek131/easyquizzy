@@ -18,7 +18,7 @@ use Yii;
  * @property int $updated_at
  *
  * @property Categories $categories
- * @property PlmDocumentItems[] $plmDocumentItemss
+ * @property PlmDocumentItems[] $plmDocumentItems
  */
 class Reasons extends BaseModel
 {
@@ -72,7 +72,7 @@ class Reasons extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPlmDocumentItemss()
+    public function getPlmDocumentItems()
     {
         return $this->hasMany(PlmDocumentItems::className(), ['reason_id' => 'id']);
     }

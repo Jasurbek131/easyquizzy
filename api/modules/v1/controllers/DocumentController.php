@@ -8,6 +8,7 @@ use app\modules\hr\models\UsersRelationHrDepartments;;
 
 use app\modules\plm\models\Defects;
 use app\modules\plm\models\PlmDocItemDefects;
+use app\modules\plm\models\PlmDocItemProducts;
 use app\modules\plm\models\PlmDocumentItems;
 use app\modules\plm\models\PlmDocuments;
 use app\modules\plm\models\PlmProcessingTime;
@@ -17,6 +18,7 @@ use app\modules\references\models\EquipmentGroup;
 use app\modules\references\models\EquipmentGroupRelationEquipment;
 use app\modules\references\models\Equipments;
 use app\modules\references\models\Products;
+use app\modules\references\models\Shifts;
 use Yii;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -131,7 +133,7 @@ class DocumentController extends ActiveController
                 $documentItems = $post['document_items'];
                 $last = PlmDocuments::find()->orderBy(['id' => SORT_DESC])->one();
                 if (!empty($last)) {
-                    $last = $last->id + 1;
+                    $last = $last['id'] + 1;
                 } else {
                     $last = 1;
                 }
@@ -146,6 +148,7 @@ class DocumentController extends ActiveController
                         'doc_number' => "PD-".$last,
                         'reg_date' => date("Y-m-d", strtotime($document['reg_date'])),
                         'hr_department_id' => $document['hr_department_id'],
+                        'shift_id' => $document['shift_id'],
                         'add_info' => $document['add_info'],
                         'status_id' => BaseModel::STATUS_ACTIVE
                     ]);
@@ -153,41 +156,41 @@ class DocumentController extends ActiveController
                         foreach ($documentItems as $item) {
                             $plannedStopped = $item['planned_stopped'];
                             $unplannedStopped = $item['unplanned_stopped'];
-//                            $equipmentGroup = $item['equipmentGroup']['equipmentGroupRelationEquipments'];
-//                            if ($equipmentGroup) {
-//                                $newGroup = new EquipmentGroup();
-//                                $newGroup->setAttributes([
-//                                    'name' => $doc->doc_number,
-//                                    'status_id' => BaseModel::STATUS_ACTIVE
-//                                ]);
-//                                if ($newGroup->save()) {
-//                                    $i = 1;
-//                                    foreach ($equipmentGroup as $equip) {
-//                                        if ($equip['value']) {
-//                                            $newRelation = new EquipmentGroupRelationEquipment();
-//                                            $newRelation->setAttributes([
-//                                                'equipment_group_id' => $newGroup->id,
-//                                                'equipment_id' => $equip['value'],
-//                                                'work_order' => $i++,
-//                                                'status_id' => BaseModel::STATUS_ACTIVE
-//                                            ]);
-//                                            if ($newRelation->save()){
-//                                                $saved = true;
-//                                            } else {
-//                                                $saved = false;
-//                                                $response['errors'] = $newRelation->getErrors();
-//                                                $response['line'] = __LINE__;
-//                                                break 2;
-//                                            }
-//                                        }
-//                                    }
-//                                } else {
-//                                    $saved = false;
-//                                    $response['errors'] = $newGroup->getErrors();
-//                                    $response['line'] = __LINE__;
-//                                    break;
-//                                }
-//                            }
+                            $equipmentGroup = $item['equipmentGroup']['equipmentGroupRelationEquipments'];
+                            if ($equipmentGroup) {
+                                $newGroup = new EquipmentGroup();
+                                $newGroup->setAttributes([
+                                    'name' => $doc->doc_number,
+                                    'status_id' => BaseModel::STATUS_ACTIVE
+                                ]);
+                                if ($newGroup->save()) {
+                                    $i = 1;
+                                    foreach ($equipmentGroup as $equip) {
+                                        if ($equip['value']) {
+                                            $newRelation = new EquipmentGroupRelationEquipment();
+                                            $newRelation->setAttributes([
+                                                'equipment_group_id' => $newGroup->id,
+                                                'equipment_id' => $equip['value'],
+                                                'work_order' => $i++,
+                                                'status_id' => BaseModel::STATUS_ACTIVE
+                                            ]);
+                                            if ($newRelation->save()){
+                                                $saved = true;
+                                            } else {
+                                                $saved = false;
+                                                $response['errors'] = $newRelation->getErrors();
+                                                $response['line'] = __LINE__;
+                                                break 2;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    $saved = false;
+                                    $response['errors'] = $newGroup->getErrors();
+                                    $response['line'] = __LINE__;
+                                    break;
+                                }
+                            }
                             if ($plannedStopped) {
                                 $planStop = new PlmStops();
                                 if ($item['planned_stop_id']) {
@@ -259,58 +262,72 @@ class DocumentController extends ActiveController
                             }
                             $docItem->setAttributes([
                                 'document_id' => $doc->id,
-                                'product_id' => $item['product_id'],
+                                //'product_id' => $item['product_id'],
                                 'planned_stop_id' => $planStop->id ?? "",
                                 'unplanned_stop_id' => $unPlanStop->id ?? "",
                                 'processing_time_id' => $processing->id ?? "",
-                              //  'equipment_group_id' => $newGroup->id,
-                                'qty' => $item['qty'],
-                                'fact_qty' => $item['fact_qty']
+                                'equipment_group_id' => $newGroup->id ?? "",
+                               // 'qty' => $item['qty'],
+                               // 'fact_qty' => $item['fact_qty']
                             ]);
                             if ($docItem->save()) {
-                                $repaired = $item['repaired'];
-                                PlmDocItemDefects::deleteAll(['doc_item_id' => $docItem->id]);
-                                if ($repaired) {
-                                    foreach ($repaired as $repair) {
-                                        if ($repair['count']) {
-                                            $newDef = new PlmDocItemDefects();
-                                            $newDef->setAttributes([
-                                                'type' => BaseModel::DEFECT_REPAIRED,
-                                                'doc_item_id' => $docItem->id,
-                                                'defect_id' => $repair['value'],
-                                                'qty' => $repair['count'],
-                                                'status_id' => BaseModel::STATUS_ACTIVE
-                                            ]);
-                                            if ($newDef->save()) {
-                                                $saved = true;
-                                            } else {
-                                                $saved = false;
-                                                $response['errors'] = $newDef->getErrors();
-                                                $response['line'] = __LINE__;
-                                                break 2;
+                                $products = $item['products'];
+                                PlmDocItemProducts::deleteAll(['document_item_id' => $docItem->id]);
+                                if ($products) {
+                                    foreach ($products as $product) {
+                                        $newProductItem = new PlmDocItemProducts();
+                                        $newProductItem->setAttributes([
+                                            'document_item_id' => $docItem->id,
+                                            'product_id' => $product['product_id'],
+                                            'qty' => $product['qty'],
+                                            'fact_qty' => $product['fact_qty']
+                                        ]);
+                                        if ($newProductItem->save()) {
+                                            $repaired = $product['repaired'];
+                                            foreach ($repaired as $repair) {
+                                                if ($repair['count']) {
+                                                    $newDef = new PlmDocItemDefects();
+                                                    $newDef->setAttributes([
+                                                        'type' => BaseModel::DEFECT_REPAIRED,
+                                                        'doc_item_id' => $docItem->id,
+                                                        'defect_id' => $repair['value'],
+                                                        'qty' => $repair['count'],
+                                                        'status_id' => BaseModel::STATUS_ACTIVE,
+                                                        'doc_item_product_id' => $newProductItem->id
+                                                    ]);
+                                                    if ($newDef->save()) {
+                                                        $saved = true;
+                                                    } else {
+                                                        $saved = false;
+                                                        $response['errors'] = $newDef->getErrors();
+                                                        $response['line'] = __LINE__;
+                                                        break 2;
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
-                                }
-                                $scrapped = $item['scrapped'];
-                                if ($scrapped) {
-                                    foreach ($scrapped as $scrap) {
-                                        if ($scrap['count']) {
-                                            $newDef = new PlmDocItemDefects();
-                                            $newDef->setAttributes([
-                                                'type' => BaseModel::DEFECT_SCRAPPED,
-                                                'doc_item_id' => $docItem->id,
-                                                'defect_id' => $scrap['value'],
-                                                'qty' => $scrap['count'],
-                                                'status_id' => BaseModel::STATUS_ACTIVE
-                                            ]);
-                                            if ($newDef->save()) {
-                                                $saved = true;
-                                            } else {
-                                                $saved = false;
-                                                $response['line'] = __LINE__;
-                                                $response['errors'] = $newDef->getErrors();
-                                                break 2;
+                                            $scrapped = $product['scrapped'];
+                                            if ($scrapped) {
+                                                foreach ($scrapped as $scrap) {
+                                                    if ($scrap['count']) {
+                                                        $newDef = new PlmDocItemDefects();
+                                                        $newDef->setAttributes([
+                                                            'type' => BaseModel::DEFECT_SCRAPPED,
+                                                            'doc_item_id' => $docItem->id,
+                                                            'defect_id' => $scrap['value'],
+                                                            'qty' => $scrap['count'],
+                                                            'status_id' => BaseModel::STATUS_ACTIVE,
+                                                            'doc_item_product_id' => $newProductItem->id
+                                                        ]);
+                                                        if ($newDef->save()) {
+                                                            $saved = true;
+                                                        } else {
+                                                            $saved = false;
+                                                            $response['line'] = __LINE__;
+                                                            $response['errors'] = $newDef->getErrors();
+                                                            break 2;
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -410,6 +427,11 @@ class DocumentController extends ActiveController
                 $response['scrapped'] = Defects::find()->select(['id as value', "name_{$language} as label", "SUM(0) as count"])
                     ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_SCRAPPED])
                     ->groupBy('id')->asArray()->all();
+
+                $response['shiftList'] = Shifts::find()->select([
+                    'id as value',
+                    "CONCAT(name, ' (', TO_CHAR(start_time, 'HH24:MI'), ' - ', TO_CHAR(end_time, 'HH24:MI'), ')') as label"
+                ])->asArray()->all();
 
                 if (!is_null($id)) {
                     $plm_document = \app\api\modules\v1\models\BaseModel::getDocumentElements($id);
