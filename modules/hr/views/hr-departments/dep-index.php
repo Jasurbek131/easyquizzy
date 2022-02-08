@@ -72,22 +72,22 @@ $create = Yii::t('app', 'Create');
 <?php Pjax::begin(['id' => 'department_pjax']); ?>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card" style="border: 1px solid green;overflow-x: scroll">
                 <div class="card-body">
                     <div class="knopka text-center">
                         <br>
                         <button class="btn btn-xs btn-outline-info department-create"
-                                style="border: 1px solid #8950fc;" id="kt_demo_panel_toggle" disabled="disabled"
+                                style="border: 1px solid #8950fc;" disabled="disabled"
                                 href="<?= Url::to(['hr-departments/create']) ?>" ><i class="fa fa-plus"></i></button>
-                        <button class="btn btn-xs btn-outline-success tree" style="border: 1px solid #1bc5bd;"
-                                id="kt_demo_panel_toggle_root" href="<?= Url::to(['hr-departments/create']) ?>"><i
+                        <button class="btn btn-xs btn-outline-success tree-create" style="border: 1px solid #1bc5bd;"
+                                href="<?= Url::to(['hr-departments/create']) ?>"><i
                                 class="fa fa-tree"></i></button>
                         <button class="btn btn-xs btn-outline-danger delete-tree disabled-danger-delete"
                                 disabled="disabled"
                                 href="<?= Url::to(['hr-departments/delete']) ?>"><i class="fa fa-trash"></i>
                         </button>
-                        <button class="btn btn-xs btn-outline-primary update-dialog update-tree-elements"
+                        <button class="btn btn-xs btn-outline-primary department-update"
                                 disabled="disabled"
                                 style="border: 1px solid #3699ff;" href="<?= Url::to(['hr-departments/update']); ?>">
                             <i class="fa fa-pencil-alt"></i></button>
@@ -100,27 +100,27 @@ $create = Yii::t('app', 'Create');
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-9">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item active">
-                    <a class="nav-link" id="tap-address-one" data-toggle="tab" href="#tab-one" role="tab"
+                <li class="nav-item">
+                    <a class="nav-link active" id="tap-address-one" data-toggle="tab" href="#shift" role="tab"
                        aria-controls="profile" aria-selected="false"><?php echo Yii::t('app', 'Shifts') ?></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="equipments-tab" data-toggle="tab" href="#equipments" role="tab"
+                    <a class="nav-link" id="equipments-tab" data-toggle="tab" href="#equipment" role="tab"
                        aria-controls="equipments" aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="products-tab" data-toggle="tab" href="#products" role="tab"
+                    <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"
                        aria-controls="products" aria-selected="false"><?php echo Yii::t('app', 'Products') ?></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="defects-tab" data-toggle="tab" href="#defects" role="tab"
+                    <a class="nav-link" id="defects-tab" data-toggle="tab" href="#defect" role="tab"
                        aria-controls="defects" aria-selected="false"><?php echo Yii::t('app', 'Defects') ?></a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade in active" id="tab-one" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade active show" id="shift" role="tabpanel" aria-labelledby="profile-tab">
                     <div class="row">
                         <div class="col-md-4">
                             <button href="<?php echo Url::to(['/references/shifts/create']) ?>"
@@ -145,16 +145,16 @@ $create = Yii::t('app', 'Create');
                                     <th class=""><?= Yii::t('app', 'Action') ?></th>
                                 </tr>
                                 </thead>
-                                <tbody id="address-data"></tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade in active" id="equipments" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade" id="equipment" role="tabpanel" aria-labelledby="profile-tab">
                     <div class="row">
                         <div class="col-md-4">
                             <button href="<?php echo Url::to(['/references/equipments/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm equipmants-create"
+                                    class="btn btn-xs-button  btn-outline-success text-sm equipments-create"
                                     style="border: 1px solid #1bc5bd;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
                             </button>
                         </div>
@@ -169,16 +169,17 @@ $create = Yii::t('app', 'Create');
                                     <th class=""><?= Yii::t('app', "№") ?></th>
                                     <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
                                     <th class=""><?= Yii::t('app', 'Equipment Name') ?></th>
+                                    <th class=""><?= Yii::t('app', 'Equipment Type') ?></th>
                                     <th class=""><?= Yii::t('app', 'Status') ?></th>
                                     <th class=""><?= Yii::t('app', 'Action') ?></th>
                                 </tr>
                                 </thead>
-                                <tbody id="address-data"></tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade in active" id="products" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="profile-tab">
                     <div class="row">
                         <div class="col-md-4">
                             <button href="<?php echo Url::to(['/references/products/create']) ?>"
@@ -197,16 +198,17 @@ $create = Yii::t('app', 'Create');
                                     <th class=""><?= Yii::t('app', "№") ?></th>
                                     <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
                                     <th class=""><?= Yii::t('app', 'Product Name') ?></th>
+                                    <th class=""><?= Yii::t('app', 'Part Number') ?></th>
                                     <th class=""><?= Yii::t('app', 'Status') ?></th>
                                     <th class=""><?= Yii::t('app', 'Action') ?></th>
                                 </tr>
                                 </thead>
-                                <tbody id="address-data"></tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade in active" id="products" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade" id="defect" role="tabpanel" aria-labelledby="profile-tab">
                     <div class="row">
                         <div class="col-md-4">
                             <button href="<?php echo Url::to(['/references/defects/create']) ?>"
@@ -225,11 +227,12 @@ $create = Yii::t('app', 'Create');
                                     <th class=""><?= Yii::t('app', "№") ?></th>
                                     <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
                                     <th class=""><?= Yii::t('app', 'Defect Name') ?></th>
+                                    <th class=""><?= Yii::t('app', 'Defect Type') ?></th>
                                     <th class=""><?= Yii::t('app', 'Status') ?></th>
                                     <th class=""><?= Yii::t('app', 'Action') ?></th>
                                 </tr>
                                 </thead>
-                                <tbody id="address-data"></tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -327,6 +330,18 @@ $css = <<<CSS
 .btn-icon>i{
     font-size: 14px;
 }
+.shifts-create{
+    margin:5px 0 5px 0;
+}
+.equipments-create{
+   margin:5px 0 5px 0;
+}
+.products-create{
+  margin:5px 0 5px 0;
+}
+.defects-create{
+      margin:5px 0 5px 0;
+}
 CSS;
 $this->registerCss($css);
 ?>
@@ -334,14 +349,14 @@ $this->registerCss($css);
 <?php
 $js = <<<JS
     /* */
-    // 6 create an when the DOM is ready
     $('#kt_tree_1').jstree();
 
 $('#kt_tree_1').on("changed.jstree", function (e, data) {
-    let musteriId = JSON.parse(data.node.li_attr['data-jstree']).musteri_id ?? -1;
-    $("#tree-department-create").attr("disabled")
-  $(".delete-tree").attr('data-id', data.node.li_attr.value ?? -1);
-  // $(".delete-tree").attr('data-musteri-id', musteriId);
+    $('#loading').css('display','block');
+    $(".department-create").attr("disabled",false);
+    $(".department-update").attr("disabled",false);
+    $('#loading').css('display','none');
+  $(".delete-tree").attr('data-id', data.node.li_attr.value);
 });
 
 $('button').on('click', function () {
@@ -384,7 +399,7 @@ $('body').delegate('.jstree-anchor', 'click', function() {
 });
 
 // tree create
-$('body').delegate('#kt_demo_panel_toggle', 'click', function(e) {
+/*$('body').delegate('#kt_demo_panel_toggle', 'click', function(e) {
     let url=$(this).attr('href');
     var departmentId = $('.delete-tree').attr('data-id');
      if(departmentId === undefined){
@@ -418,9 +433,9 @@ $('body').delegate('#kt_demo_panel_toggle_root', 'click', function(e) {
         }
     });
     $('#kt_demo_panel_toggle').click(); 
-});
+});*/
 
-//tree elements update
+/*//tree elements update
 $('body').delegate('.update-tree-elements', 'click', function(e) {
     e.preventDefault();
     var id = $('.delete-tree').attr('data-id');
@@ -428,7 +443,7 @@ $('body').delegate('.update-tree-elements', 'click', function(e) {
     $('#view-modal .modal-body').load(url, function(){
       $('#view-modal').modal("show");
     });
-});
+});*/
 
 // delete tree
 $('body').delegate('.delete-tree', 'click', function(e) {
@@ -482,10 +497,11 @@ $('body').delegate('.delete-tree', 'click', function(e) {
 });
 
 // delete license department
-$('body').delegate('.delete-license-department', 'click', function(e) {
+/*$('body').delegate('.delete-license-department', 'click', function(e) {
     e.preventDefault();
-    let url=$(this).attr('href');
-    let item = $(this).parents('tr');
+    var departmentId = $('.delete-tree').attr('data-id');
+    var id = $(this).attr('data-form-id');
+    $('#loading').css('display','block');
     $.ajax({
         url:url,
         data:{},
@@ -496,31 +512,33 @@ $('body').delegate('.delete-license-department', 'click', function(e) {
             }
         }
     });
-});
+});*/
 
-$('body').delegate('.department-create,.shifts-create ,.equipments-create','.defects-create', 'click', function(e) {
+$('body').delegate('.tree-create,.department-create,.department-update,.shifts-create,.shifts-update,.shifts-view,' +
+ '.equipments-create,.equipments-update,.equipments-view,.defects-create,' +
+  '.defects-update,.defects-view', 'click', function(e) {
     e.preventDefault();
     var departmentId = $('.delete-tree').attr('data-id');
     var id = $(this).attr('data-form-id');
-    console.log("departmentId",departmentId)
+    $('#loading').css('display','block');
     if(departmentId === undefined){
         swal({
             icon: 'error',
             title: notSelectedDepartment,
             showConfirmButton:false
         });
+        $('#loading').css('display','none');
     }else{
-        let url=$(this).attr('href');
-        // if(id != undefined){
-        //     url = url +"?id="+id+"&department_id="+departmentId;
-        // }else{
-        // }
-        console.log("department", departmentId)
-        // url = url+"?department_id="+departmentId;
-        // $('#view-modal .modal-body').load(url, function(){
-        //     $('#view-modal').modal("show");
-        //     // $('#exampleModalCenterTitle').html(modalHeaderNameShifts);
-        // });
+        let url = $(this).attr('href');
+        if(id != undefined){
+            url = url +"?id="+id+"&department_id="+departmentId;
+        }else{
+        url = url+"?department_id="+departmentId;
+        }
+        $('#view-modal .modal-body').load(url, function(){
+            $('#view-modal').modal("show");
+            $('#loading').css('display','none');
+        });
     }
 });
 
@@ -529,6 +547,7 @@ $('body').delegate('li', 'click', function(e) {
 //create, update va view larni modal yordamida chiqarish uchun
     let id = $(this).val();
     if ($(this).find('.jstree-anchor').attr('aria-selected') == 'true') {
+        $('#loading').css('display','block');
         $.ajax({
             url:'{$urlToGetItems}',
             data:{id:id},
@@ -538,21 +557,19 @@ $('body').delegate('li', 'click', function(e) {
                 if(response){
                     let delete_tree = response['delete'];
                     let shifts = response['shifts'];
-                    let usersGroup = response['users_group'];
-                    
+                    let equipments = response['equipments'];
+                    let products = response['products'];
+                    let defects = response['defects'];
                     if ( delete_tree ) {
                         $('.delete-tree').attr('disabled', true);
                     } else {
                         $('.delete-tree').attr('disabled', false);
                     }
-                    
                     shifts.map(function(item,index) {
                          var status_check;
                         if (item['status'] == 1) {
-                            status_check = 'success';
                             item['status'] = 'Active';
                         } else {
-                            status_check = 'warning';
                             item['status'] = 'Inactive';
                         }
                         let td_shifts = '<tr>' +
@@ -564,38 +581,78 @@ $('body').delegate('li', 'click', function(e) {
                              '<td>'+ item['status_name'] +'</td>' +
                              '<td>';
                         if (item['status'] == 'Active') {
-                            td_shifts += '<button href="/references/shifts/update?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success shifts-update-dialog" ><i class="fa fa-pencil-alt"></i></button>';
+                            td_shifts += '<a href="/references/shifts/update' + '" data-form-id="'+item['shift_id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success shifts-update" ><i class="fa fa-pencil-alt"></i></a>';
                         }    
-                        td_shifts += '<button href="/references/shifts/view?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info shifts-view-dialog" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
+                        td_shifts += '<button href="/references/shifts/view' + '" data-form-id="'+item['shift_id'] +'" class="btn btn-icon btn-xs btn-outline-info shifts-view" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
                              '</td>' +
                           '</tr>'; 
                          $('#table-shifts').find('tbody').append(td_shifts);
                      });
-                    
-                     // usersGroup.map(function(item,index) {
-                     //    var status_check;
-                     //    if (item['status'] == 1) {
-                     //        status_check = 'success';
-                     //        item['status'] = 'Active';
-                     //    } else {
-                     //        status_check = 'warning';
-                     //        item['status'] = 'Inactive';
-                     //    }
-                     //    let tr_user_goup = '<tr>' +
-                     //         '<td>'+ (index*1+1) +'</td>' +
-                     //         '<td>'+ item['user_fio'] +'</td>' +
-                     //         '<td>'+ item['fish'] +'</td>' +
-                     //         '<td><p class="btn btn-xs btn-'+ status_check +'">'+ item['status'] +'</p></td>' +
-                     //         '<td>'+ item['name'] +'</td>' +
-                     //        '<td>';
-                     //            if (item['status'] == 'Active') {
-                     //                tr_user_goup += '<button href="'+urlUserGroup+'/update" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-primary user-group-update" ><i class="fa fa-pencil"></i></button>';
-                     //            }    
-                     //            tr_user_goup += '<button href="'+urlUserGroup+'/view" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info users-group-view" "><i class="fa fa-eye"></i></button>' +
-                     //         '</td>' +
-                     //      '</tr>';
-                     //     $('#hr_employee-users_group').find('tbody').append(tr_user_goup); 
-                     // });
+                    equipments.map(function(item,index) {
+                         var status_check;
+                        if (item['status'] == 1) {
+                            item['status'] = 'Active';
+                        } else {
+                            item['status'] = 'Inactive';
+                        }
+                        let td_equipments = '<tr>' +
+                             '<td>'+ (index*1+1) +'</td>' +
+                             '<td>'+ item['dep_name'] +'</td>' +
+                             '<td>'+ item['equipment_name'] +'</td>' +
+                             '<td>'+ item['equipment_type_time'] +'</td>' +
+                             '<td>'+ item['status_name'] +'</td>' +
+                             '<td>';
+                        if (item['status'] == 'Active') {
+                            td_equipments += '<button href="/references/equipments/update?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success equipments-update" ><i class="fa fa-pencil-alt"></i></button>';
+                        }    
+                        td_equipments += '<button href="/references/equipments/view?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info equipments-view" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
+                             '</td>' +
+                          '</tr>'; 
+                         $('#table-equipments').find('tbody').append(td_equipments);
+                    });
+                    products.map(function(item,index) {
+                        if (item['status'] == 1) {
+                            item['status'] = 'Active';
+                        } else {
+                            item['status'] = 'Inactive';
+                        }
+                        let td_products = '<tr>' +
+                             '<td>'+ (index*1+1) +'</td>' +
+                             '<td>'+ item['dep_name'] +'</td>' +
+                             '<td>'+ item['product_name'] +'</td>' +
+                             '<td>'+ item['part_number'] +'</td>' +
+                             '<td>'+ item['status_name'] +'</td>' +
+                             '<td>';
+                        if (item['status'] == 'Active') {
+                            td_products += '<button href="/references/products/update?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success products-update" ><i class="fa fa-pencil-alt"></i></button>';
+                        }    
+                        td_products += '<button href="/references/products/view?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info products-view" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
+                             '</td>' +
+                          '</tr>'; 
+                         $('#table-products').find('tbody').append(td_products);
+                    });
+                    defects.map(function(item,index) {
+                        if (item['status'] == 1) {
+                            item['status'] = 'Active';
+                        } else {
+                            item['status'] = 'Inactive';
+                        }
+                        let td_defects = '<tr>' +
+                             '<td>'+ (index*1+1) +'</td>' +
+                             '<td>'+ item['dep_name'] +'</td>' +
+                             '<td>'+ item['defect_name'] +'</td>' +
+                             '<td>'+ item['defect_type'] +'</td>' +
+                             '<td>'+ item['status_name'] +'</td>' +
+                             '<td>';
+                        if (item['status'] == 'Active') {
+                            td_defects += '<button href="/references/defects/update?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success defects-update" ><i class="fa fa-pencil-alt"></i></button>';
+                        }    
+                        td_defects += '<button href="/references/defects/view?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info defects-view" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
+                             '</td>' +
+                          '</tr>'; 
+                         $('#table-defects').find('tbody').append(td_defects);
+                    });
+                    $('#loading').css('display','none');
                 }               
             }
         });
@@ -612,44 +669,36 @@ $(document).ready(function() {
     });
 });
 
-    $('body').delegate('.button-users-group', 'click', function(e) {
+    $('body').delegate('.button-save-form', 'click', function(e) {
         e.preventDefault();
-        let musteriId = $('.delete-tree').attr('data-musteri-id');
-        let departmentId = $('.delete-tree').attr('data-id');
-        let form = $('#users-group');
-        let actionUrl = form.attr('action');
-        $.ajax({
-            url: actionUrl,
-            data: form.serialize(),
-            type:'POST',
-            success: function(response){
-                $('tbody').html('');
-                if(response.status == 0){
-                    call_pnotify('success',response.message);
-                }else{
-                    call_pnotify('fail',response.message);
-                }
-            }
-        });
+        $('#loading').css('display','block');
+        let formModal = $(this).parents('form');
+        let actionUrl = formModal.attr('action');
+        console.log('formModal:',formModal);
+        console.log('actionUrl:',actionUrl);
+        ajaxModalSave(formModal, actionUrl);
     });
-function call_pnotify(status,message) {
-        switch (status) {
-            case 'success':
-                PNotify.defaults.styling = "bootstrap4";
-                PNotify.defaults.delay = 2000;
-                PNotify.alert({text:message,type:'success'});
-                break;
-            case 'fail':
-                PNotify.defaults.styling = "bootstrap4";
-                PNotify.defaults.delay = 2000;
-                PNotify.alert({text:message,type:'error'});
-                break;
+    
+function ajaxModalSave(formModal,actionUrl){
+     $.ajax({
+        url: actionUrl,
+        data: formModal.serialize(),
+        type:'POST',
+        success: function(response){
+            $('tbody').html('');
+            if(response.status == 0){
+                 $('#loading').css('display','none');
+                 call_pnotify('success',response.message);
+                 $('#view-modal').modal("hide");
+                 $.pjax({ container: "#department_pjax"});
+            }else{
+                $('#loading').css('display','none');
+                call_pnotify('fail',response.message);
+            }
         }
-    }
-    
-    
-    
-    $("body").on("submit", ".departmentsAjaxForm", function (e) {
+    });
+}   
+/*$("body").on("submit", ".departmentsAjaxForm", function (e) {
     e.preventDefault();
     var self = $(this);
     var url = self.attr("action");
@@ -713,7 +762,22 @@ function call_pnotify(status,message) {
     }else{
         call_pnotify('fail', "Barcha maydonlar to'ldirilmagan");
     }
-});
+});*/
+    
+function call_pnotify(status,message) {
+    switch (status) {
+        case 'success':
+            PNotify.defaults.styling = "bootstrap4";
+            PNotify.defaults.delay = 2000;
+            PNotify.alert({text:message,type:'success'});
+            break;
+        case 'fail':
+            PNotify.defaults.styling = "bootstrap4";
+            PNotify.defaults.delay = 2000;
+            PNotify.alert({text:message,type:'error'});
+            break;
+    }
+}
 JS;
 $this->registerJs($js);
 $this->registerJsFile('/js/jstree-vakate/jstree.min.js', ['depends' => JqueryAsset::class]);

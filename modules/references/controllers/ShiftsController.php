@@ -129,7 +129,9 @@ class ShiftsController extends Controller
      */
     public function actionUpdate($id)
     {
+        \yii\helpers\VarDumper::dump(Yii::$app->request,10,true);die();
         $model = $this->findModel($id);
+        $departmentId = Yii::$app->request->get('department_id');
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
@@ -168,6 +170,7 @@ class ShiftsController extends Controller
                 }
             }
         }
+
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('update', [
                 'model' => $model,
