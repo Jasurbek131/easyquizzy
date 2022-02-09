@@ -663,9 +663,6 @@ class Form extends React.Component {
                             })
                         }
                     </div>
-                    <div className={'card-footer'}>
-                        <button onClick={this.onSave.bind(this)} className={'btn btn-sm btn-success'}>Saqlash</button>
-                    </div>
                 </div>
 
                 <div className="fade modal show" role="dialog" tabIndex="-1" style={{display: displayOperator}} aria-modal="true">
