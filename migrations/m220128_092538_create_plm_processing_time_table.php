@@ -57,17 +57,6 @@ class m220128_092538_create_plm_processing_time_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%plm_documents}}`
-        $this->dropForeignKey(
-            '{{%fk-plm_processing_time-doc_id}}',
-            '{{%plm_processing_time}}'
-        );
-
-        // drops index for column `doc_id`
-        $this->dropIndex(
-            '{{%idx-plm_processing_time-doc_id}}',
-            '{{%plm_processing_time}}'
-        );
         $this->dropIndex(
             '{{%idx-plm_processing_time-status_id}}',
             '{{%plm_processing_time}}'

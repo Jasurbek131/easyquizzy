@@ -57,22 +57,9 @@ class m220128_093208_create_plm_scheduled_stop_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%plm_documents}}`
-        $this->dropForeignKey(
-            '{{%fk-plm_scheduled_stop-doc_id}}',
-            '{{%plm_scheduled_stop}}'
-        );
-
-        // drops index for column `doc_id`
-        $this->dropIndex(
-            '{{%idx-plm_scheduled_stop-doc_id}}',
-            '{{%plm_scheduled_stop}}'
-        );
-        $this->dropIndex(
-            '{{%idx-plm_scheduled_stop-status_id}}',
-            '{{%plm_scheduled_stop}}'
-        );
-
-        $this->dropTable('{{%plm_scheduled_stop}}');
+        $q = $this->db->createCommand("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'plm_scheduled_stop' );")->queryScalar();
+        if ($q) {
+            $this->dropTable('{{%plm_scheduled_stop}}');
+        }
     }
 }

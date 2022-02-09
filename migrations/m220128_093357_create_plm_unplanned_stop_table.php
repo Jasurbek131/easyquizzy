@@ -57,22 +57,25 @@ class m220128_093357_create_plm_unplanned_stop_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%plm_documents}}`
-        $this->dropForeignKey(
-            '{{%fk-plm_unplanned_stop-doc_id}}',
-            '{{%plm_unplanned_stop}}'
-        );
+        $q = $this->db->createCommand("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'plm_unplanned_stop' );")->queryScalar();
+        if ($q) {
+            // drops foreign key for table `{{%plm_documents}}`
+            $this->dropForeignKey(
+                '{{%fk-plm_unplanned_stop-doc_id}}',
+                '{{%plm_unplanned_stop}}'
+            );
 
-        // drops index for column `doc_id`
-        $this->dropIndex(
-            '{{%idx-plm_unplanned_stop-doc_id}}',
-            '{{%plm_unplanned_stop}}'
-        );
-        $this->dropIndex(
-            '{{%idx-plm_unplanned_stop-status_id}}',
-            '{{%plm_unplanned_stop}}'
-        );
+            // drops index for column `doc_id`
+            $this->dropIndex(
+                '{{%idx-plm_unplanned_stop-doc_id}}',
+                '{{%plm_unplanned_stop}}'
+            );
+            $this->dropIndex(
+                '{{%idx-plm_unplanned_stop-status_id}}',
+                '{{%plm_unplanned_stop}}'
+            );
 
-        $this->dropTable('{{%plm_unplanned_stop}}');
+            $this->dropTable('{{%plm_unplanned_stop}}');
+        }
     }
 }
