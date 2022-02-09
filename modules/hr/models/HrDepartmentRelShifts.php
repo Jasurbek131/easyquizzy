@@ -81,7 +81,7 @@ class HrDepartmentRelShifts extends BaseModel
             $data = self::find()
                 ->alias('hers')
                 ->select([
-                    "sh.id AS shift_id",
+                    "hers.id AS id",
                     "hrd.name AS dep_name",
                     "sh.name AS shift_name",
                     "sh.start_time AS start_time",
@@ -93,8 +93,8 @@ class HrDepartmentRelShifts extends BaseModel
                 ->leftJoin(['hrd' => 'hr_departments'],'hers.hr_department_id = hrd.id')
                 ->leftJoin(['sl' => 'status_list'],'hers.status_id = sl.id')
                 ->where(['hers.hr_department_id' => $department_id])
-                ->andWhere(['hers.status_id' => \app\models\BaseModel::STATUS_ACTIVE])
                 ->asArray()
+                ->orderBy(['hers.id' => SORT_DESC,'hers.status_id' => SORT_ASC])
                 ->all();
             return $data ?? [];
         }

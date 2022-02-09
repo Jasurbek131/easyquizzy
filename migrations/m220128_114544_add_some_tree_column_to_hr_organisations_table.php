@@ -3,7 +3,7 @@
 use yii\db\Migration;
 
 /**
- * Handles adding columns to table `{{%hr-organisations}}`.
+ * Handles adding columns to table `{{%hr_organisations}}`.
  */
 class m220128_114544_add_some_tree_column_to_hr_organisations_table extends Migration
 {

@@ -92,8 +92,8 @@ class HrDepartmentRelProduct extends BaseModel
                 ->leftJoin(['hrd' => 'hr_departments'],'herp.hr_department_id = hrd.id')
                 ->leftJoin(['sl' => 'status_list'],'herp.status_id = sl.id')
                 ->where(['herp.hr_department_id' => $department_id])
-                ->andWhere(['herp.status_id' => \app\models\BaseModel::STATUS_ACTIVE])
                 ->asArray()
+                ->orderBy(['herp.id' => SORT_DESC,'herp.status_id' => SORT_ASC])
                 ->all();
             return $data ?? [];
         }

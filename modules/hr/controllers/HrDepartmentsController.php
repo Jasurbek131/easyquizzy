@@ -182,7 +182,7 @@ class HrDepartmentsController extends NodeController
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 $response = [];
-                $model->parent_id = $data['department_id'] ?? null;
+                $model->parent_id = ($data['department_id']) ? ($data['department_id']) : null;
                 if ($model->save()) {
                     $response['status'] = 0;
                 } else {
@@ -280,8 +280,11 @@ class HrDepartmentsController extends NodeController
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->delete()){
-                $isDeleted = true;
+            if($model->status_id < BaseModel::STATUS_SAVED){
+                $model->status_id = BaseModel::STATUS_INACTIVE;
+                if($model->save()){
+                    $isDeleted = true;
+                }
             }
             if($isDeleted){
                 $transaction->commit();

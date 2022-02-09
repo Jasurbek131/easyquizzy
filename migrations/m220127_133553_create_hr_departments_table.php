@@ -6,7 +6,7 @@ use yii\db\Migration;
  * Handles the creation of table `{{%hr_departments}}`.
  * Has foreign keys to the tables:
  *
- * - `{{%hr-organisations}}`
+ * - `{{%hr_organisations}}`
  */
 class m220127_133553_create_hr_departments_table extends Migration
 {
@@ -35,12 +35,12 @@ class m220127_133553_create_hr_departments_table extends Migration
             'hr_organisation_id'
         );
 
-        // add foreign key for table `{{%hr-organisations}}`
+        // add foreign key for table `{{%hr_organisations}}`
         $this->addForeignKey(
             '{{%fk-hr_departments-hr_organisation_id}}',
             '{{%hr_departments}}',
             'hr_organisation_id',
-            '{{%hr-organisations}}',
+            '{{%hr_organisations}}',
             'id',
             'RESTRICT'
         );
@@ -57,7 +57,7 @@ class m220127_133553_create_hr_departments_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%hr-organisations}}`
+        // drops foreign key for table `{{%hr_organisations}}`
         $this->dropForeignKey(
             '{{%fk-hr_departments-hr_organisation_id}}',
             '{{%hr_departments}}'

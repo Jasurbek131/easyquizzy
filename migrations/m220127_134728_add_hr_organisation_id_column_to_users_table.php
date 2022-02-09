@@ -29,7 +29,7 @@ class m220127_134728_add_hr_organisation_id_column_to_users_table extends Migrat
             '{{%fk-users-hr_organisation_id}}',
             '{{%users}}',
             'hr_organisation_id',
-            '{{%hr-organisations}}',
+            '{{%hr_organisations}}',
             'id',
             'RESTRICT'
         );

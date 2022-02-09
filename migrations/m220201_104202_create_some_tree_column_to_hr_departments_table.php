@@ -45,7 +45,7 @@ class m220201_104202_create_some_tree_column_to_hr_departments_table extends Mig
 
         $this->renameColumn(self::TABLE_NAME,'name_uz','name');
 
-        // drops foreign key for table `{{%hr-organisations}}`
+        // drops foreign key for table `{{%hr_organisations}}`
         $this->dropForeignKey(
             '{{%fk-hr_departments-hr_organisation_id}}',
             '{{%hr_departments}}'
@@ -127,12 +127,12 @@ class m220201_104202_create_some_tree_column_to_hr_departments_table extends Mig
             'hr_organisation_id'
         );
 
-        // add foreign key for table `{{%hr-organisations}}`
+        // add foreign key for table `{{%hr_organisations}}`
         $this->addForeignKey(
             '{{%fk-hr_departments-hr_organisation_id}}',
             '{{%hr_departments}}',
             'hr_organisation_id',
-            '{{%hr-organisations}}',
+            '{{%hr_organisations}}',
             'id',
             'RESTRICT'
         );
@@ -149,7 +149,7 @@ class m220201_104202_create_some_tree_column_to_hr_departments_table extends Mig
             '{{%fk-users-hr_organisation_id}}',
             '{{%users}}',
             'hr_organisation_id',
-            '{{%hr-organisations}}',
+            '{{%hr_organisations}}',
             'id',
             'RESTRICT'
         );

@@ -129,7 +129,6 @@ class ShiftsController extends Controller
      */
     public function actionUpdate($id)
     {
-        \yii\helpers\VarDumper::dump(Yii::$app->request,10,true);die();
         $model = $this->findModel($id);
         $departmentId = Yii::$app->request->get('department_id');
         if (Yii::$app->request->isPost) {
