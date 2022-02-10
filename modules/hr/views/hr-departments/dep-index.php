@@ -262,7 +262,7 @@ $create = Yii::t('app', 'Create');
         </div>
     </div>
 
-<?/*= \app\widgets\ModalWindow\ModalWindow::widget([
+<?php /*= \app\widgets\ModalWindow\ModalWindow::widget([
     'model' => 'toquv-department-musteri-address',
     'crud_name' => 'toquv-department-musteri-address',
     'modal_id' => 'toquv-department-musteri-address-modal',

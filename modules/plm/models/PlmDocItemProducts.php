@@ -2,6 +2,7 @@
 
 namespace app\modules\plm\models;
 
+use app\modules\references\models\ProductLifecycle;
 use app\modules\references\models\Products;
 use Yii;
 
@@ -11,6 +12,7 @@ use Yii;
  * @property int $id
  * @property int $document_item_id
  * @property int $product_id
+ * @property int $product_lifecycle_id
  * @property int $qty
  * @property int $fact_qty
  *
@@ -34,10 +36,11 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['document_item_id', 'product_id', 'qty', 'fact_qty'], 'default', 'value' => null],
-            [['document_item_id', 'product_id', 'qty', 'fact_qty'], 'integer'],
+            [['document_item_id', 'product_id', 'product_lifecycle_id', 'qty', 'fact_qty'], 'default', 'value' => null],
+            [['document_item_id', 'product_id', 'product_lifecycle_id', 'qty', 'fact_qty'], 'integer'],
             [['document_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['document_item_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
+            [['product_lifecycle_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductLifecycle::class, 'targetAttribute' => ['product_lifecycle_id' => 'id']],
         ];
     }
 
@@ -50,6 +53,7 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'document_item_id' => Yii::t('app', 'Document Item ID'),
             'product_id' => Yii::t('app', 'Product ID'),
+            'product_lifecycle_id' => Yii::t('app', 'Product Lifecycle'),
             'qty' => Yii::t('app', 'Qty'),
             'fact_qty' => Yii::t('app', 'Fact Qty'),
         ];
@@ -61,6 +65,14 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
     public function getPlmDocumentItems()
     {
         return $this->hasOne(PlmDocumentItems::class, ['id' => 'document_item_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductLifecycle()
+    {
+        return $this->hasOne(ProductLifecycle::class, ['id' => 'product_lifecycle_id']);
     }
 
     /**

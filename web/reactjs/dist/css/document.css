@@ -1,9 +1,24 @@
+.modal-body {
+    overflow-x: hidden;
+}
 .border-block {
     display: block;
     border: 2px solid #d3cdcd;
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 12px;
+}
+.btn-form-control {
+    height: calc(1.7rem + 1px)!important;
+}
+.prt-015 {
+    padding-top: .15rem;
+    font-size: 1rem;
+}
+.displayFlex {
+    display: flex;
+    position: absolute;
+    bottom: 20px;
 }
 .wh-28 {
     width: 28px!important;

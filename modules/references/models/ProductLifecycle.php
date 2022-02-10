@@ -2,6 +2,7 @@
 
 namespace app\modules\references\models;
 
+use app\models\BaseModel;
 use app\modules\admin\models\AdminLogs;
 use Yii;
 
@@ -186,5 +187,18 @@ class ProductLifecycle extends BaseModel
             ];
         }
         return $response;
+    }
+
+    public static function getProductLifecycleList($one = false, $id = null) {
+        $list = ProductLifecycle::find()->alias('pl')->select([
+            'p.id as value', "p.name as label", "MAX(pl.lifecycle) as lifecycle"
+        ])->innerJoin('products p', 'pl.product_id = p.id')
+            ->where(['pl.status_id' => BaseModel::STATUS_ACTIVE])
+            ->groupBy('p.id')
+            ->asArray();
+        if ($one) {
+            return $list->andWhere(['pl.id' => $id])->one();
+        }
+        return $list->all();
     }
 }

@@ -64,7 +64,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
     public function getEquipmentGroup()
     {
@@ -72,7 +72,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
     public function getPlmDocuments()
     {
@@ -80,7 +80,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
     public function getPlmProcessingTime()
     {
@@ -88,14 +88,14 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
     public function getPlanned_stopped()
     {
         return $this->hasOne(PlmStops::class, ['id' => 'planned_stop_id']);
     }
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
     public function getUnplanned_stopped()
     {
@@ -103,7 +103,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
     public function getPlmDocItemDefects()
     {
@@ -111,10 +111,11 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return yii\db\ActiveQuery
      */
     public function getProducts()
     {
         return $this->hasMany(PlmDocItemProducts::class, ['document_item_id' => 'id']);
     }
+
 }
