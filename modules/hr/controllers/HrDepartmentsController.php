@@ -355,9 +355,7 @@ class HrDepartmentsController extends NodeController
      */
     public function actionIndex($deb = null)
     {
-        $user_root = UsersRelationHrDepartments::getRootByUser();
-        $user_departments = array_merge($user_root, HrDepartments::getChilds($user_root));
-        $tree = HrDepartments::getTreeViewHtmlForm(null, null, $user_departments);
+        $tree = HrDepartments::getTreeViewHtmlForm(null, null, UsersRelationHrDepartments::getDepartmentByUser());
         return $this->render('dep-index',[
             'tree' => $tree,
             'deb' => $deb,

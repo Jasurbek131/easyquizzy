@@ -98,4 +98,14 @@ class UsersRelationHrDepartments extends \yii\db\ActiveRecord
             $ids = ArrayHelper::getColumn($ids, "hr_department_id");
         return $ids;
     }
+
+    /**
+     * @return array
+     * Foydalanuvchiga tegishli tashkilot va uning bo'limlarini id larini qaytaradi
+     */
+    public static function getDepartmentByUser(): array
+    {
+        $user_root = self::getRootByUser();
+        return array_merge($user_root, HrDepartments::getChilds($user_root));
+    }
 }

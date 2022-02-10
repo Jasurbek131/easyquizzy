@@ -139,7 +139,6 @@ class HrDepartments extends BaseModel
             ->all();
 
         $tree = "";
-
         foreach ($items as $item)
             if ($item['id'] == $dep)
                 $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{ \"selected\" : true }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
@@ -152,7 +151,7 @@ class HrDepartments extends BaseModel
     /**
      * @param array $parent_id
      * @return array
-     * Bo'limga tegishli mahsulotlar
+     * Tashkilotga tegishli bo'limlar
      */
     public static function getChilds($parent_id  = []) //TODO optimallashtirish kerak
     {
