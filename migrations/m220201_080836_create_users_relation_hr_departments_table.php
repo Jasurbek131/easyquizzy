@@ -37,7 +37,7 @@ class m220201_080836_create_users_relation_hr_departments_table extends Migratio
             'user_id',
             '{{%users}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
 
         // creates index for column `hr_department_id`
@@ -54,7 +54,7 @@ class m220201_080836_create_users_relation_hr_departments_table extends Migratio
             'hr_department_id',
             '{{%hr_departments}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

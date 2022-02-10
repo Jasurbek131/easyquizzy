@@ -31,7 +31,7 @@ class m220202_155039_add_document_id_column_to_plm_document_items_table extends 
             'document_id',
             '{{%plm_documents}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

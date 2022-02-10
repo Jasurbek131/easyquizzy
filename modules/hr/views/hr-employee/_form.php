@@ -21,11 +21,11 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
         <div class="col-md-4">
-            <?php echo $form->field($model, 'firstname')->textInput(['maxlength' => true]) ?>
-            <?php echo $form->field($model, 'id')->hiddenInput()->label(false)?>
+            <?php echo $form->field($model, 'lastname')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-md-4">
-            <?php echo $form->field($model, 'lastname')->textInput(['maxlength' => true]) ?>
+            <?php echo $form->field($model, 'firstname')->textInput(['maxlength' => true]) ?>
+            <?php echo $form->field($model, 'id')->hiddenInput()->label(false)?>
         </div>
         <div class="col-md-4">
             <?php echo $form->field($model, 'fathername')->textInput(['maxlength' => true]) ?>

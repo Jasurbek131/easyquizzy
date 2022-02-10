@@ -31,7 +31,7 @@ class m220208_045912_add_shift_id_column_to_plm_documents_table extends Migratio
             'shift_id',
             '{{%shifts}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

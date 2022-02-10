@@ -31,7 +31,7 @@ class m220202_152409_add_reason_id_column_to_plm_stops_table extends Migration
             'reason_id',
             '{{%reasons}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

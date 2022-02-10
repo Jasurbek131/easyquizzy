@@ -31,7 +31,7 @@ class m220203_061918_add_equipment_group_id_column_to_plm_document_items_table e
             'equipment_group_id',
             '{{%equipment_group}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

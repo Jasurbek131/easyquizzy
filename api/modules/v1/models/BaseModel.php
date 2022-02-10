@@ -26,7 +26,7 @@ class BaseModel extends PlmDocuments
                             ])->with([
                                 'repaired' => function($r) use ($language) {
                                     $r->from(['r' => 'plm_doc_item_defects'])->select([
-                                        'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
+                                        'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count',/* 'r.doc_item_product_id'*/
                                     ])->leftJoin('defects d', 'r.defect_id = d.id')
                                         ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
                                 },
@@ -119,7 +119,7 @@ class BaseModel extends PlmDocuments
                             $p->from(['p' => 'plm_doc_item_products'])->select(['p.id', 'p.product_id', 'p.document_item_id'])->with([
                                 'repaired' => function($r) use ($language) {
                                     $r->from(['r' => 'plm_doc_item_defects'])->select([
-                                        'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
+                                        'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', /*'r.doc_item_product_id'*/
                                     ])->leftJoin('defects d', 'r.defect_id = d.id')
                                         ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
                                 },

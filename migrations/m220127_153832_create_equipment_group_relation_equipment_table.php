@@ -49,7 +49,7 @@ class m220127_153832_create_equipment_group_relation_equipment_table extends Mig
             'equipment_group_id',
             '{{%equipment_group}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
 
         // creates index for column `equipment_id`
@@ -66,7 +66,7 @@ class m220127_153832_create_equipment_group_relation_equipment_table extends Mig
             'equipment_id',
             '{{%equipments}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

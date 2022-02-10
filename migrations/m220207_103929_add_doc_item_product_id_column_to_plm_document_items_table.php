@@ -31,7 +31,7 @@ class m220207_103929_add_doc_item_product_id_column_to_plm_document_items_table 
             'doc_item_product_id',
             '{{%plm_document_items}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

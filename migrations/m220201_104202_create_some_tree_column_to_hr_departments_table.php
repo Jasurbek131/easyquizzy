@@ -42,49 +42,8 @@ class m220201_104202_create_some_tree_column_to_hr_departments_table extends Mig
         $this->createIndex('hr_departments_tree_NK3', self::TABLE_NAME, 'rgt');
         $this->createIndex('hr_departments_tree_NK4', self::TABLE_NAME, 'lvl');
         $this->createIndex('hr_departments_tree_NK5', self::TABLE_NAME, 'active');
-
-        $this->renameColumn(self::TABLE_NAME,'name_uz','name');
-
-        // drops foreign key for table `{{%hr_organisations}}`
-        $this->dropForeignKey(
-            '{{%fk-hr_departments-hr_organisation_id}}',
-            '{{%hr_departments}}'
-        );
-
-        // drops index for column `hr_organisation_id`
-        $this->dropIndex(
-            '{{%idx-hr_departments-hr_organisation_id}}',
-            '{{%hr_departments}}'
-        );
-        $this->dropForeignKey(
-            '{{%fk-users-hr_organisation_id}}',
-            '{{%users}}'
-        );
-
-        // drops index for column `hr_organisation_id`
-        $this->dropIndex(
-            '{{%idx-users-hr_organisation_id}}',
-            '{{%users}}'
-        );
-
         $this->addColumn('{{%users}}', 'hr_department_id', $this->integer());
 
-        // creates index for column `hr_department_id`
-        $this->createIndex(
-            '{{%idx-users-hr_department_id}}',
-            '{{%users}}',
-            'hr_department_id'
-        );
-
-        // add foreign key for table `{{%hr_department_id}}`
-        $this->addForeignKey(
-            '{{%fk-users-hr_department_id}}',
-            '{{%users}}',
-            'hr_department_id',
-            '{{%hr_departments}}',
-            'id',
-            'RESTRICT'
-        );
     }
 
     /**
@@ -117,55 +76,5 @@ class m220201_104202_create_some_tree_column_to_hr_departments_table extends Mig
         $this->dropColumn(self::TABLE_NAME,'movable_r');
         $this->dropColumn(self::TABLE_NAME,'removable');
         $this->dropColumn(self::TABLE_NAME,'removable_all');
-
-        $this->renameColumn(self::TABLE_NAME,'name','name_uz');
-
-        // creates index for column `hr_organisation_id`
-        $this->createIndex(
-            '{{%idx-hr_departments-hr_organisation_id}}',
-            '{{%hr_departments}}',
-            'hr_organisation_id'
-        );
-
-        // add foreign key for table `{{%hr_organisations}}`
-        $this->addForeignKey(
-            '{{%fk-hr_departments-hr_organisation_id}}',
-            '{{%hr_departments}}',
-            'hr_organisation_id',
-            '{{%hr_organisations}}',
-            'id',
-            'RESTRICT'
-        );
-
-        // creates index for column `hr_organisation_id`
-        $this->createIndex(
-            '{{%idx-users-hr_organisation_id}}',
-            '{{%users}}',
-            'hr_organisation_id'
-        );
-
-        // add foreign key for table `{{%hr_organisation_id}}`
-        $this->addForeignKey(
-            '{{%fk-users-hr_organisation_id}}',
-            '{{%users}}',
-            'hr_organisation_id',
-            '{{%hr_organisations}}',
-            'id',
-            'RESTRICT'
-        );
-
-        // drops foreign key for table `{{%hr_department_id}}`
-        $this->dropForeignKey(
-            '{{%fk-users-hr_department_id}}',
-            '{{%users}}'
-        );
-
-        // drops index for column `hr_department_id`
-        $this->dropIndex(
-            '{{%idx-users-hr_department_id}}',
-            '{{%users}}'
-        );
-
-        $this->dropColumn('{{%users}}', 'hr_department_id');
     }
 }

@@ -51,7 +51,7 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
                         'v1/document',
-                        'v2/default'
+                        'v1/plm-document-report',
                     ],
                     'extraPatterns' => [
                         'POST index' => 'index',
