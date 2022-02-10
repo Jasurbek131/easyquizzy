@@ -71,7 +71,7 @@ $create = Yii::t('app', 'Create');
 
     <div class="row">
         <div class="col-md-3">
-            <div class="card" style="border: 1px solid green;overflow-x: scroll">
+            <div class="card" style="border: 1px solid green;overflow-x: scroll; min-height: 75vh">
                 <div class="card-body">
                     <div class="knopka text-left">
                         <br>
@@ -106,139 +106,143 @@ $create = Yii::t('app', 'Create');
             </div>
         </div>
         <div class="col-md-9">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="tap-address-one" data-toggle="tab" href="#shift" role="tab"
-                       aria-controls="profile" aria-selected="false"><?php echo Yii::t('app', 'Shifts') ?></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="equipments-tab" data-toggle="tab" href="#equipment" role="tab"
-                       aria-controls="equipments" aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"
-                       aria-controls="products" aria-selected="false"><?php echo Yii::t('app', 'Products') ?></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="defects-tab" data-toggle="tab" href="#defect" role="tab"
-                       aria-controls="defects" aria-selected="false"><?php echo Yii::t('app', 'Defects') ?></a>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade active show" id="shift" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button href="<?php echo Url::to(['hr-department-rel-shifts/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm shifts-create"
-                                    style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
-                            </button>
+            <div class="card" style="border: 1px solid green;overflow-x: scroll; min-height: 75vh">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tap-address-one" data-toggle="tab" href="#shift" role="tab"
+                               aria-controls="profile" aria-selected="false"><?php echo Yii::t('app', 'Shifts') ?></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="equipments-tab" data-toggle="tab" href="#equipment" role="tab"
+                               aria-controls="equipments" aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"
+                               aria-controls="products" aria-selected="false"><?php echo Yii::t('app', 'Products') ?></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="defects-tab" data-toggle="tab" href="#defect" role="tab"
+                               aria-controls="defects" aria-selected="false"><?php echo Yii::t('app', 'Defects') ?></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade active show" id="shift" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['hr-department-rel-shifts/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm shifts-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-shifts">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Shift Name') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Start Time') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'End Time') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-8">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-hover attorney-table"
-                                   id="table-shifts">
-                                <thead>
-                                <tr>
-                                    <th class=""><?php echo Yii::t('app', "№") ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Shift Name') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Start Time') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'End Time') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <div class="tab-pane fade" id="equipment" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['hr-department-rel-equipment/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm equipments-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-equipments">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Equipment Name') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Equipment Type') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="equipment" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button href="<?php echo Url::to(['hr-department-rel-equipment/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm equipments-create"
-                                    style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
-                            </button>
+                        <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['hr-department-rel-product/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm products-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-products">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Product Name') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Part Number') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-8">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-hover attorney-table"
-                                   id="table-equipments">
-                                <thead>
-                                <tr>
-                                    <th class=""><?php echo Yii::t('app', "№") ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Equipment Name') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Equipment Type') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button href="<?php echo Url::to(['hr-department-rel-product/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm products-create"
-                                    style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
-                            </button>
-                        </div>
-                        <div class="col-md-8">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-hover attorney-table"
-                                   id="table-products">
-                                <thead>
-                                <tr>
-                                    <th class=""><?php echo Yii::t('app', "№") ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Product Name') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Part Number') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="defect" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button href="<?php echo Url::to(['hr-department-rel-defects/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm defects-create"
-                                    style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
-                            </button>
-                        </div>
-                        <div class="col-md-8">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-hover attorney-table"
-                                   id="table-defects">
-                                <thead>
-                                <tr>
-                                    <th class=""><?php echo Yii::t('app', "№") ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Defect Name') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Defect Type') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <div class="tab-pane fade" id="defect" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['hr-department-rel-defects/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm defects-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-defects">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Defect Name') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Defect Type') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
