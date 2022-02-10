@@ -106,11 +106,12 @@ class HrDepartments extends BaseModel
     /**
      * @param bool $isArray
      * @return array|\yii\db\ActiveRecord[]
+     * Tashkilotlar ro'yxatini qaytaradi [parent = null]
      */
     public static function getOrganisationList( $isArray = false) {
         $list = self::find()->select(['id as value', 'name as label'])
             ->where(["IS", "parent_id", new Expression("NULL")])
-//            ->andFilterWhere(['id' => UsersRelationHrDepartments::]) //TODO user ga tegishli dep id larga tekshirib qoyish kerak
+            ->andFilterWhere(['id' => UsersRelationHrDepartments::getRootByUser()])
             ->asArray()
             ->all();
         if ($isArray) {

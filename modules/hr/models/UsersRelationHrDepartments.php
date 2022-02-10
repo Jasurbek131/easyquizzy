@@ -4,6 +4,7 @@ namespace app\modules\hr\models;
 
 use app\models\Users;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "users_relation_hr_departments".
@@ -18,6 +19,16 @@ use Yii;
  */
 class UsersRelationHrDepartments extends \yii\db\ActiveRecord
 {
+    /**
+     * Agar bo'lim tashkilot bo'lsa root = 1
+     */
+    const ROOT = 1;
+
+    /**
+     * Agar bo'lim tashkilot bo'lmasa root = 0
+     */
+    const NOT_ROOT = 0;
+
     /**
      * {@inheritdoc}
      */
@@ -67,5 +78,24 @@ class UsersRelationHrDepartments extends \yii\db\ActiveRecord
     public function getUsers()
     {
         return $this->hasOne(Users::class, ['id' => 'user_id']);
+    }
+
+    /**
+     * @return array|\yii\db\ActiveRecord[]
+     * Foydalanuvchiga tegishli tashkilot id larini qaytaradi
+     */
+    public static function getRootByUser(): array
+    {
+        $ids = self::find()
+            ->where([
+                "user_id" => Yii::$app->user->identity->id,
+                'is_root' => self::ROOT
+            ])
+            ->asArray()
+            ->all();
+
+        if (!empty($ids))
+            $ids = ArrayHelper::getColumn($ids, "hr_department_id");
+        return $ids;
     }
 }
