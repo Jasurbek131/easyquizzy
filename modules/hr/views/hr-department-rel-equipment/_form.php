@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
     <?php
     if(!empty($model->hr_department_id)){
         echo $form->field($model, 'hr_department_id')->widget(Select2::class, [
-            'data' => HrDepartments::getParentList(),
+            'data' => HrDepartments::getList(),
             'options' => [
                 'placeholder' => 'Select ...',
                 'disabled' => true

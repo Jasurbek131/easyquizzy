@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'parentColumnName' => 'parent',
                     'showHeader' => false,
                     'rowOptions' => function ($model, $key, $index, $grid) {
-                        $parent = \app\modules\hr\models\HrDepartments::getParentList($model->id);
+                        $parent = \app\modules\hr\models\HrDepartments::getList($model->id);
                         return [
                             'onclick' => "getMusteriAddress({$model->id});",
                             'data-parent-id' => $model->id

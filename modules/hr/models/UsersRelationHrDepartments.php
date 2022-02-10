@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\models;
 
+use app\models\Users;
 use Yii;
 
 /**
@@ -34,8 +35,8 @@ class UsersRelationHrDepartments extends \yii\db\ActiveRecord
             [['user_id', 'hr_department_id'], 'default', 'value' => null],
             [['user_id', 'hr_department_id'], 'integer'],
             [['is_root'], 'boolean'],
-            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['hr_department_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -57,7 +58,7 @@ class UsersRelationHrDepartments extends \yii\db\ActiveRecord
      */
     public function getHrDepartments()
     {
-        return $this->hasOne(HrDepartments::className(), [id => hr_department_id]);
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
 
     /**
@@ -65,6 +66,6 @@ class UsersRelationHrDepartments extends \yii\db\ActiveRecord
      */
     public function getUsers()
     {
-        return $this->hasOne(Users::className(), [id => user_id]);
+        return $this->hasOne(Users::class, ['id' => 'user_id']);
     }
 }

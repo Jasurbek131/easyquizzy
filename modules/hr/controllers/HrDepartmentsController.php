@@ -357,7 +357,11 @@ class HrDepartmentsController extends NodeController
         ]);
     }
 
-    public function actionGetItemsAjax(){
+    /**
+     * @return array
+     */
+    public function actionGetItemsAjax()
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->get('id');
         $response = [];
@@ -380,7 +384,27 @@ class HrDepartmentsController extends NodeController
             }
             return $response;
         }
-
     }
 
+    /**
+     * @param $parent_id
+     * @return array
+     */
+    public function actionGetDepartments($parent_id)
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            $response = ['status' => false];
+            if ($departments = HrDepartments::getList(true, $parent_id)){
+                $response = [
+                    'status' => true,
+                    'departments' => $departments
+                ];
+            }
+            return  $response;
+        }
+    }
 }

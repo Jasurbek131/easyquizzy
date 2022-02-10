@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property int $hr_department_id
+ * @property int $hr_organisation_id
  * @property int $hr_position_id
  * @property int $hr_employee_id
  * @property string $begin_date
@@ -20,6 +21,7 @@ use Yii;
  * @property int $updated_at
  *
  * @property HrDepartments $hrDepartments
+ * @property HrDepartments $hrOrganisations
  * @property HrEmployee $hrEmployee
  * @property HrPositions $hrPositions
  */
@@ -45,6 +47,7 @@ class HrEmployeeRelPosition extends BaseModel
             [['begin_date'],'required'],
             [['status_id'],'default','value' => \app\models\BaseModel::STATUS_ACTIVE],
             [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
+            [['hr_organisation_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_organisation_id' => 'id']],
             [['hr_employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrEmployee::class, 'targetAttribute' => ['hr_employee_id' => 'id']],
             [['hr_position_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrPositions::class, 'targetAttribute' => ['hr_position_id' => 'id']],
         ];
@@ -76,6 +79,14 @@ class HrEmployeeRelPosition extends BaseModel
     public function getHrDepartments()
     {
         return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getHrOrganisations()
+    {
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_organisation_id']);
     }
 
     /**

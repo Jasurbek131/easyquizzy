@@ -2,19 +2,14 @@
 
 namespace app\modules\hr\controllers;
 
-use app\models\BaseModel;
 use app\modules\hr\models\HrEmployeeRelPosition;
-use app\modules\mobile\models\MobileTablesRelHrEmployee;
-use app\widgets\helpers\Telegram;
 use Yii;
 use app\modules\hr\models\HrEmployee;
 use app\modules\hr\models\HrEmployeeSearch;
-use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use function Symfony\Component\String\s;
 
 /**
  * HrEmployeeController implements the CRUD actions for HrEmployee model.
@@ -39,6 +34,7 @@ class HrEmployeeController extends Controller
     /**
      * Lists all HrEmployee models.
      * @return mixed
+     * @throws \Exception
      */
     public function actionIndex()
     {
@@ -126,6 +122,7 @@ class HrEmployeeController extends Controller
         $position = $model->hrEmployeeActivePosition;
         $model->hr_department_id = $position->hr_department_id ?? "";
         $model->hr_position_id = $position->hr_position_id ?? "";
+        $model->hr_organisation_id = $position->hr_organisation_id ?? "";
         $model->begin_date = $position->begin_date ? date('d.m.Y', strtotime($position->begin_date)) : "";
 
         $request = Yii::$app->request;
@@ -217,5 +214,38 @@ class HrEmployeeController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * @param $id
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionGetEmployeeData($id)
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            $response = ['status' => false];
+            $employee = $this->findModel($id);
+            if(!empty($employee)){
+
+                $data = $employee->hrEmployeeActivePosition;
+                $response = [
+                    'status' => true,
+                    'employee' => [
+                        "organisations_name" => $data->hrOrganisations->name,
+                        "department_name" => $data->hrDepartments->name,
+                        "phone_number" => $employee->phone_number,
+                        "email" => $employee->email,
+                    ]
+                ];
+            }
+
+            return  $response;
+        }
+
     }
 }

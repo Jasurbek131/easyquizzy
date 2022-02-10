@@ -59,6 +59,12 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
 
     /**
      * @var string
+     * Tashkilot nomini chiqarish uchun
+     */
+    public $hr_organisation_name;
+
+    /**
+     * @var string
      * Bo'limlar nomini chiqarish uchun
      */
     public $hr_deparment_name;
@@ -130,6 +136,7 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
             'id' => Yii::t('app', 'ID'),
             'hr_employee_id' => Yii::t('app', 'Hr Employee'),
             'hr_deparment_name' => Yii::t('app', 'Hr Department'),
+            'hr_organisation_name' => Yii::t('app', 'Hr Organisation'),
             'phone_number' => Yii::t('app', 'Phone Number'),
             'redirect_url_id' => Yii::t('app', 'Redirect Url'),
             'password_repeat' => Yii::t('app', 'Password Repeat'),

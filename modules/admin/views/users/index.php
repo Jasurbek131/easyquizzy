@@ -4,6 +4,8 @@ use app\models\BaseModel;
 use app\models\Users;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
+use yii\web\View;
 use yii\widgets\Pjax;
 use app\components\Permission\PermissionHelper as P;
 
@@ -86,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php Pjax::end(); ?>
     </div>
 </div>
-<?= \app\widgets\ModalWindow\ModalWindow::widget([
+<?php echo \app\widgets\ModalWindow\ModalWindow::widget([
     'model' => 'users',
     'crud_name' => 'users',
     'modal_id' => 'users-modal',
@@ -100,3 +102,35 @@ $this->params['breadcrumbs'][] = $this->title;
     'grid_ajax' => 'users_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
 ]); ?>
+
+<?php
+$this->registerJsVar("getEmployeeDataUrl", Url::to(["/hr/hr-employee/get-employee-data"]));
+$js = <<<JS
+    function hrOrganisationChange() {
+        $("body").delegate("#hr_employee_id", 'change', function(e) {
+            let id = $(this).val(); // hr_organisation_id
+            $("#hr_organisation_name").val("");
+            $("#hr_deparment_name").val("");
+            $("#phone_number").val("");
+            $("#email").val("");
+            
+            if (id){
+                $.ajax({
+                    url: getEmployeeDataUrl + "?id=" + id,
+                    success: function(data){ 
+                        if (data.status){
+                            $("#hr_organisation_name").val(data.employee.organisations_name);
+                            $("#hr_deparment_name").val(data.employee.department_name);
+                            $("#phone_number").val(data.employee.phone_number);
+                            $("#email").val(data.employee.email);
+                        }
+                    },
+                });
+            }
+        });
+    }
+    hrOrganisationChange();
+
+JS;
+$this->registerJs($js, View::POS_READY);
+?>

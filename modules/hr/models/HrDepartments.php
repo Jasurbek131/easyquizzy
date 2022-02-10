@@ -4,6 +4,7 @@ namespace app\modules\hr\models;
 
 use kartik\tree\models\Tree;
 use Yii;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -76,27 +77,46 @@ class HrDepartments extends BaseModel
         return $this->hasMany(HrEmployee::className(), ['hr_department_id' => 'id']);
     }
 
-    public static function getList($key = null, $isArray = false) {
-        $list = self::find()->select(['id as value', 'name as label'])->asArray()->all();
+    /**
+     * @param bool $isArray
+     * @param int $parent_id
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getList( $isArray = false, $parent_id = null) {
+        $list = self::find()->select(['id as value', 'name as label'])
+            ->andFilterWhere([
+                "parent_id" => $parent_id
+            ])
+            ->asArray()
+            ->all();
+        if ($isArray)
+            return $list;
+
+        return ArrayHelper::map($list, 'value', 'label');
+    }
+
+    /**
+     * @param bool $isArray
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getOrganisationList( $isArray = false) {
+        $list = self::find()->select(['id as value', 'name as label'])
+            ->where(["IS", "parent_id", new Expression("NULL")])
+//            ->andFilterWhere(['id' => UsersRelationHrDepartments::]) //TODO user ga tegishli dep id larga tekshirib qoyish kerak
+            ->asArray()
+            ->all();
         if ($isArray) {
             return $list;
         }
         return ArrayHelper::map($list, 'value', 'label');
     }
 
-    public static function getParentList() {
-        $list = self::find()
-            ->select(['id', 'name'])
-//            ->andFilterWhere(['=','parent_id',$id])
-            ->asArray()
-            ->orderBy(['id' => SORT_ASC])
-            ->all();
-       /* if ($isArray) {
-            return $list;
-        }*/
-        return ArrayHelper::map($list, 'id', 'name');
-    }
-
+    /**
+     * @param null $parent_id
+     * @param null $dep
+     * @param bool $isJson
+     * @return array|string
+     */
     public static function getTreeViewHtmlForm($parent_id = null,$dep = null, $isJson = false){
         $items = self::find()
             ->where(['parent_id' => $parent_id])

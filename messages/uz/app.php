@@ -21,6 +21,7 @@ return [
     '(new)' => '',
     'Active' => 'Faol',
     'Add Info' => '',
+    'Hr Organisation' => 'Tashkilot',
     'Admin' => 'Admin',
     'Redirect Url' => 'Asosiy sahifa',
     'Password Repeat' => 'Parolni takrorlash',
