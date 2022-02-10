@@ -31,7 +31,7 @@ class m220201_070146_add_equipment_group_id_column_to_products_table extends Mig
             'equipment_group_id',
             '{{%equipment_group}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

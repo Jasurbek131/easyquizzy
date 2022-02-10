@@ -40,11 +40,11 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
         return [
             [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id'], 'default', 'value' => null],
             [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id'], 'integer'],
-            [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::className(), 'targetAttribute' => ['equipment_group_id' => 'id']],
-            [['document_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocuments::className(), 'targetAttribute' => ['document_id' => 'id']],
-            [['processing_time_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmProcessingTime::className(), 'targetAttribute' => ['processing_time_id' => 'id']],
-            [['planned_stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::className(), 'targetAttribute' => ['planned_stop_id' => 'id']],
-            [['unplanned_stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::className(), 'targetAttribute' => ['unplanned_stop_id' => 'id']],
+            [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
+            [['document_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocuments::class, 'targetAttribute' => ['document_id' => 'id']],
+            [['processing_time_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmProcessingTime::class, 'targetAttribute' => ['processing_time_id' => 'id']],
+            [['planned_stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::class, 'targetAttribute' => ['planned_stop_id' => 'id']],
+            [['unplanned_stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::class, 'targetAttribute' => ['unplanned_stop_id' => 'id']],
         ];
     }
 
@@ -68,7 +68,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      */
     public function getEquipmentGroup()
     {
-        return $this->hasOne(EquipmentGroup::className(), ['id' => 'equipment_group_id']);
+        return $this->hasOne(EquipmentGroup::class, ['id' => 'equipment_group_id']);
     }
 
     /**
@@ -76,7 +76,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      */
     public function getPlmDocuments()
     {
-        return $this->hasOne(PlmDocuments::className(), ['id' => 'document_id']);
+        return $this->hasOne(PlmDocuments::class, ['id' => 'document_id']);
     }
 
     /**
@@ -84,7 +84,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      */
     public function getPlmProcessingTime()
     {
-        return $this->hasOne(PlmProcessingTime::className(), ['id' => 'processing_time_id']);
+        return $this->hasOne(PlmProcessingTime::class, ['id' => 'processing_time_id']);
     }
 
     /**
@@ -92,14 +92,14 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      */
     public function getPlanned_stopped()
     {
-        return $this->hasOne(PlmStops::className(), ['id' => 'planned_stop_id']);
+        return $this->hasOne(PlmStops::class, ['id' => 'planned_stop_id']);
     }
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getUnplanned_stopped()
     {
-        return $this->hasOne(PlmStops::className(), ['id' => 'unplanned_stop_id']);
+        return $this->hasOne(PlmStops::class, ['id' => 'unplanned_stop_id']);
     }
 
     /**
@@ -107,7 +107,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      */
     public function getPlmDocItemDefects()
     {
-        return $this->hasMany(PlmDocItemDefects::className(), ['doc_item_id' => 'id']);
+        return $this->hasMany(PlmDocItemDefects::class, ['doc_item_id' => 'id']);
     }
 
     /**
@@ -115,6 +115,6 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      */
     public function getProducts()
     {
-        return $this->hasMany(PlmDocItemProducts::className(), ['document_item_id' => 'id']);
+        return $this->hasMany(PlmDocItemProducts::class, ['document_item_id' => 'id']);
     }
 }

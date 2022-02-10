@@ -36,8 +36,8 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
         return [
             [['document_item_id', 'product_id', 'qty', 'fact_qty'], 'default', 'value' => null],
             [['document_item_id', 'product_id', 'qty', 'fact_qty'], 'integer'],
-            [['document_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::className(), 'targetAttribute' => ['document_item_id' => 'id']],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['document_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['document_item_id' => 'id']],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
         ];
     }
 
@@ -60,15 +60,15 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
      */
     public function getPlmDocumentItems()
     {
-        return $this->hasOne(PlmDocumentItems::className(), ['id' => 'document_item_id']);
+        return $this->hasOne(PlmDocumentItems::class, ['id' => 'document_item_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getProducts()
+    public function getProduct()
     {
-        return $this->hasOne(Products::className(), ['id' => 'product_id']);
+        return $this->hasOne(Products::class, ['id' => 'product_id']);
     }
 
     /**
@@ -76,7 +76,7 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
      */
     public function getPlmDocItemDefects()
     {
-        return $this->hasMany(PlmDocItemDefects::className(), ['doc_item_product_id' => 'id']);
+        return $this->hasMany(PlmDocItemDefects::class, ['doc_item_product_id' => 'id']);
     }
 
     /**
@@ -84,13 +84,13 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
      */
     public function getRepaired()
     {
-        return $this->hasMany(PlmDocItemDefects::className(), ['doc_item_product_id' => 'id']);
+        return $this->hasMany(PlmDocItemDefects::class, ['doc_item_product_id' => 'id']);
     }
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getScrapped()
     {
-        return $this->hasMany(PlmDocItemDefects::className(), ['doc_item_product_id' => 'id']);
+        return $this->hasMany(PlmDocItemDefects::class, ['doc_item_product_id' => 'id']);
     }
 }

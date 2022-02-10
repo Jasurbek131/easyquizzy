@@ -25,6 +25,10 @@ class Telegram
 
     public $get_ip = false;
 
+    /**
+     * Telegram constructor.
+     * @param array $params
+     */
     public function __construct($params = [
         'token' => '2068461713:AAH5LImS7JMsssz04dVYAM4C7dM8lCbv9mk',
         'id' => self::FAYZULLO,
@@ -49,6 +53,9 @@ class Telegram
         }
     }
 
+    /**
+     * @return bool|string
+     */
     public function sendMessage() {
         if($this->get_ip){
             $ip = $_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '#not_ip';

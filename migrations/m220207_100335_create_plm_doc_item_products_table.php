@@ -38,7 +38,7 @@ class m220207_100335_create_plm_doc_item_products_table extends Migration
             'document_item_id',
             '{{%plm_document_items}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
 
         // creates index for column `product_id`
@@ -55,7 +55,7 @@ class m220207_100335_create_plm_doc_item_products_table extends Migration
             'product_id',
             '{{%products}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

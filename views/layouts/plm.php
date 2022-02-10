@@ -383,6 +383,22 @@ AppAsset::register($this);
                                 ],
                             ],
                         ],
+                        [
+                            'label' => Yii::t('app', 'Report'),
+                            'url' => ['#'],
+                            'options' => ['class' => 'nav-item'],
+                            'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-file-alt"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
+                            'visible' => true,
+                            'items' => [
+                                [
+                                    'label' => Yii::t('app', 'Documents'),
+                                    'url' => '/plm/plm-report/document',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'plm-report' && $action == 'document',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
+                                ],
+                            ],
+                        ],
                     ],
 
                     'linkTemplate' => '<a href="{url}"><i class="fas fa-circle-o"></i> {label}</a>',

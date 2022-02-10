@@ -47,7 +47,7 @@ class m220127_140121_create_equipments_table extends Migration
             'equipment_type_id',
             '{{%equipment_types}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

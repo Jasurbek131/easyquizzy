@@ -17,7 +17,6 @@ class m220128_092538_create_plm_processing_time_table extends Migration
     {
         $this->createTable('{{%plm_processing_time}}', [
             'id' => $this->primaryKey(),
-            'doc_id' => $this->integer(),
             'begin_date' => $this->datetime(),
             'end_date' => $this->datetime(),
             'add_info' => $this->text(),
@@ -27,23 +26,6 @@ class m220128_092538_create_plm_processing_time_table extends Migration
             'updated_by' => $this->integer(),
             'updated_at' => $this->integer(),
         ]);
-
-        // creates index for column `doc_id`
-        $this->createIndex(
-            '{{%idx-plm_processing_time-doc_id}}',
-            '{{%plm_processing_time}}',
-            'doc_id'
-        );
-
-        // add foreign key for table `{{%plm_documents}}`
-        $this->addForeignKey(
-            '{{%fk-plm_processing_time-doc_id}}',
-            '{{%plm_processing_time}}',
-            'doc_id',
-            '{{%plm_documents}}',
-            'id',
-            'RESTRICT'
-        );
         // creates index for column `status_id`
         $this->createIndex(
             '{{%idx-plm_processing_time-status_id}}',
@@ -57,17 +39,6 @@ class m220128_092538_create_plm_processing_time_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%plm_documents}}`
-        $this->dropForeignKey(
-            '{{%fk-plm_processing_time-doc_id}}',
-            '{{%plm_processing_time}}'
-        );
-
-        // drops index for column `doc_id`
-        $this->dropIndex(
-            '{{%idx-plm_processing_time-doc_id}}',
-            '{{%plm_processing_time}}'
-        );
         $this->dropIndex(
             '{{%idx-plm_processing_time-status_id}}',
             '{{%plm_processing_time}}'

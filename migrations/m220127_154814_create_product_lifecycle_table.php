@@ -52,7 +52,7 @@ class m220127_154814_create_product_lifecycle_table extends Migration
             'product_id',
             '{{%products}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
 
         // creates index for column `equipment_group_id`
@@ -69,7 +69,7 @@ class m220127_154814_create_product_lifecycle_table extends Migration
             'equipment_group_id',
             '{{%equipment_group}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
 
         // creates index for column `time_type_id`
@@ -86,7 +86,7 @@ class m220127_154814_create_product_lifecycle_table extends Migration
             'time_type_id',
             '{{%time_types_list}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 
