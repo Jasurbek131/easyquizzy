@@ -20,7 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
- *
+ * @property float $value
  * @property HrEmployee[] $hrEmployees
  */
 class HrDepartments extends BaseModel
@@ -41,8 +41,8 @@ class HrDepartments extends BaseModel
     public function rules()
     {
         return [
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id'], 'default', 'value' => null],
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id', 'value'], 'default', 'value' => null],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'value'], 'integer'],
             [['status_id'],'default','value' => \app\models\BaseModel::STATUS_ACTIVE],
             [['name', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
@@ -59,6 +59,7 @@ class HrDepartments extends BaseModel
             'name_uz' => Yii::t('app', 'Name Uz'),
             'name_ru' => Yii::t('app', 'Name Ru'),
             'token' => Yii::t('app', 'Token'),
+            'value' => Yii::t('app', 'Value'),
             'parent_id' => Yii::t('app', 'Hr Parent ID'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_by' => Yii::t('app', 'Created By'),

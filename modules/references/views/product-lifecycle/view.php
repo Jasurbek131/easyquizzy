@@ -87,36 +87,4 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]) ?>
-
-    <?php
-    if (!empty($model->referencesProductLifecycleRelEquipments)):
-        $i = 1;
-        ?>
-        <table class="table  table-bordered table-striped table-condensed">
-            <thead>
-            <tr>
-                <th><?php echo Yii::t('app', '№') ?></th>
-                <th><?php echo Yii::t('app', 'Equipments') ?></th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            foreach ($model->referencesProductLifecycleRelEquipments as $item):
-                ?>
-                <tr>
-                    <td>
-                        <?php echo $i; ?>
-                    </td>
-                    <td>
-                        <?php echo $item->equipments->name ?? ""; ?>
-                    </td>
-                </tr>
-            <?php
-            endforeach;
-            ?>
-            </tbody>
-        </table>
-    <?php
-    endif;
-    ?>
 </div>

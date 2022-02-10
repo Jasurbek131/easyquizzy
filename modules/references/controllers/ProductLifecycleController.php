@@ -3,7 +3,6 @@
 namespace app\modules\references\controllers;
 
 use app\models\BaseModel;
-use app\modules\references\models\ReferencesProductLifecycleRelEquipment;
 use Yii;
 use app\modules\references\models\ProductLifecycle;
 use app\modules\references\models\ProductLifecycleSearch;
@@ -114,7 +113,6 @@ class ProductLifecycleController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->equipments = ReferencesProductLifecycleRelEquipment::getEquipmentsByProduct($id);
         $request = Yii::$app->request;
 
         if ($request->isPost) {
@@ -192,24 +190,6 @@ class ProductLifecycleController extends Controller
         }
     }
 
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "product-lifecycle_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => ProductLifecycle::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
     /**
      * Finds the ProductLifecycle model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

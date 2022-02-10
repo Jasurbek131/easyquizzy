@@ -65,6 +65,11 @@ class EquipmentTypes extends BaseModel
         return $this->hasMany(Equipments::className(), ['equipment_type_id' => 'id']);
     }
 
+    /**
+     * @param null $key
+     * @param bool $isArray
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public static function getList($key = null, $isArray = false) {
         $list = self::find()->select(['id as value', 'name as label'])->asArray()->all();
         if ($isArray) {

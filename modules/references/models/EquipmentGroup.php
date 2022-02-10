@@ -12,6 +12,7 @@ use yii\helpers\ArrayHelper;
  * @property string $name
  * @property int $status_id
  * @property int $created_at
+ * @property float $value
  * @property int $created_by
  * @property int $updated_at
  * @property int $updated_by
@@ -36,7 +37,7 @@ class EquipmentGroup extends BaseModel
     public function rules()
     {
         return [
-            [['name', 'status_id'], 'required'],
+            [['name', 'status_id', 'value'], 'required'],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
@@ -76,6 +77,11 @@ class EquipmentGroup extends BaseModel
         return $this->hasMany(ProductLifecycle::className(), ['equipment_group_id' => 'id']);
     }
 
+    /**
+     * @param null $key
+     * @param bool $isArray
+     * @return array|string|\yii\db\ActiveRecord[]
+     */
     public static function getList($key = null, $isArray = false) {
         if (!is_null($key)){
             $one = self::findOne($key);
