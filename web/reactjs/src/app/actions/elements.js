@@ -23,9 +23,8 @@ export const items = {
         bypass: ""
     },
     equipmentGroup: {
-        equipmentGroupRelationEquipments: [
-            { label: "", value: "" }
-        ]
+        equipments: [],
+        productLifecycles: []
     },
     products: [{
         label: "",

@@ -2,6 +2,7 @@
 
 namespace app\modules\references\models;
 
+use app\models\BaseModel;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -64,7 +65,7 @@ class EquipmentGroup extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getEquipmentGroupRelationEquipments()
+    public function getEquipments()
     {
         return $this->hasMany(EquipmentGroupRelationEquipment::className(), ['equipment_group_id' => 'id']);
     }
@@ -99,5 +100,38 @@ class EquipmentGroup extends BaseModel
             return $list;
         }
         return ArrayHelper::map($list, 'value', 'label');
+    }
+
+    /**
+     * @param bool $one
+     * @param $id
+     * @return array|yii\db\ActiveRecord|yii\db\ActiveRecord[]|null
+     */
+    public static function getEquipmentGroupList(bool $one = false, $id = null) {
+        $list = EquipmentGroup::find()->alias('eg')->select([
+            'eg.id as value', 'eg.name as label', 'eg.id'
+        ])->with([
+            'equipments' => function($e){
+                $e->from(['egr' => 'equipment_group_relation_equipment'])->select([
+                    'egr.equipment_id',
+                    'egr.equipment_group_id',
+                    'e.name as label',
+                    'e.id as value'
+                ])->leftJoin('equipments e', 'egr.equipment_id = e.id');
+            },
+            'productLifecycles' => function($pl) {
+                $pl->from(['pl' => 'product_lifecycle'])->select([
+                    'p.id as value',
+                    'p.name as label',
+                    'MAX(pl.lifecycle) as lifecycle',
+                    'pl.equipment_group_id'
+                ])->leftJoin('products p', 'pl.product_id = p.id')->groupBy('p.id, pl.equipment_group_id');
+            }
+        ])->where(['eg.status_id' => BaseModel::STATUS_ACTIVE])
+            ->asArray();
+        if ($one) {
+            return $list->andWhere(['eg.id' => $id])->one();
+        }
+        return $list->all();
     }
 }

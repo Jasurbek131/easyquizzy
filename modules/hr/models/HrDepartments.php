@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\models;
 
+use app\modules\references\models\Shifts;
 use kartik\tree\models\Tree;
 use Yii;
 use yii\db\Expression;
@@ -69,15 +70,17 @@ class HrDepartments extends BaseModel
         ];
     }
 
-
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getChildren()
+    public function getDepartments()
     {
         return $this->hasMany(HrDepartments::className(), ['parent_id' => 'id']);
     }
 
+    public function getShifts() {
+        return $this->hasMany(HrDepartmentRelShifts::className(), ['hr_department_id' => 'id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
