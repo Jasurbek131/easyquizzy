@@ -1,11 +1,9 @@
 <?php
 
-
-use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
 use yii\widgets\Pjax;
-
+use app\components\PermissionHelper as P;
 /* @var $this yii\web\View */
 /* @var $tree */
 
@@ -79,17 +77,21 @@ $create = Yii::t('app', 'Create');
                         <br>
                         <button class="btn btn-xs btn-outline-info department-create"
                                 style="border: 1px solid #8950fc;" disabled="disabled"
-                                href="<?= Url::to(['hr-departments/create']) ?>" ><i class="fa fa-plus"></i></button>
-                        <button class="btn btn-xs btn-outline-success tree-create" style="border: 1px solid #1bc5bd;"
-                                href="<?= Url::to(['hr-departments/create']) ?>"><i
+                                href="<?php echo Url::to(['hr-departments/create']) ?>" ><i class="fa fa-plus"></i></button>
+
+                        <?php if(!Yii::$app->user->can("hr-organisation-create")):?>
+                            <button class="btn btn-xs btn-outline-success tree-create" style="border: 1px solid #1bc5bd;"
+                                href="<?php echo Url::to(['hr-departments/create']) ?>"><i
                                 class="fa fa-tree"></i></button>
+                        <?php endif;?>
+
                         <button class="btn btn-xs btn-outline-danger delete-tree disabled-danger-delete"
                                 disabled="disabled"
-                                href="<?= Url::to(['hr-departments/delete']) ?>"><i class="fa fa-trash"></i>
+                                href="<?php echo Url::to(['hr-departments/delete']) ?>"><i class="fa fa-trash"></i>
                         </button>
                         <button class="btn btn-xs btn-outline-primary department-update"
                                 disabled="disabled"
-                                style="border: 1px solid #3699ff;" href="<?= Url::to(['hr-departments/update']); ?>">
+                                style="border: 1px solid #3699ff;" href="<?php echo Url::to(['hr-departments/update']); ?>">
                             <i class="fa fa-pencil-alt"></i></button>
                         <button class="btn btn-xs btn-outline-warning"
                                 style="border: 1px solid #ffaf36;" href="#" onclick="window.location.reload()">
@@ -139,13 +141,13 @@ $create = Yii::t('app', 'Create');
                                    id="table-shifts">
                                 <thead>
                                 <tr>
-                                    <th class=""><?= Yii::t('app', "№") ?></th>
-                                    <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Shift Name') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Start Time') ?></th>
-                                    <th class=""><?= Yii::t('app', 'End Time') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Permission') ?></th>
+                                    <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Shift Name') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Start Time') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'End Time') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -169,12 +171,12 @@ $create = Yii::t('app', 'Create');
                                    id="table-equipments">
                                 <thead>
                                 <tr>
-                                    <th class=""><?= Yii::t('app', "№") ?></th>
-                                    <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Equipment Name') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Equipment Type') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Permission') ?></th>
+                                    <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Equipment Name') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Equipment Type') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -198,12 +200,12 @@ $create = Yii::t('app', 'Create');
                                    id="table-products">
                                 <thead>
                                 <tr>
-                                    <th class=""><?= Yii::t('app', "№") ?></th>
-                                    <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Product Name') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Part Number') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Permission') ?></th>
+                                    <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Product Name') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Part Number') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -227,12 +229,12 @@ $create = Yii::t('app', 'Create');
                                    id="table-defects">
                                 <thead>
                                 <tr>
-                                    <th class=""><?= Yii::t('app', "№") ?></th>
-                                    <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Defect Name') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Defect Type') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Permission') ?></th>
+                                    <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Defect Name') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Defect Type') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                    <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>

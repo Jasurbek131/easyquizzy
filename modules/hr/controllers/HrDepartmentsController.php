@@ -8,6 +8,7 @@ use app\modules\hr\models\HrDepartmentRelEquipment;
 use app\modules\hr\models\HrDepartmentRelProduct;
 use app\modules\hr\models\HrDepartmentRelShifts;
 use app\modules\hr\models\HrEmployeeRelUsers;
+use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\references\models\Shifts;
 use kartik\tree\controllers\NodeController;
 use kartik\tree\models\Tree;
@@ -348,9 +349,15 @@ class HrDepartmentsController extends NodeController
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
+    /**
+     * @param null $deb
+     * @return string
+     */
     public function actionIndex($deb = null)
     {
-        $tree = HrDepartments::getTreeViewHtmlForm();
+        $user_root = UsersRelationHrDepartments::getRootByUser();
+        $user_departments = array_merge($user_root, HrDepartments::getChilds($user_root));
+        $tree = HrDepartments::getTreeViewHtmlForm(null, null, $user_departments);
         return $this->render('dep-index',[
             'tree' => $tree,
             'deb' => $deb,

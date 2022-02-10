@@ -125,42 +125,48 @@ class HrDepartments extends BaseModel
      * @param null $parent_id
      * @param null $dep
      * @param bool $isJson
+     * @param array $user_departments
      * @return array|string
      */
-    public static function getTreeViewHtmlForm($parent_id = null,$dep = null, $isJson = false){
+    public static function getTreeViewHtmlForm($parent_id = null, $dep = null, $user_departments = []) //TODO optimallashtirish kerak
+    {
+        $items = self::find()
+            ->where(['parent_id' => $parent_id])
+            ->andWhere(['!=','status_id',\app\models\BaseModel::STATUS_INACTIVE])
+            ->andFilterWhere(['id' => $user_departments])
+            ->orderBy(['id' => SORT_ASC])
+            ->asArray()
+            ->all();
+
+        $tree = "";
+
+        foreach ($items as $item)
+            if ($item['id'] == $dep)
+                $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{ \"selected\" : true }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
+            else
+                $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{  }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
+
+        return $tree;
+    }
+
+    /**
+     * @param array $parent_id
+     * @return array
+     * Bo'limga tegishli mahsulotlar
+     */
+    public static function getChilds($parent_id  = []) //TODO optimallashtirish kerak
+    {
         $items = self::find()
             ->where(['parent_id' => $parent_id])
             ->andWhere(['!=','status_id',\app\models\BaseModel::STATUS_INACTIVE])
             ->orderBy(['id' => SORT_ASC])
             ->asArray()
             ->all();
-        if ($isJson) {
-            $tree = [];
-            foreach ($items as $item) {
-                $tree[] = [
-                    'id'            =>  $item['id'],
-                    'text'          =>  $item['name'],
-                    'state'         =>  [
-                        'opened'    =>  $item['id'] != $dep,
-                        'selected'  =>  $item['id'] == $dep,
-                    ],
-                    'children'      =>  self::getTreeViewHtmlForm($item['id'], null, true),
-                    'li_attr'       =>  [
-                        'value'     => $item['id'],
-                    ],
-                ];
-            }
-        } else {
-            $tree = "";
-            foreach ($items as $item) {
-                if ($item['id'] == $dep) {
-                    $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{ \"selected\" : true }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
-                } else {
-                    $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{  }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
-                }
-            }
+        $ids = [];
+        foreach ($items as $item) {
+            $ids[] = $item['id'];
+            $ids = array_merge($ids, self::getChilds($item['id']));
         }
-
-        return $tree;
+        return $ids;
     }
 }
