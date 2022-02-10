@@ -1,20 +1,20 @@
 <?php
 
-namespace app\modules\references\controllers;
+namespace app\modules\hr\controllers;
 
-use app\modules\references\models\BaseModel;
+use app\models\BaseModel;
 use Yii;
-use app\modules\references\models\Shifts;
-use app\modules\references\models\ShiftsSearch;
+use app\modules\hr\models\HrDepartmentRelDefects;
+use app\modules\hr\models\HrDepartmentRelDefectsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * ShiftsController implements the CRUD actions for Shifts model.
+ * HrDepartmentRelDefectsController implements the CRUD actions for HrDepartmentRelDefects model.
  */
-class ShiftsController extends Controller
+class HrDepartmentRelDefectsController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -32,12 +32,12 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Lists all Shifts models.
+     * Lists all HrDepartmentRelDefects models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ShiftsSearch();
+        $searchModel = new HrDepartmentRelDefectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -47,7 +47,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Displays a single Shifts model.
+     * Displays a single HrDepartmentRelDefects model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,19 +65,20 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Creates a new Shifts model.
+     * Creates a new HrDepartmentRelDefects model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return array|Response|string
+     * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Shifts();
+        $model = new HrDepartmentRelDefects();
+        $data = Yii::$app->request->get();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    $model->code = strtoupper($model->name);
+                    $model->hr_department_id = ($data['department_id']) ? ($data['department_id']) : null;
                     if($model->save()){
                         $saved = true;
                     }else{
@@ -101,7 +102,7 @@ class ShiftsController extends Controller
                     } else {
                         $response['status'] = 1;
                         $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
+                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
                     }
                     return $response;
                 }
@@ -121,7 +122,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Updates an existing Shifts model.
+     * Updates an existing HrDepartmentRelDefects model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -130,13 +131,11 @@ class ShiftsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $departmentId = Yii::$app->request->get('department_id');
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    $model->code = strtoupper($model->name);
                     if($model->save()){
                         $saved = true;
                     }else{
@@ -160,7 +159,7 @@ class ShiftsController extends Controller
                     } else {
                         $response['status'] = 1;
                         $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
+                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
                     }
                     return $response;
                 }
@@ -169,7 +168,6 @@ class ShiftsController extends Controller
                 }
             }
         }
-
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('update', [
                 'model' => $model,
@@ -182,7 +180,7 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Deletes an existing Shifts model.
+     * Deletes an existing HrDepartmentRelDefects model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -194,9 +192,11 @@ class ShiftsController extends Controller
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            $model->status_id = BaseModel::STATUS_INACTIVE;
-            if($model->save()){
-                $isDeleted = true;
+            if($model->status_id < BaseModel::STATUS_SAVED){
+                $model->status_id = BaseModel::STATUS_INACTIVE;
+                if($model->save()){
+                    $isDeleted = true;
+                }
             }
             if($isDeleted){
                 $transaction->commit();
@@ -210,7 +210,7 @@ class ShiftsController extends Controller
             Yii::$app->response->format = Response::FORMAT_JSON;
             $response = [];
             $response['status'] = 1;
-            $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
+            $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
             if($isDeleted){
                 $response['status'] = 0;
                 $response['message'] = Yii::t('app','Deleted Successfully');
@@ -221,21 +221,39 @@ class ShiftsController extends Controller
             Yii::$app->session->setFlash('success',Yii::t('app','Deleted Successfully'));
             return $this->redirect(['index']);
         }else{
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Hatolik yuz berdi'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Ma\'lumotlar yetarli emas!'));
             return $this->redirect(['view', 'id' => $model->id]);
         }
     }
 
+    public function actionExportExcel(){
+        header('Content-Type: application/vnd.ms-excel');
+        $filename = "hr-department-rel-defects_".date("d-m-Y-His").".xls";
+        header('Content-Disposition: attachment;filename='.$filename .' ');
+        header('Cache-Control: max-age=0');
+        \moonland\phpexcel\Excel::export([
+            'models' => HrDepartmentRelDefects::find()->select([
+                'id',
+            ])->all(),
+            'columns' => [
+                'id',
+            ],
+            'headers' => [
+                'id' => 'Id',
+            ],
+            'autoSize' => true,
+        ]);
+    }
     /**
-     * Finds the Shifts model based on its primary key value.
+     * Finds the HrDepartmentRelDefects model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Shifts the loaded model
+     * @return HrDepartmentRelDefects the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Shifts::findOne($id)) !== null) {
+        if (($model = HrDepartmentRelDefects::findOne($id)) !== null) {
             return $model;
         }
 

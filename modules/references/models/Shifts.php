@@ -3,6 +3,7 @@
 namespace app\modules\references\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "shifts".
@@ -60,4 +61,12 @@ class Shifts extends BaseModel
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
+    public static function  getList()
+    {
+        $query = self::find()->select(['id','name'])->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])->asArray()->all();
+        if(!empty($query)){
+            return ArrayHelper::map($query, 'id', 'name');
+        }
+    }
+
 }

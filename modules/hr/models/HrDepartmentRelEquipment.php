@@ -93,8 +93,8 @@ class HrDepartmentRelEquipment extends BaseModel
                 ->leftJoin(['hrd' => 'hr_departments'],'here.hr_department_id = hrd.id')
                 ->leftJoin(['sl' => 'status_list'],'here.status_id = sl.id')
                 ->where(['here.hr_department_id' => $department_id])
-                ->andWhere(['here.status_id' => \app\models\BaseModel::STATUS_ACTIVE])
                 ->asArray()
+                ->orderBy(['here.id' => SORT_DESC,'here.status_id' => SORT_ASC])
                 ->all();
             return $data ?? [];
         }

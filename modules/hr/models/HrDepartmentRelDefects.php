@@ -2,7 +2,7 @@
 
 namespace app\modules\hr\models;
 
-use app\modules\plm\models\Defects;
+use app\modules\references\models\Defects;
 use Yii;
 
 /**
@@ -92,8 +92,8 @@ class HrDepartmentRelDefects extends BaseModel
                 ->leftJoin(['hrd' => 'hr_departments'],'herd.hr_department_id = hrd.id')
                 ->leftJoin(['sl' => 'status_list'],'herd.status_id = sl.id')
                 ->where(['herd.hr_department_id' => $department_id])
-                ->andWhere(['herd.status_id' => \app\models\BaseModel::STATUS_ACTIVE])
                 ->asArray()
+                ->orderBy(['herd.id' => SORT_DESC,'herd.status_id' => SORT_ASC])
                 ->all();
             return $data ?? [];
         }
