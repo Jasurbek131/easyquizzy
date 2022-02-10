@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
     <?php 
         if(!empty($model->parent_id)){
             echo $form->field($model, 'parent_id')->widget(Select2::class, [
-                'data' => HrDepartments::getParentList(),
+                'data' => HrDepartments::getList(),
                 'options' => [
                     'placeholder' => 'Select ...',
                     'disabled' => true
@@ -30,14 +30,16 @@ use yii\widgets\ActiveForm;
         }
     ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'name_ru')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'name_ru')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
+    <?php echo $form->field($model, 'value')->textInput(['maxlength' => true]) ?>
+
+    <?php echo $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success button-save-form']) ?>
+        <?php echo Html::submitButton('Save', ['class' => 'btn btn-success button-save-form']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

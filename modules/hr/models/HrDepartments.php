@@ -5,6 +5,7 @@ namespace app\modules\hr\models;
 use app\modules\references\models\Shifts;
 use kartik\tree\models\Tree;
 use Yii;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -20,7 +21,7 @@ use yii\helpers\ArrayHelper;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
- *
+ * @property float $value
  * @property HrEmployee[] $hrEmployees
  */
 class HrDepartments extends BaseModel
@@ -41,8 +42,8 @@ class HrDepartments extends BaseModel
     public function rules()
     {
         return [
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id'], 'default', 'value' => null],
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id', 'value'], 'default', 'value' => null],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'value'], 'integer'],
             [['status_id'],'default','value' => \app\models\BaseModel::STATUS_ACTIVE],
             [['name', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
@@ -59,6 +60,7 @@ class HrDepartments extends BaseModel
             'name_uz' => Yii::t('app', 'Name Uz'),
             'name_ru' => Yii::t('app', 'Name Ru'),
             'token' => Yii::t('app', 'Token'),
+            'value' => Yii::t('app', 'Value'),
             'parent_id' => Yii::t('app', 'Hr Parent ID'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -87,27 +89,47 @@ class HrDepartments extends BaseModel
         return $this->hasMany(HrEmployee::className(), ['hr_department_id' => 'id']);
     }
 
-    public static function getList($key = null, $isArray = false) {
-        $list = self::find()->select(['id as value', 'name as label'])->asArray()->all();
+    /**
+     * @param bool $isArray
+     * @param int $parent_id
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getList( $isArray = false, $parent_id = null) {
+        $list = self::find()->select(['id as value', 'name as label'])
+            ->andFilterWhere([
+                "parent_id" => $parent_id
+            ])
+            ->asArray()
+            ->all();
+        if ($isArray)
+            return $list;
+
+        return ArrayHelper::map($list, 'value', 'label');
+    }
+
+    /**
+     * @param bool $isArray
+     * @return array|\yii\db\ActiveRecord[]
+     * Tashkilotlar ro'yxatini qaytaradi [parent = null]
+     */
+    public static function getOrganisationList( $isArray = false) {
+        $list = self::find()->select(['id as value', 'name as label'])
+            ->where(["IS", "parent_id", new Expression("NULL")])
+            ->andFilterWhere(['id' => UsersRelationHrDepartments::getRootByUser()])
+            ->asArray()
+            ->all();
         if ($isArray) {
             return $list;
         }
         return ArrayHelper::map($list, 'value', 'label');
     }
 
-    public static function getParentList() {
-        $list = self::find()
-            ->select(['id', 'name'])
-//            ->andFilterWhere(['=','parent_id',$id])
-            ->asArray()
-            ->orderBy(['id' => SORT_ASC])
-            ->all();
-       /* if ($isArray) {
-            return $list;
-        }*/
-        return ArrayHelper::map($list, 'id', 'name');
-    }
-
+    /**
+     * @param null $parent_id
+     * @param null $dep
+     * @param bool $isJson
+     * @return array|string
+     */
     public static function getTreeViewHtmlForm($parent_id = null,$dep = null, $isJson = false){
         $items = self::find()
             ->where(['parent_id' => $parent_id])

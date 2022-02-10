@@ -40,9 +40,8 @@ class EquipmentsSearch extends Equipments
      */
     public function search($params)
     {
-        $query = Equipments::find();
-
-        // add conditions that should always apply here
+        $query = Equipments::find()
+            ->orderBy(["id" => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -50,13 +49,9 @@ class EquipmentsSearch extends Equipments
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+        if (!$this->validate())
             return $dataProvider;
-        }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'equipment_type_id' => $this->equipment_type_id,

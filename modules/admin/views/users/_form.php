@@ -23,7 +23,8 @@ use yii\widgets\ActiveForm;
             <?php echo $form->field($model, 'hr_employee_id')->widget(Select2::class, [
                 'data' => HrEmployee::getList(),
                 'options' => [
-                    'placeholder' => Yii::t('app', 'Select')
+                    'placeholder' => Yii::t('app', 'Select'),
+                    'id' => 'hr_employee_id',
                 ],
                 'pluginOptions' => [
                     'allowClear' => true
@@ -57,16 +58,22 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
         <?php
+        /**
+         * @var $employee HrEmployee
+         */
         $employee = !empty($model->hrEmployees) ? $model->hrEmployees[0]->hrEmployee : "";
         ?>
-        <div class="col-lg-4">
-            <?php echo $form->field($model, 'hr_deparment_name')->textInput(['readonly' => true, 'value' => $employee ? $employee->hrEmployeeRelPosition[0]->hrDepartments->name : ""]) ?>
+        <div class="col-lg-3">
+            <?php echo $form->field($model, 'hr_organisation_name')->textInput(['id' => 'hr_organisation_name', 'readonly' => true, 'value' => $employee ? $employee->hrEmployeeRelPosition[0]->hrOrganisations->name : ""]) ?>
         </div>
-        <div class="col-lg-4">
-            <?php echo $form->field($model, 'phone_number')->textInput(['readonly' => true,  'value' => $employee ? $employee->phone_number : ""]) ?>
+        <div class="col-lg-3">
+            <?php echo $form->field($model, 'hr_deparment_name')->textInput(['id' => 'hr_deparment_name', 'readonly' => true, 'value' => $employee ? $employee->hrEmployeeRelPosition[0]->hrDepartments->name : ""]) ?>
         </div>
-        <div class="col-lg-4">
-            <?php echo $form->field($model, 'email')->textInput(['readonly' => true,  'value' => $employee ? $employee->email : ""]) ?>
+        <div class="col-lg-3">
+            <?php echo $form->field($model, 'phone_number')->textInput(['id' => 'phone_number', 'readonly' => true,  'value' => $employee ? $employee->phone_number : ""]) ?>
+        </div>
+        <div class="col-lg-3">
+            <?php echo $form->field($model, 'email')->textInput(['id' => 'email', 'readonly' => true,  'value' => $employee ? $employee->email : ""]) ?>
         </div>
     </div>
 

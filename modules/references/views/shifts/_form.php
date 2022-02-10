@@ -14,9 +14,9 @@ use app\modules\references\models\BaseModel;
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'start_time')->widget(TimePicker::classname(), [
+    <?php echo $form->field($model, 'start_time')->widget(TimePicker::classname(), [
         'pluginOptions' => [
             'showSeconds' => false,
             'showMeridian' => false,
@@ -25,7 +25,7 @@ use app\modules\references\models\BaseModel;
         ]
     ]) ?>
 
-    <?= $form->field($model, 'end_time')->widget(TimePicker::classname(), [
+    <?php echo $form->field($model, 'end_time')->widget(TimePicker::classname(), [
         'pluginOptions' => [
             'showSeconds' => false,
             'showMeridian' => false,
@@ -34,11 +34,12 @@ use app\modules\references\models\BaseModel;
         ]
     ]) ?>
 
+    <?php echo $form->field($model, 'value')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList()) ?>
+    <?php echo $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList()) ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

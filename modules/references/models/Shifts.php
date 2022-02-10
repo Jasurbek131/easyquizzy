@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
  * @property string $end_time
  * @property string $code
  * @property int $status_id
+ * @property float $value
  * @property int $created_at
  * @property int $created_by
  * @property int $updated_at
@@ -35,7 +36,7 @@ class Shifts extends BaseModel
     public function rules()
     {
         return [
-            [['name', 'start_time', 'end_time', 'status_id'], 'required'],
+            [['name', 'start_time', 'end_time', 'status_id', 'value'], 'required'],
             [['start_time', 'end_time'], 'safe'],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
@@ -54,6 +55,7 @@ class Shifts extends BaseModel
             'start_time' => Yii::t('app', 'Start Time'),
             'end_time' => Yii::t('app', 'End Time'),
             'code' => Yii::t('app', 'Code'),
+            'value' => Yii::t('app', 'Value'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),

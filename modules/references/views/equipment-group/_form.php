@@ -19,9 +19,10 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= CustomTabularInput::widget([
+
+    <?php echo CustomTabularInput::widget([
             'id' => 'equipment_relation_equipment_group',
             'form' => $form,
             'models' => $models,
@@ -72,10 +73,12 @@ use yii\widgets\ActiveForm;
             ]
         ]) ?>
 
-    <?= $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList()) ?>
+    <?php echo $form->field($model, 'value')->textInput(['maxlength' => true]) ?>
+
+    <?php echo $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList()) ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

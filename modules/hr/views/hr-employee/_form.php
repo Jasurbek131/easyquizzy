@@ -4,7 +4,6 @@ use app\modules\hr\models\HrDepartments;
 use app\modules\hr\models\HrPositions;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
-use unclead\multipleinput\TabularInput;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -45,16 +44,31 @@ use yii\widgets\ActiveForm;
     </div>
 
     <div class="row">
-        <div class="col-md-4">
-            <?php echo $form->field($model, 'hr_department_id')->widget(Select2::class, [
-                'data' => HrDepartments::getList(),
+        <div class="col-md-3">
+            <?php echo $form->field($model, 'hr_organisation_id')->widget(Select2::class, [
+                'data' => HrDepartments::getOrganisationList(),
                 'pluginOptions' => [
-                    'placeholder' => Yii::t('app', 'Hr Departments'),
+                    'placeholder' => Yii::t('app', 'Select'),
                     'allowClear' => true,
                 ],
+                "options" => [
+                    'id' => "hr_organisation_id"
+                ]
             ]) ?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <?php echo $form->field($model, 'hr_department_id')->widget(Select2::class, [
+                'data' => $model->hr_organisation_id ? HrDepartments::getList(false, $model->hr_organisation_id) : [],
+                'pluginOptions' => [
+                    'placeholder' => Yii::t('app', 'Select'),
+                    'allowClear' => true,
+                ],
+                "options" => [
+                    'id' => "hr_department_id"
+                ]
+            ]) ?>
+        </div>
+        <div class="col-md-3">
             <?php echo $form->field($model, 'hr_position_id')->widget(Select2::class, [
                 'data' => HrPositions::getList(),
                 'pluginOptions' => [
@@ -63,7 +77,7 @@ use yii\widgets\ActiveForm;
                 ],
             ]) ?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <?php echo $form->field($model, 'begin_date')->widget( DatePicker::class,[
                 'data' => $model->begin_date ? date('d.m.Y',($model->begin_date)) : $model->begin_date,
                 'removeButton' => false,

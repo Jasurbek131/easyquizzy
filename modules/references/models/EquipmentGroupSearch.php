@@ -18,7 +18,7 @@ class EquipmentGroupSearch extends EquipmentGroup
     {
         return [
             [['id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['name'], 'safe'],
+            [['name', 'value'], 'safe'],
         ];
     }
 
@@ -40,9 +40,8 @@ class EquipmentGroupSearch extends EquipmentGroup
      */
     public function search($params)
     {
-        $query = EquipmentGroup::find();
-
-        // add conditions that should always apply here
+        $query = EquipmentGroup::find()
+            ->orderBy(["id" => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -50,16 +49,13 @@ class EquipmentGroupSearch extends EquipmentGroup
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+        if (!$this->validate())
             return $dataProvider;
-        }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'status_id' => $this->status_id,
+            'value' => $this->value,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
             'updated_at' => $this->updated_at,

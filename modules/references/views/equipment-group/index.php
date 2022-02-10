@@ -39,6 +39,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
+                'attribute' => 'value',
+                'value' => function($model) {
+                    return $model->value ?? "";
+                },
+            ],
+            [
                 'attribute' => 'status_id',
                 'format' => 'raw',
                 'value' => function($model) {
