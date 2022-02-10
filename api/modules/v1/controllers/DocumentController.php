@@ -3,9 +3,9 @@
 namespace app\api\modules\v1\controllers;
 
 use app\models\BaseModel;
+use app\modules\hr\models\HrDepartments;
 use app\modules\hr\models\HrEmployee;
 use app\modules\hr\models\UsersRelationHrDepartments;;
-
 use app\modules\references\models\Defects;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocItemProducts;
@@ -20,6 +20,7 @@ use app\modules\references\models\Equipments;
 use app\modules\references\models\Products;
 use app\modules\references\models\Shifts;
 use Yii;
+use yii\db\Expression;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\rest\ActiveController;
@@ -378,70 +379,105 @@ class DocumentController extends ActiveController
                 $response['status'] = true;
                 $user_id = Yii::$app->user->id;
 
-                $response['organisationList'] = UsersRelationHrDepartments::find()->alias('urd')->select(['hd.id as value', 'hd.name as label'])
-                    ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
-                    ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->andWhere(['urd.user_id' => $user_id])->andWhere(['urd.is_root' => true])
-                    ->groupBy('hd.id')
-                    ->asArray()->all();
-
-                $response['departmentList'] = UsersRelationHrDepartments::find()->alias('urd')->select(['hd.id as value', "hd.name as label"])
-                    ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
-                    ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->andWhere(['urd.user_id' => $user_id])->andWhere(['urd.is_root' => false])
-                    ->groupBy('hd.id')
-                    ->asArray()->all();
-
-
-
-                $response['productList'] = Products::find()->alias('p')->select([
-                    'p.id as value', "p.name as label", "p.equipment_group_id"
+                $response['organisationList'] = HrDepartments::find()->alias('hd')->select([
+                    'hd.id',
+                    'hd.id as value',
+                    'hd.name as label',
                 ])
                     ->with([
-                        'equipmentGroup' => function($q) {
-                            return $q->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
-                                'equipmentGroupRelationEquipments' => function($e) {
-                                    return $e->from(['ere' => 'equipment_group_relation_equipment'])
-                                        ->select(['e.id as value', 'e.name as label', 'ere.equipment_group_id', 'ere.equipment_id'])
-                                        ->leftJoin('equipments e', 'ere.equipment_id = e.id')
-                                        ->orderBy(['ere.work_order' => SORT_ASC]);
-                                }
+                        'children' => function($e) {
+                            $e->from(['ch' => 'hr_departments'])->select([
+                                'ch.id as value',
+                                'ch.name as label',
+                                'ch.parent_id'
                             ]);
                         }
                     ])
+                    ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
+                    ->andWhere(['IS', 'parent_id', new Expression('NULL')])
+                    ->groupBy('hd.id')
+                    ->asArray()->all();
+
+//                $response['departmentList'] = UsersRelationHrDepartments::find()->alias('urd')->select(['hd.id as value', "hd.name as label"])
+//                    ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
+//                    ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
+//                    ->andWhere(['urd.user_id' => $user_id])
+//                    ->groupBy('hd.id')
+//                    ->asArray()->all();
+
+                $response['equipmentGroupList'] = EquipmentGroup::find()->alias('eg')->select([
+                    'eg.id as value', 'eg.name as label'
+                ])->with([
+                    'equipments'
+                ])->where(['eg.status_id' => BaseModel::STATUS_ACTIVE])
+                    ->asArray()->all();
+
+                $response['productList'] = Products::find()->alias('p')->select([
+                    'p.id as value', "p.name as label"
+                ])
+//                    ->with([
+//                        'equipmentGroup' => function($q) {
+//                            return $q->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
+//                                'equipmentGroupRelationEquipments' => function($e) {
+//                                    return $e->from(['ere' => 'equipment_group_relation_equipment'])
+//                                        ->select(['e.id as value', 'e.name as label', 'ere.equipment_group_id', 'ere.equipment_id'])
+//                                        ->leftJoin('equipments e', 'ere.equipment_id = e.id')
+//                                        ->orderBy(['ere.work_order' => SORT_ASC]);
+//                                }
+//                            ]);
+//                        }
+//                    ])
+                    ->innerJoin('product_lifecycle pl', 'p.id = pl.product_id')
                     ->where(['p.status_id' => BaseModel::STATUS_ACTIVE])
                     ->groupBy('p.id')
                     ->asArray()->all();
                 $response['operatorList'] = HrEmployee::find()->asArray()->all();
-                $response['equipmentList'] = Equipments::find()->alias('e')->select(['e.id as value', "e.name as label"])
-                    ->where(['e.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->groupBy('e.id')->asArray()->all();
 
-                $response['reasonList'] = Reasons::find()->select(['id as value', "name_{$language} as label"])
-                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])->asArray()->all();
+                $response['equipmentList'] = Equipments::find()->alias('e')->select([
+                    'e.id as value',
+                    "e.name as label"
+                ])->where(['e.status_id' => BaseModel::STATUS_ACTIVE])
+                    ->groupBy('e.id')
+                    ->asArray()->all();
 
-                $response['repaired'] = Defects::find()->select(['id as value', "name_{$language} as label", "SUM(0) as count"])
-                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_REPAIRED])
-                    ->groupBy('id')->asArray()->all();
+                $response['reasonList'] = Reasons::find()->select([
+                    'id as value',
+                    "name_{$language} as label"
+                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+                    ->asArray()->all();
 
-                $response['scrapped'] = Defects::find()->select(['id as value', "name_{$language} as label", "SUM(0) as count"])
-                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_SCRAPPED])
-                    ->groupBy('id')->asArray()->all();
+                $response['repaired'] = Defects::find()->select([
+                    'id as value',
+                    "name_{$language} as label",
+                    "SUM(0) as count"
+                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+                    ->andWhere(['type' => BaseModel::DEFECT_REPAIRED])
+                    ->groupBy('id')
+                    ->asArray()->all();
+
+                $response['scrapped'] = Defects::find()->select([
+                    'id as value',
+                    "name_{$language} as label",
+                    "SUM(0) as count"
+                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+                    ->andWhere(['type' => BaseModel::DEFECT_SCRAPPED])
+                    ->groupBy('id')
+                    ->asArray()->all();
 
                 $response['shiftList'] = Shifts::find()->select([
                     'id as value',
                     "CONCAT(name, ' (', TO_CHAR(start_time, 'HH24:MI'), ' - ', TO_CHAR(end_time, 'HH24:MI'), ')') as label"
                 ])->asArray()->all();
 
-                if (!is_null($id)) {
-                    $plm_document = \app\api\modules\v1\models\BaseModel::getDocumentElements($id);
-                    if (!empty($plm_document)) {
-                        $response['plm_document'] = $plm_document;
-                    } else {
-                        $response['status'] = false;
-                        $response['message'] = Yii::t('app', 'Hujjat mavjud emas!');
-                    }
-                }
+//                if (!is_null($id)) {
+//                    $plm_document = \app\api\modules\v1\models\BaseModel::getDocumentElements($id);
+//                    if (!empty($plm_document)) {
+//                        $response['plm_document'] = $plm_document;
+//                    } else {
+//                        $response['status'] = false;
+//                        $response['message'] = Yii::t('app', 'Hujjat mavjud emas!');
+//                    }
+//                }
 
                 $response['user_id'] = $user_id;
                 $response['language'] = $language;
