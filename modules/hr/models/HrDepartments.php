@@ -71,6 +71,14 @@ class HrDepartments extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getChildren()
+    {
+        return $this->hasMany(HrDepartments::className(), ['parent_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getHrEmployees()
     {
         return $this->hasMany(HrEmployee::className(), ['hr_department_id' => 'id']);
