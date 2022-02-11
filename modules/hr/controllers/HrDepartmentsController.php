@@ -8,6 +8,7 @@ use app\modules\hr\models\HrDepartmentRelEquipment;
 use app\modules\hr\models\HrDepartmentRelProduct;
 use app\modules\hr\models\HrDepartmentRelShifts;
 use app\modules\hr\models\HrEmployeeRelUsers;
+use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\references\models\Shifts;
 use kartik\tree\controllers\NodeController;
 use kartik\tree\models\Tree;
@@ -182,7 +183,7 @@ class HrDepartmentsController extends NodeController
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 $response = [];
-                $model->parent_id = $data['department_id'] ?? null;
+                $model->parent_id = ($data['department_id']) ? ($data['department_id']) : null;
                 if ($model->save()) {
                     $response['status'] = 0;
                 } else {
@@ -280,8 +281,11 @@ class HrDepartmentsController extends NodeController
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->delete()){
-                $isDeleted = true;
+            if($model->status_id < BaseModel::STATUS_SAVED){
+                $model->status_id = BaseModel::STATUS_INACTIVE;
+                if($model->save()){
+                    $isDeleted = true;
+                }
             }
             if($isDeleted){
                 $transaction->commit();
@@ -345,16 +349,24 @@ class HrDepartmentsController extends NodeController
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
+    /**
+     * @param null $deb
+     * @return string
+     */
     public function actionIndex($deb = null)
     {
-        $tree = HrDepartments::getTreeViewHtmlForm();
+        $tree = HrDepartments::getTreeViewHtmlForm(null, null, UsersRelationHrDepartments::getDepartmentByUser());
         return $this->render('dep-index',[
             'tree' => $tree,
             'deb' => $deb,
         ]);
     }
 
-    public function actionGetItemsAjax(){
+    /**
+     * @return array
+     */
+    public function actionGetItemsAjax()
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->get('id');
         $response = [];
@@ -377,7 +389,27 @@ class HrDepartmentsController extends NodeController
             }
             return $response;
         }
-
     }
 
+    /**
+     * @param $parent_id
+     * @return array
+     */
+    public function actionGetDepartments($parent_id)
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            $response = ['status' => false];
+            if ($departments = HrDepartments::getList(true, $parent_id)){
+                $response = [
+                    'status' => true,
+                    'departments' => $departments
+                ];
+            }
+            return  $response;
+        }
+    }
 }

@@ -2,8 +2,10 @@
 
 namespace app\modules\hr\models;
 
+use app\modules\references\models\Shifts;
 use kartik\tree\models\Tree;
 use Yii;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -19,7 +21,7 @@ use yii\helpers\ArrayHelper;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
- *
+ * @property float $value
  * @property HrEmployee[] $hrEmployees
  */
 class HrDepartments extends BaseModel
@@ -40,8 +42,8 @@ class HrDepartments extends BaseModel
     public function rules()
     {
         return [
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id'], 'default', 'value' => null],
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id'], 'integer'],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id', 'value'], 'default', 'value' => null],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'value'], 'integer'],
             [['status_id'],'default','value' => \app\models\BaseModel::STATUS_ACTIVE],
             [['name', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
@@ -58,6 +60,7 @@ class HrDepartments extends BaseModel
             'name_uz' => Yii::t('app', 'Name Uz'),
             'name_ru' => Yii::t('app', 'Name Ru'),
             'token' => Yii::t('app', 'Token'),
+            'value' => Yii::t('app', 'Value'),
             'parent_id' => Yii::t('app', 'Hr Parent ID'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -67,7 +70,17 @@ class HrDepartments extends BaseModel
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDepartments()
+    {
+        return $this->hasMany(HrDepartments::className(), ['parent_id' => 'id']);
+    }
 
+    public function getShifts() {
+        return $this->hasMany(HrDepartmentRelShifts::className(), ['hr_department_id' => 'id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -76,61 +89,86 @@ class HrDepartments extends BaseModel
         return $this->hasMany(HrEmployee::className(), ['hr_department_id' => 'id']);
     }
 
-    public static function getList($key = null, $isArray = false) {
-        $list = self::find()->select(['id as value', 'name as label'])->asArray()->all();
+    /**
+     * @param bool $isArray
+     * @param int $parent_id
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getList( $isArray = false, $parent_id = null) {
+        $list = self::find()->select(['id as value', 'name as label'])
+            ->andFilterWhere([
+                "parent_id" => $parent_id
+            ])
+            ->asArray()
+            ->all();
+        if ($isArray)
+            return $list;
+
+        return ArrayHelper::map($list, 'value', 'label');
+    }
+
+    /**
+     * @param bool $isArray
+     * @return array|\yii\db\ActiveRecord[]
+     * Tashkilotlar ro'yxatini qaytaradi [parent = null]
+     */
+    public static function getOrganisationList( $isArray = false) {
+        $list = self::find()->select(['id as value', 'name as label'])
+            ->where(["IS", "parent_id", new Expression("NULL")])
+            ->andFilterWhere(['id' => UsersRelationHrDepartments::getRootByUser()])
+            ->asArray()
+            ->all();
         if ($isArray) {
             return $list;
         }
         return ArrayHelper::map($list, 'value', 'label');
     }
 
-    public static function getParentList() {
-        $list = self::find()
-            ->select(['id', 'name'])
-//            ->andFilterWhere(['=','parent_id',$id])
-            ->asArray()
+    /**
+     * @param null $parent_id
+     * @param null $dep
+     * @param bool $isJson
+     * @param array $user_departments
+     * @return array|string
+     */
+    public static function getTreeViewHtmlForm($parent_id = null, $dep = null, $user_departments = []) //TODO optimallashtirish kerak
+    {
+        $items = self::find()
+            ->where(['parent_id' => $parent_id])
+            ->andWhere(['!=','status_id',\app\models\BaseModel::STATUS_INACTIVE])
+            ->andFilterWhere(['id' => $user_departments])
             ->orderBy(['id' => SORT_ASC])
+            ->asArray()
             ->all();
-       /* if ($isArray) {
-            return $list;
-        }*/
-        return ArrayHelper::map($list, 'id', 'name');
+
+        $tree = "";
+        foreach ($items as $item)
+            if ($item['id'] == $dep)
+                $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{ \"selected\" : true }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
+            else
+                $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{  }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
+
+        return $tree;
     }
 
-    public static function getTreeViewHtmlForm($parent_id = null,$dep = null, $isJson = false){
+    /**
+     * @param array $parent_id
+     * @return array
+     * Tashkilotga tegishli bo'limlar
+     */
+    public static function getChilds($parent_id  = []) //TODO optimallashtirish kerak
+    {
         $items = self::find()
             ->where(['parent_id' => $parent_id])
             ->andWhere(['!=','status_id',\app\models\BaseModel::STATUS_INACTIVE])
             ->orderBy(['id' => SORT_ASC])
             ->asArray()
             ->all();
-        if ($isJson) {
-            $tree = [];
-            foreach ($items as $item) {
-                $tree[] = [
-                    'id'            =>  $item['id'],
-                    'text'          =>  $item['name'],
-                    'state'         =>  [
-                        'opened'    =>  $item['id'] != $dep,
-                        'selected'  =>  $item['id'] == $dep,
-                    ],
-                    'children'      =>  self::getTreeViewHtmlForm($item['id'], null, true),
-                    'li_attr'       =>  [
-                        'value'     => $item['id'],
-                    ],
-                ];
-            }
-        } else {
-            $tree = "";
-            foreach ($items as $item) {
-                if ($item['id'] == $dep) {
-                    $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{ \"selected\" : true }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
-                } else {
-                    $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{  }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
-                }
-            }
+        $ids = [];
+        foreach ($items as $item) {
+            $ids[] = $item['id'];
+            $ids = array_merge($ids, self::getChilds($item['id']));
         }
-
-        return $tree;
+        return $ids;
     }
 }

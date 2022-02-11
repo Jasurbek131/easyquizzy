@@ -17,7 +17,7 @@ class ProductLifecycleSearch extends ProductLifecycle
     public function rules()
     {
         return [
-            [['id', 'product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['id', 'product_id', 'equipment_group_id', 'lifecycle', 'bypass', 'time_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
         ];
     }
 
@@ -39,9 +39,8 @@ class ProductLifecycleSearch extends ProductLifecycle
      */
     public function search($params)
     {
-        $query = ProductLifecycle::find();
-
-        // add conditions that should always apply here
+        $query = ProductLifecycle::find()
+            ->orderBy(["id" => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -49,18 +48,15 @@ class ProductLifecycleSearch extends ProductLifecycle
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+        if (!$this->validate())
             return $dataProvider;
-        }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'product_id' => $this->product_id,
             'equipment_group_id' => $this->equipment_group_id,
             'lifecycle' => $this->lifecycle,
+            'bypass' => $this->bypass,
             'time_type_id' => $this->time_type_id,
             'status_id' => $this->status_id,
             'created_at' => $this->created_at,

@@ -39,7 +39,7 @@ class m220202_124607_create_plm_doc_item_defects_table extends Migration
             'doc_item_id',
             '{{%plm_document_items}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
 
         // creates index for column `defect_id`
@@ -56,7 +56,7 @@ class m220202_124607_create_plm_doc_item_defects_table extends Migration
             'defect_id',
             '{{%defects}}',
             'id',
-            'CASCADE'
+            'RESTRICT'
         );
     }
 

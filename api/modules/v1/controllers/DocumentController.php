@@ -3,10 +3,9 @@
 namespace app\api\modules\v1\controllers;
 
 use app\models\BaseModel;
+use app\modules\hr\models\HrDepartments;
 use app\modules\hr\models\HrEmployee;
-use app\modules\hr\models\UsersRelationHrDepartments;;
-
-use app\modules\plm\models\Defects;
+use app\modules\references\models\Defects;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocItemProducts;
 use app\modules\plm\models\PlmDocumentItems;
@@ -17,9 +16,11 @@ use app\modules\plm\models\Reasons;
 use app\modules\references\models\EquipmentGroup;
 use app\modules\references\models\EquipmentGroupRelationEquipment;
 use app\modules\references\models\Equipments;
+use app\modules\references\models\ProductLifecycle;
 use app\modules\references\models\Products;
-use app\modules\references\models\Shifts;
+use app\modules\references\models\TimeTypesList;
 use Yii;
+use yii\db\Expression;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\rest\ActiveController;
@@ -128,6 +129,83 @@ class DocumentController extends ActiveController
         $response['line'] = 0;
         $post = Yii::$app->request->post();
         switch ($type) {
+            case "SAVE_EQUIPMENT_GROUP":
+                $group = $post['equipment_group'];
+                $items = $post['relation'];
+                $transaction = Yii::$app->db->beginTransaction();
+                $saved = false;
+                try {
+                    $newGroup = new EquipmentGroup();
+                    $newGroup->setAttributes([
+                        'name' => $group['name'],
+                        'status_id' => BaseModel::STATUS_ACTIVE
+                    ]);
+                    if ($newGroup->save()) {
+                        $i = 1;
+                        foreach ($items as $item) {
+                            $newRelation = new EquipmentGroupRelationEquipment();
+                            $newRelation->setAttributes([
+                                'equipment_group_id' => $newGroup->id,
+                                'equipment_id' => $item['equipment_id'],
+                                'work_order' => $i++,
+                                'status_id' => BaseModel::STATUS_ACTIVE
+                            ]);
+                            if ($newRelation->save()) {
+                                $saved = true;
+                            } else {
+                                $saved = false;
+                                $response['errors'] = $newRelation->getErrors();
+                                break;
+                            }
+                        }
+                    } else {
+                        $response['errors'] = $newGroup->getErrors();
+                    }
+                    if ($saved) {
+                        $response['status'] = true;
+                        $response['equipmentGroup'] = EquipmentGroup::getEquipmentGroupList(true, $newGroup->id);
+                        $response['message'] = Yii::t('app', "Muvaffaqiyatli saqlandi!");
+                        $transaction->commit();
+                    } else {
+                        $transaction->rollBack();
+                    }
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    $response['errors'] = $e->getMessage();
+                }
+                break;
+            case "SAVE_PRODUCT_LIFECYCLE":
+                $lifecycle = $post['lifecycle'];
+                $transaction = Yii::$app->db->beginTransaction();
+                $saved = false;
+                try {
+                    $newLifecycle = new ProductLifecycle();
+                    $newLifecycle->setAttributes([
+                        'product_id' => $lifecycle['product_id'],
+                        'equipment_group_id' => $lifecycle['equipment_group_id'],
+                        'lifecycle' => $lifecycle['lifecycle'],
+                        'time_type_id' => $lifecycle['time_type_id'],
+                        'equipments' => true,
+                        'status_id' => BaseModel::STATUS_ACTIVE
+                    ]);
+                    if ($newLifecycle->save()) {
+                        $saved = true;
+                    } else {
+                        $response['errors'] = $newLifecycle->getErrors();
+                    }
+                    if ($saved) {
+                        $response['status'] = true;
+                        $response['productLifecycle'] = ProductLifecycle::getProductLifecycleList(true, $newLifecycle->id);
+                        $response['message'] = Yii::t('app', "Muvaffaqiyatli saqlandi!");
+                        $transaction->commit();
+                    } else {
+                        $transaction->rollBack();
+                    }
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    $response['errors'] = $e->getMessage();
+                }
+                break;
             case "SAVE_DOCUMENT":
                 $document = $post['document'];
                 $documentItems = $post['document_items'];
@@ -148,6 +226,7 @@ class DocumentController extends ActiveController
                         'doc_number' => "PD-".$last,
                         'reg_date' => date("Y-m-d", strtotime($document['reg_date'])),
                         'hr_department_id' => $document['hr_department_id'],
+                        'organisation_id' => $document['organisation_id'],
                         'shift_id' => $document['shift_id'],
                         'add_info' => $document['add_info'],
                         'status_id' => BaseModel::STATUS_ACTIVE
@@ -156,41 +235,6 @@ class DocumentController extends ActiveController
                         foreach ($documentItems as $item) {
                             $plannedStopped = $item['planned_stopped'];
                             $unplannedStopped = $item['unplanned_stopped'];
-                            $equipmentGroup = $item['equipmentGroup']['equipmentGroupRelationEquipments'];
-                            if ($equipmentGroup) {
-                                $newGroup = new EquipmentGroup();
-                                $newGroup->setAttributes([
-                                    'name' => $doc->doc_number,
-                                    'status_id' => BaseModel::STATUS_ACTIVE
-                                ]);
-                                if ($newGroup->save()) {
-                                    $i = 1;
-                                    foreach ($equipmentGroup as $equip) {
-                                        if ($equip['value']) {
-                                            $newRelation = new EquipmentGroupRelationEquipment();
-                                            $newRelation->setAttributes([
-                                                'equipment_group_id' => $newGroup->id,
-                                                'equipment_id' => $equip['value'],
-                                                'work_order' => $i++,
-                                                'status_id' => BaseModel::STATUS_ACTIVE
-                                            ]);
-                                            if ($newRelation->save()){
-                                                $saved = true;
-                                            } else {
-                                                $saved = false;
-                                                $response['errors'] = $newRelation->getErrors();
-                                                $response['line'] = __LINE__;
-                                                break 2;
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    $saved = false;
-                                    $response['errors'] = $newGroup->getErrors();
-                                    $response['line'] = __LINE__;
-                                    break;
-                                }
-                            }
                             if ($plannedStopped) {
                                 $planStop = new PlmStops();
                                 if ($item['planned_stop_id']) {
@@ -262,13 +306,10 @@ class DocumentController extends ActiveController
                             }
                             $docItem->setAttributes([
                                 'document_id' => $doc->id,
-                                //'product_id' => $item['product_id'],
                                 'planned_stop_id' => $planStop->id ?? "",
                                 'unplanned_stop_id' => $unPlanStop->id ?? "",
                                 'processing_time_id' => $processing->id ?? "",
-                                'equipment_group_id' => $newGroup->id ?? "",
-                               // 'qty' => $item['qty'],
-                               // 'fact_qty' => $item['fact_qty']
+                                'equipment_group_id' => $item['equipmentGroup']['value'] ?? "",
                             ]);
                             if ($docItem->save()) {
                                 $products = $item['products'];
@@ -279,6 +320,7 @@ class DocumentController extends ActiveController
                                         $newProductItem->setAttributes([
                                             'document_item_id' => $docItem->id,
                                             'product_id' => $product['product_id'],
+                                            'product_lifecycle_id' => '',
                                             'qty' => $product['qty'],
                                             'fact_qty' => $product['fact_qty']
                                         ]);
@@ -378,61 +420,85 @@ class DocumentController extends ActiveController
                 $response['status'] = true;
                 $user_id = Yii::$app->user->id;
 
-                $response['organisationList'] = UsersRelationHrDepartments::find()->alias('urd')->select(['hd.id as value', 'hd.name as label'])
-                    ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
-                    ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->andWhere(['urd.user_id' => $user_id])->andWhere(['urd.is_root' => true])
-                    ->groupBy('hd.id')
-                    ->asArray()->all();
-
-                $response['departmentList'] = UsersRelationHrDepartments::find()->alias('urd')->select(['hd.id as value', "hd.name as label"])
-                    ->leftJoin('hr_departments hd', 'urd.hr_department_id = hd.id')
-                    ->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->andWhere(['urd.user_id' => $user_id])->andWhere(['urd.is_root' => false])
-                    ->groupBy('hd.id')
-                    ->asArray()->all();
-
-
-
-                $response['productList'] = Products::find()->alias('p')->select([
-                    'p.id as value', "p.name as label", "p.equipment_group_id"
-                ])
-                    ->with([
-                        'equipmentGroup' => function($q) {
-                            return $q->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
-                                'equipmentGroupRelationEquipments' => function($e) {
-                                    return $e->from(['ere' => 'equipment_group_relation_equipment'])
-                                        ->select(['e.id as value', 'e.name as label', 'ere.equipment_group_id', 'ere.equipment_id'])
-                                        ->leftJoin('equipments e', 'ere.equipment_id = e.id')
-                                        ->orderBy(['ere.work_order' => SORT_ASC]);
+                $response['organisationList'] = HrDepartments::find()->alias('hd')->select([
+                    'hd.id',
+                    'hd.id as value',
+                    'hd.name as label',
+                ])->with([
+                        'departments' => function($e) {
+                            $e->from(['ch' => 'hr_departments'])->select([
+                                'ch.id',
+                                'ch.id as value',
+                                'ch.name as label',
+                                'ch.parent_id'
+                            ])->with([
+                                'shifts' => function($sh) {
+                                    $sh->from(['dsh' => 'hr_department_rel_shifts'])->select([
+                                        'sh.id as value',
+                                        'sh.name as label',
+                                        'dsh.hr_department_id'
+                                    ])->leftJoin('shifts sh', 'dsh.shift_id = sh.id');
                                 }
                             ]);
                         }
-                    ])
-                    ->where(['p.status_id' => BaseModel::STATUS_ACTIVE])
+                ])->where(['hd.status_id' => BaseModel::STATUS_ACTIVE])
+                    ->andWhere(['IS', 'parent_id', new Expression('NULL')])
+                    ->groupBy('hd.id')
+                    ->asArray()->all();
+
+                $response['equipmentGroupList'] = EquipmentGroup::getEquipmentGroupList();
+
+                $response['productList'] = Products::find()->alias('p')->select([
+                    'p.id as value', "p.name as label"
+                ])->where(['p.status_id' => BaseModel::STATUS_ACTIVE])
                     ->groupBy('p.id')
                     ->asArray()->all();
+
+               // $response['productLifecycleList'] = ProductLifecycle::getProductLifecycleList();
+
+
                 $response['operatorList'] = HrEmployee::find()->asArray()->all();
-                $response['equipmentList'] = Equipments::find()->alias('e')->select(['e.id as value', "e.name as label"])
-                    ->where(['e.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->groupBy('e.id')->asArray()->all();
 
-                $response['reasonList'] = Reasons::find()->select(['id as value', "name_{$language} as label"])
-                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])->asArray()->all();
+                $response['equipmentList'] = Equipments::find()->alias('e')->select([
+                    'e.id as value',
+                    "e.name as label"
+                ])->where(['e.status_id' => BaseModel::STATUS_ACTIVE])
+                    ->groupBy('e.id')
+                    ->asArray()->all();
 
-                $response['repaired'] = Defects::find()->select(['id as value', "name_{$language} as label", "SUM(0) as count"])
-                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_REPAIRED])
-                    ->groupBy('id')->asArray()->all();
-
-                $response['scrapped'] = Defects::find()->select(['id as value', "name_{$language} as label", "SUM(0) as count"])
-                    ->where(['status_id' => BaseModel::STATUS_ACTIVE])->andWhere(['type' => BaseModel::DEFECT_SCRAPPED])
-                    ->groupBy('id')->asArray()->all();
-
-                $response['shiftList'] = Shifts::find()->select([
+                $response['reasonList'] = Reasons::find()->select([
                     'id as value',
-                    "CONCAT(name, ' (', TO_CHAR(start_time, 'HH24:MI'), ' - ', TO_CHAR(end_time, 'HH24:MI'), ')') as label"
-                ])->asArray()->all();
+                    "name_{$language} as label"
+                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+                    ->asArray()->all();
 
+                $response['repaired'] = Defects::find()->select([
+                    'id as value',
+                    "name_{$language} as label",
+                    "SUM(0) as count"
+                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+                    ->andWhere(['type' => BaseModel::DEFECT_REPAIRED])
+                    ->groupBy('id')
+                    ->asArray()->all();
+
+                $response['scrapped'] = Defects::find()->select([
+                    'id as value',
+                    "name_{$language} as label",
+                    "SUM(0) as count"
+                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+                    ->andWhere(['type' => BaseModel::DEFECT_SCRAPPED])
+                    ->groupBy('id')
+                    ->asArray()->all();
+
+//                $response['shiftList'] = Shifts::find()->select([
+//                    'id as value',
+//                    "CONCAT(name, ' (', TO_CHAR(start_time, 'HH24:MI'), ' - ', TO_CHAR(end_time, 'HH24:MI'), ')') as label"
+//                ])->asArray()->all();
+
+                $response['timeTypeList'] = TimeTypesList::find()->select([
+                    'id as value', 'name as label'
+                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+                    ->asArray()->all();
                 if (!is_null($id)) {
                     $plm_document = \app\api\modules\v1\models\BaseModel::getDocumentElements($id);
                     if (!empty($plm_document)) {

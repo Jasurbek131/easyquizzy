@@ -1,17 +1,15 @@
 <?php
 
-
-use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
 use yii\widgets\Pjax;
-
+use app\components\PermissionHelper as P;
 /* @var $this yii\web\View */
 /* @var $tree */
 
 $confirmDeleteMessage = Yii::t('app', 'Haqiqatan ham ushbu mahsulotni yo\'q qilmoqchimisiz?');
 
-$this->title = Yii::t('app', 'Hr Departments');
+$this->title = Yii::t('app', 'Hr Organisations and Hr Departments');
 $this->params['breadcrumbs'][] = $this->title;
 $create = Yii::t('app', 'Create');
 ?>
@@ -73,24 +71,31 @@ $create = Yii::t('app', 'Create');
 
     <div class="row">
         <div class="col-md-3">
-            <div class="card" style="border: 1px solid green;overflow-x: scroll">
+            <div class="card" style="border: 1px solid green;overflow-x: scroll; min-height: 75vh">
                 <div class="card-body">
-                    <div class="knopka text-center">
+                    <div class="knopka text-left">
                         <br>
                         <button class="btn btn-xs btn-outline-info department-create"
                                 style="border: 1px solid #8950fc;" disabled="disabled"
-                                href="<?= Url::to(['hr-departments/create']) ?>" ><i class="fa fa-plus"></i></button>
-                        <button class="btn btn-xs btn-outline-success tree-create" style="border: 1px solid #1bc5bd;"
-                                href="<?= Url::to(['hr-departments/create']) ?>"><i
+                                href="<?php echo Url::to(['hr-departments/create']) ?>" ><i class="fa fa-plus"></i></button>
+
+                        <?php if(!Yii::$app->user->can("hr-organisation-create")):?>
+                            <button class="btn btn-xs btn-outline-success tree-create" style="border: 1px solid #1bc5bd;"
+                                href="<?php echo Url::to(['hr-departments/create']) ?>"><i
                                 class="fa fa-tree"></i></button>
+                        <?php endif;?>
+
                         <button class="btn btn-xs btn-outline-danger delete-tree disabled-danger-delete"
                                 disabled="disabled"
-                                href="<?= Url::to(['hr-departments/delete']) ?>"><i class="fa fa-trash"></i>
+                                href="<?php echo Url::to(['hr-departments/delete']) ?>"><i class="fa fa-trash"></i>
                         </button>
                         <button class="btn btn-xs btn-outline-primary department-update"
                                 disabled="disabled"
-                                style="border: 1px solid #3699ff;" href="<?= Url::to(['hr-departments/update']); ?>">
+                                style="border: 1px solid #3699ff;" href="<?php echo Url::to(['hr-departments/update']); ?>">
                             <i class="fa fa-pencil-alt"></i></button>
+                        <button class="btn btn-xs btn-outline-warning"
+                                style="border: 1px solid #ffaf36;" href="#" onclick="window.location.reload()">
+                            <i class="fa fa-retweet"></i></button>
                     </div>
 
                     <br>
@@ -101,139 +106,143 @@ $create = Yii::t('app', 'Create');
             </div>
         </div>
         <div class="col-md-9">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="tap-address-one" data-toggle="tab" href="#shift" role="tab"
-                       aria-controls="profile" aria-selected="false"><?php echo Yii::t('app', 'Shifts') ?></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="equipments-tab" data-toggle="tab" href="#equipment" role="tab"
-                       aria-controls="equipments" aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"
-                       aria-controls="products" aria-selected="false"><?php echo Yii::t('app', 'Products') ?></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="defects-tab" data-toggle="tab" href="#defect" role="tab"
-                       aria-controls="defects" aria-selected="false"><?php echo Yii::t('app', 'Defects') ?></a>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade active show" id="shift" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button href="<?php echo Url::to(['/references/shifts/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm shifts-create"
-                                    style="border: 1px solid #1bc5bd;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
-                            </button>
+            <div class="card" style="border: 1px solid green;overflow-x: scroll; min-height: 75vh">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tap-address-one" data-toggle="tab" href="#shift" role="tab"
+                               aria-controls="profile" aria-selected="false"><?php echo Yii::t('app', 'Shifts') ?></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="equipments-tab" data-toggle="tab" href="#equipment" role="tab"
+                               aria-controls="equipments" aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"
+                               aria-controls="products" aria-selected="false"><?php echo Yii::t('app', 'Products') ?></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="defects-tab" data-toggle="tab" href="#defect" role="tab"
+                               aria-controls="defects" aria-selected="false"><?php echo Yii::t('app', 'Defects') ?></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade active show" id="shift" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['hr-department-rel-shifts/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm shifts-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-shifts">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Shift Name') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Start Time') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'End Time') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-8">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-hover attorney-table"
-                                   id="table-shifts">
-                                <thead>
-                                <tr>
-                                    <th class=""><?= Yii::t('app', "№") ?></th>
-                                    <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Shift Name') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Start Time') ?></th>
-                                    <th class=""><?= Yii::t('app', 'End Time') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Action') ?></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <div class="tab-pane fade" id="equipment" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['hr-department-rel-equipment/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm equipments-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-equipments">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Equipment Name') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Equipment Type') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="equipment" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button href="<?php echo Url::to(['/references/equipments/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm equipments-create"
-                                    style="border: 1px solid #1bc5bd;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
-                            </button>
+                        <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['hr-department-rel-product/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm products-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-products">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Product Name') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Part Number') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-8">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-hover attorney-table"
-                                   id="table-equipments">
-                                <thead>
-                                <tr>
-                                    <th class=""><?= Yii::t('app', "№") ?></th>
-                                    <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Equipment Name') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Equipment Type') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Action') ?></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button href="<?php echo Url::to(['/references/products/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm products-create"
-                                    style="border: 1px solid #1bc5bd;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
-                            </button>
-                        </div>
-                        <div class="col-md-8">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-hover attorney-table"
-                                   id="table-products">
-                                <thead>
-                                <tr>
-                                    <th class=""><?= Yii::t('app', "№") ?></th>
-                                    <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Product Name') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Part Number') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Action') ?></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="defect" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <button href="<?php echo Url::to(['/references/defects/create']) ?>"
-                                    class="btn btn-xs-button  btn-outline-success text-sm defects-create"
-                                    style="border: 1px solid #1bc5bd;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
-                            </button>
-                        </div>
-                        <div class="col-md-8">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-hover attorney-table"
-                                   id="table-defects">
-                                <thead>
-                                <tr>
-                                    <th class=""><?= Yii::t('app', "№") ?></th>
-                                    <th class=""><?= Yii::t('app', 'Hr Department') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Defect Name') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Defect Type') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Status') ?></th>
-                                    <th class=""><?= Yii::t('app', 'Action') ?></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <div class="tab-pane fade" id="defect" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['hr-department-rel-defects/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm defects-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-defects">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Defect Name') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Defect Type') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Status') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -259,7 +268,7 @@ $create = Yii::t('app', 'Create');
         </div>
     </div>
 
-<?/*= \app\widgets\ModalWindow\ModalWindow::widget([
+<?php /*= \app\widgets\ModalWindow\ModalWindow::widget([
     'model' => 'toquv-department-musteri-address',
     'crud_name' => 'toquv-department-musteri-address',
     'modal_id' => 'toquv-department-musteri-address-modal',
@@ -291,8 +300,25 @@ $this->registerJsVar('modalHeaderNameDepartment', Yii::t('app', 'Hr Departments'
 $this->registerJsVar('modalHeaderNameShifts', Yii::t('app', 'Create Shifts'));
 $this->registerJsVar('modalHeaderNameProducts', Yii::t('app', 'Create Products'));
 $urlToGetItems = Url::to(['hr-departments/get-items-ajax']);
+$urlShiftUpdate = Url::to(['hr-department-rel-shifts/update']);
+$urlShiftDelete = Url::to(['hr-department-rel-shifts/delete']);
+$urlEquipmentUpdate = Url::to(['hr-department-rel-equipment/update']);
+$urlEquipmentDelete = Url::to(['hr-department-rel-equipment/delete']);
+$urlProductUpdate = Url::to(['hr-department-rel-product/update']);
+$urlProductDelete = Url::to(['hr-department-rel-product/delete']);
+$urlDefectUpdate = Url::to(['hr-department-rel-defects/update']);
+$urlDefectDelete = Url::to(['hr-department-rel-defects/delete']);
+$this->registerJsVar('urlShiftUpdate',$urlShiftUpdate);
+$this->registerJsVar('urlShiftDelete',$urlShiftDelete);
+$this->registerJsVar('urlEquipmentUpdate',$urlEquipmentUpdate);
+$this->registerJsVar('urlEquipmentDelete',$urlEquipmentDelete);
+$this->registerJsVar('urlProductUpdate',$urlProductUpdate);
+$this->registerJsVar('urlProductDelete',$urlProductDelete);
+$this->registerJsVar('urlDefectsUpdate',$urlDefectUpdate);
+$this->registerJsVar('urlDefectsDelete',$urlDefectDelete);
 $this->registerJsVar('tempSelectMenuMessage', Yii::t('app', "Avval bo'lim tanlang"));
 $this->registerJsVar('urlUserGroup', Url::to(['/admin/users-group']));
+$this->registerJsVar('lang', $lang);
 ?>
 <?php
 $css = <<<CSS
@@ -355,6 +381,7 @@ $('#kt_tree_1').on("changed.jstree", function (e, data) {
     $('#loading').css('display','block');
     $(".department-create").attr("disabled",false);
     $(".department-update").attr("disabled",false);
+    $(".tree-create").attr("disabled",true);
     $('#loading').css('display','none');
   $(".delete-tree").attr('data-id', data.node.li_attr.value);
 });
@@ -497,27 +524,24 @@ $('body').delegate('.delete-tree', 'click', function(e) {
 });
 
 // delete license department
-/*$('body').delegate('.delete-license-department', 'click', function(e) {
+$('body').delegate('.tree-create', 'click', function(e) {
     e.preventDefault();
     var departmentId = $('.delete-tree').attr('data-id');
-    var id = $(this).attr('data-form-id');
     $('#loading').css('display','block');
-    $.ajax({
-        url:url,
-        data:{},
-        type:'GET',
-        success: function(response){
-            if(response){
-                $(item).remove();
-            }
-        }
-    });
-});*/
+    let url = $(this).attr('href');
+    if(departmentId === undefined){
+        departmentId = 0;
+    }
+    url = url+"?department_id="+departmentId;
+    $('#view-modal .modal-body').load(url, function(){
+            $('#view-modal').modal("show");
+            $('#loading').css('display','none');
+        });
+});
 
-$('body').delegate('.tree-create,.department-create,.department-update,.shifts-create,.shifts-update,.shifts-view,' +
- '.equipments-create,.equipments-update,.equipments-view,.defects-create,' +
-  '.defects-update,.defects-view', 'click', function(e) {
+$('body').delegate('.department-create,.department-update,.shifts-create,.shifts-update,.equipments-create,.equipments-update,.products-create,.products-update,.defects-create,.defects-update', 'click', function(e) {
     e.preventDefault();
+    $(".tree-create").attr("disabled",true);
     var departmentId = $('.delete-tree').attr('data-id');
     var id = $(this).attr('data-form-id');
     $('#loading').css('display','block');
@@ -533,7 +557,7 @@ $('body').delegate('.tree-create,.department-create,.department-update,.shifts-c
         if(id != undefined){
             url = url +"?id="+id+"&department_id="+departmentId;
         }else{
-        url = url+"?department_id="+departmentId;
+            url = url+"?department_id="+departmentId;
         }
         $('#view-modal .modal-body').load(url, function(){
             $('#view-modal').modal("show");
@@ -541,6 +565,34 @@ $('body').delegate('.tree-create,.department-create,.department-update,.shifts-c
         });
     }
 });
+//Ajax yordamida itemlarni o'chirish
+
+$('body').delegate('.shifts-delete,.equipments-delete,.products-delete,.defects-delete','click',function(e){
+    var id = $(this).attr('data-form-id');
+    let url = $(this).attr('href');
+    if(id != undefined){
+        url = url +"?id="+id;
+        $('#loading').css('display','block');
+        $.ajax({
+            url:url,
+            data:{id:id},
+            type:'POST',
+            success: function(response){
+                if(response.status == 0){
+                    $('#loading').css('display','none');
+                    call_pnotify('success',response.message);
+                    window.location.reload();
+                }else {
+                    call_pnotify('fail',response.message);
+                }
+            }
+        });
+    }else{
+        $('#loading').css('display','none');
+        alert("Ma'lumot Id si mavjud emas");
+    }
+});
+
 
 // Ajax yordamida tablelarni toldirish uchun
 $('body').delegate('li', 'click', function(e) {
@@ -560,19 +612,21 @@ $('body').delegate('li', 'click', function(e) {
                     let equipments = response['equipments'];
                     let products = response['products'];
                     let defects = response['defects'];
+                    let tr_class = "";
                     if ( delete_tree ) {
                         $('.delete-tree').attr('disabled', true);
                     } else {
                         $('.delete-tree').attr('disabled', false);
                     }
                     shifts.map(function(item,index) {
-                         var status_check;
                         if (item['status'] == 1) {
                             item['status'] = 'Active';
+                            tr_class = "background:#F4F6F9";
                         } else {
                             item['status'] = 'Inactive';
+                            tr_class = "background:#FFC5C3";
                         }
-                        let td_shifts = '<tr>' +
+                        let td_shifts = '<tr style="' + tr_class+ '">' +
                              '<td>'+ (index*1+1) +'</td>' +
                              '<td>'+ item['dep_name'] +'</td>' +
                              '<td>'+ item['shift_name'] +'</td>' +
@@ -581,15 +635,13 @@ $('body').delegate('li', 'click', function(e) {
                              '<td>'+ item['status_name'] +'</td>' +
                              '<td>';
                         if (item['status'] == 'Active') {
-                            td_shifts += '<a href="/references/shifts/update' + '" data-form-id="'+item['shift_id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success shifts-update" ><i class="fa fa-pencil-alt"></i></a>';
+                            td_shifts += '<a href="' + urlShiftUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success shifts-update" ><i class="fa fa-pencil-alt"></i></a>';
+                            td_shifts += '<a href="' + urlShiftDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-danger shifts-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>';
                         }    
-                        td_shifts += '<button href="/references/shifts/view' + '" data-form-id="'+item['shift_id'] +'" class="btn btn-icon btn-xs btn-outline-info shifts-view" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
-                             '</td>' +
-                          '</tr>'; 
+                        td_shifts += '</td></tr>'; 
                          $('#table-shifts').find('tbody').append(td_shifts);
                      });
                     equipments.map(function(item,index) {
-                         var status_check;
                         if (item['status'] == 1) {
                             item['status'] = 'Active';
                         } else {
@@ -603,11 +655,11 @@ $('body').delegate('li', 'click', function(e) {
                              '<td>'+ item['status_name'] +'</td>' +
                              '<td>';
                         if (item['status'] == 'Active') {
-                            td_equipments += '<button href="/references/equipments/update?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success equipments-update" ><i class="fa fa-pencil-alt"></i></button>';
+                            td_equipments += '<a href="' + urlEquipmentUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success equipments-update" ><i class="fa fa-pencil-alt"></i></a>';
                         }    
-                        td_equipments += '<button href="/references/equipments/view?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info equipments-view" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
+                        td_equipments += '<a href="' + urlEquipmentDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info equipments-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>' +
                              '</td>' +
-                          '</tr>'; 
+                        '</tr>'; 
                          $('#table-equipments').find('tbody').append(td_equipments);
                     });
                     products.map(function(item,index) {
@@ -624,11 +676,11 @@ $('body').delegate('li', 'click', function(e) {
                              '<td>'+ item['status_name'] +'</td>' +
                              '<td>';
                         if (item['status'] == 'Active') {
-                            td_products += '<button href="/references/products/update?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success products-update" ><i class="fa fa-pencil-alt"></i></button>';
+                            td_products += '<a href="' + urlProductUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success products-update" ><i class="fa fa-pencil-alt"></i></a>';
                         }    
-                        td_products += '<button href="/references/products/view?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info products-view" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
+                        td_products += '<a href="' + urlProductDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info products-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>' +
                              '</td>' +
-                          '</tr>'; 
+                         '</tr>'; 
                          $('#table-products').find('tbody').append(td_products);
                     });
                     defects.map(function(item,index) {
@@ -645,9 +697,9 @@ $('body').delegate('li', 'click', function(e) {
                              '<td>'+ item['status_name'] +'</td>' +
                              '<td>';
                         if (item['status'] == 'Active') {
-                            td_defects += '<button href="/references/defects/update?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success defects-update" ><i class="fa fa-pencil-alt"></i></button>';
+                            td_defects += '<a href="' + urlDefectsUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success defects-update" ><i class="fa fa-pencil-alt"></i></button>';
                         }    
-                        td_defects += '<button href="/references/defects/view?id=' + item['id'] + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info defects-view" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-eye"></i></button>' +
+                        td_defects += '<a href="' + urlDefectsDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info defects-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></button>' +
                              '</td>' +
                           '</tr>'; 
                          $('#table-defects').find('tbody').append(td_defects);
@@ -674,8 +726,6 @@ $(document).ready(function() {
         $('#loading').css('display','block');
         let formModal = $(this).parents('form');
         let actionUrl = formModal.attr('action');
-        console.log('formModal:',formModal);
-        console.log('actionUrl:',actionUrl);
         ajaxModalSave(formModal, actionUrl);
     });
     
@@ -688,9 +738,9 @@ function ajaxModalSave(formModal,actionUrl){
             $('tbody').html('');
             if(response.status == 0){
                  $('#loading').css('display','none');
-                 call_pnotify('success',response.message);
                  $('#view-modal').modal("hide");
-                 $.pjax({ container: "#department_pjax"});
+                 call_pnotify('success',response.message);
+                 window.location.reload();
             }else{
                 $('#loading').css('display','none');
                 call_pnotify('fail',response.message);

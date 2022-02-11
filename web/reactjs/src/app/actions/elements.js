@@ -4,6 +4,7 @@ export const items = {
     planned_stop_id: "",
     unplanned_stop_id: "",
     processing_time_id: "",
+    equipment_group_id: "",
     start_work: "",
     end_work: "",
     planned_stopped: {
@@ -22,9 +23,8 @@ export const items = {
         bypass: ""
     },
     equipmentGroup: {
-        equipmentGroupRelationEquipments: [
-            { label: "", value: "" }
-        ]
+        equipments: [],
+        productLifecycles: []
     },
     products: [{
         label: "",

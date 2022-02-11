@@ -52,7 +52,7 @@ class Equipments extends BaseModel
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
-            'equipment_type_id' => Yii::t('app', 'Equipment Type ID'),
+            'equipment_type_id' => Yii::t('app', 'Equipment Type'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),

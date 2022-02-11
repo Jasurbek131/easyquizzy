@@ -10,13 +10,25 @@ class Telegram
     CONST OMADBEK = 64520993;
     CONST FAYZULLO = 673629439;
     CONST MUHAMMADSODIQ = 440310184;
+
     public static $token = '2068461713:AAH5LImS7JMsssz04dVYAM4C7dM8lCbv9mk';
+
     public $text;
+
     public $id;
+
     public $module;
+
     public $controller;
+
     public $user;
+
     public $get_ip = false;
+
+    /**
+     * Telegram constructor.
+     * @param array $params
+     */
     public function __construct($params = [
         'token' => '2068461713:AAH5LImS7JMsssz04dVYAM4C7dM8lCbv9mk',
         'id' => self::FAYZULLO,
@@ -41,6 +53,9 @@ class Telegram
         }
     }
 
+    /**
+     * @return bool|string
+     */
     public function sendMessage() {
         if($this->get_ip){
             $ip = $_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '#not_ip';
@@ -67,6 +82,7 @@ class Telegram
         );
         return curl_exec($ch);
     }
+
     public function sendContent() {
         file_get_contents("https://api.telegram.org/bot".self::$token."/sendMessage?chat_id={$this->id}&text=" . urlencode($this->text).'&parse_mode=Markdown');
     }
@@ -112,6 +128,14 @@ class Telegram
         return $result;
     }
 
+    /**
+     * @param $text
+     * @param null $module
+     * @param null $controller
+     * @param null $action
+     * @param null $line
+     * @param null $model
+     */
     public static function getMessageSend($text, $module = null, $controller = null, $action = null, $line = null, $model = null) {
         $subText = json_encode($text, JSON_PRETTY_PRINT);
         $user = Yii::$app->user->identity->username;
@@ -131,6 +155,14 @@ class Telegram
         curl_exec($ch);
     }
 
+    /**
+     * @param $ids
+     * @param $filePath
+     * @param string $caption
+     * @param array $local
+     * @param null $telegramToken
+     * @return array
+     */
     public static function sendDocument($ids, $filePath, $caption = '', $local = [], $telegramToken = null)
     {
         $host = $_SERVER['SERVER_ADDR'] ?? '127.0.0.1';
@@ -153,6 +185,13 @@ class Telegram
         $_GET['telegram_respons'][__LINE__] = $result;
         return $result;
     }
+
+    /**
+     * @param $options
+     * @param $method
+     * @param null $token
+     * @return bool|string
+     */
     public static function request($options, $method, $token = null) {
         $telegram_bot = $token ?? '1119831722:AAFlkTz8jzSQn4g4b-AHs-CThDKrBmP9wF0';
         $url = "https://api.telegram.org/bot".$telegram_bot."/" . $method;
@@ -166,6 +205,15 @@ class Telegram
         }
         return $res;
     }
+
+    /**
+     * @param $ids
+     * @param $filePath
+     * @param string $caption
+     * @param array $local
+     * @param null $telegramToken
+     * @return mixed
+     */
     public static function sendPhoto($ids, $filePath, $caption = '', $local = [], $telegramToken = null)
     {
         $host = $_SERVER['SERVER_ADDR'];
@@ -185,6 +233,12 @@ class Telegram
         return $result;
     }
 
+    /**
+     * @param array $ids
+     * @param $e
+     * @param array $send_local_ids
+     * @return bool|\Generator
+     */
     public static function tgExceptionLog(array $ids, $e, $send_local_ids = []) {
         if ($e instanceof Exception == false) {
             return false;

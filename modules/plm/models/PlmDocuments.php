@@ -13,6 +13,7 @@ use Yii;
  * @property string $doc_number
  * @property string $reg_date
  * @property int $hr_department_id
+ * @property int $organisation_id
  * @property string $add_info
  * @property int $status_id
  * @property int $created_by
@@ -43,10 +44,11 @@ class PlmDocuments extends BaseModel
         return [
             [['reg_date'], 'safe'],
             [['hr_department_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'shift_id'], 'default', 'value' => null],
-            [['hr_department_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'shift_id'], 'integer'],
+            [['hr_department_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'shift_id', 'organisation_id'], 'integer'],
             [['add_info'], 'string'],
             [['doc_number'], 'string', 'max' => 255],
             [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['hr_department_id' => 'id']],
+            [['organisation_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['organisation_id' => 'id']],
             [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shifts::className(), 'targetAttribute' => ['shift_id' => 'id']],
         ];
     }
@@ -77,6 +79,14 @@ class PlmDocuments extends BaseModel
     public function getHrDepartments()
     {
         return $this->hasOne(HrDepartments::className(), ['id' => 'hr_department_id']);
+    }
+
+    /**
+     * @return yii\db\ActiveQuery
+     */
+    public function getOrganisation()
+    {
+        return $this->hasOne(HrDepartments::className(), ['id' => 'organisation_id']);
     }
 
     /**

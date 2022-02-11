@@ -4,7 +4,6 @@ namespace app\modules\references\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\references\models\Shifts;
 
 /**
  * ShiftsSearch represents the model behind the search form of `app\modules\references\models\Shifts`.
@@ -18,7 +17,7 @@ class ShiftsSearch extends Shifts
     {
         return [
             [['id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['name', 'start_time', 'end_time', 'code'], 'safe'],
+            [['name', 'start_time', 'end_time', 'code', 'value'], 'safe'],
         ];
     }
 
@@ -40,9 +39,9 @@ class ShiftsSearch extends Shifts
      */
     public function search($params)
     {
-        $query = Shifts::find();
+        $query = Shifts::find()
+            ->orderBy(["id" => SORT_DESC]);
 
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -50,17 +49,14 @@ class ShiftsSearch extends Shifts
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+        if (!$this->validate())
             return $dataProvider;
-        }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
+            'value' => $this->value,
             'status_id' => $this->status_id,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,

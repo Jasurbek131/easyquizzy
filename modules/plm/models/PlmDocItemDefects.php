@@ -2,6 +2,7 @@
 
 namespace app\modules\plm\models;
 
+use app\modules\references\models\Defects;
 use Yii;
 
 /**

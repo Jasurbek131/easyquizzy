@@ -323,13 +323,13 @@ AppAsset::register($this);
                                     'active' => $controller == 'shifts' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
                                 ],
-                                [
-                                    'label' => Yii::t('app', 'Time Types List'),
-                                    'url' => '/references/time-types-list/index',
-                                    'options' => ['class' => 'nav-item'],
-                                    'active' => $controller == 'time-types-list' && $action  == 'index',
-                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-calendar nav-icon"></i><p>{label}</p></a>',
-                                ],
+//                                [
+//                                    'label' => Yii::t('app', 'Time Types List'),
+//                                    'url' => '/references/time-types-list/index',
+//                                    'options' => ['class' => 'nav-item'],
+//                                    'active' => $controller == 'time-types-list' && $action  == 'index',
+//                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-calendar nav-icon"></i><p>{label}</p></a>',
+//                                ],
                                 [
                                     'label' => Yii::t('app', 'Products'),
                                     'url' => '/references/products/index',
@@ -365,6 +365,13 @@ AppAsset::register($this);
                                     'active' => $controller == 'product-lifecycle' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
+                                [
+                                    'label' => Yii::t('app', 'Defects'),
+                                    'url' => '/references/defects/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'defects' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-exclamation nav-icon"></i><p>{label}</p></a>',
+                                ],
                             ],
                         ],
                         [
@@ -379,6 +386,22 @@ AppAsset::register($this);
                                     'url' => '/plm/plm-documents/document/index',
                                     'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'plm-documents' && $action == 'document',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
+                                ],
+                            ],
+                        ],
+                        [
+                            'label' => Yii::t('app', 'Report'),
+                            'url' => ['#'],
+                            'options' => ['class' => 'nav-item'],
+                            'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-file-alt"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
+                            'visible' => true,
+                            'items' => [
+                                [
+                                    'label' => Yii::t('app', 'Documents'),
+                                    'url' => '/plm/plm-report/document',
+                                    'options' => ['class' => 'nav-item'],
+                                    'active' => $controller == 'plm-report' && $action == 'document',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
                                 ],
                             ],

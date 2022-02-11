@@ -48,12 +48,14 @@ let other = {
             },
         ]
     }
-}
+};
+
 let all = {
     name: 'all',
     mode: "development",
     entry: {
         document: `${SRC_DIR}/app/modules/plm/Document/Document.js`,
+        plmDocumentReport: `${SRC_DIR}/app/modules/plm/Report/PlmDocumentReport.js`,
     },
     output: {
         path: `${DIST_DIR}/app`,
@@ -70,10 +72,20 @@ let document = {
     entry: `./src/app/modules/plm/Document/Document.js`,
     mode: 'development',
 };
+let plm_document_report = {
+    output: {
+        filename: './app/plmDocumentReport.bundle.js',
+    },
+    name: 'plm_document_report',
+    entry: `./src/app/modules/plm/Report/PlmDocumentReport.js`,
+    mode: 'development',
+};
 
 /**  Base Module end*/
 config = [
     {...all, ...other},
     {...document, ...other},
+    {...plm_document_report, ...other},
 ];
+
 module.exports = config;

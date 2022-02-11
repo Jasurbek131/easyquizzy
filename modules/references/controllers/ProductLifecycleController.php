@@ -117,9 +117,8 @@ class ProductLifecycleController extends Controller
 
         if ($request->isPost) {
             if ($model->load($request->post())) {
-
                 $model->isUpdate = true;
-                $response = $model->saveProductLifecycle();
+                $response = $model->saveProductLifecycle($model->oldAttributes);
                 if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     if ($response['status'])
@@ -191,24 +190,6 @@ class ProductLifecycleController extends Controller
         }
     }
 
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "product-lifecycle_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => ProductLifecycle::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
     /**
      * Finds the ProductLifecycle model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

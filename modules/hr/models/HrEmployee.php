@@ -16,6 +16,7 @@ use yii\helpers\ArrayHelper;
  * @property string $email
  * @property int $status_id
  * @property int $hr_department_id
+ * @property int $hr_organisation_id
  * @property int $hr_position_id
  * @property string $begin_date
  * @property int $created_by
@@ -35,6 +36,12 @@ class HrEmployee extends BaseModel
      * Bo'lim ma'lumotlarini olish uchun
      */
     public $hr_department_id;
+
+    /**
+     * @var
+     * Tashkilot ma'lumotlarini olish uchun
+     */
+    public $hr_organisation_id;
 
     /**
      * @var
@@ -72,7 +79,7 @@ class HrEmployee extends BaseModel
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['firstname', 'lastname', 'fathername', 'email'], 'string', 'max' => 255],
             [['phone_number'], 'string', 'max' => 30],
-            [['hr_department_id', 'hr_position_id', 'begin_date','firstname', 'lastname', 'fathername'], 'required']
+            [['hr_department_id', 'hr_organisation_id', 'hr_position_id', 'begin_date','firstname', 'lastname', 'fathername'], 'required']
         ];
     }
 
@@ -88,6 +95,7 @@ class HrEmployee extends BaseModel
             'fathername' => Yii::t('app', 'Fathername'),
             'phone_number' => Yii::t('app', 'Phone Number'),
             'hr_department_id' => Yii::t('app', 'Hr Department'),
+            'hr_organisation_id' => Yii::t('app', 'Hr Organisation'),
             'hr_position_id' => Yii::t('app', 'Hr Position'),
             'begin_date' => Yii::t('app', 'Begin Date'),
             'email' => Yii::t('app', 'Email'),
@@ -205,6 +213,7 @@ class HrEmployee extends BaseModel
                     $position =  new HrEmployeeRelPosition([
                         'hr_department_id' => $this->hr_department_id,
                         'hr_position_id' => $this->hr_position_id,
+                        'hr_organisation_id' => $this->hr_organisation_id,
                         'hr_employee_id' => $this->id,
                         'begin_date' => $this->begin_date,
                     ]);

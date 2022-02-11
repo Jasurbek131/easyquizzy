@@ -2,6 +2,8 @@
 
 namespace app\modules\references\models;
 
+use app\models\BaseModel;
+use app\modules\admin\models\AdminLogs;
 use Yii;
 
 /**
@@ -11,6 +13,7 @@ use Yii;
  * @property int $product_id
  * @property int $equipment_group_id
  * @property int $lifecycle
+ * @property int $bypass
  * @property int $time_type_id
  * @property int $status_id
  * @property array $equipments
@@ -25,12 +28,6 @@ use Yii;
  */
 class ProductLifecycle extends BaseModel
 {
-    /**
-     * @var
-     * Mahsulotlar ro'yxati uchun
-     */
-    public $equipments;
-
     /**
      * @var bool
      * Mahsulot lifecycle malumotlari yangilanayotgan bo'lsa: true bo'ladi
@@ -51,7 +48,7 @@ class ProductLifecycle extends BaseModel
     public function rules()
     {
         return [
-            [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'equipments'], 'required'],
+            [['product_id', 'lifecycle', 'status_id','bypass'], 'required'],
             [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
@@ -68,9 +65,8 @@ class ProductLifecycle extends BaseModel
             'id' => Yii::t('app', 'ID'),
             'product_id' => Yii::t('app', 'Products'),
             'equipment_group_id' => Yii::t('app', 'Equipment Group'),
-            'equipments' => Yii::t('app', 'Equipments'),
             'lifecycle' => Yii::t('app', 'Lifecycle'),
-            'time_type_id' => Yii::t('app', 'Time Type'),
+            'time_type_id' => Yii::t('app', 'Time Types List'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -104,9 +100,10 @@ class ProductLifecycle extends BaseModel
     }
 
     /**
+     * @param array $oldAttiributes
      * @return array
      */
-    public function saveProduct(): array
+    public function saveProductLifecycle($oldAttiributes = []): array
     {
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
@@ -118,30 +115,21 @@ class ProductLifecycle extends BaseModel
             if (!$this->save())
                 $response = [
                     'status' => false,
-                    'message' => 'Product not saved',
+                    'message' => 'Product lifecycle not saved',
                     'errors' => $this->getErrors()
                 ];
 
-            if ($response['status']){
-
-                if ($this->isUpdate)
-                    ReferencesProductLifecycleRelEquipment::deleteAll(["product_lifecycle_id" => $this->id]);
-
-                foreach ($this->equipments as $equipment){
-                    $rel = new ReferencesProductLifecycleRelEquipment([
-                        'product_lifecycle_id' => $this->id,
-                        'equipment_id' => $equipment,
-                    ]);
-                    if (!$rel->save()){
-                        $response = [
-                            'status' => false,
-                            'message' => 'Product rel equipment not saved',
-                            'errors' => $rel->getErrors()
-                        ];
-                        break;
-                    }
-                }
-            }
+            if ($response['status'] && $this->isUpdate && (
+                $oldAttiributes["product_id"] != $this->attributes["product_id"] ||
+                $oldAttiributes["lifecycle"] != $this->attributes["lifecycle"] ||
+                $oldAttiributes["equipment_group_id"] != $this->attributes["equipment_group_id"]
+            ))
+                $response = AdminLogs::saveLog(
+                    $oldAttiributes,
+                    $this->attributes,
+                    self::tableName(),
+                    self::class
+                );
 
             if($response['status'])
                 $transaction->commit();
@@ -156,5 +144,18 @@ class ProductLifecycle extends BaseModel
             ];
         }
         return $response;
+    }
+
+    public static function getProductLifecycleList($one = false, $id = null) {
+        $list = ProductLifecycle::find()->alias('pl')->select([
+            'p.id as value', "p.name as label", "MAX(pl.lifecycle) as lifecycle"
+        ])->innerJoin('products p', 'pl.product_id = p.id')
+            ->where(['pl.status_id' => BaseModel::STATUS_ACTIVE])
+            ->groupBy('p.id')
+            ->asArray();
+        if ($one) {
+            return $list->andWhere(['pl.id' => $id])->one();
+        }
+        return $list->all();
     }
 }

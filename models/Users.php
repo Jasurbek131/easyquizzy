@@ -4,7 +4,9 @@ namespace app\models;
 
 use app\modules\admin\models\AuthAssignment;
 use app\modules\admin\models\RedirectUrlList;
+use app\modules\hr\models\HrEmployeeRelPosition;
 use app\modules\hr\models\HrEmployeeRelUsers;
+use app\modules\hr\models\UsersRelationHrDepartments;
 use Yii;
 
 /**
@@ -56,6 +58,12 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
      * Foydalanuchiga rolar biriktirish uchun
      */
     public $roles;
+
+    /**
+     * @var string
+     * Tashkilot nomini chiqarish uchun
+     */
+    public $hr_organisation_name;
 
     /**
      * @var string
@@ -130,6 +138,7 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
             'id' => Yii::t('app', 'ID'),
             'hr_employee_id' => Yii::t('app', 'Hr Employee'),
             'hr_deparment_name' => Yii::t('app', 'Hr Department'),
+            'hr_organisation_name' => Yii::t('app', 'Hr Organisation'),
             'phone_number' => Yii::t('app', 'Phone Number'),
             'redirect_url_id' => Yii::t('app', 'Redirect Url'),
             'password_repeat' => Yii::t('app', 'Password Repeat'),
@@ -260,11 +269,15 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
                     'message' => Yii::t('app', 'Hr employee id required')
                 ];
 
-            if ($this->isUpdate && $response['status']){
+            if ($this->isUpdate && $response['status'] && $this->id){
                 HrEmployeeRelUsers::deleteAll(['user_id' => $this->id]);
                 AuthAssignment::deleteAll(['user_id' => $this->id]);
+                UsersRelationHrDepartments::deleteAll(['user_id' => $this->id]);
             }
 
+            /**
+             * Hodimga oldin foydalanuvchi biriktirilganligini tekshiradi
+             */
             if ($response['status']){
                 $existsHrEmployeeUser = HrEmployeeRelUsers::checkExistsHrEmployeeUser($this->hr_employee_id);
                 if ($existsHrEmployeeUser)
@@ -282,6 +295,9 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
                         'errors' => $this->getErrors()
                     ];
 
+            /**
+             * Hodimga foydalanuvchi biriktiradi
+             */
             if ($response['status']){
                 $hrEmployeeRelUsers = new HrEmployeeRelUsers([
                     'hr_employee_id' => $this->hr_employee_id,
@@ -295,6 +311,9 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
                     ];
             }
 
+            /**
+             * Rollarni saqlaydi
+             */
             if ($response['status'] && !empty($this->roles)){
                 foreach ($this->roles as $key => $role)
                 {
@@ -311,6 +330,41 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
                         ];
                         break;
                     }
+                }
+            }
+
+            /**
+             * Foydalanuvchiga bo'lim va tashkilotni biriktirib qo'yadi
+             */
+            if ($response['status']){
+                $relEmployeeDepartment = HrEmployeeRelPosition::findOne(["hr_employee_id" => $this->hr_employee_id, 'status_id' => BaseModel::STATUS_ACTIVE]);
+
+                if(!empty($relEmployeeDepartment) && $relEmployeeDepartment->hr_organisation_id){
+                    $userRelOrganisations = new UsersRelationHrDepartments([
+                        "user_id" => $this->id,
+                        "hr_department_id" => $relEmployeeDepartment->hr_organisation_id,
+                        "is_root" => UsersRelationHrDepartments::ROOT,
+                    ]);
+                    if (!$userRelOrganisations->save())
+                        $response = [
+                            'status' => false,
+                            'message' => Yii::t('app', 'User rel organisations not saved'),
+                            'errors' => $userRelOrganisations->getErrors()
+                        ];
+                }
+
+                if($response['status'] && !empty($relEmployeeDepartment) && $relEmployeeDepartment->hr_department_id){
+                    $userRelDepartments = new UsersRelationHrDepartments([
+                        "user_id" => $this->id,
+                        "hr_department_id" => $relEmployeeDepartment->hr_department_id,
+                        "is_root" => UsersRelationHrDepartments::NOT_ROOT,
+                    ]);
+                    if (!$userRelDepartments->save())
+                        $response = [
+                            'status' => false,
+                            'message' => Yii::t('app', 'User rel department not saved'),
+                            'errors' => $userRelDepartments->getErrors()
+                        ];
                 }
             }
 

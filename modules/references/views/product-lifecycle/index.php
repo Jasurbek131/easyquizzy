@@ -46,15 +46,26 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => EquipmentGroup::getList()
             ],
-            'lifecycle',
             [
-                'attribute' => 'time_type_id',
-                'format' => 'raw',
+                'attribute' => 'lifecycle',
                 'value' => function($model) {
-                    return TimeTypesList::getList($model->time_type_id);
+                    return $model->lifecycle ?? "";
                 },
-                'filter' => TimeTypesList::getList()
             ],
+            [
+                'attribute' => 'bypass',
+                'value' => function($model) {
+                    return $model->bypass ?? "";
+                },
+            ],
+//            [
+//                'attribute' => 'time_type_id',
+//                'format' => 'raw',
+//                'value' => function($model) {
+//                    return TimeTypesList::getList($model->time_type_id);
+//                },
+//                'filter' => TimeTypesList::getList()
+//            ],
             [
                 'attribute' => 'status_id',
                 'format' => 'raw',
