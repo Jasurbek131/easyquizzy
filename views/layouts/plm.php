@@ -251,7 +251,7 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-user"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => true,
+                            'visible' => P::can("super-admin"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Users'),
@@ -389,11 +389,12 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-file-alt"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => true,
+                            'visible' => P::can("plm-documents/document/index"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Plm Documents'),
                                     'url' => '/plm/plm-documents/document/index',
+                                    'visible' => P::can("plm-documents/document/index"),
                                     'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'plm-documents' && $action == 'document',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
@@ -405,12 +406,13 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-file-alt"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => true,
+                            'visible' => P::can("plm-report/document"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Documents'),
                                     'url' => '/plm/plm-report/document',
                                     'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("plm-report/document"),
                                     'active' => $controller == 'plm-report' && $action == 'document',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
                                 ],
