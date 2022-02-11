@@ -43,7 +43,8 @@ class HrDepartments extends BaseModel
     {
         return [
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id', 'value'], 'default', 'value' => null],
-            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'value'], 'integer'],
+            [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [["value"], "number"],
             [['status_id'],'default','value' => \app\models\BaseModel::STATUS_ACTIVE],
             [['name', 'name_ru', 'token'], 'string', 'max' => 255],
         ];

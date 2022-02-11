@@ -37,7 +37,7 @@ class HrPositions extends BaseModel
         return [
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['name_uz','name_ru'],'required'],
+            [['name_uz'],'required'],
             [['name_uz', 'name_ru'], 'string', 'max' => 255],
         ];
     }
