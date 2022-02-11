@@ -42,6 +42,7 @@ class EquipmentGroup extends BaseModel
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
+            [["value"], "number"],
             [['equipments'], 'safe']
         ];
     }
