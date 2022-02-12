@@ -108,11 +108,8 @@ class Form extends React.Component {
     onPlanSummary = (item) => {
         if (item?.products?.length > 0) {
             let diff = this.onReturnMin(item?.end_work, item?.start_work);
-            console.log("diff: "+diff);
             let planned = this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date);
-            console.log("plan: "+planned);
             let unplanned = this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date);
-            console.log("unplan: "+unplanned);
             item.products.map((product, key) => {
                 let lifecycle = product?.lifecycle ?? 0;
                 item.products[key]['qty'] = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
@@ -142,6 +139,8 @@ class Form extends React.Component {
         switch (model) {
             case "products":
                 if (name === 'product_id') {
+                    $("#product_lifecycle_id").children('div').css("border", "1px solid #ced4da");
+                    $("#qty").css("border", "1px solid #ced4da");
                     e.repaired = [];
                     e.scrapped = [];
                     plm_document_items[key]['products'][index] = e;
@@ -225,29 +224,42 @@ class Form extends React.Component {
     onOpenModal = (type, title, key, itemKey, e) => {
         let {plm_document_items, repairedList, scrappedList} = this.state;
         let store;
+        let block = "none";
         switch (type) {
             case "planned_stopped":
                 store = plm_document_items[key][type];
+                if (plm_document_items[key]['start_work'] && plm_document_items[key]['end_work']) {
+                    block = "block";
+                } else {
+                    toast.error("«Boshlanish» va «Tugash» vaqtlarini kiriting!");
+                }
                 break;
             case "unplanned_stopped":
                 store = plm_document_items[key][type];
+                if (plm_document_items[key]['start_work'] && plm_document_items[key]['end_work']) {
+                    block = "block";
+                } else {
+                    toast.error("«Boshlanish» va «Tugash» vaqtlarini kiriting!");
+                }
                 break;
             case "repaired":
                 store = plm_document_items[key]['products'][itemKey][type];
                 store = this.arrayUnique(store, repairedList);
                 plm_document_items[key]['products'][itemKey][type] = store;
                 this.setState({plm_document_items: plm_document_items});
+                block = "block";
                 break;
             case "scrapped":
                 store = plm_document_items[key]['products'][itemKey][type];
                 store = this.arrayUnique(store, scrappedList);
                 plm_document_items[key]['products'][itemKey][type] = store;
                 this.setState({plm_document_items: plm_document_items});
+                block = "block";
                 break;
         }
         let temporarily = {
             title: title,
-            display: "block",
+            display: block,
             type: type,
             store: JSON.parse(JSON.stringify(store)),
             item: JSON.parse(JSON.stringify(plm_document_items[key])),
@@ -259,17 +271,60 @@ class Form extends React.Component {
 
     onHandleSave = (e) => {
         let {temporarily, plm_document_items} = this.state;
-
+        let stored = temporarily.store;
         if (temporarily.type === 'repaired' || temporarily.type === 'scrapped') {
             plm_document_items[temporarily.key]['products'][temporarily.itemKey][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
-        }
-        if (temporarily.type === 'planned_stopped' || temporarily.type === 'unplanned_stopped') {
-            plm_document_items[temporarily.key][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
-            plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
+            temporarily.display = "none";
+            this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
         }
 
-        temporarily.display = "none";
-        this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
+        if (temporarily.type === 'planned_stopped') {
+            let isSave = true;
+            if (stored.reason_id === "") {
+                isSave = false;
+                $('#reason_id').children('div').css("border", "1px solid red");
+            }
+            if (stored.begin_date === "") {
+                isSave = false;
+                $('#begin_date').css("border", "1px solid red");
+            }
+            if (stored.end_time === "") {
+                isSave = false;
+                $('#end_time').css("border", "1px solid red");
+            }
+            if (isSave) {
+                plm_document_items[temporarily.key][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
+                plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
+                temporarily.display = "none";
+                this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
+            }
+        }
+
+        if (temporarily.type === 'unplanned_stopped') {
+            let isSave = true;
+            if (stored.bypass === "") {
+                isSave = false;
+                $('#bypass').css("border", "1px solid red");
+            }
+            if (stored.reason_id === "") {
+                isSave = false;
+                $('#reason_id').children('div').css("border", "1px solid red");
+            }
+            if (stored.begin_date === "") {
+                isSave = false;
+                $('#begin_date').css("border", "1px solid red");
+            }
+            if (stored.end_time === "") {
+                isSave = false;
+                $('#end_time').css("border", "1px solid red");
+            }
+            if (isSave) {
+                plm_document_items[temporarily.key][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
+                plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
+                temporarily.display = "none";
+                this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
+            }
+        }
     }
 
     onHandleCancel = (e) => {
@@ -355,26 +410,50 @@ class Form extends React.Component {
         if (document?.organisation_id === "") {
             isEmpty = false;
             $("#organisation_id").children('div').css("border", "1px solid red");
-        } else {
-            $("#organisation_id").children('div').css("border", "1px solid #ced4da");
         }
         if (document?.hr_department_id === "") {
             isEmpty = false;
             $("#hr_department_id").children('div').css("border", "1px solid red");
-        } else {
-            $("#hr_department_id").children('div').css("border", "1px solid #ced4da");
         }
         if (document?.shift_id === "") {
             isEmpty = false;
             $("#shift_id").children('div').css("border", "1px solid red");
-        } else {
-            $("#shift_id").children('div').css("border", "1px solid #ced4da");
         }
         if (document?.reg_date === "") {
             isEmpty = false;
             $("#reg_date").css("border", "1px solid red");
-        } else {
-            $("#reg_date").css("border", "1px solid #ced4da");
+        }
+        if (documentItems?.length > 0) {
+            documentItems.map((item, key) => {
+                if (item.equipment_group_id === "") {
+                    isEmpty = false;
+                    $("#equipment_group_id").children('div').css("border", "1px solid red");
+                }
+                if (item.start_work === "") {
+                    isEmpty = false;
+                    $("#start_work").css("border", "1px solid red");
+                }
+                if (item.end_work === "") {
+                    isEmpty = false;
+                    $("#end_work").css("border", "1px solid red");
+                }
+                if (item?.products?.length > 0) {
+                    item.products.map((product, proKey) => {
+                        if (product.product_lifecycle_id === "" || product.product_id === "") {
+                            isEmpty = false;
+                            $("#product_lifecycle_id").children('div').css("border", "1px solid red");
+                        }
+                        if (product.qty === "") {
+                            isEmpty = false;
+                            $("#qty").css("border", "1px solid red");
+                        }
+                        if (product.fact_qty === "") {
+                            isEmpty = false;
+                            $("#fact_qty").css("border", "1px solid red");
+                        }
+                    })
+                }
+            })
         }
         return isEmpty;
     }
@@ -466,13 +545,13 @@ class Form extends React.Component {
         return (
             <div>
                 <div className="no-print">
-                    <ToastContainer autoClose={3000} position={'top-right'} transition={Flip} draggablePercent={60} closeOnClick={true} pauseOnHover closeButton={true}/>
+                    <ToastContainer autoClose={3000} position={'top-center'} transition={Flip} draggablePercent={60} closeOnClick={true} pauseOnHover closeButton={true}/>
                 </div>
                 <EquipmentGroup
                     appearance={appearance}
                     onCancel={this.onHandleCancel}
                     onChangeProps={(type, model) => {this.onChangeProps(type, model)}}
-                    onSaveProps={(type, model) => {this.onSaveProps(type, model)}}
+                    onSaveProps={(type, model) => {this.onSaveProps(type, model).then(r => "")}}
                 />
 
                 <div className={'card'}>
@@ -581,6 +660,7 @@ class Form extends React.Component {
                                                 <div className={'row'}>
                                                     <div className={'col-sm-10 mb-2'}>
                                                         <Select className={"aria-required"}
+                                                                id={"equipment_group_id"}
                                                                 onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'equipment_group_id', key, '', '')}
                                                                 placeholder={"Qurilmalar guruhi"}
                                                                 value={equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id)}
@@ -612,8 +692,13 @@ class Form extends React.Component {
                                                             <div className={'col-sm-7 pb-1'}>
                                                                 <div className={'row'}>
                                                                     <div className={'col-sm-10 mb-1 pr-0'}>
-                                                                        <button onClick={this.onPush.bind(this, 'product-lifecycle-plus', 'plm_document_items', key, '')}
-                                                                                className={"btn btn-sm btn-default w-100 text-left btn-form-control prt-015"}>
+                                                                        <button onClick={(e) => {
+                                                                            if (item?.equipment_group_id) {
+                                                                                this.onPush('product-lifecycle-plus', 'plm_document_items', key, '', e)
+                                                                            } else {
+                                                                                toast.error("Avval «Qurilmalar guruhi» ni tanlang!");
+                                                                            }
+                                                                        }} className={"btn btn-sm btn-default prt-01 w-100 h-25 text-left btn-form-control"}>
                                                                             Product Lifecycle
                                                                         </button>
                                                                     </div>
@@ -660,6 +745,7 @@ class Form extends React.Component {
                                                                             <div className={'row'}>
                                                                                 <div className={'col-sm-10 pr-0 mb-1'}>
                                                                                     <Select className={"aria-required"}
+                                                                                            id={"product_lifecycle_id"}
                                                                                             onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
                                                                                             placeholder={"Tanlang ..."}
                                                                                             value={item?.equipmentGroup.productLifecycles.filter(({value}) => +value === +product?.product_id)}
@@ -676,10 +762,10 @@ class Form extends React.Component {
                                                                             </div>
                                                                         </div>
                                                                         <div className={'col-sm-3'}>
-                                                                            <input type={"text"} disabled={true} className={'form-control'} value={product?.lifecycle}/>
+                                                                            <input type={"text"} id={"product_lifecycle"} disabled={true} className={'form-control'} value={product?.lifecycle}/>
                                                                         </div>
                                                                         <div className={'col-sm-2'}>
-                                                                            <input type={"text"} disabled={true} className={'form-control'} value={product?.bypass}/>
+                                                                            <input type={"text"} id={"product_bypass"} disabled={true} className={'form-control'} value={product?.bypass}/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -687,13 +773,13 @@ class Form extends React.Component {
                                                                     <div className={'row'}>
                                                                         <div className={'col-sm-3'}>
                                                                             <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
-                                                                                   disabled={true}
-                                                                                   type={'number'} className={'form-control aria-required'}
+                                                                                   disabled={true} id={"qty"} type={'number'} className={'form-control aria-required'}
                                                                                    value={product?.qty ?? ""}/>
                                                                         </div>
                                                                         <div className={'col-sm-3'}>
                                                                             <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
-                                                                                   type={'number'} className={'form-control aria-required'} value={product?.fact_qty ?? ""}/>
+                                                                                   type={'number'} className={'form-control aria-required'}  id={"fact_qty"}
+                                                                                   value={product?.fact_qty ?? ""}/>
                                                                         </div>
                                                                         <div className={'col-sm-3 text-center'}>
                                                                             <label className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
@@ -724,6 +810,7 @@ class Form extends React.Component {
                                                             <label className={"control-label"}>Boshlanishi</label>
                                                             <DatePicker locale={ru}
                                                                         dateFormat="HH:mm"
+                                                                        id={"start_work"}
                                                                         onChange={(e)=>{
                                                                             this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
                                                                         }}
@@ -743,6 +830,7 @@ class Form extends React.Component {
                                                             <label className={"control-label"}>Tugashi</label>
                                                             <DatePicker locale={ru}
                                                                         dateFormat="HH:mm"
+                                                                        id={"end_work"}
                                                                         className={"form-control aria-required"}
                                                                         onChange={(e)=>{
                                                                             this.onHandleChange('date', 'plm_document_items', 'end_work', key, '', '', new Date(e))
@@ -812,12 +900,13 @@ class Form extends React.Component {
                                 <div className={'card-body'}>
                                     {
                                         temporarily?.type === "planned_stopped" || temporarily?.type === "unplanned_stopped" ?
-                                            <div className={'row mb-5'}>
+                                            <div className={'row'}>
                                                 <div className={'col-sm-12'}>
                                                     <div className={"form-group"}>
                                                         <label className={"control-label"}>Sabablar</label>
                                                         <Select onChange={this.onHandleChange.bind(this, 'select', 'temporarily', 'reason_id', '', '', '')}
                                                                 placeholder={"Tanlang ..."}
+                                                                id={"reason_id"}
                                                                 value={reasonList.filter(({value}) => +value === +temporarily?.store?.reason_id)}
                                                                 options={reasonList}
                                                                 styles={customStyles}
@@ -831,6 +920,7 @@ class Form extends React.Component {
                                                                         this.onHandleChange('date', 'temporarily', 'begin_date', '', '', '', new Date(e))
                                                                     }}
                                                                     locale={ru}
+                                                                    id={"begin_date"}
                                                                     className={"form-control"}
                                                                     selected={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
                                                                     autoComplete={'off'}
@@ -855,6 +945,7 @@ class Form extends React.Component {
                                                                         this.onHandleChange('date', 'temporarily', 'end_time', '', '', '', new Date(e))
                                                                     }}
                                                                     locale={ru}
+                                                                    id={"end_time"}
                                                                     className={"form-control"}
                                                                     selected={temporarily?.store?.end_time ? new Date(temporarily.store.end_time) : ""}
                                                                     autoComplete={'off'}
@@ -879,7 +970,7 @@ class Form extends React.Component {
                                                             <div className={"form-group"}>
                                                                 <label className={"control-label"}>Bypass</label>
                                                                 <input onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}
-                                                                       className={"form-control"} value={temporarily?.store?.bypass}/>
+                                                                       className={"form-control"} value={temporarily?.store?.bypass} id={"bypass"}/>
                                                             </div>
                                                         </div> : ""
                                                 }
@@ -887,7 +978,7 @@ class Form extends React.Component {
                                                     <div className={"form-group"}>
                                                         <label className={"control-label"}>Izoh</label>
                                                         <textarea onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'add_info', '', '', '')}
-                                                                  className={"form-control"} rows={4} value={temporarily?.store?.add_info}/>
+                                                                  className={"form-control"} rows={8} value={temporarily?.store?.add_info} id={"add_info"}/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -911,7 +1002,7 @@ class Form extends React.Component {
                                                 </div> : ""
                                             }
                                 </div>
-                                <div className={'card-footer mt-5'}>
+                                <div className={'card-footer mt-1'}>
                                     <div className={'row'}>
                                         <div className={'col-sm-12'}>
                                             <div className={'pull-left'}>

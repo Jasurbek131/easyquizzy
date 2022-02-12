@@ -207,9 +207,6 @@ class DocumentController extends ActiveController
                 }
                 break;
             case "SAVE_DOCUMENT":
-                echo "<pre>";
-                print_r($post);
-                echo "</pre>";exit;
                 $document = $post['document'];
                 $documentItems = $post['document_items'];
                 $last = PlmDocuments::find()->orderBy(['id' => SORT_DESC])->one();
@@ -323,7 +320,7 @@ class DocumentController extends ActiveController
                                         $newProductItem->setAttributes([
                                             'document_item_id' => $docItem->id,
                                             'product_id' => $product['product_id'],
-                                            'product_lifecycle_id' => '',
+                                            'product_lifecycle_id' => $product['product_lifecycle_id'],
                                             'qty' => $product['qty'],
                                             'fact_qty' => $product['fact_qty']
                                         ]);
