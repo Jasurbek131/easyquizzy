@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'hr_department_id')->widget(Select2::class, [
             'data' => HrDepartments::getList(),
             'options' => [
-                'placeholder' => 'Select ...',
+                'placeholder' => Yii::t("app","Select ..."),
                 'disabled' => true
             ],
             'pluginOptions' => [
@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'defect_id')->widget(Select2::class, [
         'data' => Defects::getList(),
         'options' => [
-            'placeholder' => 'Select ...',
+            'placeholder' => Yii::t("app","Select ..."),
         ],
         'pluginOptions' => [
             'allowClear' => true,
