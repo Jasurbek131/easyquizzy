@@ -4,9 +4,10 @@
 .logout{
     width: 100%!important;
 }
-/*body{*/
-/*    font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;*/
-/*}*/
+body{
+    font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size: 80%!important;
+}
 /* SELECT2 */
 .select2-container--krajee-bs4 .select2-selection--single {
     height: calc(1.8rem + 1px)!important;
