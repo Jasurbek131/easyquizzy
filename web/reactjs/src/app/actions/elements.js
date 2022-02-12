@@ -31,6 +31,9 @@ export const items = {
         value: "",
         qty: "",
         fact_qty: "",
+        product_id: "",
+        product_lifecycle_id: "",
+        lifecycle: "",
         repaired: [],
         scrapped: [],
     }]

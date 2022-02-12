@@ -11,6 +11,9 @@
 .btn-form-control {
     height: calc(1.7rem + 1px)!important;
 }
+span.form-control {
+    padding: 0.1rem 0.5rem!important;
+}
 .prt-015 {
     padding-top: .15rem;
     font-size: 1rem;

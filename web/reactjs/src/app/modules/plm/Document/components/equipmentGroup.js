@@ -145,21 +145,16 @@ function EquipmentGroup(props){
                 </div>
                 <div className={'col-sm-12'}>
                     <div className={'form-group'}>
-                        <label>Lifecycle</label>
+                        <label>Lifecycle <small>(sekund)</small></label>
                         <input onChange={(e) => {onChange('variables', 'lifecycle', '', e?.target?.value)}}
                                type={"number"} className={'form-control'} value={variables?.lifecycle}/>
                     </div>
                 </div>
                 <div className={'col-sm-12'}>
                     <div className={'form-group'}>
-                        <label>Vaqt turi</label>
-                        <Select className={"aria-required"}
-                                onChange={(e) => {onChange('variables', 'time_type_id', '', e?.value)}}
-                                placeholder={"Tanlang ..."}
-                                value={props.appearance?.timeTypeList.filter(({value}) => +value === +variables?.time_type_id)}
-                                options={props.appearance?.timeTypeList}
-                                styles={customStyles}
-                        />
+                        <label>Bypass Lifecycle <small>(sekund)</small></label>
+                        <input onChange={(e) => {onChange('variables', 'bypass', '', e?.target?.value)}}
+                               type={"number"} className={'form-control'} value={variables?.bypass}/>
                     </div>
                 </div>
                 <div className={"col-sm-12 displayFlex"}>

@@ -23,12 +23,16 @@ class BaseModel extends PlmDocuments
                         'products' => function($p) use ($language) {
                             $p->from(['p' => 'plm_doc_item_products'])->select([
                                 'p.id',
+                                'p.product_lifecycle_id',
+                                'pl.lifecycle',
+                                'pl.bypass',
                                 'p.product_id',
                                 'p.product_id as value',
                                 'p.qty',
                                 'p.fact_qty',
                                 'p.document_item_id'
-                            ])->with([
+                            ])->leftJoin('product_lifecycle pl', 'p.product_lifecycle_id = pl.id')
+                                ->with([
                                 'repaired' => function($r) use ($language) {
                                     $r->from(['r' => 'plm_doc_item_defects'])->select([
                                         'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
