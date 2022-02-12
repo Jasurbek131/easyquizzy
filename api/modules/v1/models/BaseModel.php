@@ -23,12 +23,16 @@ class BaseModel extends PlmDocuments
                         'products' => function($p) use ($language) {
                             $p->from(['p' => 'plm_doc_item_products'])->select([
                                 'p.id',
+                                'p.product_lifecycle_id',
+                                'pl.lifecycle',
+                                'pl.bypass',
                                 'p.product_id',
                                 'p.product_id as value',
                                 'p.qty',
                                 'p.fact_qty',
                                 'p.document_item_id'
-                            ])->with([
+                            ])->leftJoin('product_lifecycle pl', 'p.product_lifecycle_id = pl.id')
+                                ->with([
                                 'repaired' => function($r) use ($language) {
                                     $r->from(['r' => 'plm_doc_item_defects'])->select([
                                         'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
@@ -86,7 +90,9 @@ class BaseModel extends PlmDocuments
     public static function getPlmDocuments($params) {
         $pageSize = $params['page_size'] ?? 20;
         $language = Yii::$app->language;
-        $plm_document = PlmDocuments::find()->with([
+        $plm_document = PlmDocuments::find()->alias('pd')->select([
+            "pd.*", "sh.name as shift", 'hd.name as department'
+        ])->with([
             'plm_document_items' => function($q) use ($language) {
                 $q->from(['pdi' => 'plm_document_items'])
                     ->select(['pdi.*', 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
@@ -128,7 +134,9 @@ class BaseModel extends PlmDocuments
                         }
                     ])->leftJoin('plm_processing_time ppt', 'pdi.processing_time_id = ppt.id');
             },
-        ])->where(['!=', 'status_id', \app\models\BaseModel::STATUS_INACTIVE])
+        ])->leftJoin('hr_departments hd', 'pd.hr_department_id = hd.id')
+            ->leftJoin('shifts sh', 'pd.shift_id = sh.id')
+            ->where(['!=', 'pd.status_id', \app\models\BaseModel::STATUS_INACTIVE])
             ->asArray();
 
         return new ActiveDataProvider([

@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
         ],
         'searchOptions' => [
             'class' => 'form-control input-sm',
-            'placeholder' => 'Qidiruv...'
+            'placeholder' => Yii::t("app","Search")
         ]
     ]); ?>
 

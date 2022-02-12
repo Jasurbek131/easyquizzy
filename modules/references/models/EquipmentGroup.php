@@ -122,11 +122,14 @@ class EquipmentGroup extends BaseModel
             },
             'productLifecycles' => function($pl) {
                 $pl->from(['pl' => 'product_lifecycle'])->select([
-                    'p.id as value',
-                    'p.name as label',
-                    'MAX(pl.lifecycle) as lifecycle',
+                    'pl.id as product_lifecycle_id',
+                    'pl.product_id as value',
+                    'pl.product_id',
+                    "string_agg(CONCAT(p.name, ' (', pl.lifecycle, '/', pl.bypass, ')'), ' ') as label",
+                    'pl.lifecycle',
+                    'pl.bypass',
                     'pl.equipment_group_id'
-                ])->leftJoin('products p', 'pl.product_id = p.id')->groupBy('p.id, pl.equipment_group_id');
+                ])->leftJoin('products p', 'pl.product_id = p.id')->groupBy('pl.id');
             }
         ])->where(['eg.status_id' => BaseModel::STATUS_ACTIVE])
             ->asArray();

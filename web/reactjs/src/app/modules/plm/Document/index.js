@@ -78,25 +78,61 @@ class Index extends React.Component {
                         <Link to="/create" className={"btn btn-sm btn-primary"}><i className={"fa fa-plus"}/></Link>
                     </div>
                     <div className={'card-body'}>
-                        Body
+                        <table className={"table table-bordered"}>
+                            <thead>
+                            <tr>
+                                <th width={"70px"}>#</th>
+                                <th>Hujjat raqami</th>
+                                <th>Bo'lim</th>
+                                <th>Smena</th>
+                                <th width={"100px"}/>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                documents?.length > 0 && documents.map((item, key) => {
+                                    return (
+                                        <tr>
+                                            <td>{key+1}</td>
+                                            <td>{item.doc_number}</td>
+                                            <td>{item.department}</td>
+                                            <td>{item.shift}</td>
+                                            <td className={"text-center"}>
+                                                <button className={"btn btn-info btn-xs"}>
+                                                    <i className={"fa fa-eye"}/>
+                                                </button>
+                                                &nbsp;
+                                                <Link to={'/update/'+item.id} className={"btn btn-success btn-xs"}>
+                                                    <i className={"fa fa-pencil-alt"}/>
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                            </tbody>
+                        </table>
                     </div>
                     <div className={'card-footer'}>
-                        <ReactPaginate
-                            pageCount={pageCount}
-                            pageRangeDisplayed={7}
-                            marginPagesDisplayed={1}
-                            forcePage={+searchParams.page}
-                            previousLabel={"«"}
-                            nextLabel={"»"}
-                            containerClassName={"pagination"}
-                            activeClassName={"active"}
-                            nextClassName={"lasts"}
-                            previousClassName={"first"}
-                            disabledClassName={"disable"}
-                            onPageChange={(e) => {
-                                this.onPageChange(e).then(r => '')
-                            }}
-                        />
+                        {
+                            documents?.length > 0 ?
+                                <ReactPaginate
+                                    pageCount={pageCount}
+                                    pageRangeDisplayed={7}
+                                    marginPagesDisplayed={1}
+                                    forcePage={+searchParams.page}
+                                    previousLabel={"«"}
+                                    nextLabel={"»"}
+                                    containerClassName={"pagination"}
+                                    activeClassName={"active"}
+                                    nextClassName={"lasts"}
+                                    previousClassName={"first"}
+                                    disabledClassName={"disable"}
+                                    onPageChange={(e) => {
+                                        this.onPageChange(e).then(r => '')
+                                    }}
+                                /> : ""
+                        }
                     </div>
                 </div>
             </div>
