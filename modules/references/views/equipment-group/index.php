@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             [
                 'attribute' => 'equipments',
+                'label' => Yii::t("app","Equipments"),
                 'format' => 'raw',
                 'value' => function($model) {
                     return EquipmentGroupRelationEquipment::getGroupEquipments($model->id);
@@ -40,6 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'value',
+                'label' => Yii::t("app","Value"),
                 'value' => function($model) {
                     return $model->value ?? "";
                 },

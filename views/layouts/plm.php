@@ -471,7 +471,7 @@ AppAsset::register($this);
         </div>
     </div>
     <footer class="main-footer no-print">
-        <strong class="text-orange">&copy; Dataprizma-PLM </strong> <?= date('Y') ?>
+        <strong class="text-orange">&copy; Dataprizma-PLM - </strong> <?= date('Y') ?>
     </footer>
 
     <!-- Control Sidebar -->
