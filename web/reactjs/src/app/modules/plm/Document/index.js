@@ -98,6 +98,10 @@ class Index extends React.Component {
                                             <td>{item.department}</td>
                                             <td>{item.shift}</td>
                                             <td className={"text-center"}>
+                                                <button className={"btn btn-info btn-xs"}>
+                                                    <i className={"fa fa-eye"}/>
+                                                </button>
+                                                &nbsp;
                                                 <Link to={'/update/'+item.id} className={"btn btn-success btn-xs"}>
                                                     <i className={"fa fa-pencil-alt"}/>
                                                 </Link>
@@ -110,22 +114,25 @@ class Index extends React.Component {
                         </table>
                     </div>
                     <div className={'card-footer'}>
-                        <ReactPaginate
-                            pageCount={pageCount}
-                            pageRangeDisplayed={7}
-                            marginPagesDisplayed={1}
-                            forcePage={+searchParams.page}
-                            previousLabel={"«"}
-                            nextLabel={"»"}
-                            containerClassName={"pagination"}
-                            activeClassName={"active"}
-                            nextClassName={"lasts"}
-                            previousClassName={"first"}
-                            disabledClassName={"disable"}
-                            onPageChange={(e) => {
-                                this.onPageChange(e).then(r => '')
-                            }}
-                        />
+                        {
+                            documents?.length > 0 ?
+                                <ReactPaginate
+                                    pageCount={pageCount}
+                                    pageRangeDisplayed={7}
+                                    marginPagesDisplayed={1}
+                                    forcePage={+searchParams.page}
+                                    previousLabel={"«"}
+                                    nextLabel={"»"}
+                                    containerClassName={"pagination"}
+                                    activeClassName={"active"}
+                                    nextClassName={"lasts"}
+                                    previousClassName={"first"}
+                                    disabledClassName={"disable"}
+                                    onPageChange={(e) => {
+                                        this.onPageChange(e).then(r => '')
+                                    }}
+                                /> : ""
+                        }
                     </div>
                 </div>
             </div>
