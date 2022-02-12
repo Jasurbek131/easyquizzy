@@ -38,6 +38,7 @@ class Shifts extends BaseModel
         return [
             [['name', 'start_time', 'end_time', 'status_id', 'value'], 'required'],
             [['start_time', 'end_time'], 'safe'],
+            [["value"], "number"],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name', 'code'], 'string', 'max' => 50],

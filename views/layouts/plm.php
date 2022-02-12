@@ -4,7 +4,7 @@
 /* @var $content string */
 
 use app\components\Menu\CustomMenu;
-use app\components\Permission\PermissionHelper as P;
+use app\components\PermissionHelper as P;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use app\assets\AppAsset;
@@ -245,7 +245,7 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-user"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => true,
+                            'visible' => P::can("super-admin"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Users'),
@@ -278,12 +278,13 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-users"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => true,
+                            'visible' => P::can("hr-departments/index") || P::can("hr-employee/index") || P::can("hr-positions/index"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Hr Departments'),
                                     'url' => '/hr/hr-departments/index',
                                     'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("hr-departments/index"),
                                     'active' => $controller == 'hr-departments' && $action == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-building nav-icon"></i><p>{label}</p></a>',
                                 ],
@@ -291,6 +292,7 @@ AppAsset::register($this);
                                     'label' => Yii::t('app', 'Hr Employees'),
                                     'url' => '/hr/hr-employee/index',
                                     'options' => ['class' => 'nav-item'],
+                                    'visible' =>  P::can("hr-employee/index"),
                                     'active' => $controller == 'hr-employee' && $action == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-user nav-icon"></i><p>{label}</p></a>',
                                 ],
@@ -299,6 +301,7 @@ AppAsset::register($this);
                                     'url' => '/hr/hr-positions/index',
                                     'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'hr-positions' && $action == 'index',
+                                    'visible' =>  P::can("hr-positions/index"),
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
                                 ],
                             ],
@@ -308,26 +311,28 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fa fa-book"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => true,
+                            'visible' => P::can("shifts/index") ||
+                                P::can("products/index") ||
+                                P::can("equipments/index") ||
+                                P::can("equipment-group/index") ||
+                                P::can("product-lifecycle/index") ||
+                                P::can("defects/index") ||
+                                P::can("equipment-types/index")
+                                ,
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Shifts'),
                                     'url' => '/references/shifts/index',
                                     'options' => ['class' => 'nav-item'],
+                                    "visible" => P::can("shifts/index"),
                                     'active' => $controller == 'shifts' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-pager nav-icon"></i><p>{label}</p></a>',
                                 ],
-//                                [
-//                                    'label' => Yii::t('app', 'Time Types List'),
-//                                    'url' => '/references/time-types-list/index',
-//                                    'options' => ['class' => 'nav-item'],
-//                                    'active' => $controller == 'time-types-list' && $action  == 'index',
-//                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-calendar nav-icon"></i><p>{label}</p></a>',
-//                                ],
                                 [
                                     'label' => Yii::t('app', 'Products'),
                                     'url' => '/references/products/index',
                                     'options' => ['class' => 'nav-item'],
+                                    "visible" =>  P::can("products/index"),
                                     'active' => $controller == 'products' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
@@ -335,6 +340,7 @@ AppAsset::register($this);
                                     'label' => Yii::t('app', 'Equipment Types'),
                                     'url' => '/references/equipment-types/index',
                                     'options' => ['class' => 'nav-item'],
+                                    "visible" => P::can("equipment-types/index"),
                                     'active' => $controller == 'equipment-types' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
@@ -342,6 +348,7 @@ AppAsset::register($this);
                                     'label' => Yii::t('app', 'Equipments'),
                                     'url' => '/references/equipments/index',
                                     'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("equipments/index"),
                                     'active' => $controller == 'equipments' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
@@ -349,6 +356,7 @@ AppAsset::register($this);
                                     'label' => Yii::t('app', 'Equipment Group'),
                                     'url' => '/references/equipment-group/index',
                                     'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("equipment-group/index"),
                                     'active' => $controller == 'equipment-group' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
@@ -356,6 +364,7 @@ AppAsset::register($this);
                                     'label' => Yii::t('app', 'Product Lifecycle'),
                                     'url' => '/references/product-lifecycle/index',
                                     'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("product-lifecycle/index"),
                                     'active' => $controller == 'product-lifecycle' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-shopping-bag nav-icon"></i><p>{label}</p></a>',
                                 ],
@@ -363,6 +372,7 @@ AppAsset::register($this);
                                     'label' => Yii::t('app', 'Defects'),
                                     'url' => '/references/defects/index',
                                     'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("defects/index"),
                                     'active' => $controller == 'defects' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-exclamation nav-icon"></i><p>{label}</p></a>',
                                 ],
@@ -373,11 +383,12 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-file-alt"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => true,
+                            'visible' => P::can("plm-documents/document/index"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Plm Documents'),
                                     'url' => '/plm/plm-documents/document/index',
+                                    'visible' => P::can("plm-documents/document/index"),
                                     'options' => ['class' => 'nav-item'],
                                     'active' => $controller == 'plm-documents' && $action == 'document',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
@@ -389,12 +400,13 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-file-alt"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => true,
+                            'visible' => P::can("plm-report/document"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'Documents'),
                                     'url' => '/plm/plm-report/document',
                                     'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("plm-report/document"),
                                     'active' => $controller == 'plm-report' && $action == 'document',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
                                 ],
