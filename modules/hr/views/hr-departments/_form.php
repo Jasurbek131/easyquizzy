@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
             echo $form->field($model, 'parent_id')->widget(Select2::class, [
                 'data' => HrDepartments::getList(),
                 'options' => [
-                    'placeholder' => 'Select ...',
+                    'placeholder' => Yii::t("app","Select ..."),
                     'disabled' => true
                 ],
                 'pluginOptions' => [
