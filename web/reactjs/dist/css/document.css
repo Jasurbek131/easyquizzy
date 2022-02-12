@@ -14,9 +14,8 @@
 span.form-control {
     padding: 0.1rem 0.5rem!important;
 }
-.prt-015 {
-    padding-top: .15rem;
-    font-size: 1rem;
+.prt-01 {
+    padding-top: .1rem;
 }
 .displayFlex {
     display: flex;
@@ -24,8 +23,11 @@ span.form-control {
     bottom: 20px;
 }
 .wh-28 {
-    width: 28px!important;
-    height: 28px!important;
+    width: 24px!important;
+    height: 24px!important;
+}
+.h-25 {
+    height: 24px!important;
 }
 .background-white {
     background-color: white!important;
