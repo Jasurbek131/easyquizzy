@@ -300,7 +300,7 @@ return [
     'You cannot add children under this {node}.' => '',
     'lead-delete' => '',
     'lead-update' => '',
-    'welcome' => '',
+    'welcome' => 'ga xush kelibsiz',
     '{node} # {id} - \'{name}\': {error}' => '',
     '№' => '',
 ];
