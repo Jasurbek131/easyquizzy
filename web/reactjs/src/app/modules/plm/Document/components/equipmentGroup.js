@@ -54,6 +54,10 @@ function EquipmentGroup(props){
                     isSend = false;
                     $('#name').css("border", "1px solid red");
                 }
+                if (variables.value === "") {
+                    isSend = false;
+                    $('#value').css("border", "1px solid red");
+                }
                 variableItems.map((item, key) => {
                     if (item.equipment_id === "") {
                         isSend = false;
@@ -96,6 +100,13 @@ function EquipmentGroup(props){
                         <label>Nomi</label>
                         <input onChange={(e) => {onChange('variables', 'name', '', e?.target?.value)}}
                                type={"text"} value={variables?.name} className={'form-control'} id={"name"}/>
+                    </div>
+                </div>
+                <div className={'col-sm-12'}>
+                    <div className={'form-group'}>
+                        <label>Koeffitsienti</label>
+                        <input onChange={(e) => {onChange('variables', 'value', '', e?.target?.value)}}
+                               type={"number"} value={variables?.value} className={'form-control'} id={"value"}/>
                     </div>
                 </div>
                 <div className={"col-sm-12"}>

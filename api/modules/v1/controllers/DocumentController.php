@@ -138,6 +138,7 @@ class DocumentController extends ActiveController
                     $newGroup = new EquipmentGroup();
                     $newGroup->setAttributes([
                         'name' => $group['name'],
+                        'value' => $group['value'],
                         'status_id' => BaseModel::STATUS_ACTIVE
                     ]);
                     if ($newGroup->save()) {
