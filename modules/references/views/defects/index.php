@@ -11,12 +11,12 @@ $this->title = Yii::t('app', 'Defects');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card defects-index">
-    <?php if (Yii::$app->user->can('defects/create')): ?>
+<!--    --><?php //if (Yii::$app->user->can('defects/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
-    <?php endif; ?>
+<!--    --><?php //endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'defects_pjax']); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -56,13 +56,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
-                        'view' => Yii::$app->user->can('defects/view'),
-                        'update' => function($model) {
-                            return Yii::$app->user->can('defects/update'); // && $model->status < $model::STATUS_SAVED;
-                        },
-                        'delete' => function($model) {
-                            return Yii::$app->user->can('defects/delete'); // && $model->status < $model::STATUS_SAVED;
-                        }
+//                        'view' => Yii::$app->user->can('defects/view'),
+//                        'update' => function($model) {
+//                            return Yii::$app->user->can('defects/update'); // && $model->status < $model::STATUS_SAVED;
+//                        },
+//                        'delete' => function($model) {
+//                            return Yii::$app->user->can('defects/delete'); // && $model->status < $model::STATUS_SAVED;
+//                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {
