@@ -148,7 +148,7 @@ class ProductLifecycle extends BaseModel
 
     public static function getProductLifecycleList($one = false, $id = null) {
         $list = ProductLifecycle::find()->alias('pl')->select([
-            'pl.equipment_group_id', "MAX(p.name) as label", "pl.lifecycle", 'pl.product_id', 'pl.product_id as value',
+            'pl.equipment_group_id', "MAX(p.name) as label", "pl.lifecycle", "pl.bypass", 'pl.product_id', 'pl.product_id as value',
         ])->innerJoin('products p', 'pl.product_id = p.id')
             ->where(['pl.status_id' => BaseModel::STATUS_ACTIVE])
             ->groupBy('pl.id')
