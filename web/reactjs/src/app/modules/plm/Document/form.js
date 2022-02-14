@@ -350,7 +350,7 @@ class Form extends React.Component {
                     display: "block",
                     type: "equipment-group",
                     title: "Qurilmalar guruhi yaratish",
-                    variables: {name: ""},
+                    variables: {name: "", value: ""},
                     equipmentList: this.state.equipmentList,
                     variableItems: [{
                         equipment_id: ""
