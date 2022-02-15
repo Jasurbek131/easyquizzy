@@ -382,21 +382,12 @@ AppAsset::register($this);
                             ],
                         ],
                         [
-                            'label' => Yii::t('app', 'Plm'),
-                            'url' => ['#'],
-                            'options' => ['class' => 'nav-item'],
-                            'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fas fa-file-alt"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
+                            'label' => Yii::t('app', 'Production results'),
+                            'url' => '/plm/plm-documents/document/index',
                             'visible' => P::can("plm-documents/document/index"),
-                            'items' => [
-                                [
-                                    'label' => Yii::t('app', 'Plm Documents'),
-                                    'url' => '/plm/plm-documents/document/index',
-                                    'visible' => P::can("plm-documents/document/index"),
-                                    'options' => ['class' => 'nav-item'],
-                                    'active' => $controller == 'plm-documents' && $action == 'document',
-                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-file nav-icon"></i><p>{label}</p></a>',
-                                ],
-                            ],
+                            'options' => ['class' => 'nav-item'],
+                            'active' => $controller == 'plm-documents' && $action == 'document',
+                            'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-industry nav-icon"></i><p>{label}</p></a>',
                         ],
                         [
                             'label' => Yii::t('app', 'Reports'),
