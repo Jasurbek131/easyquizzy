@@ -1,7 +1,8 @@
 <?php
 
-namespace app\modules\plm\models;
+namespace app\modules\references\models;
 
+use app\modules\plm\models\PlmDocumentItems;
 use Yii;
 
 /**

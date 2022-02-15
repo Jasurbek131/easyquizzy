@@ -1,8 +1,8 @@
 <?php
 
-namespace app\modules\plm\models;
-
+namespace app\modules\references\models;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "categories".
@@ -21,6 +21,9 @@ use Yii;
  */
 class Categories extends BaseModel
 {
+    const PLANNED_TYPE  = 1; // rejali to'xtalish turi
+    const UNPLANNED_TYPE  = 2; // rejasiz to'xtalish turi
+
     /**
      * {@inheritdoc}
      */
@@ -66,4 +69,22 @@ class Categories extends BaseModel
     {
         return $this->hasMany(Reasons::className(), ['category_id' => 'id']);
     }
+    public static function getCategoryTypeList($key = null){
+        $result = [
+            self::PLANNED_TYPE => Yii::t('app','Planned Type'),
+            self::UNPLANNED_TYPE => Yii::t('app','Unplanned Type'),
+        ];
+        if(!empty($key)){
+            return $result[$key];
+        }
+        return $result;
+    }
+    public static function  getList()
+    {
+        $query = self::find()->select(['id','name_uz'])->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])->asArray()->all();
+        if(!empty($query)){
+            return ArrayHelper::map($query, 'id', 'name');
+        }
+    }
+
 }

@@ -376,6 +376,22 @@ AppAsset::register($this);
                                     'active' => $controller == 'defects' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-exclamation nav-icon"></i><p>{label}</p></a>',
                                 ],
+                                [
+                                    'label' => Yii::t('app', 'Categories'),
+                                    'url' => '/references/categories/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("categories/index"),
+                                    'active' => $controller == 'categories' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-sitemap nav-icon"></i><p>{label}</p></a>',
+                                ],
+                                [
+                                    'label' => Yii::t('app', 'Reasons'),
+                                    'url' => '/references/reasons/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    'visible' => P::can("reasons/index"),
+                                    'active' => $controller == 'reasons' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-exclamation-triangle nav-icon"></i><p>{label}</p></a>',
+                                ],
                             ],
                         ],
                         [
