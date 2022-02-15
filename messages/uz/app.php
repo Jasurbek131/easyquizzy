@@ -17,11 +17,14 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    '(New)' => '@@(Yangi)@@',
+    'Group type' => 'Guruh turi',
+    'Lifecycle (s)' => 'Siklik time (s)',
+    'Bypass (s)' => 'Bypass (s)',
+    '(New)' => '(Yangi)',
     '(new)' => '(yangi)',
     'Active' => 'Faol',
     'Add Info' => '',
-    'Admin' => '@@Admin@@',
+    'Admin' => 'Admin',
     'Administrator' => '',
     'Already at bottom-most node in the hierarchy.' => '',
     'Already at left-most node in the hierarchy.' => '',
@@ -98,7 +101,7 @@ return [
     'Document ID' => 'Hujjat',
     'Document Item ID' => '',
     'Document Report' => '',
-    'Documents' => '@@Hujjatlar@@',
+    'Documents' => 'Hujjatlar',
     'Email' => 'Elektron pochta',
     'End Date' => 'Ishdan ketgan sanasi',
     'End Name' => '',
