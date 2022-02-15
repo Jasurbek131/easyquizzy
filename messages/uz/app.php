@@ -17,6 +17,9 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    'Group type' => 'Guruh turi',
+    'Lifecycle (s)' => 'Siklik time (s)',
+    'Bypass (s)' => 'Bypass (s)',
     '(New)' => '@@@@',
     '(new)' => '',
     'Active' => 'Faol',

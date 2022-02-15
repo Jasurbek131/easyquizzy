@@ -115,6 +115,12 @@ class ApiProductController extends ActiveController
                 $response["status_list"] = BaseModel::getStatusList(null, true);
                 $response["products_list"] = Products::getList(null, true);
                 $response["equipments_group_type_list"] = BaseModel::getEquipmentGroupTypeList();
+                $response['messages'] = [
+                    'equipments' => Yii::t('app', 'Equipments'),
+                    'group_type' => Yii::t('app', 'Group type'),
+                    'lifecycle' => Yii::t('app', 'Lifecycle (s)'),
+                    'bypass' => Yii::t('app', 'Bypass (s)'),
+                ];
                 break;
             case "PRODUCT_SAVE":
                 $response = ApiProduct::saveApiProduct($post);
