@@ -3,7 +3,7 @@
 namespace app\modules\references\controllers;
 
 use app\models\BaseModel;
-use app\modules\references\models\ReferencesProductRelEquipment;
+use app\modules\references\models\ReferencesProductGroupSearch;
 use Yii;
 use app\modules\references\models\Products;
 use app\modules\references\models\ProductsSearch;
@@ -38,7 +38,7 @@ class ProductsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ProductsSearch();
+        $searchModel = new ReferencesProductGroupSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -202,7 +202,23 @@ class ProductsController extends Controller
         if (($model = Products::findOne($id)) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    /**
+     * @return string
+     */
+    public function actionNewCreate()
+    {
+        return $this->render('new_create');
+    }
+
+    /**
+     * @return string
+     */
+    public function actionNewUpdate()
+    {
+        return $this->render('new_update');
+    }
+
 }
