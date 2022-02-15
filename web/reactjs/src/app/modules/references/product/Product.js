@@ -21,6 +21,7 @@ class Product extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            messages: {},
             isSubmitted: true,
             equipments_list: [],
             status_list: [],
@@ -53,6 +54,12 @@ class Product extends Component {
                 if (response.data.forms.product_lifecycle.length <= 0)
                     forms['product_lifecycle'] = [JSON.parse(JSON.stringify(initialLifeCycle))];
 
+                forms["modal"] = {
+                    id: null,
+                    name: '',
+                    part_number: '',
+                    status_id: '',
+                };
                 this.setState({ forms });
             }
             this.setState({
@@ -60,6 +67,7 @@ class Product extends Component {
                 status_list: response.data.status_list,
                 products_list: response.data.products_list,
                 equipments_group_type_list: response.data.equipments_group_type_list,
+                messages: response.data.messages,
             });
         }
 
@@ -188,6 +196,7 @@ class Product extends Component {
             equipments_group_type_list,
             status_list,
             display,
+            messages,
             products_list,
             isSubmitted
         } = this.state;
@@ -206,9 +215,12 @@ class Product extends Component {
                                 <button className={"btn btn-xs btn-primary "} onClick={this.addManualDriverInfo.bind(this)}><i className={"fa fa-plus"}></i></button>
                             </div>}
 
+
+
+
                        <div className={"row"}>
                            <div className={"col-lg-6"}>
-                               <label htmlFor={"equipments_"+index}>Equipments</label>
+                               <label htmlFor={"equipments_"+index}>{messages.equipments}</label>
                                <Select
                                    styles={style}
                                    isMulti
@@ -221,7 +233,7 @@ class Product extends Component {
                                />
                            </div>
                            <div className={"col-lg-2"}>
-                               <label htmlFor={"equipments_group_type_id_"+index}>Group type</label>
+                               <label htmlFor={"equipments_group_type_id_"+index}>{messages.group_type}</label>
                                <Select
                                    styles={style}
                                    id={"equipments_group_type_id_"+index}
@@ -233,7 +245,7 @@ class Product extends Component {
                                />
                            </div>
                            <div className={"col-lg-2"}>
-                               <label htmlFor={"lifecycle"+index}>Lifecycle</label>
+                               <label htmlFor={"lifecycle"+index}>{messages.lifecycle}</label>
                                <input
                                    style={{borderColor: isSubmitted || item.lifecycle ? "#CCCCCC" : "#C82333"}}
                                    className={"form-control"}
@@ -245,7 +257,7 @@ class Product extends Component {
                                />
                            </div>
                            <div className={"col-lg-2"}>
-                               <label htmlFor={"bypass"+index}>Bypass</label>
+                               <label htmlFor={"bypass"+index}>{messages.bypass}</label>
                                <div className={"flex"}>
                                    <input
                                        style={{borderColor: isSubmitted || item.bypass ? "#CCCCCC" : "#C82333"}}
