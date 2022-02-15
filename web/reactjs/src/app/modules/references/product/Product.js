@@ -48,10 +48,13 @@ class Product extends Component {
 
         let response = await axios.get(API_URL + 'index?type=PRODUCT_DATA&id=' + id);
         if (response.data.status){
-            if (id)
-                this.setState({
-                    forms: response.data.forms,
-                });
+            if (id){
+                let forms = response.data.forms;
+                if (response.data.forms.product_lifecycle.length <= 0)
+                    forms['product_lifecycle'] = [JSON.parse(JSON.stringify(initialLifeCycle))];
+
+                this.setState({ forms });
+            }
             this.setState({
                 equipments_list: response.data.equipments_list,
                 status_list: response.data.status_list,
@@ -94,14 +97,33 @@ class Product extends Component {
         this.setState({forms});
     };
 
-    removeManualDriverInfo = (remove_index) => {
-        let productLifeCycle;
+    async removeLifeCycle(remove_index){
         let { forms } = this.state;
+        if (forms["product_lifecycle"][remove_index]['product_lifecycle_id']){
+            if (confirm("Rostdan ham o'chirmoqchimisiz?")){
+                let { forms } = this.state;
+                let response = await axios.post(API_URL + 'index?type=PRODUCT_EQUIPMENT_DELETE', forms["product_lifecycle"][remove_index]);
+                if(response.data.status){
+                    this.remove(remove_index);
+                }else{
+                    toast.error(response.data.message);
+                }
+            }
+        }else{
+            this.remove(remove_index);
+        }
+    };
+
+    remove(remove_index)
+    {
+        let { forms } = this.state;
+        let productLifeCycle;
         if (forms.product_lifecycle.length > 0){
             productLifeCycle =  forms.product_lifecycle.filter((item, index) => index != remove_index);
             forms['product_lifecycle'] = productLifeCycle;
-            this.setState({ forms });
         }
+        toast.success("O'chirildi");
+        this.setState({ forms });
     };
 
     addManualDriverInfo = () => {
@@ -177,7 +199,7 @@ class Product extends Component {
                     <div className={"driver col-lg-12"} key={index}>
                         {index != 0 ? (
                             <div className={"remove_driver remove"}>
-                                <button  className={"btn btn-xs btn-danger"}  onClick={this.removeManualDriverInfo.bind(this,index)}><i className={"fa fa-times"}></i></button>
+                                <button  className={"btn btn-xs btn-danger"}  onClick={this.removeLifeCycle.bind(this,index)}><i className={"fa fa-times"}></i></button>
                             </div>
                         ) :
                             <div className={"add_driver"}>

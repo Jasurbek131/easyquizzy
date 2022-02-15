@@ -122,6 +122,9 @@ class ApiProductController extends ActiveController
             case "PRODUCT_EQUIPMENT_SAVE":
                 $response = ApiProduct::saveApiProductEquipment($post);
                 break;
+            case "PRODUCT_EQUIPMENT_DELETE":
+                $response = ApiProduct::deleteApiProductEquipment($post);
+                break;
         }
 
         return $response;

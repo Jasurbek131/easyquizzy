@@ -81,7 +81,6 @@ class ApiProduct extends Products
                     'status' => false,
                     'message' => Yii::t('app', 'Data empty'),
                 ];
-
             /**
              * Product group yaratilyapti
              */
@@ -140,7 +139,6 @@ class ApiProduct extends Products
                     $post['item']['equipment_group_id'] = $equipmentGroup->id;
                 }
             }
-
             /**
              * Equipment group rel equipment yaratildi
              */
@@ -162,14 +160,15 @@ class ApiProduct extends Products
                     }
                 }
             }
+
             /**
              * Mahsulot life cycle yaratish
              */
             if ($response['status']){
-                if (empty($post['item']['product_life_cycle_id']))
+                if (empty($post['item']['product_lifecycle_id']))
                     $productLifecycle = new ProductLifecycle();
                 else
-                    $productLifecycle = ProductLifecycle::findOne(['id' => $post['item']['product_life_cycle_id']]);
+                    $productLifecycle = ProductLifecycle::findOne(['id' => $post['item']['product_lifecycle_id']]);
 
                 $productLifecycle->setAttributes([
                     'product_group_id' => $post['product_group_id'],
@@ -189,7 +188,7 @@ class ApiProduct extends Products
             if ($response['status']) {
                 $response['equipment_group_id'] =  $post['item']['equipment_group_id'];
                 $response['product_group_id'] = $post['product_group_id'];
-                $response['product_life_cycle_id'] = $productLifecycle->id;
+                $response['product_lifecycle_id'] = $productLifecycle->id;
                 $transaction->commit();
             } else {
                 $transaction->rollBack();
@@ -261,24 +260,84 @@ class ApiProduct extends Products
             ->one();
 
         $response['product_group_id'] = $id;
-        
-        foreach ($data['referencesProductGroupRelProducts'] as $item){
-            $response["products"][] = [
-                'value' => $item["products"]['value'] ?? '',
-                'label' => $item["products"]['label'] ?? '',
-            ];
+        $response["products"] = [];
+        $response["product_lifecycle"] = [];
+
+        if (!empty($data['referencesProductGroupRelProducts'])){
+            foreach ($data['referencesProductGroupRelProducts'] as $item){
+                $response["products"][] = [
+                    'value' => $item["products"]['value'] ?? '',
+                    'label' => $item["products"]['label'] ?? '',
+                ];
+            }
         }
 
-        foreach ($data['productLifecycles'] as $item){
-            $response["product_lifecycle"][] = [
-                'lifecycle' => $item["lifecycle"] ?? '',
-                'bypass' => $item["bypass"] ?? '',
-                'equipments_group_type_id' => $item["equipmentGroup"]["equipments_group_type_id"] ?? [],
-                'equipment_group_id' => $item["equipment_group_id"] ?? '',
-                'product_lifecycle_id' => $item["product_lifecycle_id"] ?? '',
-                'equipments' => $item["equipmentGroup"]["equipments"] ?? [],
-            ];
+        if (!empty($data['productLifecycles'])){
+            foreach ($data['productLifecycles'] as $item){
+                $response["product_lifecycle"][] = [
+                    'lifecycle' => $item["lifecycle"] ?? '',
+                    'bypass' => $item["bypass"] ?? '',
+                    'equipments_group_type_id' => $item["equipmentGroup"]["equipments_group_type_id"] ?? [],
+                    'equipment_group_id' => $item["equipment_group_id"] ?? '',
+                    'product_lifecycle_id' => $item["product_lifecycle_id"] ?? '',
+                    'equipments' => $item["equipmentGroup"]["equipments"] ?? [],
+                ];
+            }
         }
         return $response;
+    }
+
+    /**
+     * @param $post
+     * @return array
+     */
+    public static function deleteApiProductEquipment($post):array 
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app','Success'),
+        ];
+        try{
+
+            if(empty($post) || empty($post['product_lifecycle_id']))
+                $response = [
+                    'status' => false,
+                    'message' => Yii::t('app', 'Data empty'),
+                ];
+
+            if ($response['status']){
+                $lifecycle = ProductLifecycle::findOne(['id' => $post['product_lifecycle_id']]);
+                if (!empty($lifecycle)){
+                    if ($lifecycle->delete() === false)
+                        $response = [
+                            'status' => false,
+                            'message' => Yii::t('app', 'Not deleted'),
+                        ];
+                    if ($lifecycle->equipment_group_id){
+                        EquipmentGroupRelationEquipment::deleteAll(['equipment_group_id' => $lifecycle->equipment_group_id]);
+                        EquipmentGroup::deleteAll(['id' => $lifecycle->equipment_group_id]);
+                    }
+                }else{
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app', 'Product lifecycle not found'),
+                    ];
+                }
+            }
+
+            if($response['status']){ 
+                $transaction->commit();
+            }else{
+                $transaction->rollBack();
+            }
+        } catch(\Exception $e){
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        return  $response;
     }
 }
