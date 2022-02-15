@@ -39,7 +39,9 @@ class ReferencesProductGroupSearch extends ReferencesProductGroup
     public function search($params)
     {
         $query = ReferencesProductGroup::find()
-            ->orderBy(["id" => SORT_DESC]);
+            ->alias("rpg")
+            ->orderBy(["id" => SORT_DESC])
+            ->joinWith(["referencesProductGroupRelProducts.products as p"]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -50,9 +52,8 @@ class ReferencesProductGroupSearch extends ReferencesProductGroup
         if (!$this->validate())
             return $dataProvider;
 
-        $query->andFilterWhere([
-            'status_id' => $this->status_id,
-        ]);
+        $query->andFilterWhere(['rpg.status_id' => $this->status_id])
+            ->andFilterWhere(["ilike", 'p.name', $this->name]);
         return $dataProvider;
     }
 }
