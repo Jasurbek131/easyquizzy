@@ -12,7 +12,7 @@ use app\modules\plm\models\PlmDocumentItems;
 use app\modules\plm\models\PlmDocuments;
 use app\modules\plm\models\PlmProcessingTime;
 use app\modules\plm\models\PlmStops;
-use app\modules\plm\models\Reasons;
+use app\modules\references\models\Reasons;
 use app\modules\references\models\EquipmentGroup;
 use app\modules\references\models\EquipmentGroupRelationEquipment;
 use app\modules\references\models\Equipments;
