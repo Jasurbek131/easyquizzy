@@ -82,7 +82,6 @@ class ApiProduct extends Products
                     'message' => Yii::t('app', 'Data empty'),
                 ];
 
-
             /**
              * Product group yaratilyapti
              */
@@ -163,15 +162,14 @@ class ApiProduct extends Products
                     }
                 }
             }
-
             /**
              * Mahsulot life cycle yaratish
              */
             if ($response['status']){
-                if (empty($post['product_life_cycle_id']))
+                if (empty($post['item']['product_life_cycle_id']))
                     $productLifecycle = new ProductLifecycle();
                 else
-                    $productLifecycle = ProductLifecycle::findOne(['id' => $post['product_life_cycle_id']]);
+                    $productLifecycle = ProductLifecycle::findOne(['id' => $post['item']['product_life_cycle_id']]);
 
                 $productLifecycle->setAttributes([
                     'product_group_id' => $post['product_group_id'],

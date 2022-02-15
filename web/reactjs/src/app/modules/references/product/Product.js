@@ -121,7 +121,6 @@ class Product extends Component {
                 data = {
                     products: forms.products,
                     product_group_id: forms.product_group_id,
-                    product_lifecycle_id: forms.product_lifecycle_id,
                     item: forms["product_lifecycle"][index]
                 };
                 break;
