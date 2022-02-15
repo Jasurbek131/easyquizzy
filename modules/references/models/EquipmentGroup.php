@@ -38,8 +38,8 @@ class EquipmentGroup extends BaseModel
     public function rules()
     {
         return [
-            [['name', 'status_id', 'value'], 'required'],
-            [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
+            [['name', 'status_id'], 'required'],
+            [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'equipments_group_type_id'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [["value"], "number"],
@@ -61,6 +61,11 @@ class EquipmentGroup extends BaseModel
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        return parent::beforeSave($insert);
     }
 
     /**

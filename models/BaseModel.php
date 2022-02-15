@@ -29,6 +29,9 @@ class BaseModel extends ActiveRecord
     // category type
     const CATEGORY_PLANNED = 1;
     const CATEGORY_UNPLANNED = 2;
+
+    const TYPE_EQUIPMENT_GROUP_STATSIONAR = 1;
+    const TYPE_EQUIPMENT_GROUP_KONVEYER = 2;
     /**
      * @return array
      */
@@ -59,10 +62,28 @@ class BaseModel extends ActiveRecord
             }
             return "";
         }
+
         $list = StatusList::find()->asArray()->select(['id as value', "{$language} as label"])->all();
         if ($isArray) {
             return $list;
         }
         return ArrayHelper::map($list, 'value', 'label');
+    }
+
+    /**
+     * @return array
+     */
+    public static function getEquipmentGroupTypeList(): array
+    {
+        return [
+            [
+                'value' => self::TYPE_EQUIPMENT_GROUP_STATSIONAR,
+                'label' => "Statsionar"
+            ],
+            [
+                'value' => self::TYPE_EQUIPMENT_GROUP_KONVEYER,
+                'label' => "Konveyer"
+            ],
+        ];
     }
 }

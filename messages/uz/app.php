@@ -20,6 +20,7 @@ return [
     '(New)' => '@@@@',
     '(new)' => '',
     'Active' => 'Faol',
+    'New product create' => 'Yangi mahsulot qo\'shish',
     'Add Info' => '',
     'Admin' => '@@Admin@@',
     'Administrator' => '',

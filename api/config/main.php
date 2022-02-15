@@ -52,6 +52,7 @@ return [
                     'controller' => [
                         'v1/document',
                         'v1/plm-document-report',
+                        'v1/api-product',
                     ],
                     'extraPatterns' => [
                         'POST index' => 'index',

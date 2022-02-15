@@ -14,7 +14,7 @@ class Language extends Widget
 
     public function run()
     {
-        $lang = in_array(Yii::$app->language, Yii::$app->params['language_list']) ? Yii::$app->language : "uz";
+        $lang = Yii::$app->language ?? "uz";
         echo $this->prefix.$lang;
     }
 }

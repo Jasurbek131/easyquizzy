@@ -79,7 +79,7 @@ $create = Yii::t('app', 'Create');
                                 style="border: 1px solid #8950fc;" disabled="disabled"
                                 href="<?php echo Url::to(['hr-departments/create']) ?>" ><i class="fa fa-plus"></i></button>
 
-                        <?php if(!Yii::$app->user->can("hr-organisation-create")):?>
+                        <?php if(Yii::$app->user->can("super-admin")):?>
                             <button class="btn btn-xs btn-outline-success tree-create" style="border: 1px solid #1bc5bd;"
                                 href="<?php echo Url::to(['hr-departments/create']) ?>"><i
                                 class="fa fa-tree"></i></button>
