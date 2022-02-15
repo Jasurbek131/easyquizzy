@@ -48,10 +48,11 @@ class ProductLifecycle extends BaseModel
     public function rules()
     {
         return [
-            [['product_id', 'lifecycle', 'status_id','bypass'], 'required'],
+            [['lifecycle', 'status_id','bypass'], 'required'],
             [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
+            [['product_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => ReferencesProductGroup::class, 'targetAttribute' => ['product_group_id' => 'id']],
             [['time_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => TimeTypesList::class, 'targetAttribute' => ['time_type_id' => 'id']],
         ];
     }

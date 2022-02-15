@@ -36,7 +36,7 @@ class EquipmentGroupRelationEquipment extends BaseModel
     public function rules()
     {
         return [
-            [['equipment_group_id', 'equipment_id', 'work_order', 'status_id'], 'required'],
+            [['equipment_group_id', 'equipment_id', 'status_id'], 'required'],
             [['created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['equipment_group_id', 'equipment_id', 'work_order', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::className(), 'targetAttribute' => ['equipment_group_id' => 'id']],

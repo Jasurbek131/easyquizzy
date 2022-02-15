@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="card products-index">
 <!--    --><?php //if (Yii::$app->user->can('products/create')): ?>
     <div class="card-header pull-right no-print">
-        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
+        <?= Html::a('<span class="fa fa-plus"></span>', ['new-create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
 <!--    --><?php //endif; ?>
@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update}{view}{delete}',
+                    'template' => '{new-update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                     'visibleButtons' => [
 //                        'view' => Yii::$app->user->can('products/view'),
@@ -53,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                        }
                     ],
                     'buttons' => [
-                        'update' => function ($url, $model) {
+                        'new-update' => function ($url, $model) {
                             return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
                                 'title' => Yii::t('app', 'Update'),
                                 'class'=> 'update-dialog btn btn-xs btn-success mr1',
@@ -83,17 +83,3 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php Pjax::end(); ?>
     </div>
 </div>
-<?=  \app\widgets\ModalWindow\ModalWindow::widget([
-    'model' => 'products',
-    'crud_name' => 'products',
-    'modal_id' => 'products-modal',
-    'modal_header' => '<h5>'. Yii::t('app', 'Products') . '</h5>',
-    'active_from_class' => 'customAjaxForm',
-    'update_button' => 'update-dialog',
-    'create_button' => 'create-dialog',
-    'view_button' => 'view-dialog',
-    'delete_button' => 'delete-dialog',
-    'modal_size' => 'modal-md',
-    'grid_ajax' => 'products_pjax',
-    'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
-]); ?>

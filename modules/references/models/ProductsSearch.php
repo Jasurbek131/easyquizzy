@@ -40,7 +40,7 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
-        $query = Products::find()
+        $query = ReferencesProductGroup::find()
             ->orderBy(["id" => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
