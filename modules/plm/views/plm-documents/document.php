@@ -5,7 +5,7 @@ use app\assets\ReactAsset;
 use yii\web\View;
 
 /* @var $this View */
-$this->title = Yii::t('app', 'Documents');
+$this->title = Yii::t('app', 'Production results');
 $this->params['breadcrumbs'][] = $this->title;
 
 ReactAsset::$reactFileName = 'document';
