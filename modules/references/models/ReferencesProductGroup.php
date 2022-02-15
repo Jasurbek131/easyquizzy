@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property int $status_id
+ * @property string $name
  * @property int $created_by
  * @property int $created_at
  * @property int $updated_by
@@ -19,6 +20,7 @@ use Yii;
  */
 class ReferencesProductGroup extends BaseModel
 {
+    public $name;
     /**
      * {@inheritdoc}
      */
@@ -35,6 +37,7 @@ class ReferencesProductGroup extends BaseModel
         return [
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['name'], 'safe']
         ];
     }
 
@@ -45,6 +48,7 @@ class ReferencesProductGroup extends BaseModel
     {
         return [
             'id' => Yii::t('app', 'ID'),
+            'name' => Yii::t('app', 'Name'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_by' => Yii::t('app', 'Created By'),
             'created_at' => Yii::t('app', 'Created At'),

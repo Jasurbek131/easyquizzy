@@ -1,6 +1,8 @@
 <?php
 
 use app\models\BaseModel;
+use app\modules\references\models\ReferencesProductGroup;
+use app\modules\references\models\ReferencesProductGroupRelProduct;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -29,8 +31,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
 
-                'name',
-                'part_number',
+                [
+                    'attribute' => 'name',
+                    'format' => 'raw',
+                    'value' => function(ReferencesProductGroup $model) {
+                        return ReferencesProductGroupRelProduct::getProductsByGroup($model->id);
+                    },
+                ],
                 [
                     'attribute' => 'status_id',
                     'format' => 'raw',

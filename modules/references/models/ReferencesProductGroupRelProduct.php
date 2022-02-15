@@ -64,4 +64,31 @@ class ReferencesProductGroupRelProduct extends \yii\db\ActiveRecord
     {
         return $this->hasOne(ReferencesProductGroup::class, ['id' => 'product_group_id']);
     }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    public static function getProductsByGroup($id): string
+    {
+        $data = self::find()
+            ->alias("rpgrp")
+            ->select([
+                "p.name"
+            ])
+            ->leftJoin(["p" => "products"], "rpgrp.product_id = p.id")
+            ->where([
+                "rpgrp.product_group_id" => $id
+            ])
+            ->asArray()
+            ->all();
+
+        $result = "";
+        if (!empty($data)){
+            foreach ($data as $item){
+                $result .= "<span class='badge badge-success'>".$item['name']."</span> ";
+            }
+        }
+        return $result;
+    }
 }

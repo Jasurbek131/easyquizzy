@@ -306,7 +306,7 @@ class Product extends Component {
                             </div>
                             <div className="row">
                                 <div className="col-lg-12">
-                                    <a href="" className={"btn btn-info"}>Orqaga</a>
+                                    <a href="/references/products/index" className={"btn btn-info"}>Orqaga</a>
                                 </div>
                             </div>
                         </div>
