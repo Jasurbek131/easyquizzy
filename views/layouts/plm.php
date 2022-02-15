@@ -360,14 +360,14 @@ AppAsset::register($this);
                                     'active' => $controller == 'equipment-group' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-object-group nav-icon"></i><p>{label}</p></a>',
                                 ],
-                                [
-                                    'label' => Yii::t('app', 'Product Lifecycle'),
-                                    'url' => '/references/product-lifecycle/index',
-                                    'options' => ['class' => 'nav-item'],
-                                    'visible' => P::can("product-lifecycle/index"),
-                                    'active' => $controller == 'product-lifecycle' && $action  == 'index',
-                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-clock nav-icon"></i><p>{label}</p></a>',
-                                ],
+//                                [
+//                                    'label' => Yii::t('app', 'Product Lifecycle'),
+//                                    'url' => '/references/product-lifecycle/index',
+//                                    'options' => ['class' => 'nav-item'],
+//                                    'visible' => P::can("product-lifecycle/index"),
+//                                    'active' => $controller == 'product-lifecycle' && $action  == 'index',
+//                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-clock nav-icon"></i><p>{label}</p></a>',
+//                                ],
                                 [
                                     'label' => Yii::t('app', 'Defects'),
                                     'url' => '/references/defects/index',
