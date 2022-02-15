@@ -48,7 +48,7 @@ class ProductLifecycle extends BaseModel
     public function rules()
     {
         return [
-            [['lifecycle', 'status_id','bypass'], 'required'],
+            [['equipment_group_id', 'lifecycle', 'status_id','bypass'], 'required'],
             [['product_id', 'equipment_group_id', 'lifecycle', 'time_type_id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
@@ -149,10 +149,10 @@ class ProductLifecycle extends BaseModel
 
     public static function getProductLifecycleList($one = false, $id = null) {
         $list = ProductLifecycle::find()->alias('pl')->select([
-            'p.id as value', "p.name as label", "MAX(pl.lifecycle) as lifecycle"
+            'pl.equipment_group_id', "MAX(p.name) as label", "pl.lifecycle", "pl.bypass", 'pl.product_id', 'pl.product_id as value',
         ])->innerJoin('products p', 'pl.product_id = p.id')
             ->where(['pl.status_id' => BaseModel::STATUS_ACTIVE])
-            ->groupBy('p.id')
+            ->groupBy('pl.id')
             ->asArray();
         if ($one) {
             return $list->andWhere(['pl.id' => $id])->one();

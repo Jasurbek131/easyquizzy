@@ -12,7 +12,7 @@ use app\modules\plm\models\PlmDocumentItems;
 use app\modules\plm\models\PlmDocuments;
 use app\modules\plm\models\PlmProcessingTime;
 use app\modules\plm\models\PlmStops;
-use app\modules\plm\models\Reasons;
+use app\modules\references\models\Reasons;
 use app\modules\references\models\EquipmentGroup;
 use app\modules\references\models\EquipmentGroupRelationEquipment;
 use app\modules\references\models\Equipments;
@@ -138,6 +138,7 @@ class DocumentController extends ActiveController
                     $newGroup = new EquipmentGroup();
                     $newGroup->setAttributes([
                         'name' => $group['name'],
+                        'value' => $group['value'],
                         'status_id' => BaseModel::STATUS_ACTIVE
                     ]);
                     if ($newGroup->save()) {
@@ -184,7 +185,7 @@ class DocumentController extends ActiveController
                         'product_id' => $lifecycle['product_id'],
                         'equipment_group_id' => $lifecycle['equipment_group_id'],
                         'lifecycle' => $lifecycle['lifecycle'],
-                        'time_type_id' => $lifecycle['time_type_id'],
+                        'bypass' => $lifecycle['bypass'],
                         'equipments' => true,
                         'status_id' => BaseModel::STATUS_ACTIVE
                     ]);
@@ -320,7 +321,7 @@ class DocumentController extends ActiveController
                                         $newProductItem->setAttributes([
                                             'document_item_id' => $docItem->id,
                                             'product_id' => $product['product_id'],
-                                            'product_lifecycle_id' => '',
+                                            'product_lifecycle_id' => $product['product_lifecycle_id'],
                                             'qty' => $product['qty'],
                                             'fact_qty' => $product['fact_qty']
                                         ]);
@@ -494,11 +495,11 @@ class DocumentController extends ActiveController
 //                    'id as value',
 //                    "CONCAT(name, ' (', TO_CHAR(start_time, 'HH24:MI'), ' - ', TO_CHAR(end_time, 'HH24:MI'), ')') as label"
 //                ])->asArray()->all();
+//                $response['timeTypeList'] = TimeTypesList::find()->select([
+//                    'id as value', 'name as label'
+//                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+//                    ->asArray()->all();
 
-                $response['timeTypeList'] = TimeTypesList::find()->select([
-                    'id as value', 'name as label'
-                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
-                    ->asArray()->all();
                 if (!is_null($id)) {
                     $plm_document = \app\api\modules\v1\models\BaseModel::getDocumentElements($id);
                     if (!empty($plm_document)) {

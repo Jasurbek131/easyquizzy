@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ReactAsset::$reactFileName = 'document';
 ReactAsset::$reactCssFileName = 'document';
 \app\assets\ReactAsset::register($this);
-
+$this->params['bodyClass'] = "sidebar-collapse";
 ?>
     <div id="root"></div>
 

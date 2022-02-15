@@ -4,21 +4,21 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\references\models\DefectsSearch */
+/* @var $searchModel app\modules\references\models\CategoriesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Defects');
+$this->title = Yii::t('app', 'Categories');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="card defects-index">
-<!--    --><?php //if (Yii::$app->user->can('defects/create')): ?>
+<div class="card categories-index">
+    <?php if (Yii::$app->user->can('categories/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
-<!--    --><?php //endif; ?>
+    <?php endif; ?>
     <div class="card-body">
-        <?php Pjax::begin(['id' => 'defects_pjax']); ?>
+        <?php Pjax::begin(['id' => 'categories_pjax']); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     
     <?= GridView::widget([
@@ -33,8 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'name_ru',
             [
                 'attribute' => 'type',
-                'value' => function(\app\modules\references\models\Defects $model){
-                    $info = $model::getDefectTypeList($model->type);
+                'value' => function(\app\modules\references\models\Categories $model){
+                    $info = $model::getCategoryTypeList($model->type);
                     return $info;
                 }
             ],
@@ -56,13 +56,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
-//                        'view' => Yii::$app->user->can('defects/view'),
-//                        'update' => function($model) {
-//                            return Yii::$app->user->can('defects/update'); // && $model->status < $model::STATUS_SAVED;
-//                        },
-//                        'delete' => function($model) {
-//                            return Yii::$app->user->can('defects/delete'); // && $model->status < $model::STATUS_SAVED;
-//                        }
+                        'view' => Yii::$app->user->can('categories/view'),
+                        'update' => function($model) {
+                            return Yii::$app->user->can('categories/update'); // && $model->status < $model::STATUS_SAVED;
+                        },
+                        'delete' => function($model) {
+                            return Yii::$app->user->can('categories/delete'); // && $model->status < $model::STATUS_SAVED;
+                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {
@@ -95,16 +95,16 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 <?=  \app\widgets\ModalWindow\ModalWindow::widget([
-    'model' => 'defects',
-    'crud_name' => 'defects',
-    'modal_id' => 'defects-modal',
-    'modal_header' => '<h5>'. Yii::t('app', 'Defects') . '</h5>',
+    'model' => 'categories',
+    'crud_name' => 'categories',
+    'modal_id' => 'categories-modal',
+    'modal_header' => '<h5>'. Yii::t('app', 'Categories') . '</h5>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',
     'view_button' => 'view-dialog',
     'delete_button' => 'delete-dialog',
     'modal_size' => 'modal-md',
-    'grid_ajax' => 'defects_pjax',
+    'grid_ajax' => 'categories_pjax',
     'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
 ]); ?>

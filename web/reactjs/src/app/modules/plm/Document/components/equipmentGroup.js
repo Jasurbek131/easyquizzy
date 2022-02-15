@@ -19,10 +19,16 @@ function EquipmentGroup(props){
         switch (type) {
             case "variables":
                 variables[name] = value;
+                if (name === 'product_id') {
+                    $("#" + name).children('div').css("border", "1px solid #ced4da");
+                } else {
+                    $("#" + name).css("border", "1px solid #ced4da");
+                }
                 props.onChangeProps('variables', variables);
                 break;
             case "variableItems":
                 variableItems[key][name] = value;
+                $("#equipment_id"+key).children('div').css("border", "1px solid #ced4da");
                 props.onChangeProps('variableItems', variableItems);
                 break;
             case "variableItems-plus":
@@ -41,16 +47,47 @@ function EquipmentGroup(props){
     }
 
     const onSave = (event) => {
+        let isSend = true;
         switch (props.appearance.type) {
             case "equipment-group":
-                let equipment_group = {
-                    equipment_group: variables,
-                    relation: variableItems
-                };
-                props.onSaveProps('equipmentGroup', equipment_group);
+                if (variables.name === "") {
+                    isSend = false;
+                    $('#name').css("border", "1px solid red");
+                }
+                if (variables.value === "") {
+                    isSend = false;
+                    $('#value').css("border", "1px solid red");
+                }
+                variableItems.map((item, key) => {
+                    if (item.equipment_id === "") {
+                        isSend = false;
+                        $('#equipment_id'+key).children('div').css("border", "1px solid red");
+                    }
+                })
+                if (isSend) {
+                    let equipment_group = {
+                        equipment_group: variables,
+                        relation: variableItems
+                    };
+                    props.onSaveProps('equipmentGroup', equipment_group);
+                }
                 break;
             case "product-lifecycle":
-                props.onSaveProps('productLifecycle', {lifecycle: variables});
+                if (variables.product_id === "") {
+                    isSend = false;
+                    $('#product_id').children('div').css("border", "1px solid red");
+                }
+                if (variables.lifecycle === "") {
+                    isSend = false;
+                    $('#lifecycle').css("border", "1px solid red");
+                }
+                if (variables.bypass === "") {
+                    isSend = false;
+                    $('#bypass').css("border", "1px solid red");
+                }
+                if (isSend) {
+                    props.onSaveProps('productLifecycle', {lifecycle: variables});
+                }
                 break;
         }
     }
@@ -62,7 +99,14 @@ function EquipmentGroup(props){
                     <div className={'form-group'}>
                         <label>Nomi</label>
                         <input onChange={(e) => {onChange('variables', 'name', '', e?.target?.value)}}
-                               type={"text"} value={variables?.name} className={'form-control'}/>
+                               type={"text"} value={variables?.name} className={'form-control'} id={"name"}/>
+                    </div>
+                </div>
+                <div className={'col-sm-12'}>
+                    <div className={'form-group'}>
+                        <label>Koeffitsienti</label>
+                        <input onChange={(e) => {onChange('variables', 'value', '', e?.target?.value)}}
+                               type={"number"} value={variables?.value} className={'form-control'} id={"value"}/>
                     </div>
                 </div>
                 <div className={"col-sm-12"}>
@@ -85,6 +129,7 @@ function EquipmentGroup(props){
                                         <td>{(key + 1)}</td>
                                         <td>
                                             <Select className={"aria-required"}
+                                                    id={"equipment_id"+key}
                                                     onChange={(e) => {onChange('variableItems', 'equipment_id', key, e?.value)}}
                                                     placeholder={"Tanlang ..."}
                                                     value={props?.appearance?.equipmentList.filter(({value}) => +value === +item?.equipment_id)}
@@ -136,6 +181,7 @@ function EquipmentGroup(props){
                                 onChange={(e) => {
                                     onChange('variables', 'product_id', '', e?.value)
                                 }}
+                                id={"product_id"}
                                 placeholder={"Tanlang ..."}
                                 value={props.appearance?.productList.filter(({value}) => +value === +variables?.product_id)}
                                 options={props.appearance?.productList}
@@ -145,21 +191,16 @@ function EquipmentGroup(props){
                 </div>
                 <div className={'col-sm-12'}>
                     <div className={'form-group'}>
-                        <label>Lifecycle</label>
+                        <label>Lifecycle <small>(sekund)</small></label>
                         <input onChange={(e) => {onChange('variables', 'lifecycle', '', e?.target?.value)}}
-                               type={"number"} className={'form-control'} value={variables?.lifecycle}/>
+                               type={"number"} className={'form-control'} value={variables?.lifecycle} id={"lifecycle"}/>
                     </div>
                 </div>
                 <div className={'col-sm-12'}>
                     <div className={'form-group'}>
-                        <label>Vaqt turi</label>
-                        <Select className={"aria-required"}
-                                onChange={(e) => {onChange('variables', 'time_type_id', '', e?.value)}}
-                                placeholder={"Tanlang ..."}
-                                value={props.appearance?.timeTypeList.filter(({value}) => +value === +variables?.time_type_id)}
-                                options={props.appearance?.timeTypeList}
-                                styles={customStyles}
-                        />
+                        <label>Bypass Lifecycle <small>(sekund)</small></label>
+                        <input onChange={(e) => {onChange('variables', 'bypass', '', e?.target?.value)}}
+                               type={"number"} className={'form-control'} value={variables?.bypass} id={"bypass"}/>
                     </div>
                 </div>
                 <div className={"col-sm-12 displayFlex"}>
