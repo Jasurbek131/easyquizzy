@@ -9,9 +9,9 @@ $this->title = Yii::t('app','welcome');
 ?>
     <div class="card" style="background: #F7F7F7;">
        <div class="card-body">
-               <div class="image text-center"><?= Html::img('/img/index-logo2.png', ['style'=>'width:auto;height:400px;'])?></div>
+               <div class="image text-center"><?= Html::img('/img/index-logo2.png', ['style'=>'width:auto;height:420px;'])?></div>
            <br>
-           <h4 class="text-orange text-center"><?= mb_strtoupper(\Yii::t('app', 'Text about this system'))?></h4>
+<!--           <h4 class="text-orange text-center">--><?php //echo mb_strtoupper(\Yii::t('app', 'Text about this system'))?><!--</h4>-->
        </div>
     </div>
 <?php
