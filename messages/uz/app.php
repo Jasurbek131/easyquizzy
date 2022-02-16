@@ -17,8 +17,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Group type' => 'Guruh turi',
-    'Lifecycle (s)' => 'Siklik time (s)',
+    'Equipments type' => 'Uskunalar turi',
+    'Cycle time (s)' => 'Cycle time (s)',
     'Bypass (s)' => 'Bypass (s)',
     '(New)' => '(Yangi)',
     '(new)' => '(yangi)',

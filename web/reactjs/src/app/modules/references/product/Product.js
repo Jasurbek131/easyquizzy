@@ -9,6 +9,7 @@ const API_URL = window.location.protocol + "//" + window.location.host + "/api/v
 
 const  initialLifeCycle = {
     equipments : '',
+    name : '',
     lifecycle : '',
     bypass : '',
     equipment_group_id : '',
@@ -32,7 +33,7 @@ class Product extends Component {
                     id: null,
                     name: '',
                     part_number: '',
-                    status_id: '',
+                    status_id: 1,
                 },
                 products: [],
                 product_group_id: '',
@@ -143,9 +144,13 @@ class Product extends Component {
     async onSave(type, index, e){
         let { forms, products_list } = this.state;
         let data = {};
+        let validate = true;
         switch (type) {
             case "PRODUCT_SAVE":
                 data = forms.modal;
+                if (!forms.modal.name || !forms.modal.part_number || !forms.modal.status_id) {
+                    validate = false;
+                }
                 break;
             case "PRODUCT_EQUIPMENT_SAVE":
                 data = {
@@ -153,34 +158,43 @@ class Product extends Component {
                     product_group_id: forms.product_group_id,
                     item: forms["product_lifecycle"][index]
                 };
+                if (
+                    !forms["product_lifecycle"][index]['name'] || !forms["product_lifecycle"][index]['equipments']
+                    || !forms["product_lifecycle"][index]['lifecycle'] || !forms["product_lifecycle"][index]['bypass'] || !forms["product_lifecycle"][index]['equipments_group_type_id']
+                ) {
+                    validate = false;
+                }
                 break;
         }
 
-        let response = await axios.post(API_URL + 'index?type=' + type, data);
+        if (validate){
+            let response = await axios.post(API_URL + 'index?type=' + type, data);
 
-        if (response.data.status) {
-            switch (type) {
-                case "PRODUCT_SAVE":
-                    forms['modal'] =  {
-                        id: null,
-                        name: '',
-                        part_number: '',
-                        status_id: '',
-                    };
-                    products_list.push(response.data.item);
-                    this.display();
-                    break;
-                case "PRODUCT_EQUIPMENT_SAVE":
-                    forms["product_lifecycle"][index]['equipment_group_id'] = response.data.equipment_group_id;
-                    forms["product_lifecycle"][index]['product_lifecycle_id'] = response.data.product_lifecycle_id;
-                    forms['product_group_id'] = response.data.product_group_id;
-                    break;
+            if (response.data.status) {
+                switch (type) {
+                    case "PRODUCT_SAVE":
+                        forms['modal'] =  {
+                            id: null,
+                            name: '',
+                            part_number: '',
+                            status_id: 1,
+                        };
+                        products_list.push(response.data.item);
+                        this.display();
+                        break;
+                    case "PRODUCT_EQUIPMENT_SAVE":
+                        forms["product_lifecycle"][index]['equipment_group_id'] = response.data.equipment_group_id;
+                        forms["product_lifecycle"][index]['product_lifecycle_id'] = response.data.product_lifecycle_id;
+                        forms['product_group_id'] = response.data.product_group_id;
+                        break;
+                }
+                toast.success(response.data.message);
+            } else {
+                toast.error(response.data.message);
             }
-            toast.success(response.data.message);
-        } else {
-            toast.error(response.data.message);
+        }else{
+            toast.error('Kerakli ma\'lumotlarni to\'ldiring');
         }
-
         this.setState({forms, products_list});
     };
 
@@ -205,7 +219,7 @@ class Product extends Component {
         if(forms.product_lifecycle.length > 0){
             productLifecycleBody = forms.product_lifecycle.map((item, index) => {
                 return (
-                    <div className={"driver col-lg-12"} key={index}>
+                    <div className={item.product_lifecycle_id ? "driver col-lg-12 saved": "driver col-lg-12"} key={index}>
                         {index != 0 ? (
                             <div className={"remove_driver remove"}>
                                 <button  className={"btn btn-xs btn-danger"}  onClick={this.removeLifeCycle.bind(this,index)}><i className={"fa fa-times"}></i></button>
@@ -215,12 +229,21 @@ class Product extends Component {
                                 <button className={"btn btn-xs btn-primary "} onClick={this.addManualDriverInfo.bind(this)}><i className={"fa fa-plus"}></i></button>
                             </div>}
 
-
-
-
                        <div className={"row"}>
-                           <div className={"col-lg-6"}>
-                               <label htmlFor={"equipments_"+index}>{messages.equipments}</label>
+                           <div className="col-lg-2">
+                               <label htmlFor={"lifecycle_"+index}><span className={"required"}>*</span> {messages.name}</label>
+                               <input
+                                   style={{borderColor: isSubmitted || item.name ? "#CCCCCC" : "#C82333"}}
+                                   className={"form-control"}
+                                   id={"name_"+index}
+                                   name="name"
+                                   autoComplete={'off'}
+                                   value={item.name}
+                                   onChange={this.onHandleChange.bind(this, 'input', 'name', 'product_lifecycle', index)}
+                               />
+                           </div>
+                           <div className={"col-lg-4"}>
+                               <label htmlFor={"equipments_"+index}><span className={"required"}>*</span> {messages.equipments}</label>
                                <Select
                                    styles={style}
                                    isMulti
@@ -233,7 +256,7 @@ class Product extends Component {
                                />
                            </div>
                            <div className={"col-lg-2"}>
-                               <label htmlFor={"equipments_group_type_id_"+index}>{messages.group_type}</label>
+                               <label htmlFor={"equipments_group_type_id_"+index}><span className={"required"}>*</span> {messages.group_type}</label>
                                <Select
                                    styles={style}
                                    id={"equipments_group_type_id_"+index}
@@ -245,27 +268,31 @@ class Product extends Component {
                                />
                            </div>
                            <div className={"col-lg-2"}>
-                               <label htmlFor={"lifecycle"+index}>{messages.lifecycle}</label>
+                               <label htmlFor={"lifecycle_"+index}><span className={"required"}>*</span> {messages.lifecycle}</label>
                                <input
                                    style={{borderColor: isSubmitted || item.lifecycle ? "#CCCCCC" : "#C82333"}}
                                    className={"form-control"}
-                                   id={"lifecycle"+index}
+                                   id={"lifecycle_"+index}
                                    name="lifecycle"
                                    autoComplete={'off'}
+                                   type={"number"}
+                                   min={0}
                                    value={item.lifecycle}
                                    onChange={this.onHandleChange.bind(this, 'input', 'lifecycle', 'product_lifecycle', index)}
                                />
                            </div>
                            <div className={"col-lg-2"}>
-                               <label htmlFor={"bypass"+index}>{messages.bypass}</label>
+                               <label htmlFor={"bypass"+index}><span className={"required"}>*</span> {messages.bypass}</label>
                                <div className={"flex"}>
                                    <input
                                        style={{borderColor: isSubmitted || item.bypass ? "#CCCCCC" : "#C82333"}}
                                        className={"form-control"}
                                        id={"bypass"+index}
                                        name="bypass"
+                                       type={"number"}
                                        autoComplete={'off'}
                                        value={item.bypass}
+                                       min={0}
                                        onChange={this.onHandleChange.bind(this, 'input', 'bypass', 'product_lifecycle', index)}
                                    />
                                    <button className="btn btn-success btn-xs" disabled={forms.products.length > 0 ? false : true} onClick={this.onSave.bind(this, "PRODUCT_EQUIPMENT_SAVE", index)}>
@@ -288,7 +315,7 @@ class Product extends Component {
                     </div>
                     <div className={"row"}>
                         <div className="col-lg-12">
-                            <label htmlFor={"products"}>Mahsulotlar</label>
+                            <label htmlFor={"products"}><span className={"required"}>*</span> {messages.products}</label>
                             <div className="flex">
                                 <Select
                                     styles={style}
@@ -318,30 +345,31 @@ class Product extends Component {
                             </div>
                             <div className="row">
                                 <div className="col-lg-12">
-                                    <a href="/references/products/index" className={"btn btn-info"}>Orqaga</a>
+                                    <a href="/references/products/index" className={"btn btn-info"}>{messages.back ?? ""}</a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="modal" id="settingModalBox1" style={{display: display ? "block" : "none"}}>
-                        <div className="modal-dialog modal-xl custom-modal-xl" role="document">
+                        <div className="modal-dialog modal-md custom-modal-xl" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
+                                    <span></span>
                                     <span onClick={this.display.bind(this)} className={"my_times"}>&times;</span>
                                 </div>
                                 <div className="modal-body">
-                                   <div style={{minHeight: "30vh"}}>
+                                   <div style={{minHeight: "50vh"}}>
                                        <div className={"row"}>
-                                           <div className="col-lg-12">
-                                               <label className={"control-label"}><span className={"required"}>*</span>Nomi</label>
-                                               <input onChange={this.onHandleChange.bind(this, 'input', 'name', 'modal', '')}
-                                                      name={'name'} value={forms?.modal?.name} className={'form-control'}/>
-                                           </div>
                                            <div className="col-lg-12">
                                                <label className={"control-label"}><span className={"required"}>*</span>Kodi</label>
                                                <input onChange={this.onHandleChange.bind(this, 'input', 'part_number', 'modal', '')}
                                                       name={'part_number'} value={forms?.modal?.part_number} className={'form-control'}/>
+                                           </div>
+                                           <div className="col-lg-12">
+                                               <label className={"control-label"}><span className={"required"}>*</span>Nomi</label>
+                                               <input onChange={this.onHandleChange.bind(this, 'input', 'name', 'modal', '')}
+                                                      name={'name'} value={forms?.modal?.name} className={'form-control'}/>
                                            </div>
                                            <div className="col-lg-12">
                                                <label className={"control-label"}><span className={"required"}>*</span>Holati</label>
@@ -357,7 +385,7 @@ class Product extends Component {
                                            </div>
                                            <div className="col-lg-12">
                                                <br/>
-                                               <button className="btn btn-xs btn-primary" onClick={this.onSave.bind(this, "PRODUCT_SAVE", '')}>Saqlash</button>
+                                               <button className="btn btn-primary" onClick={this.onSave.bind(this, "PRODUCT_SAVE", '')}>Saqlash</button>
                                            </div>
                                        </div>
                                    </div>
@@ -367,7 +395,6 @@ class Product extends Component {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         );

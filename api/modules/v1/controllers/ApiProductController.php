@@ -117,9 +117,12 @@ class ApiProductController extends ActiveController
                 $response["equipments_group_type_list"] = BaseModel::getEquipmentGroupTypeList();
                 $response['messages'] = [
                     'equipments' => Yii::t('app', 'Equipments'),
-                    'group_type' => Yii::t('app', 'Group type'),
-                    'lifecycle' => Yii::t('app', 'Lifecycle (s)'),
+                    'group_type' => Yii::t('app', 'Equipments type'),
+                    'lifecycle' => Yii::t('app', 'Cycle time (s)'),
                     'bypass' => Yii::t('app', 'Bypass (s)'),
+                    'name' => Yii::t('app', 'Name'),
+                    'back' => Yii::t('app', 'Back'),
+                    'products' => Yii::t('app', 'Products'),
                 ];
                 break;
             case "PRODUCT_SAVE":
