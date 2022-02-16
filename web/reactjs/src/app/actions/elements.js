@@ -24,7 +24,7 @@ export const items = {
     },
     equipmentGroup: {
         equipments: [],
-        productLifecycles: []
+        productLifecycles: [],
     },
     products: [{
         label: "",
@@ -36,5 +36,6 @@ export const items = {
         lifecycle: "",
         repaired: [],
         scrapped: [],
-    }]
+    }],
+    equipments: []
 };

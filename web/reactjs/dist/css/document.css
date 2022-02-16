@@ -64,6 +64,19 @@ label {
 ul {
     margin-bottom: 0;
 }
+textarea.form-control{
+    padding: 2px!important;
+    height: 26px;
+}
+#organisation_id .css-1ylieoo-control{
+    background-color: #eee!important;
+}
+#organisation_id{
+    pointer-events: none;
+}
+#reg_date{
+    height: 25px!important;
+}
 @media print {
     .no-print {
         display: none!important;
