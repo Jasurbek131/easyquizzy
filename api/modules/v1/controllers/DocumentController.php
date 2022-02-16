@@ -227,7 +227,7 @@ class DocumentController extends ActiveController
                     'equipmentGroupList' => EquipmentGroup::getEquipmentGroupList(),
                     'user_id' => Yii::$app->user->id,
                     'language' => $language,
-                    'today' => date('Y.m.d H:i:s'),
+                    'today' => /*date('Y.m.d H:i:s')*/ '',
                 ];
 
                 $response['productList'] = Products::find()->alias('p')->select([
