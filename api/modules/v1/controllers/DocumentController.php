@@ -401,6 +401,8 @@ class DocumentController extends ActiveController
                 }
                 break;
             case "UPDATE":
+            case "SAVE_MODAL":
+
                 break;
         }
         return $response;
