@@ -87,6 +87,14 @@ class ProductLifecycle extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getProductGroup()
+    {
+        return $this->hasOne(ReferencesProductGroup::class, ['id' => 'product_group_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getProducts()
     {
         return $this->hasOne(Products::class, ['id' => 'product_id']);
