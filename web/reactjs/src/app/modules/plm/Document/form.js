@@ -186,7 +186,7 @@ class Form extends React.Component {
                 plm_document_items[key][name] = v;
                 if (name === 'equipment_group_id') {
                     plm_document_items[key]['equipmentGroup'] = e;
-                    plm_document_items[key]['equipmentGroup']['productLifecycles'] = e?.productLifecycles;
+                    plm_document_items[key]['equipmentGroup']['lifecycles'] = e?.lifecycles;
                 }
                 if (name === 'product_id') {
                     plm_document_items[key]['products'][index] = e;
@@ -518,28 +518,28 @@ class Form extends React.Component {
         let {appearance} = this.state;
         let response;
         switch (type) {
-            case "equipmentGroup":
-                response = await axios.post(API_URL + 'save-properties?type=SAVE_EQUIPMENT_GROUP', model);
-                if (response.data.status) {
-                    let {equipmentGroupList} = this.state;
-                    equipmentGroupList.push(response.data.equipmentGroup);
-                    appearance.display = "none";
-                    this.setState({appearance: appearance, equipmentGroupList: equipmentGroupList});
-                } else {
-                    toast.error(response.data.message);
-                }
-                break;
-            case "productLifecycle":
-                response = await axios.post(API_URL + 'save-properties?type=SAVE_PRODUCT_LIFECYCLE', model);
-                if (response.data.status) {
-                    let {plm_document_items} = this.state;
-                    plm_document_items[appearance.key]['equipmentGroup']['productLifecycles'].push(response.data.productLifecycle);
-                    appearance.display = "none";
-                    this.setState({appearance: appearance, plm_document_items: plm_document_items});
-                } else {
-                    toast.error(response.data.message);
-                }
-                break;
+            // case "equipmentGroup":
+            //     response = await axios.post(API_URL + 'save-properties?type=SAVE_EQUIPMENT_GROUP', model);
+            //     if (response.data.status) {
+            //         let {equipmentGroupList} = this.state;
+            //         equipmentGroupList.push(response.data.equipmentGroup);
+            //         appearance.display = "none";
+            //         this.setState({appearance: appearance, equipmentGroupList: equipmentGroupList});
+            //     } else {
+            //         toast.error(response.data.message);
+            //     }
+            //     break;
+            // case "productLifecycle":
+            //     response = await axios.post(API_URL + 'save-properties?type=SAVE_PRODUCT_LIFECYCLE', model);
+            //     if (response.data.status) {
+            //         let {plm_document_items} = this.state;
+            //         plm_document_items[appearance.key]['equipmentGroup']['productLifecycle'].push(response.data.productLifecycle);
+            //         appearance.display = "none";
+            //         this.setState({appearance: appearance, plm_document_items: plm_document_items});
+            //     } else {
+            //         toast.error(response.data.message);
+            //     }
+            //     break;
         }
     };
 
@@ -689,7 +689,7 @@ class Form extends React.Component {
                                             <div className={'col-sm-2'}>
                                                 <div className={'row'}>
                                                     <div className={'col-sm-12 mb-2'}>
-                                                        <label htmlFor={"equipment_group_id"+key}>Equipment group</label>
+                                                        <label htmlFor={"equipment_group_id"+key}>Uskunalar guruhi</label>
                                                         <Select className={"aria-required"}
                                                                 id={"equipment_group_id"}
                                                                 onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'equipment_group_id', key, '', '')}
@@ -700,12 +700,12 @@ class Form extends React.Component {
                                                         />
                                                     </div>
                                                     <div className="col-lg-12">
-                                                        <label htmlFor={"equipments"+key}>Equipments</label>
+                                                        <label htmlFor={"equipments"+key}>Uskunalar</label>
                                                         <Select
                                                             styles={customStyles}
                                                             isMulti
                                                             id={"equipments"}
-                                                            onChange={this.onHandleChange.bind(this, 'multi -select', 'plm_document_items','equipments',key, '', '')}
+                                                            onChange={this.onHandleChange.bind(this, 'multi-select', 'plm_document_items','equipments',key, '', '')}
                                                             value={item.equipments}
                                                             placeholder={"Выбрать"}
                                                             isClearable={true}
@@ -728,123 +728,6 @@ class Form extends React.Component {
                                                     {/*    })*/}
                                                     {/*}*/}
                                                 </div>
-                                            </div>
-                                            <div className={'col-sm-7'}>
-                                                <div className={'row'}>
-                                                    <div className={'col-sm-6'}>
-                                                        <div className={'row'}>
-                                                            <div className={'col-sm-7 pb-1'}>
-                                                                <div className={'row'}>
-                                                                    {/*<div className={'col-sm-10 mb-1 pr-0'}>*/}
-                                                                    {/*    <button onClick={(e) => {*/}
-                                                                    {/*        if (item?.equipment_group_id) {*/}
-                                                                    {/*            this.onPush('product-lifecycle-plus', 'plm_document_items', key, '', e)*/}
-                                                                    {/*        } else {*/}
-                                                                    {/*            toast.error("Avval «Qurilmalar guruhi» ni tanlang!");*/}
-                                                                    {/*        }*/}
-                                                                    {/*    }} className={"btn btn-sm btn-default prt-01 w-100 h-25 text-left btn-form-control"}>*/}
-                                                                    {/*        Product Lifecycle*/}
-                                                                    {/*    </button>*/}
-                                                                    {/*</div>*/}
-                                                                    <div className={"col-sm-2 mb-1"}>
-                                                                        <button onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
-                                                                                className={"btn btn-xs btn-primary wh-28"}>
-                                                                            <i className={"fa fa-plus"}/>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className={'col-sm-3 pb-1 text-center'}>
-                                                                <label className={'control-label'}>Lifecycle</label>
-                                                            </div>
-                                                            <div className={'col-sm-2 pb-1 text-center'}>
-                                                                <label className={'control-label'}>Bypass</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={'col-sm-6'}>
-                                                        <div className={'row'}>
-                                                            <div className={'col-sm-3 text-center'}>
-                                                                <label className={"control-label"}>Rejada</label>
-                                                            </div>
-                                                            <div className={'col-sm-3 text-center'}>
-                                                                <label className={"control-label"}>Ish/chiq</label>
-                                                            </div>
-                                                            <div className={'col-sm-3 text-center'}>
-                                                                <label className={"control-label"}>Ta'mirlangan</label>
-                                                            </div>
-                                                            <div className={'col-sm-3 text-center'}>
-                                                                <label className={"control-label"}>Yaroqsiz</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {
-                                                    item?.products?.length > 0 && item.products.map((product, prKey) => {
-                                                        return (
-                                                            <div className={'row'} key={prKey}>
-                                                                <div className={'col-sm-6'}>
-                                                                    <div className={'row'}>
-                                                                        <div className={'col-sm-7'}>
-                                                                            <div className={'row'}>
-                                                                                <div className={'col-sm-10 pr-0 mb-1'}>
-                                                                                    <Select className={"aria-required"}
-                                                                                            id={"product_lifecycle_id"}
-                                                                                            onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
-                                                                                            placeholder={"Tanlang ..."}
-                                                                                            value={item?.equipmentGroup.productLifecycles.filter(({value}) => +value === +product?.product_id)}
-                                                                                            options={item?.equipmentGroup.productLifecycles}
-                                                                                            styles={customStyles}
-                                                                                    />
-                                                                                </div>
-                                                                                <div className={'col-sm-2 mb-1'}>
-                                                                                    <button onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
-                                                                                            className={"btn btn-xs wh-28 btn-outline-danger"}>
-                                                                                        <i className={"fa fa-times"}/>
-                                                                                    </button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className={'col-sm-3'}>
-                                                                            <input type={"text"} id={"product_lifecycle"} disabled={true} className={'form-control'} value={product?.lifecycle}/>
-                                                                        </div>
-                                                                        <div className={'col-sm-2'}>
-                                                                            <input type={"text"} id={"product_bypass"} disabled={true} className={'form-control'} value={product?.bypass}/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className={'col-sm-6'}>
-                                                                    <div className={'row'}>
-                                                                        <div className={'col-sm-3'}>
-                                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
-                                                                                   disabled={true} id={"qty"} type={'number'} className={'form-control aria-required'}
-                                                                                   value={product?.qty ?? ""}/>
-                                                                        </div>
-                                                                        <div className={'col-sm-3'}>
-                                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
-                                                                                   type={'number'} className={'form-control aria-required'}  id={"fact_qty"}
-                                                                                   value={product?.fact_qty ?? ""}/>
-                                                                        </div>
-                                                                        <div className={'col-sm-3 text-center'}>
-                                                                            <label className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
-                                                                            <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
-                                                                                    className={'btn btn-primary btn-xs wh-28'}>
-                                                                                <i className={'fa fa-plus'}/>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div className={'col-sm-3 text-center'}>
-                                                                            <label className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
-                                                                            <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
-                                                                                     className={'btn btn-primary btn-xs wh-28'}>
-                                                                                <i className={'fa fa-plus'}/>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
                                             </div>
 
                                             <div className={'col-sm-1'}>
@@ -891,6 +774,115 @@ class Form extends React.Component {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div className={'col-sm-7'}>
+                                                <div className={'row'}>
+                                                    <div className={'col-sm-6'}>
+                                                        <div className={'row'}>
+                                                            <div className={'col-sm-6 pb-1'}>
+                                                                <div className={'row'}>
+                                                                    <div className={"col-sm-2 mb-1"}>
+                                                                        <button onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
+                                                                                className={"btn btn-xs btn-primary wh-28"}>
+                                                                            <i className={"fa fa-plus"}/>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className={'col-sm-2 pb-1 text-center'}>
+                                                                <label className={'control-label'}>Lifecycle</label>
+                                                            </div>
+                                                            <div className={'col-sm-2 pb-1 text-center'}>
+                                                                <label className={'control-label'}>Bypass</label>
+                                                            </div>
+                                                            <div className={'col-sm-2 text-center'}>
+                                                                <label className={"control-label"}>Rejada</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className={'col-sm-6'}>
+                                                        <div className={'row'}>
+                                                            <div className={'col-sm-3 text-center'}>
+                                                                <label className={"control-label"}>Ish/chiq</label>
+                                                            </div>
+                                                            <div className={'col-sm-3 text-center'}>
+                                                                <label className={"control-label"}>Ta'mirlangan</label>
+                                                            </div>
+                                                            <div className={'col-sm-3 text-center'}>
+                                                                <label className={"control-label"}>Yaroqsiz</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {
+                                                    item?.products?.length > 0 && item.products.map((product, prKey) => {
+                                                        return (
+                                                            <div className={'row'} key={prKey}>
+                                                                <div className={'col-sm-6'}>
+                                                                    <div className={'row'}>
+                                                                        <div className={'col-sm-6'}>
+                                                                            <div className={'row'}>
+                                                                                <div className={'col-sm-10 pr-0 mb-1'}>
+                                                                                    <Select className={"aria-required"}
+                                                                                            id={"product_lifecycle_id"}
+                                                                                            onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
+                                                                                            placeholder={"Tanlang ..."}
+                                                                                            value={item?.equipmentGroup?.lifecycles?.productGroup?.products.filter(({value}) => +value === +product?.product_id)}
+                                                                                            options={item?.equipmentGroup?.lifecycles?.productGroup?.products}
+                                                                                            styles={customStyles}
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className={'col-sm-2'}>
+                                                                            <input type={"text"} id={"product_lifecycle"} disabled={true} className={'form-control'} value={product?.lifecycle}/>
+                                                                        </div>
+                                                                        <div className={'col-sm-2'}>
+                                                                            <input type={"text"} id={"product_bypass"} disabled={true} className={'form-control'} value={product?.bypass}/>
+                                                                        </div>
+
+                                                                        <div className={'col-sm-2'}>
+                                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
+                                                                                   disabled={true} id={"qty"} type={'number'} className={'form-control aria-required'}
+                                                                                   value={product?.qty ?? ""}/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className={'col-sm-6'}>
+                                                                    <div className={'row'}>
+                                                                        <div className={'col-sm-3'}>
+                                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
+                                                                                   type={'number'} className={'form-control aria-required'}  id={"fact_qty"}
+                                                                                   value={product?.fact_qty ?? ""}/>
+                                                                        </div>
+                                                                        <div className={'col-sm-3 text-center'}>
+                                                                            <label className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
+                                                                            <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
+                                                                                    className={'btn btn-primary btn-xs wh-28'}>
+                                                                                <i className={'fa fa-plus'}/>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div className={'col-sm-3 text-center'}>
+                                                                            <label className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
+                                                                            <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
+                                                                                     className={'btn btn-primary btn-xs wh-28'}>
+                                                                                <i className={'fa fa-plus'}/>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div className={'col-sm-3 mb-1'}>
+                                                                            <button onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
+                                                                                    className={"btn btn-xs wh-28 btn-outline-danger"}>
+                                                                                <i className={"fa fa-times"}/>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+
                                             <div className={'col-sm-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row'}>

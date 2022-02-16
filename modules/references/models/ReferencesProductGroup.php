@@ -64,6 +64,13 @@ class ReferencesProductGroup extends BaseModel
     {
         return $this->hasMany(ReferencesProductGroupRelProduct::class, ['product_group_id' => 'id']);
     }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProducts()
+    {
+        return $this->hasMany(ReferencesProductGroupRelProduct::class, ['product_group_id' => 'id']);
+    }
 
     /**
      * @return \yii\db\ActiveQuery
