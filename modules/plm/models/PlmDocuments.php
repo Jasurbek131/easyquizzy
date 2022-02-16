@@ -73,6 +73,19 @@ class PlmDocuments extends BaseModel
         ];
     }
 
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord){
+            $last = self::find()->orderBy(['id' => SORT_DESC])->one();
+            if (!empty($last))
+                $last = $last['id'] + 1;
+            else
+                $last = 1;
+            $this->doc_number =  "PD-".$last;
+        }
+        return parent::beforeSave($insert);
+    }
+
     /**
      * @return yii\db\ActiveQuery
      */
