@@ -28,8 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-//            'id',
             'name_uz',
             'name_ru',
             [
@@ -46,10 +44,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => BaseModel::getStatusList()
             ],
-            //'created_by',
-            //'created_at',
-            //'updated_by',
-            //'updated_at',
 
                 [
                     'class' => 'yii\grid\ActionColumn',
