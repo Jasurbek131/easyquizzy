@@ -1,6 +1,7 @@
 <?php
 
 namespace app\modules\references\models;
+use app\modules\hr\models\HrDepartments;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -68,6 +69,10 @@ class Categories extends BaseModel
     public function getReasonss()
     {
         return $this->hasMany(Reasons::className(), ['category_id' => 'id']);
+    }
+    public function getHrDepartment()
+    {
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
     public static function getCategoryTypeList($key = null){
         $result = [

@@ -205,6 +205,9 @@ class DocumentController extends ActiveController
                 break;
             case "UPDATE":
                 break;
+            case "SAVE_MODAL":
+                $response = ApiPlmDocument::saveModalData($post);
+                break;
         }
         return $response;
     }

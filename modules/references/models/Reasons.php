@@ -3,6 +3,7 @@
 namespace app\modules\references\models;
 
 use app\models\BaseModel;
+use app\modules\hr\models\HrDepartments;
 use app\modules\plm\models\PlmDocumentItems;
 use Yii;
 
@@ -79,6 +80,10 @@ class Reasons extends BaseModel
         return $this->hasMany(PlmDocumentItems::className(), ['reason_id' => 'id']);
     }
 
+    public function getHrDepartment()
+    {
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
+    }
     /**
      * @return array
      */

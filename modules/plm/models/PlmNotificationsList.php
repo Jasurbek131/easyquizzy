@@ -28,7 +28,7 @@ use Yii;
  * @property PlmDocumentItems $plmDocumentItems
  * @property Reasons $reasons
  */
-class PlmNotificationsList extends \yii\db\ActiveRecord
+class PlmNotificationsList extends BaseModel
 {
     /**
      * {@inheritdoc}
