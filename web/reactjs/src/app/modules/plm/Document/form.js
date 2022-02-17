@@ -496,6 +496,8 @@ class Form extends React.Component {
             const response = await axios.post(API_URL + 'save-properties?type=SAVE_DOCUMENT', params);
             if (response.data.status) {
                 toast.success(response.data.message);
+                plm_document_items[key]["id"] = response.data.id;
+                this.setState({plm_document_items});
             } else {
                 toast.error(response.data.message);
             }
