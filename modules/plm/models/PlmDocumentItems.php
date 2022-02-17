@@ -11,6 +11,8 @@ use Yii;
  * @property int $id
  * @property int $planned_stop_id
  * @property int $unplanned_stop_id
+ * @property int $lifecycle
+ * @property int $bypass
  * @property int $processing_time_id
  * @property int $document_id
  * @property int $equipment_group_id
