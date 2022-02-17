@@ -41,7 +41,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     {
         return [
             [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id'], 'default', 'value' => null],
-            [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id'], 'integer'],
+            [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id', 'lifecycle', 'bypass'], 'integer'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['document_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocuments::class, 'targetAttribute' => ['document_id' => 'id']],
             [['processing_time_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmProcessingTime::class, 'targetAttribute' => ['processing_time_id' => 'id']],

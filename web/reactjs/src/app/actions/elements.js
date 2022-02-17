@@ -7,6 +7,8 @@ export const items = {
     equipment_group_id: "",
     start_work: "",
     end_work: "",
+    lifecycle: "",
+    bypass: "",
     planned_stopped: {
         id: "",
         begin_date: "",
