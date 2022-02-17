@@ -9,7 +9,6 @@ import uz from "date-fns/locale/uz/index.js";
 import {items} from "../../../actions/elements";
 import {loadingContent, removeElement} from "../../../actions/functions";
 import {Link} from "react-router-dom";
-// import EquipmentGroup from "./components/equipmentGroup";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
 
@@ -49,12 +48,9 @@ class Form extends React.Component {
             reasonList: [],
             repairedList: [],
             scrappedList: [],
-            // operatorList: [],
             equipmentGroupList: [],
             shiftList: [],
-            // productList: [],
             timeTypeList: [],
-            // equipmentList: [],
             language: 'uz'
         };
     };
@@ -100,10 +96,7 @@ class Form extends React.Component {
             this.setState({
                 organisationList: response.data.organisationList,
                 equipmentGroupList: response.data.equipmentGroupList,
-                // productList: response.data.productList,
                 timeTypeList: response.data.timeTypeList,
-              //  productLifecycleList: response.data.productLifecycleList,
-              //   equipmentList: response.data.equipmentList,
                 reasonList: response.data.reasonList,
                 repairedList: response.data.repaired,
                 scrappedList: response.data.scrapped,
@@ -402,6 +395,7 @@ class Form extends React.Component {
                 plm_document_items.push(JSON.parse(JSON.stringify(newItems)));
                 break;
             case "remove":
+                // if ()
                 plm_document_items = removeElement(plm_document_items, key);
                 break;
             case "product-plus":
@@ -427,6 +421,51 @@ class Form extends React.Component {
     };
 
     onRequiredColumns = (document, documentItems) => {
+        let isEmpty = this.onRequiredDoc(document);
+        if (documentItems?.length > 0) {
+            documentItems.map((item, key) => {
+                isEmpty = this.onRequiredDocItem(item, key);
+            })
+        }
+        return isEmpty;
+    };
+
+    onRequiredDocItem (item, key)
+    {
+        let isEmpty = true;
+        if (item.equipment_group_id === "") {
+            isEmpty = false;
+            $("#equipment_group_id_"+key).children('div').css("border", "1px solid red");
+        }
+        if (item.equipments.length <= 0) {
+            isEmpty = false;
+            $("#equipments_"+key).children('div').css("border", "1px solid red");
+        }
+        if (item.start_work === "") {
+            isEmpty = false;
+            $("#start_work_" + key).css("border", "1px solid red");
+        }
+        if (item.end_work === "") {
+            isEmpty = false;
+            $("#end_work_" + key).css("border", "1px solid red");
+        }
+        if (item?.products?.length > 0) {
+            item.products.map((product, proKey) => {
+                if (product.product_id === "") {
+                    isEmpty = false;
+                    $("#product_id_" + key +"_"+ proKey).children('div').css("border", "1px solid red");
+                }
+                if (product.fact_qty === "") {
+                    isEmpty = false;
+                    $("#fact_qty_" + key +"_"+ proKey).css("border", "1px solid red");
+                }
+            })
+        }
+        return isEmpty;
+    }
+
+    onRequiredDoc(document)
+    {
         let isEmpty = true;
         if (document?.organisation_id === "") {
             isEmpty = false;
@@ -444,48 +483,16 @@ class Form extends React.Component {
             isEmpty = false;
             $("#reg_date").css("border", "1px solid red");
         }
-        if (documentItems?.length > 0) {
-            documentItems.map((item, key) => {
-                if (item.equipment_group_id === "") {
-                    isEmpty = false;
-                    $("#equipment_group_id_"+key).children('div').css("border", "1px solid red");
-                }
-                if (item.equipments.length <= 0) {
-                    isEmpty = false;
-                    $("#equipments_"+key).children('div').css("border", "1px solid red");
-                }
-                if (item.start_work === "") {
-                    isEmpty = false;
-                    $("#start_work_" + key).css("border", "1px solid red");
-                }
-                if (item.end_work === "") {
-                    isEmpty = false;
-                    $("#end_work_" + key).css("border", "1px solid red");
-                }
-                if (item?.products?.length > 0) {
-                    item.products.map((product, proKey) => {
-                        if (product.product_id === "") {
-                            isEmpty = false;
-                            $("#product_id_" + key +"_"+ proKey).children('div').css("border", "1px solid red");
-                        }
-                        if (product.fact_qty === "") {
-                            isEmpty = false;
-                            $("#fact_qty_" + key +"_"+ proKey).css("border", "1px solid red");
-                        }
-                    })
-                }
-            })
-        }
         return isEmpty;
-    };
+    }
 
-    onSave = async (e) => {
+    onSave = async (key, e) => {
         let {plm_document, plm_document_items} = this.state;
         let params = {
             document: plm_document,
-            document_items: plm_document_items
+            document_items: [plm_document_items[key]]
         };
-        if (this.onRequiredColumns(plm_document, plm_document_items)) {
+        if (this.onRequiredDoc(plm_document) && this.onRequiredDocItem(plm_document_items[key], key)) {
             const response = await axios.post(API_URL + 'save-properties?type=SAVE_DOCUMENT', params);
             if (response.data.status) {
                 toast.success(response.data.message);
@@ -518,37 +525,11 @@ class Form extends React.Component {
     };
 
     onSaveProps = async (type, model) => {
-        let {appearance} = this.state;
-        let response;
-        switch (type) {
-            // case "equipmentGroup":
-            //     response = await axios.post(API_URL + 'save-properties?type=SAVE_EQUIPMENT_GROUP', model);
-            //     if (response.data.status) {
-            //         let {equipmentGroupList} = this.state;
-            //         equipmentGroupList.push(response.data.equipmentGroup);
-            //         appearance.display = "none";
-            //         this.setState({appearance: appearance, equipmentGroupList: equipmentGroupList});
-            //     } else {
-            //         toast.error(response.data.message);
-            //     }
-            //     break;
-            // case "productLifecycle":
-            //     response = await axios.post(API_URL + 'save-properties?type=SAVE_PRODUCT_LIFECYCLE', model);
-            //     if (response.data.status) {
-            //         let {plm_document_items} = this.state;
-            //         plm_document_items[appearance.key]['equipmentGroup']['productLifecycle'].push(response.data.productLifecycle);
-            //         appearance.display = "none";
-            //         this.setState({appearance: appearance, plm_document_items: plm_document_items});
-            //     } else {
-            //         toast.error(response.data.message);
-            //     }
-            //     break;
-        }
+
     };
 
     render() {
         const {
-            appearance,
             language,
             isLoading,
             temporarily,
@@ -567,15 +548,6 @@ class Form extends React.Component {
                 <div className="no-print">
                     <ToastContainer autoClose={3000} position={'top-center'} transition={Flip} draggablePercent={60} closeOnClick={true} pauseOnHover closeButton={true}/>
                 </div>
-
-
-                {/*<EquipmentGroup*/}
-                {/*    appearance={appearance}*/}
-                {/*    onCancel={this.onHandleCancel}*/}
-                {/*    onChangeProps={(type, model) => {this.onChangeProps(type, model)}}*/}
-                {/*    onSaveProps={(type, model) => {this.onSaveProps(type, model).then(r => "")}}*/}
-                {/*/>*/}
-
                 <div className={'card'}>
 
                     <div className={'card-header'}>
@@ -681,7 +653,7 @@ class Form extends React.Component {
                                             }
                                             <br/>
                                             <br/>
-                                            <button onClick={this.onSave} className={"btn btn-xs btn-success"}>
+                                            <button onClick={this.onSave.bind(this, key)} className={"btn btn-xs btn-success"}>
                                                 <i className={"fa fa-check"}/>
                                             </button>
                                         </div>
@@ -707,6 +679,7 @@ class Form extends React.Component {
                                                                 styles={customStyles}
                                                                 isMulti
                                                                 id={"equipments_" + key}
+                                                                className={"custom-padding"}
                                                                 onChange={this.onHandleChange.bind(this, 'multi-select', 'plm_document_items','equipments',key, '', '')}
                                                                 value={item.equipments}
                                                                 placeholder={"Выбрать"}

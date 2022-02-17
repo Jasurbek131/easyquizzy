@@ -49,6 +49,9 @@ label {
     align-items: center;
     height: 100%;
 }
+.align-center .row{
+    width: 100%;
+}
 .control-label {
     display: block;
 }
@@ -84,4 +87,10 @@ textarea.form-control{
 }
 .modal-body{
     min-height: 70vh!important;
+}
+/*Hard code siz bunday qila ko'rmang*/
+.custom-padding .css-1ylieoo-control,
+.custom-padding .css-p7x95i-control
+{
+    padding: 5px 1px!important;
 }
