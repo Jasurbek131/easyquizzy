@@ -89,8 +89,8 @@ class Form extends React.Component {
 
             let { plm_document, departmentList } = this.state;
             if(!plm_document.organisation_id){ // organisation id tanlanmagan bo'lsa default chiqarib qoyish
-                plm_document.organisation_id = response.data.organisationList[0]['value'] ?? "";
-                departmentList = response.data.organisationList[0]["departments"] ?? [];
+                plm_document.organisation_id = response?.data?.organisationList[0] ? response?.data?.organisationList[0]['value'] : "";
+                departmentList = response?.data?.organisationList[0]? response?.data?.organisationList[0]["departments"] : [];
             }
 
             if(!plm_document.reg_date){
