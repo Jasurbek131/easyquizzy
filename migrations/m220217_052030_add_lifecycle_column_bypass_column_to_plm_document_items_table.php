@@ -12,8 +12,8 @@ class m220217_052030_add_lifecycle_column_bypass_column_to_plm_document_items_ta
      */
     public function safeUp()
     {
-        $this->addColumn('{{%plm_document_items}}', 'lifecycle', $this->integer());
-        $this->addColumn('{{%plm_document_items}}', 'bypass', $this->integer());
+        $this->addColumn('{{%plm_document_items}}', 'lifecycle', $this->float());
+        $this->addColumn('{{%plm_document_items}}', 'bypass', $this->float());
     }
 
     /**
