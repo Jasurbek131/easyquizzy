@@ -141,6 +141,7 @@ class ApiPlmDocument extends PlmDocuments
                             'processing_time_id' => $processing->id ?? "",
                             'lifecycle' => $item["lifecycle"] ? (int)$item["lifecycle"] : "",
                             'bypass' => $item["bypass"] ? (int)$item["bypass"] : "",
+                            'target_qty' => $item["target_qty"] ? (int)$item["target_qty"] : "",
                             'equipment_group_id' => $item['equipmentGroup']['value'] ?? "",
                         ]);
                         if (!$docItem->save()) {
@@ -277,7 +278,7 @@ class ApiPlmDocument extends PlmDocuments
             ])->with([
                 'plm_document_items' => function ($q) use ($language) {
                     $q->from(['pdi' => 'plm_document_items'])
-                        ->select(['pdi.*', "pdi.lifecycle", "pdi.bypass", 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
+                        ->select(['pdi.*', "pdi.lifecycle", "pdi.bypass", "pdi.target_qty", 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
                             'products' => function ($p) use ($language) {
                                 $p->from(['p' => 'plm_doc_item_products'])->select([
                                     'p.id',
