@@ -10,6 +10,7 @@ use app\modules\plm\models\PlmDocItemEquipments;
 use app\modules\plm\models\PlmDocItemProducts;
 use app\modules\plm\models\PlmDocumentItems;
 use app\modules\plm\models\PlmDocuments;
+use app\modules\plm\models\PlmNotificationsList;
 use app\modules\plm\models\PlmProcessingTime;
 use app\modules\plm\models\PlmStops;
 use Yii;
@@ -268,6 +269,71 @@ class ApiPlmDocument extends PlmDocuments
     }
 
     /**
+     * @param $post
+     * @return array
+     */
+    public static function deleteDocumentItem($post): array
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app','Deleted'),
+        ];
+        try{
+            if (!empty($post["plm_document_items"]) && !empty($post["plm_document_items"]["id"])){
+
+                $docItem = PlmDocumentItems::findOne(["id" => $post["plm_document_items"]["id"]]);
+                if (!empty($docItem)){
+                    PlmDocItemDefects::deleteAll(["doc_item_id" => $docItem->id]);
+                    PlmDocItemEquipments::deleteAll(["document_item_id" => $docItem->id]);
+                    PlmDocItemProducts::deleteAll(["document_item_id" => $docItem->id]);
+                    PlmNotificationsList::deleteAll(["plm_doc_item_id" => $docItem->id]);
+
+                    $docItem->setAttributes([
+                        "planned_stop_id" => "",
+                        "unplanned_stop_id" => "",
+                        "processing_time_id" => "",
+                    ]);
+                    if (!$docItem->save())
+                        $response = [
+                            'status' => false,
+                            'errors' => $docItem->getErrors(),
+                            'message' => Yii::t('app','Doc item saved'),
+                        ];
+
+                    if (!empty($docItem->planned_stop_id))
+                        PlmStops::deleteAll(['id' => $docItem->planned_stop_id]);
+
+                    if (!empty($docItem->unplanned_stop_id))
+                        PlmStops::deleteAll(['id' => $docItem->unplanned_stop_id]);
+
+                    if (!empty($docItem->processing_time_id))
+                        PlmProcessingTime::findAll(["id" => $docItem->processing_time_id]);
+
+                    if ($docItem->delete() == false)
+                        $response = [
+                            'status' => false,
+                            'message' => Yii::t('app','Not deleted'),
+                        ];
+                }
+            }
+
+            if($response['status'])
+                $transaction->commit();
+            else
+                $transaction->rollBack();
+
+        } catch(\Exception $e){
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        return $response;
+    }
+
+    /**
      * @param $id
      * @return array|\yii\db\ActiveRecord|null
      */
@@ -433,6 +499,7 @@ class ApiPlmDocument extends PlmDocuments
             ])->leftJoin('hr_departments hd', 'pd.hr_department_id = hd.id')
             ->leftJoin('shifts sh', 'pd.shift_id = sh.id')
             ->where(['!=', 'pd.status_id', \app\models\BaseModel::STATUS_INACTIVE])
+            ->orderBy(["pd.id" => SORT_DESC])
             ->asArray();
 
         return new ActiveDataProvider([

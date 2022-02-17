@@ -14,10 +14,10 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card equipment-group-index">
 <!--    --><?php //if (Yii::$app->user->can('equipment-group/create')): ?>
-    <div class="card-header pull-right no-print">
-        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
-        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
-    </div>
+<!--    <div class="card-header pull-right no-print">-->
+<!--        --><?//= Html::a('<span class="fa fa-plus"></span>', ['create'],
+//        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
+<!--    </div>-->
 <!--    --><?php //endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'equipment-group_pjax']); ?>
@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update}{view}{delete}',
+                'template' => '{view}', /*{update} {delete}*/
                 'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                 'visibleButtons' => [
 //                    'view' => Yii::$app->user->can('equipment-group/view'),
@@ -68,13 +68,13 @@ $this->params['breadcrumbs'][] = $this->title;
 //                    }
                 ],
                 'buttons' => [
-                    'update' => function ($url, $model) {
-                        return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
-                            'title' => Yii::t('app', 'Update'),
-                            'class'=> 'update-dialog btn btn-xs btn-success mr1',
-                            'data-form-id' => $model->id,
-                        ]);
-                    },
+//                    'update' => function ($url, $model) {
+//                        return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
+//                            'title' => Yii::t('app', 'Update'),
+//                            'class'=> 'update-dialog btn btn-xs btn-success mr1',
+//                            'data-form-id' => $model->id,
+//                        ]);
+//                    },
                     'view' => function ($url, $model) {
                         return Html::a('<span class="fa fa-eye"></span>', $url, [
                             'title' => Yii::t('app', 'View'),
@@ -82,13 +82,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data-form-id' => $model->id,
                         ]);
                     },
-                    'delete' => function ($url, $model) {
-                        return Html::a('<span class="fa fa-trash-alt"></span>', $url, [
-                            'title' => Yii::t('app', 'Delete'),
-                            'class' => 'btn btn-xs btn-danger delete-dialog',
-                            'data-form-id' => $model->id,
-                        ]);
-                    },
+//                    'delete' => function ($url, $model) {
+//                        return Html::a('<span class="fa fa-trash-alt"></span>', $url, [
+//                            'title' => Yii::t('app', 'Delete'),
+//                            'class' => 'btn btn-xs btn-danger delete-dialog',
+//                            'data-form-id' => $model->id,
+//                        ]);
+//                    },
                 ],
             ],
         ],
