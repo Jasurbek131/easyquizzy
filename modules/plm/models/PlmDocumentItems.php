@@ -118,4 +118,11 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
         return $this->hasMany(PlmDocItemProducts::class, ['document_item_id' => 'id']);
     }
 
+    /**
+     * @return yii\db\ActiveQuery
+     */
+    public function getEquipments()
+    {
+        return $this->hasMany(PlmDocItemEquipments::class, ['document_item_id' => 'id']);
+    }
 }

@@ -81,7 +81,7 @@ class Categories extends BaseModel
     }
     public static function  getList()
     {
-        $query = self::find()->select(['id','name_uz'])->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])->asArray()->all();
+        $query = self::find()->select(['id','name_uz as name'])->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])->asArray()->all();
         if(!empty($query)){
             return ArrayHelper::map($query, 'id', 'name');
         }
