@@ -1,5 +1,6 @@
 <?php
 
+use app\models\BaseModel;
 use app\modules\references\models\Categories;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -18,15 +19,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name_ru')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'category_id')->widget(Select2::classname(), [
+    <?= $form->field($model, 'category_id')->widget(Select2::class, [
         'data' => Categories::getList(),
         'options' => ['placeholder' => Yii::t("app","Select ...")],
         'pluginOptions' => [
             'allowClear' => true,
         ]
-    ]) ?> ?>
+    ]) ?>
 
-    <?= $form->field($model, 'status_id')->textInput() ?>
+    <?php echo $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList()) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

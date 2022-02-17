@@ -87,6 +87,14 @@ class ProductLifecycle extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getProductGroup()
+    {
+        return $this->hasOne(ReferencesProductGroup::class, ['id' => 'product_group_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getProducts()
     {
         return $this->hasOne(Products::class, ['id' => 'product_id']);
@@ -152,7 +160,7 @@ class ProductLifecycle extends BaseModel
             'pl.equipment_group_id', "MAX(p.name) as label", "pl.lifecycle", "pl.bypass", 'pl.product_id', 'pl.product_id as value',
         ])->innerJoin('products p', 'pl.product_id = p.id')
             ->where(['pl.status_id' => BaseModel::STATUS_ACTIVE])
-            ->groupBy('pl.id')
+            ->groupBy('p.id')
             ->asArray();
         if ($one) {
             return $list->andWhere(['pl.id' => $id])->one();

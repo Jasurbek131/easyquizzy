@@ -215,7 +215,7 @@ class HrEmployee extends BaseModel
                         'hr_position_id' => $this->hr_position_id,
                         'hr_organisation_id' => $this->hr_organisation_id,
                         'hr_employee_id' => $this->id,
-                        'begin_date' => $this->begin_date,
+                        'begin_date' => $this->begin_date ? date('Y-m-d H:i:s', strtotime($this->begin_date)) : "",
                     ]);
                 }
 

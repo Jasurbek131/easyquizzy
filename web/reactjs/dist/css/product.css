@@ -32,3 +32,13 @@
 #products{
     min-width: 98%!important;
 }
+.my_times{
+    font-size: 25px!important;
+    cursor: pointer!important;
+}
+#settingModalBox1{
+    background-color: #00000096;
+}
+.saved{
+    background-color: #D1FFD1!important;
+}

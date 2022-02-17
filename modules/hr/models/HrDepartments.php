@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\models;
 
+use app\models\BaseModel;
 use app\modules\references\models\Shifts;
 use kartik\tree\models\Tree;
 use Yii;
@@ -79,9 +80,13 @@ class HrDepartments extends BaseModel
         return $this->hasMany(HrDepartments::className(), ['parent_id' => 'id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getShifts() {
         return $this->hasMany(HrDepartmentRelShifts::className(), ['hr_department_id' => 'id']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -171,5 +176,47 @@ class HrDepartments extends BaseModel
             $ids = array_merge($ids, self::getChilds($item['id']));
         }
         return $ids;
+    }
+
+    /**
+     * @return array|\yii\db\ActiveRecord[]
+     * Tashkilot ro'yxati va tashkilotga tegishli smenalar ro'yxati smenasi bilan
+     */
+    public static function getOrganisationListWithSmenaByUser():array
+    {
+        return HrDepartments::find()
+            ->alias('hd')
+            ->select([
+                'hd.id',
+                'hd.id as value',
+                'hd.name as label',
+            ])->with([
+                'departments' => function($e) {
+                    $e->from(['ch' => 'hr_departments'])->select([
+                        'ch.id',
+                        'ch.id as value',
+                        'ch.name as label',
+                        'ch.parent_id'
+                    ])->with([
+                        'shifts' => function($sh) {
+                            $sh->from(['dsh' => 'hr_department_rel_shifts'])->select([
+                                'sh.id as value',
+                                'sh.name as label',
+                                'dsh.hr_department_id'
+                            ])->leftJoin('shifts sh', 'dsh.shift_id = sh.id');
+                        }
+                    ]);
+                }
+            ])
+            ->leftJoin(["urhd" => "users_relation_hr_departments"], "urhd.hr_department_id = hd.id")
+            ->where([
+                'hd.status_id' => BaseModel::STATUS_ACTIVE,
+                'urhd.user_id' => Yii::$app->user->identity->id,
+                'urhd.is_root' => UsersRelationHrDepartments::ROOT
+            ])
+            ->andWhere(['IS', 'parent_id', new Expression('NULL')])
+            ->groupBy('hd.id')
+            ->asArray()
+            ->all();
     }
 }

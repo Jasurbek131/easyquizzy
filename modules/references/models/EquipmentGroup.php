@@ -84,6 +84,15 @@ class EquipmentGroup extends BaseModel
         return $this->hasMany(ProductLifecycle::className(), ['equipment_group_id' => 'id']);
     }
 
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLifecycles()
+    {
+        return $this->hasOne(ProductLifecycle::className(), ['equipment_group_id' => 'id']);
+    }
+
     /**
      * @param null $key
      * @param bool $isArray
@@ -114,29 +123,40 @@ class EquipmentGroup extends BaseModel
      * @return array|yii\db\ActiveRecord|yii\db\ActiveRecord[]|null
      */
     public static function getEquipmentGroupList(bool $one = false, $id = null) {
-        $list = EquipmentGroup::find()->alias('eg')->select([
-            'eg.id as value', 'eg.name as label', 'eg.id'
-        ])->with([
-            'equipments' => function($e){
-                $e->from(['egr' => 'equipment_group_relation_equipment'])->select([
-                    'egr.equipment_id',
-                    'egr.equipment_group_id',
-                    'e.name as label',
-                    'e.id as value'
-                ])->leftJoin('equipments e', 'egr.equipment_id = e.id');
-            },
-            'productLifecycles' => function($pl) {
-                $pl->from(['pl' => 'product_lifecycle'])->select([
-                    'pl.id as product_lifecycle_id',
-                    'pl.product_id as value',
-                    'pl.product_id',
-                    "string_agg(CONCAT(p.name, ' (', pl.lifecycle, '/', pl.bypass, ')'), ' ') as label",
-                    'pl.lifecycle',
-                    'pl.bypass',
-                    'pl.equipment_group_id'
-                ])->leftJoin('products p', 'pl.product_id = p.id')->groupBy('pl.id');
-            }
-        ])->where(['eg.status_id' => BaseModel::STATUS_ACTIVE])
+        $list = EquipmentGroup::find()
+            ->alias('eg')
+            ->select([
+                'eg.id as value', 'eg.name as label', 'eg.id'
+            ])->with([
+                'equipments' => function($e){
+                    $e->from(['egr' => 'equipment_group_relation_equipment'])->select([
+                        'egr.equipment_id',
+                        'egr.equipment_group_id',
+                        'e.name as label',
+                        'e.id as value'
+                    ])->leftJoin('equipments e', 'egr.equipment_id = e.id');
+                },
+                'lifecycles' => function($pl) {
+                    $pl->from(['pl' => 'product_lifecycle'])
+                        ->select([
+                            'pl.id as product_lifecycle_id',
+                            'pl.lifecycle',
+                            'pl.bypass',
+                            'pl.equipment_group_id',
+                            'pl.product_group_id',
+                        ])
+                        ->with(["productGroup.products" => function($rp){
+                            $rp->from(["rp" => "references_product_group_rel_product"])
+                                ->select([
+                                    "rp.product_group_id",
+                                    "rp.product_id",
+                                    "p.name as label",
+                                    "p.id as value",
+                                ])
+                                ->leftJoin('products p', 'rp.product_id = p.id');
+                        }]);
+                }
+            ])->where(['eg.status_id' => BaseModel::STATUS_ACTIVE])
             ->asArray();
         if ($one) {
             return $list->andWhere(['eg.id' => $id])->one();

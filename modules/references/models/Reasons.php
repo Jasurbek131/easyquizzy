@@ -2,6 +2,7 @@
 
 namespace app\modules\references\models;
 
+use app\models\BaseModel;
 use app\modules\plm\models\PlmDocumentItems;
 use Yii;
 
@@ -76,5 +77,20 @@ class Reasons extends BaseModel
     public function getPlmDocumentItems()
     {
         return $this->hasMany(PlmDocumentItems::className(), ['reason_id' => 'id']);
+    }
+
+    /**
+     * @return array
+     */
+    public static  function getList():array
+    {
+        $language = Yii::$app->language;
+        return self::find()
+            ->select([
+                'id as value',
+                "name_{$language} as label"
+            ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+            ->asArray()
+            ->all();
     }
 }

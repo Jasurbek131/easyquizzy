@@ -123,9 +123,14 @@ class ApiProduct extends Products
             /**
              * Equipment_group yaratish
              */
-            if ($response['status'] && empty($post['item']['equipment_group_id'])) {
-                $equipmentGroup = new EquipmentGroup([
-                    'name' => 'Generation some text',
+            if ($response['status']) {
+                if (!empty($post['item']['equipment_group_id']))
+                    $equipmentGroup = EquipmentGroup::findOne(['id' => $post['item']['equipment_group_id']]);
+                else
+                    $equipmentGroup = new EquipmentGroup();
+
+                $equipmentGroup->setAttributes([
+                    'name' => $post['item']['name'],
                     'equipments_group_type_id' => $post['item']['equipments_group_type_id'],
                     'status_id' => BaseModel::STATUS_ACTIVE,
                 ]);
@@ -139,6 +144,7 @@ class ApiProduct extends Products
                     $post['item']['equipment_group_id'] = $equipmentGroup->id;
                 }
             }
+
             /**
              * Equipment group rel equipment yaratildi
              */
@@ -277,6 +283,7 @@ class ApiProduct extends Products
                 $response["product_lifecycle"][] = [
                     'lifecycle' => $item["lifecycle"] ?? '',
                     'bypass' => $item["bypass"] ?? '',
+                    'name' => $item["equipmentGroup"]["name"] ?? [],
                     'equipments_group_type_id' => $item["equipmentGroup"]["equipments_group_type_id"] ?? [],
                     'equipment_group_id' => $item["equipment_group_id"] ?? '',
                     'product_lifecycle_id' => $item["product_lifecycle_id"] ?? '',

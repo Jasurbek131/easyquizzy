@@ -1,5 +1,6 @@
 <?php
 
+use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -40,11 +41,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'status_id',
-                'value' => function($model){
-                    $info = $model::getStatusList($model->status_id);
-                    return $info;
+                'format' => 'raw',
+                'value' => function($model) {
+                    return $model->status_id ? BaseModel::getStatusList($model->status_id): "";
                 },
-                'format' => 'html'
+                'filter' => BaseModel::getStatusList()
             ],
             //'created_by',
             //'created_at',
