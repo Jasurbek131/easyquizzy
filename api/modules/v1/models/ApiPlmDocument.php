@@ -58,7 +58,7 @@ class ApiPlmDocument extends PlmDocuments
                 foreach ($documentItems as $item) {
                     $plannedStopped = $item['planned_stopped'];
                     $unplannedStopped = $item['unplanned_stopped'];
-                    
+
                     /**
                      * Planned stop
                      */
@@ -141,6 +141,9 @@ class ApiPlmDocument extends PlmDocuments
                             'planned_stop_id' => $planStop->id ?? "",
                             'unplanned_stop_id' => $unPlanStop->id ?? "",
                             'processing_time_id' => $processing->id ?? "",
+                            'lifecycle' => $item["lifecycle"] ? (int)$item["lifecycle"] : "",
+                            'bypass' => $item["bypass"] ? (int)$item["bypass"] : "",
+                            'target_qty' => $item["target_qty"] ? (int)$item["target_qty"] : "",
                             'equipment_group_id' => $item['equipmentGroup']['value'] ?? "",
                         ]);
                         if (!$docItem->save()) {
@@ -248,10 +251,12 @@ class ApiPlmDocument extends PlmDocuments
                 }
             }
 
-            if ($response['status'])
+            if ($response['status']){
+                $response["id"] = $docItem->id ?? "";
                 $transaction->commit();
-            else
+            } else {
                 $transaction->rollBack();
+            }
 
         } catch (\Exception $e) {
             $transaction->rollBack();
@@ -268,231 +273,62 @@ class ApiPlmDocument extends PlmDocuments
      * @param $post
      * @return array
      */
-    public static function saveModalData($post): array
+    public static function deleteDocumentItem($post): array
     {
-        $document = $post['document'];
-        $documentItems = $post['document_items'];
-
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
             'status' => true,
-            'message' => Yii::t('app', 'Success'),
+            'message' => Yii::t('app','Deleted'),
         ];
-        try {
-            $doc = new PlmDocuments();
-            if (!empty($document['id']))
-                $doc = PlmDocuments::findOne($document['id']);
-            $doc->setAttributes([
-                'reg_date' => date("Y-m-d", strtotime($document['reg_date'])),
-                'hr_department_id' => $document['hr_department_id'],
-                'organisation_id' => $document['organisation_id'],
-                'shift_id' => $document['shift_id'],
-                'add_info' => $document['add_info'],
-                'status_id' => BaseModel::STATUS_ACTIVE
-            ]);
-            if (!$doc->save())
-                $response = [
-                    'status' => false,
-                    'message' => Yii::t('app', 'Doc not saved'),
-                    'errors' => $doc->getErrors(),
-                    'line' => __LINE__
-                ];
+        try{
+            if (!empty($post["plm_document_items"]) && !empty($post["plm_document_items"]["id"])){
 
-            if ($response['status']) {
-                foreach ($documentItems as $item) {
-                    $docItem = new PlmDocumentItems();
-                    if ($item['id'])
-                        $docItem = PlmDocumentItems::findOne($item['id']);
+                $docItem = PlmDocumentItems::findOne(["id" => $post["plm_document_items"]["id"]]);
+                if (!empty($docItem)){
+                    PlmDocItemDefects::deleteAll(["doc_item_id" => $docItem->id]);
+                    PlmDocItemEquipments::deleteAll(["document_item_id" => $docItem->id]);
+                    PlmDocItemProducts::deleteAll(["document_item_id" => $docItem->id]);
+                    PlmNotificationsList::deleteAll(["plm_doc_item_id" => $docItem->id]);
+
                     $docItem->setAttributes([
-                        'document_id' => $doc->id,
-                        'planned_stop_id' => $planStop->id ?? "",
-                        'unplanned_stop_id' => $unPlanStop->id ?? "",
-                        'processing_time_id' => $processing->id ?? "",
-                        'equipment_group_id' => $item['equipmentGroup']['value'] ?? "",
+                        "planned_stop_id" => "",
+                        "unplanned_stop_id" => "",
+                        "processing_time_id" => "",
                     ]);
-                    if (!$docItem->save()) {
+                    if (!$docItem->save())
                         $response = [
                             'status' => false,
-                            'line' => __LINE__,
                             'errors' => $docItem->getErrors(),
-                            'message' => Yii::t('app', 'Plm Doc item not saved'),
+                            'message' => Yii::t('app','Doc item saved'),
                         ];
-                        break;
-                    }
-                    $plannedStopped = $item['planned_stopped']; // rejali to'xtalish
-                    $unplannedStopped = $item['unplanned_stopped']; // rejasiz to'xtalish
-                    $products = $item['products'];
 
-                    /** WORKING_TIME start **/
-                    if ($response['status'] && $item['start_work'] && $item['end_work']) {
-                        $plmNotifications = new PlmNotificationsList();
-                        $plmNotifications->setAttributes([
-                            'plm_doc_item_id' => $docItem->id,
-                            'begin_time' => date("Y-m-d H:i", strtotime($item['start_work'])),
-                            'end_time' => date("Y-m-d H:i", strtotime($item['end_work'])),
-                            'status_id' => BaseModel::STATUS_ACTIVE,
-                        ]);
-                        if (!$plmNotifications->save()) {
-                            $response = [
-                                'status' => false,
-                                'line' => __LINE__,
-                                'errors' => $plmNotifications->getErrors(),
-                                'message' => Yii::t('app', 'Working notification time not saved'),
-                            ];
-                            break;
-                        }
-                    }
-                    /** WORKING_TIME end **/
+                    if (!empty($docItem->planned_stop_id))
+                        PlmStops::deleteAll(['id' => $docItem->planned_stop_id]);
 
-                    /** PLANNED start **/
+                    if (!empty($docItem->unplanned_stop_id))
+                        PlmStops::deleteAll(['id' => $docItem->unplanned_stop_id]);
 
-                    if (!empty($plannedStopped)) {
-                        $plmNotifications = new PlmNotificationsList();
-                        $plmNotifications->setAttributes([
-                            'plm_doc_item_id' => $docItem->id,
-                            'reason_id' => $plannedStopped['reason_id'],
-                            'begin_time' => date("Y-m-d H:i", strtotime($item['begin_date'])),
-                            'end_time' => date("Y-m-d H:i", strtotime($item['end_time'])),
-                            'status_id' => BaseModel::STATUS_ACTIVE,
-                            'add_info' => $plannedStopped['add_info']
-                        ]);
-                        if (!$plmNotifications->save()) {
-                            $response = [
-                                'status' => false,
-                                'line' => __LINE__,
-                                'errors' => $plmNotifications->getErrors(),
-                                'message' => Yii::t('app', 'Planned notification stop not saved'),
-                            ];
-                            break;
-                        }
-                    }
+                    if (!empty($docItem->processing_time_id))
+                        PlmProcessingTime::findAll(["id" => $docItem->processing_time_id]);
 
-                    /** PLANNED end **/
-
-                    /** UNPLANNED start **/
-                    if (!empty($unplannedStopped) && $response['status']) {
-                        $plmNotifications = new PlmNotificationsList();
-                        $plmNotifications->setAttributes([
-                            'plm_doc_item_id' => $docItem->id,
-                            'reason_id' => $unplannedStopped['reason_id'],
-                            'begin_time' => date("Y-m-d H:i", strtotime($item['begin_date'])),
-                            'end_time' => date("Y-m-d H:i", strtotime($item['end_time'])),
-                            'status_id' => BaseModel::STATUS_ACTIVE,
-                            'add_info' => $unplannedStopped['add_info']
-                        ]);
-                        if (!$plmNotifications->save()) {
-                            $response = [
-                                'status' => false,
-                                'line' => __LINE__,
-                                'errors' => $plmNotifications->getErrors(),
-                                'message' => Yii::t('app', 'Unplanned notification stop not saved'),
-                            ];
-                            break;
-                        }
-                    }
-                    /** UNPLANNED end **/
-
-                    if ($response['status']) {
-                        if (!empty($products)) {
-                            foreach ($products as $product) {
-                                /** REPAIRED(DEFECTS) start **/
-                                $repaired = $product['repaired'] ?? [];
-                                if($repaired){
-                                    $plmNotifications = new PlmNotificationsList();
-                                    $plmNotifications->setAttributes([
-                                        'plm_doc_item_id' => $docItem->id,
-                                        'status_id' => BaseModel::STATUS_ACTIVE,
-                                    ]);
-                                    if (!$plmNotifications->save()) {
-                                        $response = [
-                                            'status' => false,
-                                            'line' => __LINE__,
-                                            'errors' => $plmNotifications->getErrors(),
-                                            'message' => Yii::t('app', 'PlmNotificationsList not saved'),
-                                        ];
-                                        break;
-                                    }
-                                    foreach ($repaired as $repair) {
-                                        if ($repair['count']) {
-                                            $plmNotificationRelDefects = new PlmNotificationRelDefect();
-                                            $plmNotificationRelDefects->setAttributes([
-                                                'plm_notification_id' => $plmNotifications->id,
-                                                'defect_id' => $repair['value'],
-                                                'defect_count' => $repair['count'],
-                                                'status_id' => BaseModel::STATUS_ACTIVE,
-                                            ]);
-                                            if(!$plmNotificationRelDefects->save()){
-                                                $response = [
-                                                    'status' => false,
-                                                    'line' => __LINE__,
-                                                    'errors' => $plmNotifications->getErrors(),
-                                                    'message' => Yii::t('app', 'PlmNotificationRelDefect not saved'),
-                                                ];
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                }
-                                /** REPAIRED(DEFECTS) end **/
-
-                                /** INVALID(DEFECTS) start **/
-                                $scrapped = $product['scrapped'] ?? [];
-                                if($scrapped){
-                                    $plmNotifications = new PlmNotificationsList();
-                                    $plmNotifications->setAttributes([
-                                        'plm_doc_item_id' => $docItem->id,
-                                        'status_id' => BaseModel::STATUS_ACTIVE,
-                                    ]);
-                                    if (!$plmNotifications->save()) {
-                                        $response = [
-                                            'status' => false,
-                                            'line' => __LINE__,
-                                            'errors' => $plmNotifications->getErrors(),
-                                            'message' => Yii::t('app', 'PlmNotificationsList not saved'),
-                                        ];
-                                        break;
-                                    }
-                                    foreach ($scrapped as $scrap) {
-                                        if ($scrap['count']) {
-                                            $plmNotificationRelDefects = new PlmNotificationRelDefect();
-                                            $plmNotificationRelDefects->setAttributes([
-                                                'plm_notification_id' => $plmNotifications->id,
-                                                'defect_id' => $scrap['value'],
-                                                'defect_count' => $scrap['count'],
-                                                'status_id' => BaseModel::STATUS_ACTIVE,
-                                            ]);
-                                            if(!$plmNotificationRelDefects->save()){
-                                                $response = [
-                                                    'status' => false,
-                                                    'line' => __LINE__,
-                                                    'errors' => $plmNotifications->getErrors(),
-                                                    'message' => Yii::t('app', 'PlmNotificationRelDefect not saved'),
-                                                ];
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                /** INVALID(DEFECTS) start **/
-                            }
-                        }
-                    }
+                    if ($docItem->delete() == false)
+                        $response = [
+                            'status' => false,
+                            'message' => Yii::t('app','Not deleted'),
+                        ];
                 }
             }
 
-            if ($response['status'])
+            if($response['status'])
                 $transaction->commit();
             else
                 $transaction->rollBack();
 
-        } catch (\Exception $e) {
+        } catch(\Exception $e){
             $transaction->rollBack();
             $response = [
                 'status' => false,
-                'errors' => $e->getMessage(),
-                'line' => __LINE__,
+                'message' => $e->getMessage(),
             ];
         }
         return $response;
@@ -511,33 +347,31 @@ class ApiPlmDocument extends PlmDocuments
             ])->with([
                 'plm_document_items' => function ($q) use ($language) {
                     $q->from(['pdi' => 'plm_document_items'])
-                        ->select(['pdi.*', 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
+                        ->select(['pdi.*', "pdi.lifecycle", "pdi.bypass", "pdi.target_qty", 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
                             'products' => function ($p) use ($language) {
                                 $p->from(['p' => 'plm_doc_item_products'])->select([
                                     'p.id',
                                     'p.product_lifecycle_id',
-                                    'pl.lifecycle',
-                                    'pl.bypass',
                                     'p.product_id',
                                     'p.product_id as value',
                                     'p.qty',
                                     'p.fact_qty',
-                                    'p.document_item_id'
-                                ])->leftJoin('product_lifecycle pl', 'p.product_lifecycle_id = pl.id')
-                                    ->with([
-                                        'repaired' => function ($r) use ($language) {
-                                            $r->from(['r' => 'plm_doc_item_defects'])->select([
-                                                'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
-                                            ])->leftJoin('defects d', 'r.defect_id = d.id')
-                                                ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
-                                        },
-                                        'scrapped' => function ($r) use ($language) {
-                                            $r->from(['s' => 'plm_doc_item_defects'])->select([
-                                                's.defect_id as value', "d.name_{$language} as label", 's.qty as count', 's.doc_item_product_id'
-                                            ])->leftJoin('defects d', 's.defect_id = d.id')
-                                                ->where(['s.type' => \app\models\BaseModel::DEFECT_SCRAPPED]);
-                                        },
-                                    ]);
+                                    'p.document_item_id',
+                                ])
+                                ->with([
+                                    'repaired' => function ($r) use ($language) {
+                                        $r->from(['r' => 'plm_doc_item_defects'])->select([
+                                            'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
+                                        ])->leftJoin('defects d', 'r.defect_id = d.id')
+                                            ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
+                                    },
+                                    'scrapped' => function ($r) use ($language) {
+                                        $r->from(['s' => 'plm_doc_item_defects'])->select([
+                                            's.defect_id as value', "d.name_{$language} as label", 's.qty as count', 's.doc_item_product_id'
+                                        ])->leftJoin('defects d', 's.defect_id = d.id')
+                                            ->where(['s.type' => \app\models\BaseModel::DEFECT_SCRAPPED]);
+                                    },
+                                ]);
                             },
                             'planned_stopped' => function ($e) {
                                 $e->from(['ps1' => 'plm_stops'])->select([
@@ -666,6 +500,7 @@ class ApiPlmDocument extends PlmDocuments
             ])->leftJoin('hr_departments hd', 'pd.hr_department_id = hd.id')
             ->leftJoin('shifts sh', 'pd.shift_id = sh.id')
             ->where(['!=', 'pd.status_id', \app\models\BaseModel::STATUS_INACTIVE])
+            ->orderBy(["pd.id" => SORT_DESC])
             ->asArray();
 
         return new ActiveDataProvider([

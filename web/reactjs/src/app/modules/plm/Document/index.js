@@ -75,7 +75,7 @@ class Index extends React.Component {
                 </div>
                 <div className={'card'}>
                     <div className={'card-header'}>
-                        <Link to="/create" className={"btn btn-sm btn-primary"}><i className={"fa fa-plus"}/></Link>
+                        <Link to="/create" className={"btn btn-sm btn-success"}><i className={"fa fa-plus"}/></Link>
                     </div>
                     <div className={'card-body'}>
                         <table className={"table table-bordered"}>

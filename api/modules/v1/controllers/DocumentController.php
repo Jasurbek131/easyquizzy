@@ -122,88 +122,89 @@ class DocumentController extends ActiveController
         $response['line'] = 0;
         $post = Yii::$app->request->post();
         switch ($type) {
-            case "SAVE_EQUIPMENT_GROUP":
-                $group = $post['equipment_group'];
-                $items = $post['relation'];
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    $newGroup = new EquipmentGroup();
-                    $newGroup->setAttributes([
-                        'name' => $group['name'],
-                        'value' => $group['value'],
-                        'status_id' => BaseModel::STATUS_ACTIVE
-                    ]);
-                    if ($newGroup->save()) {
-                        $i = 1;
-                        foreach ($items as $item) {
-                            $newRelation = new EquipmentGroupRelationEquipment();
-                            $newRelation->setAttributes([
-                                'equipment_group_id' => $newGroup->id,
-                                'equipment_id' => $item['equipment_id'],
-                                'work_order' => $i++,
-                                'status_id' => BaseModel::STATUS_ACTIVE
-                            ]);
-                            if ($newRelation->save()) {
-                                $saved = true;
-                            } else {
-                                $saved = false;
-                                $response['errors'] = $newRelation->getErrors();
-                                break;
-                            }
-                        }
-                    } else {
-                        $response['errors'] = $newGroup->getErrors();
-                    }
-                    if ($saved) {
-                        $response['status'] = true;
-                        $response['equipmentGroup'] = EquipmentGroup::getEquipmentGroupList(true, $newGroup->id);
-                        $response['message'] = Yii::t('app', "Muvaffaqiyatli saqlandi!");
-                        $transaction->commit();
-                    } else {
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                    $response['errors'] = $e->getMessage();
-                }
-                break;
-            case "SAVE_PRODUCT_LIFECYCLE":
-                $lifecycle = $post['lifecycle'];
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    $newLifecycle = new ProductLifecycle();
-                    $newLifecycle->setAttributes([
-                        'product_id' => $lifecycle['product_id'],
-                        'equipment_group_id' => $lifecycle['equipment_group_id'],
-                        'lifecycle' => $lifecycle['lifecycle'],
-                        'bypass' => $lifecycle['bypass'],
-                        'equipments' => true,
-                        'status_id' => BaseModel::STATUS_ACTIVE
-                    ]);
-                    if ($newLifecycle->save()) {
-                        $saved = true;
-                    } else {
-                        $response['errors'] = $newLifecycle->getErrors();
-                    }
-                    if ($saved) {
-                        $response['status'] = true;
-                        $response['productLifecycle'] = ProductLifecycle::getProductLifecycleList(true, $newLifecycle->id);
-                        $response['message'] = Yii::t('app', "Muvaffaqiyatli saqlandi!");
-                        $transaction->commit();
-                    } else {
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                    $response['errors'] = $e->getMessage();
-                }
-                break;
+//            case "SAVE_EQUIPMENT_GROUP":
+//                $group = $post['equipment_group'];
+//                $items = $post['relation'];
+//                $transaction = Yii::$app->db->beginTransaction();
+//                $saved = false;
+//                try {
+//                    $newGroup = new EquipmentGroup();
+//                    $newGroup->setAttributes([
+//                        'name' => $group['name'],
+//                        'value' => $group['value'],
+//                        'status_id' => BaseModel::STATUS_ACTIVE
+//                    ]);
+//                    if ($newGroup->save()) {
+//                        $i = 1;
+//                        foreach ($items as $item) {
+//                            $newRelation = new EquipmentGroupRelationEquipment();
+//                            $newRelation->setAttributes([
+//                                'equipment_group_id' => $newGroup->id,
+//                                'equipment_id' => $item['equipment_id'],
+//                                'work_order' => $i++,
+//                                'status_id' => BaseModel::STATUS_ACTIVE
+//                            ]);
+//                            if ($newRelation->save()) {
+//                                $saved = true;
+//                            } else {
+//                                $saved = false;
+//                                $response['errors'] = $newRelation->getErrors();
+//                                break;
+//                            }
+//                        }
+//                    } else {
+//                        $response['errors'] = $newGroup->getErrors();
+//                    }
+//                    if ($saved) {
+//                        $response['status'] = true;
+//                        $response['equipmentGroup'] = EquipmentGroup::getEquipmentGroupList(true, $newGroup->id);
+//                        $response['message'] = Yii::t('app', "Muvaffaqiyatli saqlandi!");
+//                        $transaction->commit();
+//                    } else {
+//                        $transaction->rollBack();
+//                    }
+//                } catch (\Exception $e) {
+//                    $transaction->rollBack();
+//                    $response['errors'] = $e->getMessage();
+//                }
+//                break;
+//            case "SAVE_PRODUCT_LIFECYCLE":
+//                $lifecycle = $post['lifecycle'];
+//                $transaction = Yii::$app->db->beginTransaction();
+//                $saved = false;
+//                try {
+//                    $newLifecycle = new ProductLifecycle();
+//                    $newLifecycle->setAttributes([
+//                        'product_id' => $lifecycle['product_id'],
+//                        'equipment_group_id' => $lifecycle['equipment_group_id'],
+//                        'lifecycle' => $lifecycle['lifecycle'],
+//                        'bypass' => $lifecycle['bypass'],
+//                        'equipments' => true,
+//                        'status_id' => BaseModel::STATUS_ACTIVE
+//                    ]);
+//                    if ($newLifecycle->save()) {
+//                        $saved = true;
+//                    } else {
+//                        $response['errors'] = $newLifecycle->getErrors();
+//                    }
+//                    if ($saved) {
+//                        $response['status'] = true;
+//                        $response['productLifecycle'] = ProductLifecycle::getProductLifecycleList(true, $newLifecycle->id);
+//                        $response['message'] = Yii::t('app', "Muvaffaqiyatli saqlandi!");
+//                        $transaction->commit();
+//                    } else {
+//                        $transaction->rollBack();
+//                    }
+//                } catch (\Exception $e) {
+//                    $transaction->rollBack();
+//                    $response['errors'] = $e->getMessage();
+//                }
+//                break;
             case "SAVE_DOCUMENT":
                 $response = ApiPlmDocument::saveData($post);
                 break;
-            case "UPDATE":
+            case "DELETE_DOCUMENT_ITEM":
+                $response = ApiPlmDocument::deleteDocumentItem($post);
                 break;
             case "SAVE_MODAL":
                 $response = ApiPlmDocument::saveModalData($post);

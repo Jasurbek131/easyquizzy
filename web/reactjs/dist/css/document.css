@@ -48,6 +48,13 @@ label {
     display: flex;
     align-items: center;
     height: 100%;
+    justify-content: center;
+}
+.align-center .row{
+    width: 100%;
+}
+.align-center .col-lg-12{
+    padding: 0!important;
 }
 .control-label {
     display: block;
@@ -81,4 +88,16 @@ textarea.form-control{
     .no-print {
         display: none!important;
     }
+}
+.modal-body{
+    min-height: 70vh!important;
+}
+/*Hard code siz bunday qila ko'rmang*/
+.custom-padding .css-1ylieoo-control,
+.custom-padding .css-p7x95i-control
+{
+    padding: 5px 0px!important;
+}
+.modal{
+    background-color: #000000a3!important;
 }
