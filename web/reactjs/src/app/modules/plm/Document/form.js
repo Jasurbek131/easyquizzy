@@ -121,16 +121,12 @@ class Form extends React.Component {
     };
 
     onPlanSummary = (item) => {
-        if (item?.products?.length > 0) {
             let diff = this.onReturnMin(item?.end_work, item?.start_work);
             let planned = this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date);
             let unplanned = this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date);
-            item.products.map((product, key) => {
-                let lifecycle = product?.lifecycle ?? 0;
-                item.products[key]['qty'] = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
-            });
-        }
-        return item;
+            let lifecycle = item ? (item.lifecycle ? item.lifecycle : 1) : 1;
+            item.target_qty = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
+            return item;
     };
 
     onHandleChange = (type, model, name, key, index, value, e) => {
@@ -189,6 +185,7 @@ class Form extends React.Component {
                 plm_document_items[key][name] = v;
                 if (name === 'equipment_group_id') {
                     plm_document_items[key]['equipmentGroup'] = e;
+                    plm_document_items[key]['equipments'] = [];
                     plm_document_items[key]['lifecycle'] = e?.lifecycles?.lifecycle;
                     plm_document_items[key]['bypass'] = e?.lifecycles?.bypass;
                 }
@@ -782,19 +779,30 @@ class Form extends React.Component {
                                             </div>
 
                                             <div className="col-lg-1">
-                                                <div className={"align-center"}>
-                                                    <div className="row">
-                                                        <div className={'col-sm-12 pb-1 text-center'}>
-                                                            <label className={'control-label'}>Cycle time (s)</label>
-                                                            <input value={item?.lifecycle ?? ""} readOnly={true} className={'form-control'}/>
+
+                                                <div className="row">
+                                                    <div className={'col-sm-6 pb-1 text-center'}>
+                                                        <div className={"align-center"}>
+                                                           <div>
+                                                               <label className={'control-label'}>Cycle time (s)</label>
+                                                               <input value={item?.lifecycle ?? ""} readOnly={true} className={'form-control'}/>
+                                                               <br/>
+                                                               <label className={'control-label'}>Bypass (s)</label>
+                                                               <input value={item?.bypass ?? ""} readOnly={true} className={'form-control'}/>
+                                                           </div>
                                                         </div>
-                                                        <div className={'col-sm-12 pb-1 text-center'}>
-                                                            <label className={'control-label'}>Bypass (s)</label>
-                                                            <input value={item?.bypass ?? ""} readOnly={true} className={'form-control'}/>
+                                                    </div>
+                                                    <div className={'col-sm-6 pb-1 text-center'}>
+                                                        <div className={"align-center"}>
+                                                            <div>
+                                                                <label className={'control-label'}>Rejada</label>
+                                                                <input value={item?.target_qty ?? ""} readOnly={true} className={'form-control'}/>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div className={'col-sm-6'}>
                                                 <div className={'row'}>
                                                     <div className={'col-sm-12'}>

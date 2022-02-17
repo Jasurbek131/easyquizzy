@@ -11,8 +11,9 @@ use Yii;
  * @property int $id
  * @property int $planned_stop_id
  * @property int $unplanned_stop_id
- * @property int $lifecycle
- * @property int $bypass
+ * @property float $lifecycle
+ * @property float $bypass
+ * @property float $target_qty
  * @property int $processing_time_id
  * @property int $document_id
  * @property int $equipment_group_id
@@ -41,7 +42,8 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     {
         return [
             [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id'], 'default', 'value' => null],
-            [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id', 'lifecycle', 'bypass'], 'integer'],
+            [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id'], 'integer'],
+            [[ 'lifecycle', 'bypass', 'target_qty'], 'number'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['document_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocuments::class, 'targetAttribute' => ['document_id' => 'id']],
             [['processing_time_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmProcessingTime::class, 'targetAttribute' => ['processing_time_id' => 'id']],
