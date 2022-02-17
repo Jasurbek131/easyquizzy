@@ -249,10 +249,12 @@ class ApiPlmDocument extends PlmDocuments
                 }
             }
 
-            if ($response['status'])
+            if ($response['status']){
+                $response["id"] = $docItem->id ?? "";
                 $transaction->commit();
-            else
+            } else {
                 $transaction->rollBack();
+            }
 
         } catch (\Exception $e) {
             $transaction->rollBack();
