@@ -1,5 +1,6 @@
 <?php
 
+use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -27,29 +28,22 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-//            'id',
             'name_uz',
             'name_ru',
             [
                 'attribute' => 'type',
                 'value' => function(\app\modules\references\models\Defects $model){
-                    $info = $model::getDefectTypeList($model->type);
-                    return $info;
+                    return $model::getDefectTypeList($model->type);
                 }
             ],
             [
                 'attribute' => 'status_id',
-                'value' => function($model){
-                    $info = $model::getStatusList($model->status_id);
-                    return $info;
+                'format' => 'raw',
+                'value' => function($model) {
+                    return $model->status_id ? BaseModel::getStatusList($model->status_id): "";
                 },
-                'format' => 'html'
+                'filter' => BaseModel::getStatusList()
             ],
-            //'created_by',
-            //'created_at',
-            //'updated_by',
-            //'updated_at',
 
                 [
                     'class' => 'yii\grid\ActionColumn',

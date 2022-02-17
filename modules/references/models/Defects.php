@@ -2,6 +2,7 @@
 
 namespace app\modules\references\models;
 
+use app\models\BaseModel;
 use app\modules\hr\models\HrDepartmentRelDefects;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocumentItems;
@@ -90,6 +91,10 @@ class Defects extends BaseModel
         return $this->hasMany(PlmDocumentItems::className(), ['defect_id' => 'id']);
     }
 
+    /**
+     * @param null $key
+     * @return array|mixed
+     */
     public static function getDefectTypeList($key = null){
         $result = [
             self::REPAIRED_TYPE => Yii::t('app','Repaired Type'),
@@ -100,6 +105,13 @@ class Defects extends BaseModel
         }
         return $result;
     }
+
+    /**
+     * @param null $key
+     * @param bool $isArray
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws \Exception
+     */
     public static function getList($key = null, $isArray = false) {
         $language = Language::widget();
         $list = self::find()->asArray()->select(['id as id', "{$language} as name"])->all();
@@ -107,5 +119,25 @@ class Defects extends BaseModel
             return $list;
         }
         return ArrayHelper::map($list, 'id', 'name');
+    }
+
+    /**
+     * @param $type
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getListByType($type)
+    {
+        $language = Yii::$app->language;
+
+        return Defects::find()
+            ->select([
+                'id as value',
+                "name_{$language} as label",
+                "SUM(0) as count"
+            ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+            ->andWhere(['type' => $type])
+            ->groupBy('id')
+            ->asArray()
+            ->all();
     }
 }

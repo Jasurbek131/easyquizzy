@@ -9,8 +9,7 @@ import uz from "date-fns/locale/uz/index.js";
 import {items} from "../../../actions/elements";
 import {loadingContent, removeElement} from "../../../actions/functions";
 import {Link} from "react-router-dom";
-import EquipmentGroup from "./components/equipmentGroup";
-import style from "../../../style/style";
+// import EquipmentGroup from "./components/equipmentGroup";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
 
@@ -50,12 +49,12 @@ class Form extends React.Component {
             reasonList: [],
             repairedList: [],
             scrappedList: [],
-            operatorList: [],
+            // operatorList: [],
             equipmentGroupList: [],
             shiftList: [],
-            productList: [],
+            // productList: [],
             timeTypeList: [],
-            equipmentList: [],
+            // equipmentList: [],
             language: 'uz'
         };
     };
@@ -72,22 +71,26 @@ class Form extends React.Component {
             response = await axios.post(API_URL + 'fetch-list?type=CREATE_DOCUMENT');
         }
         if (response.data.status) {
+
             if (id) {
-                let {shiftList, departmentList} = this.state;
-                shiftList.push(response.data.plm_document?.shifts);
-                departmentList.push(response.data.plm_document?.hrDepartments);
+                let organisations = response.data.organisationList.filter(({value}) => +value === +response.data?.plm_document?.organisation_id) ?? [];
+                let departmentList = organisations ? (organisations[0]?.departments ?? []) : [];
+                let departments  = departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
+                let shiftList = departments ? (departments[0]?.shifts ?? []) : [];
+
                 this.setState({
                     plm_document: response.data?.plm_document,
                     plm_document_items: response.data?.plm_document?.plm_document_items,
                     shiftList: shiftList,
-                    departmentList: departmentList
+                    departmentList: departmentList,
+                    organisationList: response.data.organisationList,
                 });
             }
 
             let { plm_document, departmentList } = this.state;
             if(!plm_document.organisation_id){ // organisation id tanlanmagan bo'lsa default chiqarib qoyish
-                plm_document.organisation_id = response.data.organisationList[0]['value'] ?? "";
-                departmentList = response.data.organisationList[0]["departments"] ?? [];
+                plm_document.organisation_id = response?.data?.organisationList[0] ? response?.data?.organisationList[0]['value'] : "";
+                departmentList = response?.data?.organisationList[0]? response?.data?.organisationList[0]["departments"] : [];
             }
 
             if(!plm_document.reg_date){
@@ -97,17 +100,15 @@ class Form extends React.Component {
             this.setState({
                 organisationList: response.data.organisationList,
                 equipmentGroupList: response.data.equipmentGroupList,
-                productList: response.data.productList,
+                // productList: response.data.productList,
                 timeTypeList: response.data.timeTypeList,
               //  productLifecycleList: response.data.productLifecycleList,
-                equipmentList: response.data.equipmentList,
+              //   equipmentList: response.data.equipmentList,
                 reasonList: response.data.reasonList,
                 repairedList: response.data.repaired,
                 scrappedList: response.data.scrapped,
-                operatorList: response.data.operatorList,
                 plm_document: plm_document,
                 departmentList: departmentList,
-               // shiftList: response.data.shiftList,
                 language: response.data.language,
                 isLoading: false
             });
@@ -160,10 +161,12 @@ class Form extends React.Component {
                 if (name === 'product_id') {
                     $("#product_lifecycle_id").children('div').css("border", "1px solid #ced4da");
                     $("#qty").css("border", "1px solid #ced4da");
-                    e.repaired = [];
-                    e.scrapped = [];
-                    plm_document_items[key]['products'][index] = e;
-                    plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
+                    // e.repaired = [];
+                    // e.scrapped = [];
+                    plm_document_items[key]['products'][index][name] = v;
+                    plm_document_items[key]['products'][index]["repaired"] = [];
+                    plm_document_items[key]['products'][index]["scrapped"] = [];
+                    // plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                 } else {
                     plm_document_items[key]['products'][index][name] = v;
                 }
@@ -321,10 +324,10 @@ class Form extends React.Component {
 
         if (temporarily.type === 'unplanned_stopped') {
             let isSave = true;
-            if (stored.bypass === "") {
-                isSave = false;
-                $('#bypass').css("border", "1px solid red");
-            }
+            // if (stored.bypass === "") {
+            //     isSave = false;
+            //     $('#bypass').css("border", "1px solid red");
+            // }
             if (stored.reason_id === "") {
                 isSave = false;
                 $('#reason_id').children('div').css("border", "1px solid red");
@@ -406,6 +409,8 @@ class Form extends React.Component {
             case "product-plus":
                 let product = {
                     label: "",
+                    fact_qty: "",
+                    qty: "",
                     value: "",
                     repaired: [],
                     scrapped: []
@@ -457,7 +462,7 @@ class Form extends React.Component {
                 }
                 if (item?.products?.length > 0) {
                     item.products.map((product, proKey) => {
-                        if (product.product_lifecycle_id === "" || product.product_id === "") {
+                        if (product.product_id === "") {
                             isEmpty = false;
                             $("#product_lifecycle_id").children('div').css("border", "1px solid red");
                         }
@@ -566,14 +571,12 @@ class Form extends React.Component {
                 </div>
 
 
-                <EquipmentGroup
-                    appearance={appearance}
-                    onCancel={this.onHandleCancel}
-                    onChangeProps={(type, model) => {this.onChangeProps(type, model)}}
-                    onSaveProps={(type, model) => {this.onSaveProps(type, model).then(r => "")}}
-                />
-
-
+                {/*<EquipmentGroup*/}
+                {/*    appearance={appearance}*/}
+                {/*    onCancel={this.onHandleCancel}*/}
+                {/*    onChangeProps={(type, model) => {this.onChangeProps(type, model)}}*/}
+                {/*    onSaveProps={(type, model) => {this.onSaveProps(type, model).then(r => "")}}*/}
+                {/*/>*/}
 
                 <div className={'card'}>
 
@@ -777,9 +780,9 @@ class Form extends React.Component {
 
                                             <div className={'col-sm-7'}>
                                                 <div className={'row'}>
-                                                    <div className={'col-sm-6'}>
+                                                    <div className={'col-sm-5'}>
                                                         <div className={'row'}>
-                                                            <div className={'col-sm-6 pb-1'}>
+                                                            <div className={'col-sm-8 pb-1'}>
                                                                 <div className={'row'}>
                                                                     <div className={"col-sm-2 mb-1"}>
                                                                         <button onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
@@ -789,21 +792,21 @@ class Form extends React.Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div className={'col-sm-2 pb-1 text-center'}>
-                                                                <label className={'control-label'}>Lifecycle</label>
-                                                            </div>
-                                                            <div className={'col-sm-2 pb-1 text-center'}>
-                                                                <label className={'control-label'}>Bypass</label>
-                                                            </div>
-                                                            <div className={'col-sm-2 text-center'}>
-                                                                <label className={"control-label"}>Rejada</label>
+                                                            {/*<div className={'col-sm-2 pb-1 text-center'}>*/}
+                                                            {/*    <label className={'control-label'}>Cycle time (s)</label>*/}
+                                                            {/*</div>*/}
+                                                            {/*<div className={'col-sm-2 pb-1 text-center'}>*/}
+                                                            {/*    <label className={'control-label'}>Bypass (s)</label>*/}
+                                                            {/*</div>*/}
+                                                            <div className={'col-sm-4 text-center'}>
+                                                                <label className={"control-label"}>Ish/chiq</label>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className={'col-sm-6'}>
+                                                    <div className={'col-sm-7'}>
                                                         <div className={'row'}>
                                                             <div className={'col-sm-3 text-center'}>
-                                                                <label className={"control-label"}>Ish/chiq</label>
+                                                                <label className={"control-label"}>Ish/chiq(Bypass)</label>
                                                             </div>
                                                             <div className={'col-sm-3 text-center'}>
                                                                 <label className={"control-label"}>Ta'mirlangan</label>
@@ -818,42 +821,39 @@ class Form extends React.Component {
                                                     item?.products?.length > 0 && item.products.map((product, prKey) => {
                                                         return (
                                                             <div className={'row'} key={prKey}>
-                                                                <div className={'col-sm-6'}>
+                                                                <div className={'col-sm-5'}>
                                                                     <div className={'row'}>
-                                                                        <div className={'col-sm-6'}>
-                                                                            <div className={'row'}>
-                                                                                <div className={'col-sm-10 pr-0 mb-1'}>
-                                                                                    <Select className={"aria-required"}
-                                                                                            id={"product_lifecycle_id"}
-                                                                                            onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
-                                                                                            placeholder={"Tanlang ..."}
-                                                                                            value={item?.equipmentGroup?.lifecycles?.productGroup?.products.filter(({value}) => +value === +product?.product_id)}
-                                                                                            options={item?.equipmentGroup?.lifecycles?.productGroup?.products}
-                                                                                            styles={customStyles}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
+                                                                        <div className={'col-sm-8'}>
+                                                                            <Select className={"aria-required"}
+                                                                                    id={"product_lifecycle_id"}
+                                                                                    onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
+                                                                                    placeholder={"Tanlang ..."}
+                                                                                    value={item?.equipmentGroup?.lifecycles?.productGroup?.products.filter(({value}) => +value === +product?.product_id)}
+                                                                                    options={item?.equipmentGroup?.lifecycles?.productGroup?.products}
+                                                                                    styles={customStyles}
+                                                                            />
                                                                         </div>
-                                                                        <div className={'col-sm-2'}>
-                                                                            <input type={"text"} id={"product_lifecycle"} disabled={true} className={'form-control'} value={product?.lifecycle}/>
-                                                                        </div>
-                                                                        <div className={'col-sm-2'}>
-                                                                            <input type={"text"} id={"product_bypass"} disabled={true} className={'form-control'} value={product?.bypass}/>
-                                                                        </div>
-
-                                                                        <div className={'col-sm-2'}>
-                                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
-                                                                                   disabled={true} id={"qty"} type={'number'} className={'form-control aria-required'}
-                                                                                   value={product?.qty ?? ""}/>
+                                                                        {/*<div className={'col-sm-2'}>*/}
+                                                                        {/*    <input type={"text"} id={"product_lifecycle"} disabled={true} className={'form-control'} value={product?.lifecycle}/>*/}
+                                                                        {/*</div>*/}
+                                                                        {/*<div className={'col-sm-2'}>*/}
+                                                                        {/*    <input type={"text"} id={"product_bypass"} disabled={true} className={'form-control'} value={product?.bypass}/>*/}
+                                                                        {/*</div>*/}
+                                                                        <div className={'col-sm-4'}>
+                                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
+                                                                                   type={'number'} className={'form-control aria-required'}  id={"fact_qty"}
+                                                                                   min={0}
+                                                                                   value={product?.fact_qty ?? ""}/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div className={'col-sm-6'}>
+                                                                <div className={'col-sm-7'}>
                                                                     <div className={'row'}>
                                                                         <div className={'col-sm-3'}>
-                                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
-                                                                                   type={'number'} className={'form-control aria-required'}  id={"fact_qty"}
-                                                                                   value={product?.fact_qty ?? ""}/>
+                                                                            <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
+                                                                                   type={'number'} className={'form-control aria-required'}
+                                                                                   min={0}
+                                                                                   value={product?.qty ?? ""}/>
                                                                         </div>
                                                                         <div className={'col-sm-3 text-center'}>
                                                                             <label className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
@@ -1003,16 +1003,16 @@ class Form extends React.Component {
                                                         />
                                                     </div>
                                                 </div>
-                                                {
-                                                    temporarily?.type === 'unplanned_stopped' ?
-                                                        <div className={'col-sm-12'}>
-                                                            <div className={"form-group"}>
-                                                                <label className={"control-label"}>Bypass</label>
-                                                                <input onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}
-                                                                       className={"form-control"} value={temporarily?.store?.bypass} id={"bypass"}/>
-                                                            </div>
-                                                        </div> : ""
-                                                }
+                                                {/*{*/}
+                                                {/*    temporarily?.type === 'unplanned_stopped' ?*/}
+                                                {/*        <div className={'col-sm-12'}>*/}
+                                                {/*            <div className={"form-group"}>*/}
+                                                {/*                <label className={"control-label"}>Bypass</label>*/}
+                                                {/*                <input onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}*/}
+                                                {/*                       className={"form-control"} value={temporarily?.store?.bypass} id={"bypass"}/>*/}
+                                                {/*            </div>*/}
+                                                {/*        </div> : ""*/}
+                                                {/*}*/}
                                                 <div className={'col-sm-12'}>
                                                     <div className={"form-group"}>
                                                         <label className={"control-label"}>Izoh</label>

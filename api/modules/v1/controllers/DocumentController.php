@@ -228,55 +228,31 @@ class DocumentController extends ActiveController
                     'user_id' => Yii::$app->user->id,
                     'language' => $language,
                     'today' => /*date('Y.m.d H:i:s')*/ '',
+                    'reasonList' => Reasons::getList(),
+                    'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED),
+                    'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED),
                 ];
 
-                $response['productList'] = Products::find()->alias('p')->select([
-                    'p.id as value', "p.name as label"
-                ])->where(['p.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->groupBy('p.id')
-                    ->asArray()->all();
+//                $response['productList'] = Products::find()->alias('p')->select([
+//                    'p.id as value', "p.name as label"
+//                ])->where(['p.status_id' => BaseModel::STATUS_ACTIVE])
+//                    ->groupBy('p.id')
+//                    ->asArray()->all();
 
                // $response['productLifecycleList'] = ProductLifecycle::getProductLifecycleList();
 
 
-                $response['operatorList'] = HrEmployee::find()->asArray()->all();
+//                $response['operatorList'] = HrEmployee::find()->asArray()->all();
 
-                $response['equipmentList'] = Equipments::find()
-                    ->alias('e')
-                    ->select([
-                        'e.id as value',
-                        "e.name as label"
-                    ])->where(['e.status_id' => BaseModel::STATUS_ACTIVE])
-                    ->groupBy('e.id')
-                    ->asArray()
-                    ->all();
-
-                $response['reasonList'] = Reasons::find()
-                    ->select([
-                        'id as value',
-                        "name_{$language} as label"
-                    ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
-                    ->asArray()
-                    ->all();
-
-                $response['repaired'] = Defects::find()
-                    ->select([
-                        'id as value',
-                        "name_{$language} as label",
-                        "SUM(0) as count"
-                    ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
-                    ->andWhere(['type' => BaseModel::DEFECT_REPAIRED])
-                    ->groupBy('id')
-                    ->asArray()->all();
-
-                $response['scrapped'] = Defects::find()->select([
-                    'id as value',
-                    "name_{$language} as label",
-                    "SUM(0) as count"
-                ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
-                    ->andWhere(['type' => BaseModel::DEFECT_SCRAPPED])
-                    ->groupBy('id')
-                    ->asArray()->all();
+//                $response['equipmentList'] = Equipments::find()
+//                    ->alias('e')
+//                    ->select([
+//                        'e.id as value',
+//                        "e.name as label"
+//                    ])->where(['e.status_id' => BaseModel::STATUS_ACTIVE])
+//                    ->groupBy('e.id')
+//                    ->asArray()
+//                    ->all();
 
 //                $response['shiftList'] = Shifts::find()->select([
 //                    'id as value',
@@ -288,7 +264,7 @@ class DocumentController extends ActiveController
 //                    ->asArray()->all();
 
                 if (!is_null($id)) {
-                    $plm_document = \app\api\modules\v1\models\BaseModel::getDocumentElements($id);
+                    $plm_document = \app\api\modules\v1\models\ApiPlmDocument::getDocumentElements($id);
                     if (!empty($plm_document)) {
                         $response['plm_document'] = $plm_document;
                     } else {
@@ -309,7 +285,7 @@ class DocumentController extends ActiveController
      */
     public function actionSearch(): array
     {
-        $dataProvider = \app\api\modules\v1\models\BaseModel::getPlmDocuments([]);
+        $dataProvider = \app\api\modules\v1\models\ApiPlmDocument::getPlmDocuments([]);
         $response['documents'] = $dataProvider->getModels();
         $response['pagination'] = $dataProvider->getPagination();
         $response['status'] = true;

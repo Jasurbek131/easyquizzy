@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                      'attribute' => 'status_id',
                      'format' => 'raw',
                      'value' => function($model) {
-                         return BaseModel::getStatusList($model->status_id);
+                         return $model->status_id ? BaseModel::getStatusList($model->status_id): "";
                      },
                      'filter' => BaseModel::getStatusList()
                 ],
