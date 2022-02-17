@@ -139,6 +139,9 @@ class ApiPlmDocument extends PlmDocuments
                             'planned_stop_id' => $planStop->id ?? "",
                             'unplanned_stop_id' => $unPlanStop->id ?? "",
                             'processing_time_id' => $processing->id ?? "",
+                            'lifecycle' => $item["lifecycle"] ? (int)$item["lifecycle"] : "",
+                            'bypass' => $item["bypass"] ? (int)$item["bypass"] : "",
+                            'target_qty' => $item["target_qty"] ? (int)$item["target_qty"] : "",
                             'equipment_group_id' => $item['equipmentGroup']['value'] ?? "",
                         ]);
                         if (!$docItem->save()) {
@@ -275,33 +278,31 @@ class ApiPlmDocument extends PlmDocuments
             ])->with([
                 'plm_document_items' => function ($q) use ($language) {
                     $q->from(['pdi' => 'plm_document_items'])
-                        ->select(['pdi.*', 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
+                        ->select(['pdi.*', "pdi.lifecycle", "pdi.bypass", "pdi.target_qty", 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
                             'products' => function ($p) use ($language) {
                                 $p->from(['p' => 'plm_doc_item_products'])->select([
                                     'p.id',
                                     'p.product_lifecycle_id',
-                                    'pl.lifecycle',
-                                    'pl.bypass',
                                     'p.product_id',
                                     'p.product_id as value',
                                     'p.qty',
                                     'p.fact_qty',
-                                    'p.document_item_id'
-                                ])->leftJoin('product_lifecycle pl', 'p.product_lifecycle_id = pl.id')
-                                    ->with([
-                                        'repaired' => function ($r) use ($language) {
-                                            $r->from(['r' => 'plm_doc_item_defects'])->select([
-                                                'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
-                                            ])->leftJoin('defects d', 'r.defect_id = d.id')
-                                                ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
-                                        },
-                                        'scrapped' => function ($r) use ($language) {
-                                            $r->from(['s' => 'plm_doc_item_defects'])->select([
-                                                's.defect_id as value', "d.name_{$language} as label", 's.qty as count', 's.doc_item_product_id'
-                                            ])->leftJoin('defects d', 's.defect_id = d.id')
-                                                ->where(['s.type' => \app\models\BaseModel::DEFECT_SCRAPPED]);
-                                        },
-                                    ]);
+                                    'p.document_item_id',
+                                ])
+                                ->with([
+                                    'repaired' => function ($r) use ($language) {
+                                        $r->from(['r' => 'plm_doc_item_defects'])->select([
+                                            'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
+                                        ])->leftJoin('defects d', 'r.defect_id = d.id')
+                                            ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
+                                    },
+                                    'scrapped' => function ($r) use ($language) {
+                                        $r->from(['s' => 'plm_doc_item_defects'])->select([
+                                            's.defect_id as value', "d.name_{$language} as label", 's.qty as count', 's.doc_item_product_id'
+                                        ])->leftJoin('defects d', 's.defect_id = d.id')
+                                            ->where(['s.type' => \app\models\BaseModel::DEFECT_SCRAPPED]);
+                                    },
+                                ]);
                             },
                             'planned_stopped' => function ($e) {
                                 $e->from(['ps1' => 'plm_stops'])->select([

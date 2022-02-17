@@ -121,16 +121,12 @@ class Form extends React.Component {
     };
 
     onPlanSummary = (item) => {
-        if (item?.products?.length > 0) {
             let diff = this.onReturnMin(item?.end_work, item?.start_work);
             let planned = this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date);
             let unplanned = this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date);
-            item.products.map((product, key) => {
-                let lifecycle = product?.lifecycle ?? 0;
-                item.products[key]['qty'] = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
-            });
-        }
-        return item;
+            let lifecycle = item ? (item.lifecycle ? item.lifecycle : 1) : 1;
+            item.target_qty = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
+            return item;
     };
 
     onHandleChange = (type, model, name, key, index, value, e) => {
@@ -189,7 +185,9 @@ class Form extends React.Component {
                 plm_document_items[key][name] = v;
                 if (name === 'equipment_group_id') {
                     plm_document_items[key]['equipmentGroup'] = e;
-                    plm_document_items[key]['equipmentGroup']['lifecycles'] = e?.lifecycles;
+                    plm_document_items[key]['equipments'] = [];
+                    plm_document_items[key]['lifecycle'] = e?.lifecycles?.lifecycle;
+                    plm_document_items[key]['bypass'] = e?.lifecycles?.bypass;
                 }
                 if (name === 'product_id') {
                     plm_document_items[key]['products'][index] = e;
@@ -450,29 +448,29 @@ class Form extends React.Component {
             documentItems.map((item, key) => {
                 if (item.equipment_group_id === "") {
                     isEmpty = false;
-                    $("#equipment_group_id").children('div').css("border", "1px solid red");
+                    $("#equipment_group_id_"+key).children('div').css("border", "1px solid red");
+                }
+                if (item.equipments.length <= 0) {
+                    isEmpty = false;
+                    $("#equipments_"+key).children('div').css("border", "1px solid red");
                 }
                 if (item.start_work === "") {
                     isEmpty = false;
-                    $("#start_work").css("border", "1px solid red");
+                    $("#start_work_" + key).css("border", "1px solid red");
                 }
                 if (item.end_work === "") {
                     isEmpty = false;
-                    $("#end_work").css("border", "1px solid red");
+                    $("#end_work_" + key).css("border", "1px solid red");
                 }
                 if (item?.products?.length > 0) {
                     item.products.map((product, proKey) => {
                         if (product.product_id === "") {
                             isEmpty = false;
-                            $("#product_lifecycle_id").children('div').css("border", "1px solid red");
-                        }
-                        if (product.qty === "") {
-                            isEmpty = false;
-                            $("#qty").css("border", "1px solid red");
+                            $("#product_id_" + key +"_"+ proKey).children('div').css("border", "1px solid red");
                         }
                         if (product.fact_qty === "") {
                             isEmpty = false;
-                            $("#fact_qty").css("border", "1px solid red");
+                            $("#fact_qty_" + key +"_"+ proKey).css("border", "1px solid red");
                         }
                     })
                 }
@@ -690,46 +688,48 @@ class Form extends React.Component {
 
                                         <div className={"row"}>
                                             <div className={'col-sm-2'}>
-                                                <div className={'row'}>
-                                                    <div className={'col-sm-12 mb-2'}>
-                                                        <label htmlFor={"equipment_group_id"+key}>Uskunalar guruhi</label>
-                                                        <Select className={"aria-required"}
-                                                                id={"equipment_group_id"}
-                                                                onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'equipment_group_id', key, '', '')}
-                                                                placeholder={"Qurilmalar guruhi"}
-                                                                value={equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id)}
-                                                                options={equipmentGroupList}
+                                                <div className={"align-center"}>
+                                                    <div className={'row'}>
+                                                        <div className={'col-sm-12 mb-2'}>
+                                                            <label htmlFor={"equipment_group_id"+key}>Uskunalar guruhi</label>
+                                                            <Select className={"aria-required"}
+                                                                    id={"equipment_group_id_" + key}
+                                                                    onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'equipment_group_id', key, '', '')}
+                                                                    placeholder={"Qurilmalar guruhi"}
+                                                                    value={equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id)}
+                                                                    options={equipmentGroupList}
+                                                                    styles={customStyles}
+                                                            />
+                                                        </div>
+                                                        <div className="col-lg-12">
+                                                            <label htmlFor={"equipments_"+key}>Uskunalar</label>
+                                                            <Select
                                                                 styles={customStyles}
-                                                        />
+                                                                isMulti
+                                                                id={"equipments_" + key}
+                                                                onChange={this.onHandleChange.bind(this, 'multi-select', 'plm_document_items','equipments',key, '', '')}
+                                                                value={item.equipments}
+                                                                placeholder={"Выбрать"}
+                                                                isClearable={true}
+                                                                options={item?.equipmentGroup?.equipments ?? []}
+                                                            />
+                                                        </div>
+                                                        {/*<div className={"col-sm-2 mb-1 text-right"}>*/}
+                                                        {/*    <button onClick={this.onPush.bind(this, 'equipment-group-plus', 'plm_document_items', key, '')}*/}
+                                                        {/*            className={"btn btn-xs wh-28 btn-primary"}>*/}
+                                                        {/*        <i className={"fa fa-plus"}/>*/}
+                                                        {/*    </button>*/}
+                                                        {/*</div>*/}
+                                                        {/*{*/}
+                                                        {/*    item?.equipmentGroup?.equipments?.length > 0 && item.equipmentGroup?.equipments.map((equipment, eqKey) => {*/}
+                                                        {/*        return (*/}
+                                                        {/*            <div className={'col-sm-12 mb-1'} key={eqKey}>*/}
+                                                        {/*                <span className={'form-control'}>{equipment?.label}</span>*/}
+                                                        {/*            </div>*/}
+                                                        {/*        )*/}
+                                                        {/*    })*/}
+                                                        {/*}*/}
                                                     </div>
-                                                    <div className="col-lg-12">
-                                                        <label htmlFor={"equipments"+key}>Uskunalar</label>
-                                                        <Select
-                                                            styles={customStyles}
-                                                            isMulti
-                                                            id={"equipments"}
-                                                            onChange={this.onHandleChange.bind(this, 'multi-select', 'plm_document_items','equipments',key, '', '')}
-                                                            value={item.equipments}
-                                                            placeholder={"Выбрать"}
-                                                            isClearable={true}
-                                                            options={item?.equipmentGroup?.equipments ?? []}
-                                                        />
-                                                    </div>
-                                                    {/*<div className={"col-sm-2 mb-1 text-right"}>*/}
-                                                    {/*    <button onClick={this.onPush.bind(this, 'equipment-group-plus', 'plm_document_items', key, '')}*/}
-                                                    {/*            className={"btn btn-xs wh-28 btn-primary"}>*/}
-                                                    {/*        <i className={"fa fa-plus"}/>*/}
-                                                    {/*    </button>*/}
-                                                    {/*</div>*/}
-                                                    {/*{*/}
-                                                    {/*    item?.equipmentGroup?.equipments?.length > 0 && item.equipmentGroup?.equipments.map((equipment, eqKey) => {*/}
-                                                    {/*        return (*/}
-                                                    {/*            <div className={'col-sm-12 mb-1'} key={eqKey}>*/}
-                                                    {/*                <span className={'form-control'}>{equipment?.label}</span>*/}
-                                                    {/*            </div>*/}
-                                                    {/*        )*/}
-                                                    {/*    })*/}
-                                                    {/*}*/}
                                                 </div>
                                             </div>
 
@@ -740,7 +740,7 @@ class Form extends React.Component {
                                                             <label className={"control-label"}>Boshlanishi</label>
                                                             <DatePicker locale={ru}
                                                                         dateFormat="HH:mm"
-                                                                        id={"start_work"}
+                                                                        id={"start_work_"+ key}
                                                                         onChange={(e)=>{
                                                                             this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
                                                                         }}
@@ -760,7 +760,7 @@ class Form extends React.Component {
                                                             <label className={"control-label"}>Tugashi</label>
                                                             <DatePicker locale={ru}
                                                                         dateFormat="HH:mm"
-                                                                        id={"end_work"}
+                                                                        id={"end_work_"+ key}
                                                                         className={"form-control aria-required"}
                                                                         onChange={(e)=>{
                                                                             this.onHandleChange('date', 'plm_document_items', 'end_work', key, '', '', new Date(e))
@@ -778,11 +778,36 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
 
-                                            <div className={'col-sm-7'}>
+                                            <div className="col-lg-1">
+
+                                                <div className="row">
+                                                    <div className={'col-sm-6 pb-1 text-center'}>
+                                                        <div className={"align-center"}>
+                                                           <div>
+                                                               <label className={'control-label'}>Cycle time (s)</label>
+                                                               <input value={item?.lifecycle ?? ""} readOnly={true} className={'form-control'}/>
+                                                               <br/>
+                                                               <label className={'control-label'}>Bypass (s)</label>
+                                                               <input value={item?.bypass ?? ""} readOnly={true} className={'form-control'}/>
+                                                           </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className={'col-sm-6 pb-1 text-center'}>
+                                                        <div className={"align-center"}>
+                                                            <div>
+                                                                <label className={'control-label'}>Rejada</label>
+                                                                <input value={item?.target_qty ?? ""} readOnly={true} className={'form-control'}/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className={'col-sm-6'}>
                                                 <div className={'row'}>
-                                                    <div className={'col-sm-5'}>
+                                                    <div className={'col-sm-12'}>
                                                         <div className={'row'}>
-                                                            <div className={'col-sm-8 pb-1'}>
+                                                            <div className={'col-sm-3 pb-1'}>
                                                                 <div className={'row'}>
                                                                     <div className={"col-sm-2 mb-1"}>
                                                                         <button onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
@@ -792,28 +817,20 @@ class Form extends React.Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            {/*<div className={'col-sm-2 pb-1 text-center'}>*/}
-                                                            {/*    <label className={'control-label'}>Cycle time (s)</label>*/}
-                                                            {/*</div>*/}
-                                                            {/*<div className={'col-sm-2 pb-1 text-center'}>*/}
-                                                            {/*    <label className={'control-label'}>Bypass (s)</label>*/}
-                                                            {/*</div>*/}
-                                                            <div className={'col-sm-4 text-center'}>
+
+                                                            <div className={'col-sm-2 text-center'}>
                                                                 <label className={"control-label"}>Ish/chiq</label>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={'col-sm-7'}>
-                                                        <div className={'row'}>
-                                                            <div className={'col-sm-3 text-center'}>
-                                                                <label className={"control-label"}>Ish/chiq(Bypass)</label>
+                                                            <div className={'col-sm-2 text-center'}>
+                                                                <label className={"control-label"}>Ish/chiq(Bs)</label>
                                                             </div>
-                                                            <div className={'col-sm-3 text-center'}>
+                                                            <div className={'col-sm-2 text-center'}>
                                                                 <label className={"control-label"}>Ta'mirlangan</label>
                                                             </div>
-                                                            <div className={'col-sm-3 text-center'}>
+                                                            <div className={'col-sm-2 text-center'}>
                                                                 <label className={"control-label"}>Yaroqsiz</label>
                                                             </div>
+                                                            <div className={"col-sm-1 text-center"}></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -821,11 +838,11 @@ class Form extends React.Component {
                                                     item?.products?.length > 0 && item.products.map((product, prKey) => {
                                                         return (
                                                             <div className={'row'} key={prKey}>
-                                                                <div className={'col-sm-5'}>
+                                                                <div className={'col-sm-12'}>
                                                                     <div className={'row'}>
-                                                                        <div className={'col-sm-8'}>
+                                                                        <div className={'col-sm-3'}>
                                                                             <Select className={"aria-required"}
-                                                                                    id={"product_lifecycle_id"}
+                                                                                    id={"product_id_" + key + "_" + prKey}
                                                                                     onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
                                                                                     placeholder={"Tanlang ..."}
                                                                                     value={item?.equipmentGroup?.lifecycles?.productGroup?.products.filter(({value}) => +value === +product?.product_id)}
@@ -839,37 +856,34 @@ class Form extends React.Component {
                                                                         {/*<div className={'col-sm-2'}>*/}
                                                                         {/*    <input type={"text"} id={"product_bypass"} disabled={true} className={'form-control'} value={product?.bypass}/>*/}
                                                                         {/*</div>*/}
-                                                                        <div className={'col-sm-4'}>
+                                                                        <div className={'col-sm-2'}>
                                                                             <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
-                                                                                   type={'number'} className={'form-control aria-required'}  id={"fact_qty"}
+                                                                                   type={'number'} className={'form-control aria-required'}  id={"fact_qty_" + key + "_"  + prKey}
                                                                                    min={0}
                                                                                    value={product?.fact_qty ?? ""}/>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className={'col-sm-7'}>
-                                                                    <div className={'row'}>
-                                                                        <div className={'col-sm-3'}>
+                                                                        <div className={'col-sm-2'}>
                                                                             <input onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
                                                                                    type={'number'} className={'form-control aria-required'}
+                                                                                   id={"qty_" + prKey}
                                                                                    min={0}
                                                                                    value={product?.qty ?? ""}/>
                                                                         </div>
-                                                                        <div className={'col-sm-3 text-center'}>
+                                                                        <div className={'col-sm-2 text-center'}>
                                                                             <label className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
                                                                             <button onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
                                                                                     className={'btn btn-primary btn-xs wh-28'}>
                                                                                 <i className={'fa fa-plus'}/>
                                                                             </button>
                                                                         </div>
-                                                                        <div className={'col-sm-3 text-center'}>
+                                                                        <div className={'col-sm-2 text-center'}>
                                                                             <label className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
                                                                             <button  onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
                                                                                      className={'btn btn-primary btn-xs wh-28'}>
                                                                                 <i className={'fa fa-plus'}/>
                                                                             </button>
                                                                         </div>
-                                                                        <div className={'col-sm-3 mb-1'}>
+                                                                        <div className={'col-sm-1 mb-1'}>
                                                                             <button onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
                                                                                     className={"btn btn-xs wh-28 btn-outline-danger"}>
                                                                                 <i className={"fa fa-times"}/>
