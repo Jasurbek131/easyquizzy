@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\components\OurCustomBehavior;
 use app\widgets\Language;
+use DateTime;
 use Exception;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -85,5 +86,48 @@ class BaseModel extends ActiveRecord
                 'label' => "Konveyer"
             ],
         ];
+    }
+
+    /**
+     * @param $time1
+     * @param $time2
+     * @param string $need
+     * @return float|int
+     */
+    public static function getDiffDateTime($time1, $time2, $need = "s")
+    {
+        try {
+            $time1 = new DateTime($time1);
+            $time2 = new DateTime($time2);
+            $diff = $time1->diff($time2);
+            $total = 0;
+            switch( $need){
+                case "y":
+                    $total = $diff->y + $diff->m / 12 + $diff->d / 365.25;
+                    break;
+                case "m":
+                    $total= $diff->y * 12 + $diff->m + $diff->d/30 + $diff->h / 24;
+                    break;
+                case "d":
+                    $total = $diff->y * 365.25 + $diff->m * 30 + $diff->d + $diff->h/24 + $diff->i / 60;
+                    break;
+                case "h":
+                    $total = ($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h + $diff->i/60;
+                    break;
+                case "i":
+                    $total = (($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i + $diff->s/60;
+                    break;
+                case "s":
+                    $total = ((($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i)*60 + $diff->s;
+                    break;
+            }
+            if($diff->invert)
+                return  -1 * $total;
+            else
+                return $total;
+
+        }catch (Exception $e){
+
+        }
     }
 }

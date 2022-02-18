@@ -8,6 +8,7 @@ use kartik\tree\models\Tree;
 use Yii;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
+use function Faker\Provider\pt_BR\check_digit;
 
 /**
  * This is the model class for table "hr_departments".
@@ -231,6 +232,7 @@ class HrDepartments extends BaseModel
             ->select([
                 'hd.id',
                 'hd.id as value',
+
                 'hd.name as label',
             ])
             ->with([

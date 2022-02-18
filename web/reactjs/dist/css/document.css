@@ -52,6 +52,7 @@ label {
 }
 .align-center .row{
     width: 100%;
+    margin: 0;
 }
 .align-center .col-lg-12{
     padding: 0!important;
@@ -130,3 +131,15 @@ textarea.form-control{
     font-weight: bold;
     font-size: 16px!important;
 }
+.react-datepicker{
+    zoom: 0.5;
+}
+.col-lg-5{
+    padding: 0!important;
+}
+.col-lg-2{
+    padding: 1px;
+}
+/*#root{*/
+/*    zoom: 0.9;*/
+/*}*/
