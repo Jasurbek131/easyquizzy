@@ -155,16 +155,16 @@ class ProductLifecycle extends BaseModel
         return $response;
     }
 
-    public static function getProductLifecycleList($one = false, $id = null) {
-        $list = ProductLifecycle::find()->alias('pl')->select([
-            'pl.equipment_group_id', "MAX(p.name) as label", "pl.lifecycle", "pl.bypass", 'pl.product_id', 'pl.product_id as value',
-        ])->innerJoin('products p', 'pl.product_id = p.id')
-            ->where(['pl.status_id' => BaseModel::STATUS_ACTIVE])
-            ->groupBy('p.id')
-            ->asArray();
-        if ($one) {
-            return $list->andWhere(['pl.id' => $id])->one();
-        }
-        return $list->all();
-    }
+//    public static function getProductLifecycleList($one = false, $id = null) {
+//        $list = ProductLifecycle::find()->alias('pl')->select([
+//            'pl.equipment_group_id', "MAX(p.name) as label", "pl.lifecycle", "pl.bypass", 'pl.product_id', 'pl.product_id as value',
+//        ])->innerJoin('products p', 'pl.product_id = p.id')
+//            ->where(['pl.status_id' => BaseModel::STATUS_ACTIVE])
+//            ->groupBy('p.id')
+//            ->asArray();
+//        if ($one) {
+//            return $list->andWhere(['pl.id' => $id])->one();
+//        }
+//        return $list->all();
+//    }
 }
