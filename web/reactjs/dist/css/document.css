@@ -105,7 +105,7 @@ textarea.form-control{
     font-size: 10px!important;
 }
 .plan{
-    background-color: #6d6c71!important;
+    background-color: #E74C3D!important;
     color: white;
 }
 .time{
@@ -121,4 +121,12 @@ textarea.form-control{
 .unplanned_stopped{
     background-color: #00ffff2e;
     padding: 4px!important;
+}
+.control-label{
+    font-weight: bold!important;
+}
+.date-min{
+    color:#E74C3D;
+    font-weight: bold;
+    font-size: 16px!important;
 }

@@ -737,7 +737,7 @@ class Form extends React.Component {
                                                                         onChange={(e) => {
                                                                             this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
                                                                         }}
-                                                                        className={"form-control aria-required"}
+                                                                        className={"form-control text-center aria-required"}
                                                                         selected={item?.start_work ? new Date(item.start_work) : ""}
                                                                         autoComplete={'off'}
                                                                         showTimeSelect
@@ -746,7 +746,7 @@ class Form extends React.Component {
                                                                         timeCaption="Вақт"
                                                             />
                                                         </div>
-                                                        <div className={"col-lg-12 text-center mt-2 mb-1"}>
+                                                        <div className={"col-lg-12 text-center mt-2 mb-1 date-min"}>
                                                             <label>{this.onReturnMin(item?.end_work, item?.start_work)}
                                                                 <small>min</small></label>
                                                         </div>
@@ -755,7 +755,7 @@ class Form extends React.Component {
                                                             <DatePicker locale={ru}
                                                                         dateFormat="HH:mm"
                                                                         id={"end_work_" + key}
-                                                                        className={"form-control aria-required"}
+                                                                        className={"form-control text-center aria-required"}
                                                                         onChange={(e) => {
                                                                             this.onHandleChange('date', 'plm_document_items', 'end_work', key, '', '', new Date(e))
                                                                         }}

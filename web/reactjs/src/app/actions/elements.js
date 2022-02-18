@@ -9,7 +9,7 @@ export const items = {
     end_work: "",
     lifecycle: "",
     bypass: "",
-    target_qty: "",
+    target_qty: 0,
     planned_stopped: {
         id: "",
         begin_date: "",
