@@ -336,6 +336,7 @@ class ApiPlmDocument extends PlmDocuments
                             'begin_time' => date("Y-m-d H:i", strtotime($item['start_work'])),
                             'end_time' => date("Y-m-d H:i", strtotime($item['end_work'])),
                             'status_id' => BaseModel::STATUS_ACTIVE,
+                            'plm_sector_list_id' => 1, // WORKING_TIME ID
                         ]);
                         if (!$plmNotifications->save()) {
                             $response = [
@@ -349,54 +350,6 @@ class ApiPlmDocument extends PlmDocuments
                     }
                     /** WORKING_TIME end **/
 
-                    /** PLANNED start **/
-
-                    if (!empty($plannedStopped)) {
-                        $plmNotifications = new PlmNotificationsList();
-                        $plmNotifications->setAttributes([
-                            'plm_doc_item_id' => $docItem->id,
-                            'reason_id' => $plannedStopped['reason_id'],
-                            'begin_time' => date("Y-m-d H:i", strtotime($item['begin_date'])),
-                            'end_time' => date("Y-m-d H:i", strtotime($item['end_time'])),
-                            'status_id' => BaseModel::STATUS_ACTIVE,
-                            'add_info' => $plannedStopped['add_info']
-                        ]);
-                        if (!$plmNotifications->save()) {
-                            $response = [
-                                'status' => false,
-                                'line' => __LINE__,
-                                'errors' => $plmNotifications->getErrors(),
-                                'message' => Yii::t('app', 'Planned notification stop not saved'),
-                            ];
-                            break;
-                        }
-                    }
-
-                    /** PLANNED end **/
-
-                    /** UNPLANNED start **/
-                    if (!empty($unplannedStopped) && $response['status']) {
-                        $plmNotifications = new PlmNotificationsList();
-                        $plmNotifications->setAttributes([
-                            'plm_doc_item_id' => $docItem->id,
-                            'reason_id' => $unplannedStopped['reason_id'],
-                            'begin_time' => date("Y-m-d H:i", strtotime($item['begin_date'])),
-                            'end_time' => date("Y-m-d H:i", strtotime($item['end_time'])),
-                            'status_id' => BaseModel::STATUS_ACTIVE,
-                            'add_info' => $unplannedStopped['add_info']
-                        ]);
-                        if (!$plmNotifications->save()) {
-                            $response = [
-                                'status' => false,
-                                'line' => __LINE__,
-                                'errors' => $plmNotifications->getErrors(),
-                                'message' => Yii::t('app', 'Unplanned notification stop not saved'),
-                            ];
-                            break;
-                        }
-                    }
-                    /** UNPLANNED end **/
-
                     if ($response['status']) {
                         if (!empty($products)) {
                             foreach ($products as $product) {
@@ -407,6 +360,7 @@ class ApiPlmDocument extends PlmDocuments
                                     $plmNotifications->setAttributes([
                                         'plm_doc_item_id' => $docItem->id,
                                         'status_id' => BaseModel::STATUS_ACTIVE,
+                                        'plm_sector_list_id' => 2, // REPAIRED ID
                                     ]);
                                     if (!$plmNotifications->save()) {
                                         $response = [
@@ -448,6 +402,7 @@ class ApiPlmDocument extends PlmDocuments
                                     $plmNotifications->setAttributes([
                                         'plm_doc_item_id' => $docItem->id,
                                         'status_id' => BaseModel::STATUS_ACTIVE,
+                                        'plm_sector_list_id' => 3, // INVALID ID
                                     ]);
                                     if (!$plmNotifications->save()) {
                                         $response = [
@@ -484,6 +439,56 @@ class ApiPlmDocument extends PlmDocuments
                             }
                         }
                     }
+
+                    /** PLANNED start **/
+
+                    if (!empty($plannedStopped)) {
+                        $plmNotifications = new PlmNotificationsList();
+                        $plmNotifications->setAttributes([
+                            'plm_doc_item_id' => $docItem->id,
+                            'reason_id' => $plannedStopped['reason_id'],
+                            'begin_time' => date("Y-m-d H:i", strtotime($item['begin_date'])),
+                            'end_time' => date("Y-m-d H:i", strtotime($item['end_time'])),
+                            'status_id' => BaseModel::STATUS_ACTIVE,
+                            'add_info' => $plannedStopped['add_info'],
+                            'plm_sector_list_id' => 4,// PLANNED ID
+                        ]);
+                        if (!$plmNotifications->save()) {
+                            $response = [
+                                'status' => false,
+                                'line' => __LINE__,
+                                'errors' => $plmNotifications->getErrors(),
+                                'message' => Yii::t('app', 'Planned notification stop not saved'),
+                            ];
+                            break;
+                        }
+                    }
+
+                    /** PLANNED end **/
+
+                    /** UNPLANNED start **/
+                    if (!empty($unplannedStopped) && $response['status']) {
+                        $plmNotifications = new PlmNotificationsList();
+                        $plmNotifications->setAttributes([
+                            'plm_doc_item_id' => $docItem->id,
+                            'reason_id' => $unplannedStopped['reason_id'],
+                            'begin_time' => date("Y-m-d H:i", strtotime($item['begin_date'])),
+                            'end_time' => date("Y-m-d H:i", strtotime($item['end_time'])),
+                            'status_id' => BaseModel::STATUS_ACTIVE,
+                            'add_info' => $unplannedStopped['add_info'],
+                            'plm_sector_list_id' => 5,// UNPLANNED ID
+                        ]);
+                        if (!$plmNotifications->save()) {
+                            $response = [
+                                'status' => false,
+                                'line' => __LINE__,
+                                'errors' => $plmNotifications->getErrors(),
+                                'message' => Yii::t('app', 'Unplanned notification stop not saved'),
+                            ];
+                            break;
+                        }
+                    }
+                    /** UNPLANNED end **/
                 }
             }
 
