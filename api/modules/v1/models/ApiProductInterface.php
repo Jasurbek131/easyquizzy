@@ -1,5 +1,5 @@
 <?php
-namespace app\api\modules\v1\models\interfaces;
+namespace app\api\modules\v1\models;
 
 interface ApiProductInterface
 {

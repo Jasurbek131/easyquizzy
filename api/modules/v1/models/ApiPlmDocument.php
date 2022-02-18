@@ -4,7 +4,7 @@
 namespace app\api\modules\v1\models;
 
 
-use app\api\modules\v1\models\interfaces\ApiPlmDocumentInterface;
+use app\api\modules\v1\models\ApiPlmDocumentInterface;
 use app\models\BaseModel;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocItemEquipments;

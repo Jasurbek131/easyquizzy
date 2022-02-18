@@ -4,7 +4,7 @@
 namespace app\api\modules\v1\models;
 
 
-use app\api\modules\v1\models\interfaces\ApiProductInterface;
+use app\api\modules\v1\models\ApiProductInterface;
 use app\models\BaseModel;
 use app\modules\references\models\EquipmentGroup;
 use app\modules\references\models\EquipmentGroupRelationEquipment;
