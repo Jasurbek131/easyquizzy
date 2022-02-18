@@ -201,6 +201,7 @@ class DocumentController extends ActiveController
 //                }
 //                break;
             case "SAVE_DOCUMENT":
+                \yii\helpers\VarDumper::dump($post,10,true);die();
                 $response = ApiPlmDocument::saveData($post);
                 break;
             case "DELETE_DOCUMENT_ITEM":
