@@ -73,4 +73,14 @@ class PlmSectorList extends BaseModel
         }
         return ArrayHelper::map($list, 'value', 'label');
     }
+
+    public static function getSectorId($token = null){
+        if(!empty($token)){
+            $result = self::findOne(['token' => $token]);
+            if(!empty($result)){
+                return $result['id'];
+            }
+        }
+        return false;
+    }
 }
