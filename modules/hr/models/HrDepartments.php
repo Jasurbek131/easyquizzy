@@ -219,4 +219,37 @@ class HrDepartments extends BaseModel
             ->asArray()
             ->all();
     }
+
+    /**
+     * @return array
+     *  Bo'limga tegishli smenalar ro'yxati smenasi bilan
+     */
+    public static function getDepartmentListWithSmenaByUser():array
+    {
+        return HrDepartments::find()
+            ->alias('hd')
+            ->select([
+                'hd.id',
+                'hd.id as value',
+                'hd.name as label',
+            ])
+            ->with([
+                'shifts' => function($sh) {
+                    $sh->from(['dsh' => 'hr_department_rel_shifts'])->select([
+                        'sh.id as value',
+                        'sh.name as label',
+                        'dsh.hr_department_id'
+                    ])->leftJoin('shifts sh', 'dsh.shift_id = sh.id');
+                }
+            ])
+            ->leftJoin(["urhd" => "users_relation_hr_departments"], "urhd.hr_department_id = hd.id")
+            ->where([
+                'hd.status_id' => BaseModel::STATUS_ACTIVE,
+                'urhd.user_id' => Yii::$app->user->identity->id,
+                'urhd.is_root' => UsersRelationHrDepartments::NOT_ROOT
+            ])
+            ->groupBy('hd.id')
+            ->asArray()
+            ->all();
+    }
 }

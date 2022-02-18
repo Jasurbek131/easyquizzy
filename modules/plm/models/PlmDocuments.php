@@ -3,6 +3,7 @@
 namespace app\modules\plm\models;
 
 use app\modules\hr\models\HrDepartments;
+use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\references\models\Shifts;
 use Yii;
 
@@ -82,6 +83,8 @@ class PlmDocuments extends BaseModel
             else
                 $last = 1;
             $this->doc_number =  "PD-".$last;
+            $organisation = UsersRelationHrDepartments::findOne(["user_id" => Yii::$app->user->identity->id, 'is_root' => UsersRelationHrDepartments::ROOT]);
+            $this->organisation_id =  $organisation ? $organisation->hr_department_id : "";
         }
         return parent::beforeSave($insert);
     }

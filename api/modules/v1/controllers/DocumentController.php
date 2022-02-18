@@ -227,7 +227,8 @@ class DocumentController extends ActiveController
             case "CREATE_DOCUMENT":
                 $response = [
                     'status' => true,
-                    'organisationList' => HrDepartments::getOrganisationListWithSmenaByUser(),
+//                    'organisationList' => HrDepartments::getOrganisationListWithSmenaByUser(),
+                    'departmentList' => HrDepartments::getDepartmentListWithSmenaByUser(),
                     'equipmentGroupList' => EquipmentGroup::getEquipmentGroupList(),
                     'user_id' => Yii::$app->user->id,
                     'language' => $language,

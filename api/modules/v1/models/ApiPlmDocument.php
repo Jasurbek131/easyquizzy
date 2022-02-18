@@ -253,7 +253,8 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             }
 
             if ($response['status']){
-                $response["id"] = $docItem->id ?? "";
+                $response["doc_item_id"] = $docItem->id ?? "";
+                $response["doc_id"] = $doc->id ?? "";
                 $transaction->commit();
             } else {
                 $transaction->rollBack();

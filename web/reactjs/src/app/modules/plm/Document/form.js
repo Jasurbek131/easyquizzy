@@ -43,7 +43,7 @@ class Form extends React.Component {
                 add_info: ""
             },
             plm_document_items: [JSON.parse(JSON.stringify(items))],
-            organisationList: [],
+            // organisationList: [],
             departmentList: [],
             reasonList: [],
             repairedList: [],
@@ -69,24 +69,24 @@ class Form extends React.Component {
         if (response.data.status) {
 
             if (id) {
-                let organisations = response.data.organisationList.filter(({value}) => +value === +response.data?.plm_document?.organisation_id) ?? [];
-                let departmentList = organisations ? (organisations[0]?.departments ?? []) : [];
-                let departments = departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
+                let departments = response.data.departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
+                // let departmentList = organisations ? (organisations[0]?.departments ?? []) : [];
+                // let departments = departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
                 let shiftList = departments ? (departments[0]?.shifts ?? []) : [];
 
                 this.setState({
                     plm_document: response.data?.plm_document,
                     plm_document_items: response.data?.plm_document?.plm_document_items,
                     shiftList: shiftList,
-                    departmentList: departmentList,
-                    organisationList: response.data.organisationList,
+                    // departmentList: departmentList,
+                    // organisationList: response.data.organisationList,
                 });
             }
 
-            let {plm_document, departmentList} = this.state;
-            if (!plm_document.organisation_id) { // organisation id tanlanmagan bo'lsa default chiqarib qoyish
-                plm_document.organisation_id = response?.data?.organisationList[0] ? response?.data?.organisationList[0]['value'] : "";
-                departmentList = response?.data?.organisationList[0] ? response?.data?.organisationList[0]["departments"] : [];
+            let {plm_document, shiftList} = this.state;
+            if (!plm_document.hr_department_id) { // organisation id tanlanmagan bo'lsa default chiqarib qoyish
+                plm_document.hr_department_id = response?.data?.departmentList[0] ? response?.data?.departmentList[0]['value'] : "";
+                shiftList = response?.data?.departmentList[0] ? response?.data?.departmentList[0]["shifts"] : [];
             }
 
             if (!plm_document.reg_date) {
@@ -94,14 +94,15 @@ class Form extends React.Component {
             }
 
             this.setState({
-                organisationList: response.data.organisationList,
+                // organisationList: response.data.organisationList,
                 equipmentGroupList: response.data.equipmentGroupList,
                 timeTypeList: response.data.timeTypeList,
                 reasonList: response.data.reasonList,
                 repairedList: response.data.repaired,
                 scrappedList: response.data.scrapped,
                 plm_document: plm_document,
-                departmentList: departmentList,
+                departmentList: response.data.departmentList,
+                shiftList: shiftList,
                 language: response.data.language,
                 isLoading: false
             });
@@ -478,10 +479,10 @@ class Form extends React.Component {
 
     onRequiredDoc(document) {
         let isEmpty = true;
-        if (document?.organisation_id === "") {
-            isEmpty = false;
-            $("#organisation_id").children('div').css("border", "1px solid red");
-        }
+        // if (document?.organisation_id === "") {
+        //     isEmpty = false;
+        //     $("#organisation_id").children('div').css("border", "1px solid red");
+        // }
         if (document?.hr_department_id === "") {
             isEmpty = false;
             $("#hr_department_id").children('div').css("border", "1px solid red");
@@ -507,8 +508,9 @@ class Form extends React.Component {
             const response = await axios.post(API_URL + 'save-properties?type=SAVE_DOCUMENT', params);
             if (response.data.status) {
                 toast.success(response.data.message);
-                plm_document_items[key]["id"] = response.data.id;
-                this.setState({plm_document_items});
+                plm_document["id"] = response.data.doc_id;
+                plm_document_items[key]["id"] = response.data.doc_item_id;
+                this.setState({plm_document_items, plm_document});
             } else {
                 toast.error(response.data.message);
             }
@@ -548,7 +550,7 @@ class Form extends React.Component {
             temporarily,
             plm_document,
             plm_document_items,
-            organisationList,
+            // organisationList,
             departmentList,
             equipmentGroupList,
             reasonList,
@@ -573,20 +575,20 @@ class Form extends React.Component {
                             </div>
                         </div>
                         <div className={'row'}>
-                            <div className={'col-lg-2'}>
-                                <div className={'form-group'}>
-                                    <label className={"control-label"}>Tashkilot</label>
-                                    <Select className={"aria-required"}
-                                            id={"organisation_id"}
-                                            onChange={this.onHandleChange.bind(this, 'select', 'plm_document', 'organisation_id', '', '', '')}
-                                            placeholder={"Tanlang ..."}
-                                            value={organisationList.filter(({value}) => +value === +plm_document?.organisation_id)}
-                                            options={organisationList}
-                                            styles={customStyles}
-                                    />
-                                </div>
-                            </div>
-                            <div className={'col-lg-2'}>
+                            {/*<div className={'col-lg-2'}>*/}
+                            {/*    <div className={'form-group'}>*/}
+                            {/*        <label className={"control-label"}>Tashkilot</label>*/}
+                            {/*        <Select className={"aria-required"}*/}
+                            {/*                id={"organisation_id"}*/}
+                            {/*                onChange={this.onHandleChange.bind(this, 'select', 'plm_document', 'organisation_id', '', '', '')}*/}
+                            {/*                placeholder={"Tanlang ..."}*/}
+                            {/*                value={organisationList.filter(({value}) => +value === +plm_document?.organisation_id)}*/}
+                            {/*                options={organisationList}*/}
+                            {/*                styles={customStyles}*/}
+                            {/*        />*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
+                            <div className={'col-lg-3'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Bo'lim</label>
                                     <Select className={"aria-required"}
@@ -599,7 +601,7 @@ class Form extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <div className={'col-lg-2'}>
+                            <div className={'col-lg-3'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Smena</label>
                                     <Select className={"aria-required"}
@@ -612,7 +614,7 @@ class Form extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <div className={'col-lg-2'}>
+                            <div className={'col-lg-3'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Sana</label>
                                     <DatePicker onChange={(e) => {
@@ -630,7 +632,7 @@ class Form extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <div className={'col-lg-4'}>
+                            <div className={'col-lg-3'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Izoh</label>
                                     <textarea
