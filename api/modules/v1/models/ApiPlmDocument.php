@@ -4,6 +4,7 @@
 namespace app\api\modules\v1\models;
 
 
+use app\api\modules\v1\models\interfaces\ApiPlmDocumentInterface;
 use app\models\BaseModel;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocItemEquipments;
@@ -16,7 +17,7 @@ use app\modules\plm\models\PlmStops;
 use Yii;
 use yii\data\ActiveDataProvider;
 
-class ApiPlmDocument extends PlmDocuments
+class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
 {
 
     /**

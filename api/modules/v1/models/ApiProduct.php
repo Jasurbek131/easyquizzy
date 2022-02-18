@@ -4,6 +4,7 @@
 namespace app\api\modules\v1\models;
 
 
+use app\api\modules\v1\models\interfaces\ApiProductInterface;
 use app\models\BaseModel;
 use app\modules\references\models\EquipmentGroup;
 use app\modules\references\models\EquipmentGroupRelationEquipment;
@@ -13,7 +14,7 @@ use app\modules\references\models\ReferencesProductGroup;
 use app\modules\references\models\ReferencesProductGroupRelProduct;
 use Yii;
 
-class ApiProduct extends Products
+class ApiProduct extends Products implements ApiProductInterface
 {
     /**
      * @param $post
@@ -214,7 +215,7 @@ class ApiProduct extends Products
      * @param $id
      * @return array|\yii\db\ActiveRecord|null
      */
-    public static function getProductFormData($id)
+    public static function getProductFormData($id):array
     {
         $data = ReferencesProductGroup::find()
             ->alias("rpg")
