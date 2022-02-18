@@ -14,7 +14,9 @@ use app\modules\plm\models\PlmDocuments;
 use app\modules\plm\models\PlmNotificationRelDefect;
 use app\modules\plm\models\PlmNotificationsList;
 use app\modules\plm\models\PlmProcessingTime;
+use app\modules\plm\models\PlmSectorList;
 use app\modules\plm\models\PlmStops;
+use app\modules\references\models\Defects;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -338,7 +340,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             'begin_time' => date("Y-m-d H:i", strtotime($item['start_work'])),
                             'end_time' => date("Y-m-d H:i", strtotime($item['end_work'])),
                             'status_id' => BaseModel::STATUS_ACTIVE,
-                            'plm_sector_list_id' => 1, // WORKING_TIME ID
+                            'plm_sector_list_id' => PlmSectorList::getSectorId('WORKING_TIME'), // WORKING_TIME ID
                         ]);
                         if (!$plmNotifications->save()) {
                             $response = [
@@ -361,8 +363,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                     $plmNotifications = new PlmNotificationsList();
                                     $plmNotifications->setAttributes([
                                         'plm_doc_item_id' => $docItem->id,
+                                        'defect_type_id' => Defects::REPAIRED_TYPE,
                                         'status_id' => BaseModel::STATUS_ACTIVE,
-                                        'plm_sector_list_id' => 2, // REPAIRED ID
+                                        'plm_sector_list_id' => PlmSectorList::getSectorId('REPAIRED'), // REPAIRED ID
                                     ]);
                                     if (!$plmNotifications->save()) {
                                         $response = [
@@ -403,8 +406,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                     $plmNotifications = new PlmNotificationsList();
                                     $plmNotifications->setAttributes([
                                         'plm_doc_item_id' => $docItem->id,
+                                        'defect_type_id' => Defects::INVALID_TYPE,
                                         'status_id' => BaseModel::STATUS_ACTIVE,
-                                        'plm_sector_list_id' => 3, // INVALID ID
+                                        'plm_sector_list_id' => PlmSectorList::getSectorId('INVALID'), // INVALID ID
                                     ]);
                                     if (!$plmNotifications->save()) {
                                         $response = [
@@ -453,7 +457,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             'end_time' => date("Y-m-d H:i", strtotime($item['end_time'])),
                             'status_id' => BaseModel::STATUS_ACTIVE,
                             'add_info' => $plannedStopped['add_info'],
-                            'plm_sector_list_id' => 4,// PLANNED ID
+                            'plm_sector_list_id' => PlmSectorList::getSectorId('PLANNED'),// PLANNED ID
                         ]);
                         if (!$plmNotifications->save()) {
                             $response = [
@@ -478,7 +482,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             'end_time' => date("Y-m-d H:i", strtotime($item['end_time'])),
                             'status_id' => BaseModel::STATUS_ACTIVE,
                             'add_info' => $unplannedStopped['add_info'],
-                            'plm_sector_list_id' => 5,// UNPLANNED ID
+                            'plm_sector_list_id' => PlmSectorList::getSectorId('UNPLANNED'),// UNPLANNED ID
                         ]);
                         if (!$plmNotifications->save()) {
                             $response = [

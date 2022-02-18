@@ -728,7 +728,7 @@ class Form extends React.Component {
 
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
-                                                    <div className={'row'}>
+                                                    <div className={'row time'}>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Boshlanishi</label>
                                                             <DatePicker locale={ru}
@@ -775,141 +775,126 @@ class Form extends React.Component {
                                             </div>
 
                                             <div className="col-lg-1">
-                                                <div className="row">
-                                                    <div className={'col-lg-6 pb-1 text-center'}>
-                                                        <div className={"align-center"}>
-                                                            <div>
-                                                                <label className={'control-label'}>Cycle time
-                                                                    (s)</label>
-                                                                <input value={item?.lifecycle ?? ""} readOnly={true}
-                                                                       className={'form-control'}/>
-                                                                <br/>
-                                                                <label className={'control-label'}>Bypass (s)</label>
-                                                                <input value={item?.bypass ?? ""} readOnly={true}
-                                                                       className={'form-control'}/>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={'col-lg-6 pb-1 text-center'}>
-                                                        <div className={"align-center"}>
-                                                            <div>
-                                                                <label className={'control-label'}>Rejada</label>
-                                                                <input value={item?.target_qty ?? ""} readOnly={true}
-                                                                       className={'form-control'}/>
-                                                            </div>
-                                                        </div>
+                                                <div className={"align-center text-center"}>
+                                                    <div>
+                                                        <label className={'control-label middle-size'}>Reja</label>
+                                                        <input value={item?.target_qty ?? ""} readOnly={true}
+                                                               className={'form-control plan text-center'}/>
+                                                        <label className={'control-label middle-size'}>Cycle time (s)</label>
+                                                        <input value={item?.lifecycle ?? ""} readOnly={true}
+                                                               className={'form-control text-center'}/>
+                                                        <label className={'control-label middle-size'}>Bypass (s)</label>
+                                                        <input value={item?.bypass ?? ""} readOnly={true}
+                                                               className={'form-control text-center'}/>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div className={'col-lg-6'}>
-                                                <div className={'row'}>
-                                                    <div className={'col-lg-12'}>
+                                                <div className={"align-center"}>
+                                                    <div>
                                                         <div className={'row'}>
-                                                            <div className={'col-lg-3 pb-1'}>
+                                                            <div className={'col-lg-12'}>
                                                                 <div className={'row'}>
-                                                                    <div className={"col-lg-2 mb-1"}>
-                                                                        <button
-                                                                            onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
-                                                                            className={"btn btn-xs btn-primary wh-28"}>
-                                                                            <i className={"fa fa-plus"}/>
-                                                                        </button>
+                                                                    <div className={'col-lg-3 pb-1'}>
+                                                                        <div className={'row'}>
+                                                                            <div className={"col-lg-2 mb-1"}>
+                                                                                <button
+                                                                                    onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
+                                                                                    className={"btn btn-xs btn-primary wh-28"}>
+                                                                                    <i className={"fa fa-plus"}/>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
+
+                                                                    <div className={'col-lg-2 text-center'}>
+                                                                        <label className={"control-label"}>Ish/chiq</label>
+                                                                    </div>
+                                                                    <div className={'col-lg-2 text-center'}>
+                                                                        <label className={"control-label"}>Ish/chiq(Bs)</label>
+                                                                    </div>
+                                                                    <div className={'col-lg-2 text-center repaired'}>
+                                                                        <label className={"control-label"}>Ta'mirlangan</label>
+                                                                    </div>
+                                                                    <div className={'col-lg-2 text-center scrapped'}>
+                                                                        <label className={"control-label"}>Yaroqsiz</label>
+                                                                    </div>
+                                                                    <div className={"col-lg-1 text-center"}></div>
                                                                 </div>
                                                             </div>
-
-                                                            <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label"}>Ish/chiq</label>
-                                                            </div>
-                                                            <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label"}>Ish/chiq(Bs)</label>
-                                                            </div>
-                                                            <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label"}>Ta'mirlangan</label>
-                                                            </div>
-                                                            <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label"}>Yaroqsiz</label>
-                                                            </div>
-                                                            <div className={"col-lg-1 text-center"}></div>
                                                         </div>
+                                                        {
+                                                            item?.products?.length > 0 && item.products.map((product, prKey) => {
+                                                                return (
+                                                                    <div className={'row'} key={key +"_"+ prKey}>
+                                                                        <div className={'col-lg-12'}>
+                                                                            <div className={'row'}>
+                                                                                <div className={'col-lg-3'}>
+                                                                                    <Select className={"aria-required"}
+                                                                                            id={"product_id_" + key + "_" + prKey}
+                                                                                            onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
+                                                                                            placeholder={"Tanlang ..."}
+                                                                                            value={item?.equipmentGroup?.lifecycles?.productGroup?.products.filter(({value}) => +value === +product?.product_id)}
+                                                                                            options={item?.equipmentGroup?.lifecycles?.productGroup?.products}
+                                                                                            styles={customStyles}
+                                                                                    />
+                                                                                </div>
+                                                                                <div className={'col-lg-2'}>
+                                                                                    <input
+                                                                                        onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
+                                                                                        type={'number'}
+                                                                                        className={'form-control aria-required'}
+                                                                                        id={"fact_qty_" + key + "_" + prKey}
+                                                                                        min={0}
+                                                                                        value={product?.fact_qty ?? ""}/>
+                                                                                </div>
+                                                                                <div className={'col-lg-2'}>
+                                                                                    <input
+                                                                                        onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
+                                                                                        type={'number'}
+                                                                                        className={'form-control aria-required'}
+                                                                                        id={"qty_" + prKey}
+                                                                                        min={0}
+                                                                                        value={product?.qty ?? ""}/>
+                                                                                </div>
+                                                                                <div className={'col-lg-2 text-center repaired'}>
+                                                                                    <label
+                                                                                        className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
+                                                                                    <button
+                                                                                        onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
+                                                                                        className={'btn btn-warning btn-xs wh-28'}>
+                                                                                        <i className={'fa fa-plus'}/>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className={'col-lg-2 text-center scrapped'}>
+                                                                                    <label
+                                                                                        className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
+                                                                                    <button
+                                                                                        onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
+                                                                                        className={'btn btn-info btn-xs wh-28'}>
+                                                                                        <i className={'fa fa-plus'}/>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className={'col-lg-1 mb-1'}>
+                                                                                    <button
+                                                                                        onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
+                                                                                        className={"btn btn-xs wh-28 btn-outline-danger"}>
+                                                                                        <i className={"fa fa-times"}/>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
                                                     </div>
                                                 </div>
-                                                {
-                                                    item?.products?.length > 0 && item.products.map((product, prKey) => {
-                                                        return (
-                                                            <div className={'row'} key={prKey}>
-                                                                <div className={'col-lg-12'}>
-                                                                    <div className={'row'}>
-                                                                        <div className={'col-lg-3'}>
-                                                                            <Select className={"aria-required"}
-                                                                                    id={"product_id_" + key + "_" + prKey}
-                                                                                    onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
-                                                                                    placeholder={"Tanlang ..."}
-                                                                                    value={item?.equipmentGroup?.lifecycles?.productGroup?.products.filter(({value}) => +value === +product?.product_id)}
-                                                                                    options={item?.equipmentGroup?.lifecycles?.productGroup?.products}
-                                                                                    styles={customStyles}
-                                                                            />
-                                                                        </div>
-                                                                        {/*<div className={'col-lg-2'}>*/}
-                                                                        {/*    <input type={"text"} id={"product_lifecycle"} disabled={true} className={'form-control'} value={product?.lifecycle}/>*/}
-                                                                        {/*</div>*/}
-                                                                        {/*<div className={'col-lg-2'}>*/}
-                                                                        {/*    <input type={"text"} id={"product_bypass"} disabled={true} className={'form-control'} value={product?.bypass}/>*/}
-                                                                        {/*</div>*/}
-                                                                        <div className={'col-lg-2'}>
-                                                                            <input
-                                                                                onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
-                                                                                type={'number'}
-                                                                                className={'form-control aria-required'}
-                                                                                id={"fact_qty_" + key + "_" + prKey}
-                                                                                min={0}
-                                                                                value={product?.fact_qty ?? ""}/>
-                                                                        </div>
-                                                                        <div className={'col-lg-2'}>
-                                                                            <input
-                                                                                onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
-                                                                                type={'number'}
-                                                                                className={'form-control aria-required'}
-                                                                                id={"qty_" + prKey}
-                                                                                min={0}
-                                                                                value={product?.qty ?? ""}/>
-                                                                        </div>
-                                                                        <div className={'col-lg-2 text-center'}>
-                                                                            <label
-                                                                                className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
-                                                                            <button
-                                                                                onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
-                                                                                className={'btn btn-primary btn-xs wh-28'}>
-                                                                                <i className={'fa fa-plus'}/>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div className={'col-lg-2 text-center'}>
-                                                                            <label
-                                                                                className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
-                                                                            <button
-                                                                                onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
-                                                                                className={'btn btn-primary btn-xs wh-28'}>
-                                                                                <i className={'fa fa-plus'}/>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div className={'col-lg-1 mb-1'}>
-                                                                            <button
-                                                                                onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
-                                                                                className={"btn btn-xs wh-28 btn-outline-danger"}>
-                                                                                <i className={"fa fa-times"}/>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
                                             </div>
-
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
-                                                    <div className={'row'}>
+                                                    <div className={'row planned_stopped'}>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Rejali
                                                                 to'xtalishlar</label>
@@ -920,7 +905,7 @@ class Form extends React.Component {
                                                                 <small>min</small></label>
                                                             <button
                                                                 onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key, '')}
-                                                                className={"btn btn-xs btn-primary"}>
+                                                                className={"btn btn-xs btn-warning"}>
                                                                 <i className={'fa fa-plus'}/>
                                                             </button>
                                                         </div>
@@ -929,7 +914,7 @@ class Form extends React.Component {
                                             </div>
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
-                                                    <div className={'row'}>
+                                                    <div className={'row unplanned_stopped'}>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Rejasiz
                                                                 to'xtalishlar</label>
@@ -940,7 +925,7 @@ class Form extends React.Component {
                                                                 <small>min</small></label>
                                                             <button
                                                                 onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key, '')}
-                                                                className={'btn btn-primary btn-xs'}>
+                                                                className={'btn btn-info btn-xs'}>
                                                                 <i className={'fa fa-plus'}/>
                                                             </button>
                                                         </div>

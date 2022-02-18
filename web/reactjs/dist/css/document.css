@@ -101,3 +101,24 @@ textarea.form-control{
 .modal{
     background-color: #000000a3!important;
 }
+.middle-size{
+    font-size: 10px!important;
+}
+.plan{
+    background-color: #6d6c71!important;
+    color: white;
+}
+.time{
+    background-color: #005d5a3b!important;
+    padding: 2px!important;
+}
+.repaired,
+.planned_stopped{
+    background-color: #0745ff24;
+    padding: 2px!important;
+}
+.scrapped,
+.unplanned_stopped{
+    background-color: #00ffff2e;
+    padding: 4px!important;
+}
