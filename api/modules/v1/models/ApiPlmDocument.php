@@ -4,6 +4,7 @@
 namespace app\api\modules\v1\models;
 
 
+use app\api\modules\v1\models\ApiPlmDocumentInterface;
 use app\models\BaseModel;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocItemEquipments;
@@ -17,7 +18,7 @@ use app\modules\plm\models\PlmStops;
 use Yii;
 use yii\data\ActiveDataProvider;
 
-class ApiPlmDocument extends PlmDocuments
+class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
 {
 
     /**
@@ -252,7 +253,8 @@ class ApiPlmDocument extends PlmDocuments
             }
 
             if ($response['status']){
-                $response["id"] = $docItem->id ?? "";
+                $response["doc_item_id"] = $docItem->id ?? "";
+                $response["doc_id"] = $doc->id ?? "";
                 $transaction->commit();
             } else {
                 $transaction->rollBack();

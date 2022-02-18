@@ -75,10 +75,10 @@ textarea.form-control{
     padding: 2px!important;
     height: 26px;
 }
-#organisation_id .css-1ylieoo-control{
+#hr_department_id .css-1ylieoo-control{
     background-color: #eee!important;
 }
-#organisation_id{
+#hr_department_id{
     pointer-events: none;
 }
 #reg_date{
