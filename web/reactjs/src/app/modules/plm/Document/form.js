@@ -182,6 +182,7 @@ class Form extends React.Component {
                     plm_document_items[key]['equipments'] = [];
                     plm_document_items[key]['lifecycle'] = e?.lifecycles?.lifecycle;
                     plm_document_items[key]['bypass'] = e?.lifecycles?.bypass;
+
                 }
                 if (name === 'product_id') {
                     plm_document_items[key]['products'][index] = e;
@@ -189,7 +190,7 @@ class Form extends React.Component {
                 if (name === "start_work") {
                     plm_document_items[key]['end_work'] = "";
                 }
-                if (name === "end_work") {
+                if (name === "end_work" || name === "equipment_group_id") {
                     plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                 }
                 this.setState({plm_document_items: plm_document_items});
@@ -1024,7 +1025,7 @@ class Form extends React.Component {
                                                     temporarily?.type === 'unplanned_stopped' ?
                                                         <div className={'col-lg-12'}>
                                                             <div className={"form-group"}>
-                                                                <label className={"control-label"}>Bypass</label>
+                                                                <label className={"control-label"}>Bypass (m)</label>
                                                                 <input
                                                                     onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}
                                                                     className={"form-control"}
