@@ -206,6 +206,9 @@ class DocumentController extends ActiveController
             case "DELETE_DOCUMENT_ITEM":
                 $response = ApiPlmDocument::deleteDocumentItem($post);
                 break;
+            case "SAVE_MODAL":
+                $response = ApiPlmDocument::saveModalData($post);
+                break;
         }
         return $response;
     }

@@ -4,6 +4,7 @@ namespace app\modules\references\models;
 
 use app\models\BaseModel;
 use app\modules\hr\models\HrDepartmentRelDefects;
+use app\modules\hr\models\HrDepartments;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocumentItems;
 use app\widgets\Language;
@@ -89,6 +90,10 @@ class Defects extends BaseModel
     public function getPlmDocumentItems()
     {
         return $this->hasMany(PlmDocumentItems::className(), ['defect_id' => 'id']);
+    }
+    public function getHrDepartment()
+    {
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
 
     /**
