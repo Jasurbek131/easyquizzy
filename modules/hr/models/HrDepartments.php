@@ -8,6 +8,7 @@ use kartik\tree\models\Tree;
 use Yii;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
+use function Faker\Provider\pt_BR\check_digit;
 
 /**
  * This is the model class for table "hr_departments".
@@ -201,7 +202,7 @@ class HrDepartments extends BaseModel
                         'shifts' => function($sh) {
                             $sh->from(['dsh' => 'hr_department_rel_shifts'])->select([
                                 'sh.id as value',
-                                'sh.name as label',
+                                "CONCAT_WS('',sh.name,' (',sh.start_time,' - ',sh.end_time, ')') as label",
                                 'dsh.hr_department_id'
                             ])->leftJoin('shifts sh', 'dsh.shift_id = sh.id');
                         }
@@ -231,13 +232,14 @@ class HrDepartments extends BaseModel
             ->select([
                 'hd.id',
                 'hd.id as value',
+
                 'hd.name as label',
             ])
             ->with([
                 'shifts' => function($sh) {
                     $sh->from(['dsh' => 'hr_department_rel_shifts'])->select([
                         'sh.id as value',
-                        'sh.name as label',
+                        "CONCAT_WS('',sh.name,' (',sh.start_time,' - ',sh.end_time, ')') as label",
                         'dsh.hr_department_id'
                     ])->leftJoin('shifts sh', 'dsh.shift_id = sh.id');
                 }

@@ -40,5 +40,6 @@ export const items = {
         repaired: [],
         scrapped: [],
     }],
-    equipments: []
+    equipments: [],
+    is_change: true,
 };
