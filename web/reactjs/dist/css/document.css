@@ -132,7 +132,7 @@ textarea.form-control{
     font-size: 16px!important;
 }
 .react-datepicker{
-    zoom: 0.5;
+    zoom: 0.7;
 }
 .col-lg-5{
     padding: 0!important;
@@ -140,6 +140,9 @@ textarea.form-control{
 .col-lg-2{
     padding: 1px;
 }
-/*#root{*/
-/*    zoom: 0.9;*/
-/*}*/
+.border-block .react-datepicker__day-name,
+.border-block .react-datepicker__day,
+.border-block .react-datepicker__time-name{
+    width: 1.2rem;
+    line-height: 1.7rem;
+}

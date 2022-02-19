@@ -147,6 +147,8 @@ class DocumentController extends ActiveController
                     'user_id' => Yii::$app->user->id,
                     'language' => $language,
                     'today' => date('D M j G:i:s T Y'),
+                    'yesterday' => date('D M j G:i:s T Y', strtotime("-1 days")),
+                    'tomorrow' => date('D M j G:i:s T Y', strtotime("+1 day")),
                     'reasonList' => Reasons::getList(),
                     'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED),
                     'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED),

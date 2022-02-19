@@ -70,16 +70,11 @@ class Form extends React.Component {
 
             if (id) {
                 let departments = response.data.departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
-                // let departmentList = organisations ? (organisations[0]?.departments ?? []) : [];
-                // let departments = departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
                 let shiftList = departments ? (departments[0]?.shifts ?? []) : [];
-
                 this.setState({
                     plm_document: response.data?.plm_document,
                     plm_document_items: response.data?.plm_document?.plm_document_items,
                     shiftList: shiftList,
-                    // departmentList: departmentList,
-                    // organisationList: response.data.organisationList,
                 });
             }
 
@@ -94,7 +89,6 @@ class Form extends React.Component {
             }
 
             this.setState({
-                // organisationList: response.data.organisationList,
                 equipmentGroupList: response.data.equipmentGroupList,
                 timeTypeList: response.data.timeTypeList,
                 reasonList: response.data.reasonList,
@@ -151,12 +145,9 @@ class Form extends React.Component {
                 if (name === 'product_id') {
                     $("#product_lifecycle_id").children('div').css("border", "1px solid #ced4da");
                     $("#qty").css("border", "1px solid #ced4da");
-                    // e.repaired = [];
-                    // e.scrapped = [];
                     plm_document_items[key]['products'][index][name] = v;
                     plm_document_items[key]['products'][index]["repaired"] = [];
                     plm_document_items[key]['products'][index]["scrapped"] = [];
-                    // plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                 } else {
                     plm_document_items[key]['products'][index][name] = v;
                 }
@@ -540,19 +531,6 @@ class Form extends React.Component {
                             </div>
                         </div>
                         <div className={'row'}>
-                            {/*<div className={'col-lg-2'}>*/}
-                            {/*    <div className={'form-group'}>*/}
-                            {/*        <label className={"control-label"}>Tashkilot</label>*/}
-                            {/*        <Select className={"aria-required"}*/}
-                            {/*                id={"organisation_id"}*/}
-                            {/*                onChange={this.onHandleChange.bind(this, 'select', 'plm_document', 'organisation_id', '', '', '')}*/}
-                            {/*                placeholder={"Tanlang ..."}*/}
-                            {/*                value={organisationList.filter(({value}) => +value === +plm_document?.organisation_id)}*/}
-                            {/*                options={organisationList}*/}
-                            {/*                styles={customStyles}*/}
-                            {/*        />*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
                             <div className={'col-lg-3'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Sana</label>
@@ -611,7 +589,6 @@ class Form extends React.Component {
                             </div>
                         </div>
                     </div>
-
 
                     <div className={'card-body'}>
                         {
@@ -681,7 +658,6 @@ class Form extends React.Component {
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Boshlanishi</label>
                                                             <DatePicker locale={ru}
-                                                                        // dateFormat="HH:mm"
                                                                         dateFormat="dd.MM.yyyy HH:mm"
                                                                         id={"start_work_" + key}
                                                                         onChange={(e) => {
@@ -691,7 +667,6 @@ class Form extends React.Component {
                                                                         selected={item?.start_work ? new Date(item.start_work) : ""}
                                                                         autoComplete={'off'}
                                                                         showTimeSelect
-                                                                        // showTimeSelectOnly
                                                                         timeIntervals={5}
                                                                         timeCaption="Вақт"
                                                             />
@@ -703,7 +678,6 @@ class Form extends React.Component {
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Tugashi</label>
                                                             <DatePicker locale={ru}
-                                                                        // dateFormat="HH:mm"
                                                                         dateFormat="dd.MM.yyyy HH:mm"
                                                                         id={"end_work_" + key}
                                                                         className={"form-control text-center aria-required"}
@@ -717,7 +691,6 @@ class Form extends React.Component {
                                                                         autoComplete={'off'}
                                                                         showTimeSelect
                                                                         minDate={item.start_work}
-                                                                        // showTimeSelectOnly
                                                                         timeIntervals={5}
                                                                         timeCaption="Вақт"
                                                             />
@@ -1014,7 +987,6 @@ class Form extends React.Component {
                         </div>
                     </div>
                 </div>
-
             </div>
         );
     };
