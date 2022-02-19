@@ -70,16 +70,11 @@ class Form extends React.Component {
 
             if (id) {
                 let departments = response.data.departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
-                // let departmentList = organisations ? (organisations[0]?.departments ?? []) : [];
-                // let departments = departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
                 let shiftList = departments ? (departments[0]?.shifts ?? []) : [];
-
                 this.setState({
                     plm_document: response.data?.plm_document,
                     plm_document_items: response.data?.plm_document?.plm_document_items,
                     shiftList: shiftList,
-                    // departmentList: departmentList,
-                    // organisationList: response.data.organisationList,
                 });
             }
 
@@ -94,7 +89,6 @@ class Form extends React.Component {
             }
 
             this.setState({
-                // organisationList: response.data.organisationList,
                 equipmentGroupList: response.data.equipmentGroupList,
                 timeTypeList: response.data.timeTypeList,
                 reasonList: response.data.reasonList,
@@ -126,6 +120,11 @@ class Form extends React.Component {
     onHandleChange = (type, model, name, key, index, value, e) => {
         let v = value;
         let element = $('#' + name);
+        if (key !== '' && index !== ''){
+            element = $('#' + name + "_" + key + "_" + index);
+        }else if(key !== ''){
+            element = $('#' + name + "_" + key);
+        }
         let {plm_document_items, temporarily} = this.state;
         switch (type) {
             case "select":
@@ -151,12 +150,9 @@ class Form extends React.Component {
                 if (name === 'product_id') {
                     $("#product_lifecycle_id").children('div').css("border", "1px solid #ced4da");
                     $("#qty").css("border", "1px solid #ced4da");
-                    // e.repaired = [];
-                    // e.scrapped = [];
                     plm_document_items[key]['products'][index][name] = v;
                     plm_document_items[key]['products'][index]["repaired"] = [];
                     plm_document_items[key]['products'][index]["scrapped"] = [];
-                    // plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                 } else {
                     plm_document_items[key]['products'][index][name] = v;
                 }
@@ -182,6 +178,7 @@ class Form extends React.Component {
                     plm_document_items[key]['equipments'] = [];
                     plm_document_items[key]['lifecycle'] = e?.lifecycles?.lifecycle;
                     plm_document_items[key]['bypass'] = e?.lifecycles?.bypass;
+
                 }
                 if (name === 'product_id') {
                     plm_document_items[key]['products'][index] = e;
@@ -189,7 +186,7 @@ class Form extends React.Component {
                 if (name === "start_work") {
                     plm_document_items[key]['end_work'] = "";
                 }
-                if (name === "end_work") {
+                if (name === "end_work" || name === "equipment_group_id") {
                     plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                 }
                 this.setState({plm_document_items: plm_document_items});
@@ -358,37 +355,6 @@ class Form extends React.Component {
     onPush = async (type, model, key, index, e) => {
         let {plm_document_items} = this.state;
         switch (type) {
-            // case "equipment-group-plus":
-            //     appearance = {
-            //         display: "block",
-            //         type: "equipment-group",
-            //         title: "Qurilmalar guruhi yaratish",
-            //         variables: {name: "", value: ""},
-            //         equipmentList: this.state.equipmentList,
-            //         variableItems: [{
-            //             equipment_id: ""
-            //         }]
-            //     };
-            //     this.setState({appearance: appearance});
-            //     break;
-            // case "product-lifecycle-plus":
-            //     appearance = {
-            //         display: "block",
-            //         type: "product-lifecycle",
-            //         key: key,
-            //         title: "Create Product Lifecycle",
-            //         variables: {
-            //             product_id: "",
-            //             equipment_group_id: plm_document_items[key]['equipmentGroup']['id'],
-            //             lifecycle: "",
-            //             bypass: ""
-            //         },
-            //         productList: this.state.productList,
-            //         equipmentGroupList: this.state.equipmentGroupList,
-            //         timeTypeList: this.state.timeTypeList
-            //     };
-            //     this.setState({appearance: appearance});
-            //     break;
             case "add":
                 let newItems = items;
                 newItems.repaired = this.state.repairedList;
@@ -479,10 +445,6 @@ class Form extends React.Component {
 
     onRequiredDoc(document) {
         let isEmpty = true;
-        // if (document?.organisation_id === "") {
-        //     isEmpty = false;
-        //     $("#organisation_id").children('div').css("border", "1px solid red");
-        // }
         if (document?.hr_department_id === "") {
             isEmpty = false;
             $("#hr_department_id").children('div').css("border", "1px solid red");
@@ -550,7 +512,6 @@ class Form extends React.Component {
             temporarily,
             plm_document,
             plm_document_items,
-            // organisationList,
             departmentList,
             equipmentGroupList,
             reasonList,
@@ -575,19 +536,24 @@ class Form extends React.Component {
                             </div>
                         </div>
                         <div className={'row'}>
-                            {/*<div className={'col-lg-2'}>*/}
-                            {/*    <div className={'form-group'}>*/}
-                            {/*        <label className={"control-label"}>Tashkilot</label>*/}
-                            {/*        <Select className={"aria-required"}*/}
-                            {/*                id={"organisation_id"}*/}
-                            {/*                onChange={this.onHandleChange.bind(this, 'select', 'plm_document', 'organisation_id', '', '', '')}*/}
-                            {/*                placeholder={"Tanlang ..."}*/}
-                            {/*                value={organisationList.filter(({value}) => +value === +plm_document?.organisation_id)}*/}
-                            {/*                options={organisationList}*/}
-                            {/*                styles={customStyles}*/}
-                            {/*        />*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
+                            <div className={'col-lg-3'}>
+                                <div className={'form-group'}>
+                                    <label className={"control-label"}>Sana</label>
+                                    <DatePicker onChange={(e) => {
+                                        this.onHandleChange('date', 'plm_document', 'reg_date', '', '', '', new Date(e))
+                                    }}
+                                        id={"reg_date"}
+                                        locale={language === "uz" ? uz : ru}
+                                        dateFormat="dd.MM.yyyy"
+                                        className={"form-control aria-required"}
+                                        selected={plm_document?.reg_date ? new Date(plm_document.reg_date) : ""}
+                                        autoComplete={'off'}
+                                        peekNextMonth
+                                        showMonthDropdown
+                                        showYearDropdown
+                                    />
+                                </div>
+                            </div>
                             <div className={'col-lg-3'}>
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Bo'lim</label>
@@ -616,24 +582,6 @@ class Form extends React.Component {
                             </div>
                             <div className={'col-lg-3'}>
                                 <div className={'form-group'}>
-                                    <label className={"control-label"}>Sana</label>
-                                    <DatePicker onChange={(e) => {
-                                        this.onHandleChange('date', 'plm_document', 'reg_date', '', '', '', new Date(e))
-                                    }}
-                                                id={"reg_date"}
-                                                locale={language === "uz" ? uz : ru}
-                                                dateFormat="dd.MM.yyyy"
-                                                className={"form-control aria-required"}
-                                                selected={plm_document?.reg_date ? new Date(plm_document.reg_date) : ""}
-                                                autoComplete={'off'}
-                                                peekNextMonth
-                                                showMonthDropdown
-                                                showYearDropdown
-                                    />
-                                </div>
-                            </div>
-                            <div className={'col-lg-3'}>
-                                <div className={'form-group'}>
                                     <label className={"control-label"}>Izoh</label>
                                     <textarea
                                         onChange={this.onHandleChange.bind(this, 'textarea', 'plm_document', 'add_info', '', '', '')}
@@ -646,7 +594,6 @@ class Form extends React.Component {
                             </div>
                         </div>
                     </div>
-
 
                     <div className={'card-body'}>
                         {
@@ -682,8 +629,7 @@ class Form extends React.Component {
                                                 <div className={"align-center"}>
                                                     <div className={'row'}>
                                                         <div className={'col-lg-12 mb-2'}>
-                                                            <label htmlFor={"equipment_group_id" + key}>Uskunalar
-                                                                guruhi</label>
+                                                            <label htmlFor={"equipment_group_id" + key}>Uskunalar guruhi</label>
                                                             <Select className={"aria-required"}
                                                                     id={"equipment_group_id_" + key}
                                                                     onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'equipment_group_id', key, '', '')}
@@ -707,65 +653,49 @@ class Form extends React.Component {
                                                                 options={item?.equipmentGroup?.equipments ?? []}
                                                             />
                                                         </div>
-                                                        {/*<div className={"col-lg-2 mb-1 text-right"}>*/}
-                                                        {/*    <button onClick={this.onPush.bind(this, 'equipment-group-plus', 'plm_document_items', key, '')}*/}
-                                                        {/*            className={"btn btn-xs wh-28 btn-primary"}>*/}
-                                                        {/*        <i className={"fa fa-plus"}/>*/}
-                                                        {/*    </button>*/}
-                                                        {/*</div>*/}
-                                                        {/*{*/}
-                                                        {/*    item?.equipmentGroup?.equipments?.length > 0 && item.equipmentGroup?.equipments.map((equipment, eqKey) => {*/}
-                                                        {/*        return (*/}
-                                                        {/*            <div className={'col-lg-12 mb-1'} key={eqKey}>*/}
-                                                        {/*                <span className={'form-control'}>{equipment?.label}</span>*/}
-                                                        {/*            </div>*/}
-                                                        {/*        )*/}
-                                                        {/*    })*/}
-                                                        {/*}*/}
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className={'col-lg-1'}>
+                                            <div className={'col-lg-2'}>
                                                 <div className={"align-center"}>
-                                                    <div className={'row'}>
+                                                    <div className={'row time'}>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Boshlanishi</label>
                                                             <DatePicker locale={ru}
-                                                                        dateFormat="HH:mm"
+                                                                        dateFormat="dd.MM.yyyy HH:mm"
                                                                         id={"start_work_" + key}
                                                                         onChange={(e) => {
                                                                             this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
                                                                         }}
-                                                                        className={"form-control aria-required"}
+                                                                        className={"form-control text-center aria-required"}
                                                                         selected={item?.start_work ? new Date(item.start_work) : ""}
                                                                         autoComplete={'off'}
                                                                         showTimeSelect
-                                                                        showTimeSelectOnly
                                                                         timeIntervals={5}
                                                                         timeCaption="Вақт"
                                                             />
                                                         </div>
-                                                        <div className={"col-lg-12 text-center mt-2 mb-1"}>
+                                                        <div className={"col-lg-12 text-center mt-2 mb-1 date-min"}>
                                                             <label>{this.onReturnMin(item?.end_work, item?.start_work)}
                                                                 <small>min</small></label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Tugashi</label>
                                                             <DatePicker locale={ru}
-                                                                        dateFormat="HH:mm"
+                                                                        dateFormat="dd.MM.yyyy HH:mm"
                                                                         id={"end_work_" + key}
-                                                                        className={"form-control aria-required"}
+                                                                        className={"form-control text-center aria-required"}
                                                                         onChange={(e) => {
                                                                             this.onHandleChange('date', 'plm_document_items', 'end_work', key, '', '', new Date(e))
                                                                         }}
                                                                         selected={item?.end_work ? new Date(item.end_work) : ""}
                                                                         filterTime={(e) => {
-                                                                            return new Date(item?.start_work).getTime() < new Date(e).getTime()
+                                                                            return new Date(item?.start_work) < new Date(e)
                                                                         }}
                                                                         autoComplete={'off'}
                                                                         showTimeSelect
-                                                                        showTimeSelectOnly
+                                                                        minDate={item.start_work}
                                                                         timeIntervals={5}
                                                                         timeCaption="Вақт"
                                                             />
@@ -775,87 +705,62 @@ class Form extends React.Component {
                                             </div>
 
                                             <div className="col-lg-1">
-                                                <div className="row">
-                                                    <div className={'col-lg-6 pb-1 text-center'}>
-                                                        <div className={"align-center"}>
-                                                            <div>
-                                                                <label className={'control-label'}>Cycle time
-                                                                    (s)</label>
-                                                                <input value={item?.lifecycle ?? ""} readOnly={true}
-                                                                       className={'form-control'}/>
-                                                                <br/>
-                                                                <label className={'control-label'}>Bypass (s)</label>
-                                                                <input value={item?.bypass ?? ""} readOnly={true}
-                                                                       className={'form-control'}/>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={'col-lg-6 pb-1 text-center'}>
-                                                        <div className={"align-center"}>
-                                                            <div>
-                                                                <label className={'control-label'}>Rejada</label>
-                                                                <input value={item?.target_qty ?? ""} readOnly={true}
-                                                                       className={'form-control'}/>
-                                                            </div>
-                                                        </div>
+                                                <div className={"align-center text-center"}>
+                                                    <div>
+                                                        <label className={'control-label middle-size'}>Reja</label>
+                                                        <input value={item?.target_qty ?? ""} readOnly={true}
+                                                               className={'form-control plan text-center'}/>
+                                                        <label className={'control-label middle-size'}>Cycle time (s)</label>
+                                                        <input value={item?.lifecycle ?? ""} readOnly={true}
+                                                               className={'form-control text-center'}/>
+                                                        <label className={'control-label middle-size'}>Bypass (s)</label>
+                                                        <input value={item?.bypass ?? ""} readOnly={true}
+                                                               className={'form-control text-center'}/>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className={'col-lg-6'}>
-                                                <div className={'row'}>
-                                                    <div className={'col-lg-12'}>
+                                            <div className={'col-lg-5'}>
+                                                <div className={"align-center"}>
+                                                    <div>
                                                         <div className={'row'}>
                                                             <div className={'col-lg-3 pb-1'}>
-                                                                <div className={'row'}>
-                                                                    <div className={"col-lg-2 mb-1"}>
-                                                                        <button
-                                                                            onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
-                                                                            className={"btn btn-xs btn-primary wh-28"}>
-                                                                            <i className={"fa fa-plus"}/>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
+                                                                <button
+                                                                    onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
+                                                                    className={"btn btn-xs btn-primary wh-28"}>
+                                                                    <i className={"fa fa-plus"}/>
+                                                                </button>
                                                             </div>
 
                                                             <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label"}>Ish/chiq</label>
+                                                                <label className={"control-label middle-size"}>Ish/chiq</label>
                                                             </div>
                                                             <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label"}>Ish/chiq(Bs)</label>
+                                                                <label className={"control-label middle-size"}>Ish/chiq(Bs)</label>
                                                             </div>
-                                                            <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label"}>Ta'mirlangan</label>
+                                                            <div className={'col-lg-2 text-center repaired'}>
+                                                                <label className={"control-label middle-size"}>Ta'mirlangan</label>
                                                             </div>
-                                                            <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label"}>Yaroqsiz</label>
+                                                            <div className={'col-lg-2 text-center scrapped'}>
+                                                                <label className={"control-label middle-size"}>Yaroqsiz</label>
                                                             </div>
                                                             <div className={"col-lg-1 text-center"}></div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                {
-                                                    item?.products?.length > 0 && item.products.map((product, prKey) => {
-                                                        return (
-                                                            <div className={'row'} key={prKey}>
-                                                                <div className={'col-lg-12'}>
-                                                                    <div className={'row'}>
+
+                                                        {
+                                                            item?.products?.length > 0 && item.products.map((product, prKey) => {
+                                                                return (
+                                                                    <div className={'row'} key={key +"_"+ prKey}>
                                                                         <div className={'col-lg-3'}>
                                                                             <Select className={"aria-required"}
                                                                                     id={"product_id_" + key + "_" + prKey}
                                                                                     onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
-                                                                                    placeholder={"Tanlang ..."}
+                                                                                    placeholder={"Tanlang"}
                                                                                     value={item?.equipmentGroup?.lifecycles?.productGroup?.products.filter(({value}) => +value === +product?.product_id)}
                                                                                     options={item?.equipmentGroup?.lifecycles?.productGroup?.products}
                                                                                     styles={customStyles}
                                                                             />
                                                                         </div>
-                                                                        {/*<div className={'col-lg-2'}>*/}
-                                                                        {/*    <input type={"text"} id={"product_lifecycle"} disabled={true} className={'form-control'} value={product?.lifecycle}/>*/}
-                                                                        {/*</div>*/}
-                                                                        {/*<div className={'col-lg-2'}>*/}
-                                                                        {/*    <input type={"text"} id={"product_bypass"} disabled={true} className={'form-control'} value={product?.bypass}/>*/}
-                                                                        {/*</div>*/}
                                                                         <div className={'col-lg-2'}>
                                                                             <input
                                                                                 onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
@@ -874,21 +779,21 @@ class Form extends React.Component {
                                                                                 min={0}
                                                                                 value={product?.qty ?? ""}/>
                                                                         </div>
-                                                                        <div className={'col-lg-2 text-center'}>
+                                                                        <div className={'col-lg-2 text-center repaired'}>
                                                                             <label
                                                                                 className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
                                                                             <button
                                                                                 onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
-                                                                                className={'btn btn-primary btn-xs wh-28'}>
+                                                                                className={'btn btn-warning btn-xs wh-28'}>
                                                                                 <i className={'fa fa-plus'}/>
                                                                             </button>
                                                                         </div>
-                                                                        <div className={'col-lg-2 text-center'}>
+                                                                        <div className={'col-lg-2 text-center scrapped'}>
                                                                             <label
                                                                                 className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
                                                                             <button
                                                                                 onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
-                                                                                className={'btn btn-primary btn-xs wh-28'}>
+                                                                                className={'btn btn-info btn-xs wh-28'}>
                                                                                 <i className={'fa fa-plus'}/>
                                                                             </button>
                                                                         </div>
@@ -900,19 +805,17 @@ class Form extends React.Component {
                                                                             </button>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
+                                                </div>
                                             </div>
-
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
-                                                    <div className={'row'}>
+                                                    <div className={'row planned_stopped'}>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label className={"control-label"}>Rejali
-                                                                to'xtalishlar</label>
+                                                            <label className={"control-label middle-size"}>Rejali to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label
@@ -920,7 +823,7 @@ class Form extends React.Component {
                                                                 <small>min</small></label>
                                                             <button
                                                                 onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key, '')}
-                                                                className={"btn btn-xs btn-primary"}>
+                                                                className={"btn btn-xs btn-warning"}>
                                                                 <i className={'fa fa-plus'}/>
                                                             </button>
                                                         </div>
@@ -929,10 +832,9 @@ class Form extends React.Component {
                                             </div>
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
-                                                    <div className={'row'}>
+                                                    <div className={'row unplanned_stopped'}>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label className={"control-label"}>Rejasiz
-                                                                to'xtalishlar</label>
+                                                            <label className={"control-label middle-size"}>Rejasiz to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label
@@ -940,7 +842,7 @@ class Form extends React.Component {
                                                                 <small>min</small></label>
                                                             <button
                                                                 onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key, '')}
-                                                                className={'btn btn-primary btn-xs'}>
+                                                                className={'btn btn-info btn-xs'}>
                                                                 <i className={'fa fa-plus'}/>
                                                             </button>
                                                         </div>
@@ -995,15 +897,11 @@ class Form extends React.Component {
                                                                     className={"form-control"}
                                                                     selected={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
                                                                     autoComplete={'off'}
-                                                            // filterTime={(e) => {
-                                                            //     return new Date(temporarily.item?.start_work).getTime() <= new Date(e).getTime() &&
-                                                            //         new Date(e).getTime() <= new Date(temporarily.item?.end_work).getTime()
-                                                            // }}
                                                                     peekNextMonth
                                                                     showMonthDropdown
                                                                     showYearDropdown
                                                                     showTimeSelect
-                                                                    dateFormat="dd/MM/yyyy HH:mm"
+                                                                    dateFormat="dd.MM.yyyy HH:mm"
                                                                     timeIntervals={5}
                                                                     timeCaption="Вақт"
                                                         />
@@ -1023,13 +921,9 @@ class Form extends React.Component {
                                                                     minDate={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
                                                                     peekNextMonth
                                                                     showMonthDropdown
-                                                            // filterTime={(e) => {
-                                                            //     return new Date(temporarily.store?.begin_date).getTime() < new Date(e).getTime() &&
-                                                            //         new Date(e).getTime() <= new Date(temporarily.item?.end_work).getTime()
-                                                            // }}
                                                                     showYearDropdown
                                                                     showTimeSelect
-                                                                    dateFormat="dd/MM/yyyy HH:mm"
+                                                                    dateFormat="dd.MM.yyyy HH:mm"
                                                                     timeIntervals={5}
                                                                     timeCaption="Вақт"
                                                         />
@@ -1039,7 +933,7 @@ class Form extends React.Component {
                                                     temporarily?.type === 'unplanned_stopped' ?
                                                         <div className={'col-lg-12'}>
                                                             <div className={"form-group"}>
-                                                                <label className={"control-label"}>Bypass</label>
+                                                                <label className={"control-label"}>Bypass (m)</label>
                                                                 <input
                                                                     onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}
                                                                     className={"form-control"}
@@ -1098,7 +992,6 @@ class Form extends React.Component {
                         </div>
                     </div>
                 </div>
-
             </div>
         );
     };
