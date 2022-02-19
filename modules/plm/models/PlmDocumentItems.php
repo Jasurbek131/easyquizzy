@@ -109,6 +109,22 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     /**
      * @return yii\db\ActiveQuery
      */
+    public function getPlanned_stops()
+    {
+        return $this->hasMany(PlmStops::class, ['document_item_id' => 'id', 'type' => \app\models\BaseModel::CATEGORY_PLANNED]);
+    }
+
+    /**
+     * @return yii\db\ActiveQuery
+     */
+    public function getUnplanned_stops()
+    {
+        return $this->hasMany(PlmStops::class, ['document_item_id' => 'id', 'type' => \app\models\BaseModel::CATEGORY_UNPLANNED]);
+    }
+
+    /**
+     * @return yii\db\ActiveQuery
+     */
     public function getPlmDocItemDefects()
     {
         return $this->hasMany(PlmDocItemDefects::class, ['doc_item_id' => 'id']);

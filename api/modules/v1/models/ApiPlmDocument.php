@@ -592,7 +592,14 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             ])->with([
                 'plm_document_items' => function ($q) use ($language) {
                     $q->from(['pdi' => 'plm_document_items'])
-                        ->select(['pdi.*', "pdi.lifecycle", "pdi.bypass", "pdi.target_qty", 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
+                        ->select([
+                            'pdi.*',
+                            "pdi.lifecycle",
+                            "pdi.bypass",
+                            "pdi.target_qty",
+                            'ppt.begin_date as start_work',
+                            'ppt.end_date as end_work',
+                        ])->with([
                             'products' => function ($p) use ($language) {
                                 $p->from(['p' => 'plm_doc_item_products'])->select([
                                     'p.id',

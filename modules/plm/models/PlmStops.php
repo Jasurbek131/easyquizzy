@@ -22,6 +22,7 @@ use Yii;
  * @property string $bypass
  * @property Reasons[] $reasons
  * @property PlmDocumentItems[] $plmDocumentItems
+ * @property PlmDocumentItems[] $plmDocumentItem
  */
 class PlmStops extends BaseModel
 {
@@ -44,7 +45,8 @@ class PlmStops extends BaseModel
             [['begin_date', 'end_time'], 'safe'],
             [['add_info'], 'string'],
             [['bypass'], 'string', 'max' => 255],
-            [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reasons::className(), 'targetAttribute' => ['reason_id' => 'id']],
+            [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reasons::class, 'targetAttribute' => ['reason_id' => 'id']],
+            [['document_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['document_item_id' => 'id']],
         ];
     }
 
@@ -74,7 +76,7 @@ class PlmStops extends BaseModel
      */
     public function getReasons()
     {
-        return $this->hasMany(Reasons::className(), ['reason_id' => 'id']);
+        return $this->hasMany(Reasons::class, ['reason_id' => 'id']);
     }
 
     /**
@@ -82,6 +84,15 @@ class PlmStops extends BaseModel
      */
     public function getPlmDocumentItems()
     {
-        return $this->hasMany(PlmDocumentItems::className(), ['unplanned_stop_id' => 'id']);
+        return $this->hasMany(PlmDocumentItems::class, ['unplanned_stop_id' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlmDocumentItem()
+    {
+        return $this->hasMany(PlmDocumentItems::class, ['id' => "document_item_id"]);
+    }
+
 }

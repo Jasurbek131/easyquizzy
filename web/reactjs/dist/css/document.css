@@ -147,6 +147,5 @@ textarea.form-control{
     line-height: 1.7rem;
 }
 .success-block{
-    border: 2px solid #238F3B!important;
-    background: #ecffec!important;
+    background: #ecf5ec!important;
 }
