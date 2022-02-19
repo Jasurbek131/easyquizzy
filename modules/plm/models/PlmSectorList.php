@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
  * @property int $updated_by
  * @property int $updated_at
  *
- * @property PlmSettingAcceptedSectorRelHrDepartment[] $plmSettingAcceptedSectorRelHrDepartments
+ * @property PlmSectorRelHrDepartment[] $plmSettingAcceptedSectorRelHrDepartments
  */
 class PlmSectorList extends BaseModel
 {
@@ -63,7 +63,7 @@ class PlmSectorList extends BaseModel
      */
     public function getPlmSettingAcceptedSectorRelHrDepartments()
     {
-        return $this->hasMany(PlmSettingAcceptedSectorRelHrDepartment::className(), ['plm_sector_list_id' => 'id']);
+        return $this->hasMany(PlmSectorRelHrDepartment::className(), ['plm_sector_list_id' => 'id']);
     }
 
     public static function getList($key = null, $isArray = false) {

@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartmentSearch */
+/* @var $searchModel app\modules\plm\models\PlmSectorRelHrDepartmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Plm Setting Accepted Sector Rel Hr Departments');
+$this->title = Yii::t('app', 'Plm Sector Rel Hr Departments');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card plm-setting-accepted-sector-rel-hr-department-index">
-    <?php if (Yii::$app->user->can('plm-setting-accepted-sector-rel-hr-department/create')): ?>
+    <?php if (Yii::$app->user->can('plm-sector-rel-hr-department/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
@@ -62,12 +62,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
-                        'view' => Yii::$app->user->can('plm-setting-accepted-sector-rel-hr-department/view'),
+                        'view' => Yii::$app->user->can('plm-sector-rel-hr-department/view'),
                         'update' => function($model) {
-                            return Yii::$app->user->can('plm-setting-accepted-sector-rel-hr-department/update'); // && $model->status < $model::STATUS_SAVED;
+                            return Yii::$app->user->can('plm-sector-rel-hr-department/update'); // && $model->status < $model::STATUS_SAVED;
                         },
                         'delete' => function($model) {
-                            return Yii::$app->user->can('plm-setting-accepted-sector-rel-hr-department/delete'); // && $model->status < $model::STATUS_SAVED;
+                            return Yii::$app->user->can('plm-sector-rel-hr-department/delete'); // && $model->status < $model::STATUS_SAVED;
                         }
                     ],
                     'buttons' => [
@@ -101,10 +101,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 <?=  \app\widgets\ModalWindow\ModalWindow::widget([
-    'model' => 'plm-setting-accepted-sector-rel-hr-department',
-    'crud_name' => 'plm-setting-accepted-sector-rel-hr-department',
-    'modal_id' => 'plm-setting-accepted-sector-rel-hr-department-modal',
-    'modal_header' => '<h5>'. Yii::t('app', 'Plm Setting Accepted Sector Rel Hr Department') . '</h5>',
+    'model' => 'plm-sector-rel-hr-department',
+    'crud_name' => 'plm-sector-rel-hr-department',
+    'modal_id' => 'plm-sector-rel-hr-department-modal',
+    'modal_header' => '<h5>'. Yii::t('app', 'Plm Sector Rel Hr Department') . '</h5>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',

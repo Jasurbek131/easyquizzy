@@ -3,12 +3,12 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartment */
+/* @var $model app\modules\plm\models\PlmSectorRelHrDepartment */
 
-$this->title = Yii::t('app', 'Update Plm Setting Accepted Sector Rel Hr Department: {name}', [
+$this->title = Yii::t('app', 'Update Plm Sector Rel Hr Department: {name}', [
     'name' => $model->id,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Plm Setting Accepted Sector Rel Hr Departments'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Plm Sector Rel Hr Departments'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>

@@ -20,14 +20,14 @@ use Yii;
  * @property HrDepartments $hrDepartments
  * @property PlmSectorList $plmSectorList
  */
-class PlmSettingAcceptedSectorRelHrDepartment extends BaseModel
+class PlmSectorRelHrDepartment extends BaseModel
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'plm_setting_accepted_sector_rel_hr_department';
+        return 'plm_sector_rel_hr_department';
     }
 
     /**
@@ -75,4 +75,5 @@ class PlmSettingAcceptedSectorRelHrDepartment extends BaseModel
     {
         return $this->hasOne(PlmSectorList::className(), ['id' => 'plm_sector_list_id']);
     }
+
 }

@@ -4,12 +4,12 @@ namespace app\modules\plm\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartment;
+use app\modules\plm\models\PlmSectorRelHrDepartment;
 
 /**
- * PlmSettingAcceptedSectorRelHrDepartmentSearch represents the model behind the search form of `app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartment`.
+ * PlmSectorRelHrDepartmentSearch represents the model behind the search form of `app\modules\plm\models\PlmSectorRelHrDepartment`.
  */
-class PlmSettingAcceptedSectorRelHrDepartmentSearch extends PlmSettingAcceptedSectorRelHrDepartment
+class PlmSectorRelHrDepartmentSearch extends PlmSectorRelHrDepartment
 {
     /**
      * {@inheritdoc}
@@ -39,7 +39,7 @@ class PlmSettingAcceptedSectorRelHrDepartmentSearch extends PlmSettingAcceptedSe
      */
     public function search($params)
     {
-        $query = PlmSettingAcceptedSectorRelHrDepartment::find();
+        $query = PlmSectorRelHrDepartment::find();
 
         // add conditions that should always apply here
 

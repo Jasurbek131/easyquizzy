@@ -2,18 +2,19 @@
 
 namespace app\modules\plm\controllers;
 
+use app\modules\hr\models\UsersRelationHrDepartments;
 use Yii;
-use app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartment;
-use app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartmentSearch;
+use app\modules\plm\models\PlmSectorRelHrDepartment;
+use app\modules\plm\models\PlmSectorRelHrDepartmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * PlmSettingAcceptedSectorRelHrDepartmentController implements the CRUD actions for PlmSettingAcceptedSectorRelHrDepartment model.
+ * PlmSectorRelHrDepartmentController implements the CRUD actions for PlmSectorRelHrDepartment model.
  */
-class PlmSettingAcceptedSectorRelHrDepartmentController extends Controller
+class PlmSectorRelHrDepartmentController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -31,12 +32,12 @@ class PlmSettingAcceptedSectorRelHrDepartmentController extends Controller
     }
 
     /**
-     * Lists all PlmSettingAcceptedSectorRelHrDepartment models.
+     * Lists all PlmSectorRelHrDepartment models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new PlmSettingAcceptedSectorRelHrDepartmentSearch();
+        $searchModel = new PlmSectorRelHrDepartmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -46,7 +47,7 @@ class PlmSettingAcceptedSectorRelHrDepartmentController extends Controller
     }
 
     /**
-     * Displays a single PlmSettingAcceptedSectorRelHrDepartment model.
+     * Displays a single PlmSectorRelHrDepartment model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -64,13 +65,13 @@ class PlmSettingAcceptedSectorRelHrDepartmentController extends Controller
     }
 
     /**
-     * Creates a new PlmSettingAcceptedSectorRelHrDepartment model.
+     * Creates a new PlmSectorRelHrDepartment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PlmSettingAcceptedSectorRelHrDepartment();
+        $model = new PlmSectorRelHrDepartment();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
@@ -119,7 +120,7 @@ class PlmSettingAcceptedSectorRelHrDepartmentController extends Controller
     }
 
     /**
-     * Updates an existing PlmSettingAcceptedSectorRelHrDepartment model.
+     * Updates an existing PlmSectorRelHrDepartment model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -177,7 +178,7 @@ class PlmSettingAcceptedSectorRelHrDepartmentController extends Controller
     }
 
     /**
-     * Deletes an existing PlmSettingAcceptedSectorRelHrDepartment model.
+     * Deletes an existing PlmSectorRelHrDepartment model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -226,7 +227,7 @@ class PlmSettingAcceptedSectorRelHrDepartmentController extends Controller
         header('Content-Disposition: attachment;filename='.$filename .' ');
         header('Cache-Control: max-age=0');
         \moonland\phpexcel\Excel::export([
-            'models' => PlmSettingAcceptedSectorRelHrDepartment::find()->select([
+            'models' => PlmSectorRelHrDepartment::find()->select([
                 'id',
             ])->all(),
             'columns' => [
@@ -239,15 +240,15 @@ class PlmSettingAcceptedSectorRelHrDepartmentController extends Controller
         ]);
     }
     /**
-     * Finds the PlmSettingAcceptedSectorRelHrDepartment model based on its primary key value.
+     * Finds the PlmSectorRelHrDepartment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return PlmSettingAcceptedSectorRelHrDepartment the loaded model
+     * @return PlmSectorRelHrDepartment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PlmSettingAcceptedSectorRelHrDepartment::findOne($id)) !== null) {
+        if (($model = PlmSectorRelHrDepartment::findOne($id)) !== null) {
             return $model;
         }
 
