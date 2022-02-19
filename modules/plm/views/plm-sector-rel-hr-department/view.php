@@ -4,22 +4,22 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartment */
+/* @var $model app\modules\plm\models\PlmSectorRelHrDepartment */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Plm Setting Accepted Sector Rel Hr Departments'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Plm Sector Rel Hr Departments'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="plm-setting-accepted-sector-rel-hr-department-view">
     <?php if(!Yii::$app->request->isAjax){?>
     <div class="pull-right" style="margin-bottom: 15px;">
-        <?php if (Yii::$app->user->can('plm-setting-accepted-sector-rel-hr-department/update')): ?>
+        <?php if (Yii::$app->user->can('plm-sector-rel-hr-department/update')): ?>
             <?php  if ($model->status < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             <?php endif; ?>
         <?php endif; ?>
-        <?php if (Yii::$app->user->can('plm-setting-accepted-sector-rel-hr-department/delete')): ?>
+        <?php if (Yii::$app->user->can('plm-sector-rel-hr-department/delete')): ?>
             <?php  if ($model->status < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
                     'class' => 'btn btn-danger',

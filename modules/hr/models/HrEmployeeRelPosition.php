@@ -2,6 +2,8 @@
 
 namespace app\modules\hr\models;
 
+use app\models\Users;
+use app\modules\plm\models\BaseModel;
 use Yii;
 
 /**
@@ -112,4 +114,17 @@ class HrEmployeeRelPosition extends BaseModel
     {
         return $this->hasOne(HrEmployee::class, ['id' => 'hr_employee_id']);
     }
+    public static function getActiveHrDepartment(){
+        $user_id = Yii::$app->user->identity->id;
+            return Users::find()
+                ->alias('u')
+                ->select(['hrerp.*'])
+                ->leftJoin(['hreru' => 'hr_employee_rel_users'],'hreru.user_id = u.id')
+                ->leftJoin(['hrerp' => 'hr_employee_rel_position'],'hrerp.hr_employee_id = hreru.hr_employee_id')
+                ->where(['u.id' => $user_id,'hreru.status_id' => BaseModel::STATUS_ACTIVE,'hrerp.status_id' => BaseModel::STATUS_ACTIVE])
+                ->orderBy(['hrerp.id' => SORT_DESC])
+                ->one();
+    }
+
+
 }

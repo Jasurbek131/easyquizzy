@@ -390,6 +390,14 @@ AppAsset::register($this);
                             'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-industry nav-icon"></i><p>{label}</p></a>',
                         ],
                         [
+                            'label' => Yii::t('app', 'Plm Notifications List'),
+                            'url' => '/plm/plm-notifications-list/index',
+                            'visible' => P::can("plm-notifications-list/index"),
+                            'options' => ['class' => 'nav-item'],
+                            'active' => $controller == 'plm-notifications-list' && $action == 'index',
+                            'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-check-circle nav-icon"></i><p>{label}</p></a>',
+                        ],
+                        [
                             'label' => Yii::t('app', 'Settings'),
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
@@ -397,11 +405,11 @@ AppAsset::register($this);
                             'visible' => P::can("plm-report/document"),
                             'items' => [
                                 [
-                                    'label' => Yii::t('app', 'PlmSettingAcceptedSectorRelHrDepartment'),
-                                    'url' => '/plm/plm-setting-accepted-sector-rel-hr-department/index',
+                                    'label' => Yii::t('app', 'PlmSectorRelHrDepartment'),
+                                    'url' => '/plm/plm-sector-rel-hr-department/index',
                                     'options' => ['class' => 'nav-item'],
-                                    'visible' => P::can("plm-setting-accepted-sector-rel-hr-department/index"),
-                                    'active' => $controller == 'plm-setting-accepted-sector-rel-hr-department' && $action == 'index',
+                                    'visible' => P::can("plm-sector-rel-hr-department/index"),
+                                    'active' => $controller == 'plm-sector-rel-hr-department' && $action == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-paperclip nav-icon"></i><p>{label}</p></a>',
                                 ],
                             ],

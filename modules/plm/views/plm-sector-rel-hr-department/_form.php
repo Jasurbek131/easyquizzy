@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartment */
+/* @var $model app\modules\plm\models\PlmSectorRelHrDepartment */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\plm\models\PlmSettingAcceptedSectorRelHrDepartmentSearch */
+/* @var $model app\modules\plm\models\PlmSectorRelHrDepartmentSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
