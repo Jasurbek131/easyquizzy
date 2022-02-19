@@ -120,6 +120,11 @@ class Form extends React.Component {
     onHandleChange = (type, model, name, key, index, value, e) => {
         let v = value;
         let element = $('#' + name);
+        if (key !== '' && index !== ''){
+            element = $('#' + name + "_" + key + "_" + index);
+        }else if(key !== ''){
+            element = $('#' + name + "_" + key);
+        }
         let {plm_document_items, temporarily} = this.state;
         switch (type) {
             case "select":
