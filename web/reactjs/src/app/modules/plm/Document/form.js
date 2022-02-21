@@ -125,6 +125,7 @@ class Form extends React.Component {
         }else if(key !== ''){
             element = $('#' + name + "_" + key);
         }
+        console.log("element", element);
         let {plm_document_items, temporarily} = this.state;
         switch (type) {
             case "select":
@@ -147,9 +148,8 @@ class Form extends React.Component {
         }
         switch (model) {
             case "products":
+                plm_document_items[key]['is_change'] = true;
                 if (name === 'product_id') {
-                    $("#product_lifecycle_id").children('div').css("border", "1px solid #ced4da");
-                    $("#qty").css("border", "1px solid #ced4da");
                     plm_document_items[key]['products'][index][name] = v;
                     plm_document_items[key]['products'][index]["repaired"] = [];
                     plm_document_items[key]['products'][index]["scrapped"] = [];
@@ -173,12 +173,12 @@ class Form extends React.Component {
                 break;
             case "plm_document_items":
                 plm_document_items[key][name] = v;
+                plm_document_items[key]['is_change'] = true;
                 if (name === 'equipment_group_id') {
                     plm_document_items[key]['equipmentGroup'] = e;
                     plm_document_items[key]['equipments'] = [];
                     plm_document_items[key]['lifecycle'] = e?.lifecycles?.lifecycle;
                     plm_document_items[key]['bypass'] = e?.lifecycles?.bypass;
-
                 }
                 if (name === 'product_id') {
                     plm_document_items[key]['products'][index] = e;
@@ -380,6 +380,7 @@ class Form extends React.Component {
                 break;
             case "product-plus":
                 let product = {
+                    product_id: "",
                     label: "",
                     fact_qty: "",
                     qty: "",
@@ -472,6 +473,7 @@ class Form extends React.Component {
                 toast.success(response.data.message);
                 plm_document["id"] = response.data.doc_id;
                 plm_document_items[key]["id"] = response.data.doc_item_id;
+                plm_document_items[key]["is_change"] = false;
                 this.setState({plm_document_items, plm_document});
             } else {
                 toast.error(response.data.message);
@@ -599,7 +601,7 @@ class Form extends React.Component {
                         {
                             plm_document_items?.length > 0 && plm_document_items.map((item, key) => {
                                 return (
-                                    <div className={"border-block"} key={key}>
+                                    <div className={item.is_change ? "border-block" : "border-block success-block"} key={key}>
                                         <div className={'pull-right'}>
                                             {
                                                 key === 0 ?
@@ -618,10 +620,12 @@ class Form extends React.Component {
                                             }
                                             <br/>
                                             <br/>
-                                            <button onClick={this.onSave.bind(this, key)}
-                                                    className={"btn btn-xs btn-success"}>
-                                                <i className={"fa fa-check"}/>
-                                            </button>
+                                            {item.is_change ? (
+                                                <button onClick={this.onSave.bind(this, key)} className={"btn btn-xs btn-success"}>
+                                                    <i className={"fa fa-check"}/>
+                                                </button>
+                                            ) : (<span></span>)}
+
                                         </div>
 
                                         <div className={"row"}>

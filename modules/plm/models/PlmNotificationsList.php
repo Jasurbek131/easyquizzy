@@ -2,6 +2,7 @@
 
 namespace app\modules\plm\models;
 
+use app\modules\hr\models\HrEmployeeRelPosition;
 use app\modules\references\models\Defects;
 use app\modules\references\models\Reasons;
 use Yii;
@@ -30,6 +31,11 @@ use Yii;
  */
 class PlmNotificationsList extends BaseModel
 {
+    public $department;
+    public $shift;
+    public $product;
+    public $defect;
+    public $reason;
     /**
      * {@inheritdoc}
      */
@@ -99,5 +105,53 @@ class PlmNotificationsList extends BaseModel
     public function getReasons()
     {
         return $this->hasOne(Reasons::className(), ['id' => 'reason_id']);
+    }
+
+    public static function getViews($id = null){
+        $query = [];
+        $hr_department = HrEmployeeRelPosition::getActiveHrDepartment(); // foydalanuvchini faol bo'limini olish
+        if(!empty($id)){
+            $query = self::find()
+                ->alias('pnl')
+                ->select([
+                    'pnl.*',
+                    'hd.name AS department',
+                    'sh.name shift',
+                    'product.product',
+                    'r.name_uz AS reason',
+                    'defect.defect',
+                    'defect.count',
+                ])
+                ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
+                ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
+                ->leftJoin(['pd' => 'plm_documents'],'pdi.document_id = pd.id')
+                ->leftJoin(['sh' => 'shifts'],'pd.shift_id = sh.id')
+                ->leftJoin(['hd' => 'hr_departments'],'pd.hr_department_id = hd.id')
+                ->leftJoin(['r' => 'reasons'],'pnl.reason_id = r.id')
+                ->leftJoin(['defect' => PlmNotificationRelDefect::find()
+                    ->alias('pnrd')
+                    ->select([
+                        'pnrd.plm_notification_list_id',
+                        'SUM(pnrd.defect_count) AS count',
+                        "STRING_AGG(DISTINCT d.name_uz,', ') AS defect"
+                    ])
+                    ->leftJoin(['d' => 'defects'],'pnrd.defect_id = d.id')
+                    ->groupBy(['pnrd.plm_notification_list_id'])
+                ],'defect.plm_notification_list_id = pnl.id')
+                ->leftJoin(['product' => PlmDocItemProducts::find()
+                    ->alias('pdip')
+                    ->select([
+                        "pdip.document_item_id",
+                        "STRING_AGG(DISTINCT p.name,', ') AS product",
+                    ])
+                    ->leftJoin(['p' => 'products'],'pdip.product_id = p.id')
+                    ->groupBy(['pdip.document_item_id'])
+                ],'product.document_item_id = pnl.plm_doc_item_id')
+            ->where(['pnl.id' => $id])
+            ->andWhere(['=','psrd.hr_department_id', $hr_department['hr_department_id']])
+            ->asArray()
+            ->one();
+        }
+        return $query;
     }
 }

@@ -24,7 +24,6 @@ class Index extends React.Component {
     }
 
     async componentDidMount() {
-        this._isMounted = true;
         let {history} = this.props;
         let {searchParams} = this.state;
         const response = await axios.get(API_URL + 'search', searchParams);
@@ -32,13 +31,6 @@ class Index extends React.Component {
             this.setState({
                 documents: response.data.documents,
                 pagination: response.data.pagination,
-                // organisationList: response.data.organisationList,
-                // departmentList: response.data.departmentList,
-                // productList: response.data.productList,
-                // equipmentList: response.data.equipmentList,
-                // reasonList: response.data.reasonList,
-                // repairedList: response.data.repaired,
-                // scrappedList: response.data.scrapped,
                 language: response.data.language,
                 isLoading: false
             });
@@ -56,7 +48,7 @@ class Index extends React.Component {
         let {searchParams} = this.state;
         searchParams.page = page;
 
-    }
+    };
 
 
     render() {
