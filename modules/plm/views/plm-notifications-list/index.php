@@ -22,6 +22,9 @@ $this->params['breadcrumbs'][] = $this->title;
            'dataProvider' => $dataProvider,
            'filterRowOptions' => ['class' => 'filters no-print'],
            'filterModel' => $searchModel,
+           'rowOptions' => function($model){
+                if($model['status_id'] == BaseModel::STATUS_ACCEPTED) return ['style' => 'background:#92d7ff'];
+           },
            'columns' => [
                ['class' => 'yii\grid\SerialColumn'],
 

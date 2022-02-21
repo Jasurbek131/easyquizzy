@@ -44,7 +44,6 @@ class PlmNotificationsListController extends Controller
      */
     public function actionIndex()
     {
-
         $searchModel = new PlmNotificationsListSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
@@ -157,20 +156,26 @@ class PlmNotificationsListController extends Controller
     public function actionAccepted($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post())) {
+        $transaction = Yii::$app->db->beginTransaction();
+        $saved = false;
+        try {   
             if($model->status_id < BaseModel::STATUS_ACCEPTED){
                 $model->status_id = BaseModel::STATUS_ACCEPTED;
                 if($model->save()){
+                    $saved = true;
+                }
+                if($saved) {
+                    $transaction->commit();
                     Yii::$app->session->setFlash('success',Yii::t("app","Checked successfully"));
-                    return $this->redirect(['view', 'id' => $model->id]);
                 }else{
+                    $transaction->rollBack();
                     Yii::$app->session->setFlash('error',Yii::t("app","Checked not successfully"));
-                    return $this->redirect(['view', 'id' => $model->id]);
                 }
             }
+        } catch (\Exception $e) {
+            Yii::info('Not saved' . $e, 'save');
+            $transaction->rollBack();
         }
-
         return $this->redirect(['view', 'id' => $model->id]);
     }
 
