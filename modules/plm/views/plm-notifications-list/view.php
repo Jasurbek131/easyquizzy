@@ -119,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],*/
         ],
     ]) ?>
-    <div class="modal md"  id="modal_return" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="true">
+    <div class="modal md"  id="modal_rejected" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
@@ -134,7 +134,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                         <br>
                         <div class="col-md-12">
-                           <?= Html::submitButton(Yii::t('app', 'Send'), ['class' => 'btn btn-sm btn-success save_button']) ?>
+                           <?= Html::submitButton(Yii::t('app', 'Send'), ['class' => 'btn btn-sm btn-success save_rejected']) ?>
                         </div>
                     </div>
                 </div>
@@ -145,17 +145,24 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
-$url_return = Url::to(['ajax-return']);
-$this->registerJsVar('urlReturn',$url_return);
+$this->registerCss("
+    .save_rejected{
+        float:right;
+        margin:10px 20px;
+    }
+");
+
+$url_rejected = Url::to(['ajax-rejected']);
+$this->registerJsVar('urlRejected',$url_rejected);
 $js = <<< JS
     $('body').delegate('.rejected','click', function(e){
-       $('#modal_return').modal('show');
+       $('#modal_rejected').modal('show');
    });
-   $('body').delegate('#save_return','click',function() {
+   $('body').delegate('.save_rejected','click',function() {
       let list_id = $('#plm_notification_list_id').val();
       let message = $('#message').val();
       $.ajax({
-            url: urlReturn,
+            url: urlRejected,
             data:{
                 list_id:list_id,
                 message: message,

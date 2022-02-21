@@ -108,7 +108,6 @@ class UsersController extends Controller
         $model->roles = AuthAssignment::getUserRoles($id);
         $model->password = "";
         $request = Yii::$app->request;
-
         if ($request->isPost) {
             if ($model->load($request->post())) {
                 $model->isUpdate = true;

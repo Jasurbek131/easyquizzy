@@ -12,6 +12,7 @@ use Yii;
  *
  * @property int $id
  * @property int $plm_doc_item_id
+ * @property int $plm_sector_list_id
  * @property string $begin_time
  * @property string $end_time
  * @property int $defect_id

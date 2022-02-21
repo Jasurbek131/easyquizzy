@@ -54,7 +54,8 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                     'r.name_uz AS reason',
                     'defect.defect',
                     'defect.count',
-                    'pnl.status_id'
+                    'pnl.status_id',
+                    'pnl.plm_sector_list_id'
                 ]);
         $query = $query
             ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
