@@ -357,6 +357,10 @@ AppAsset::register($this);
                                     'url' => ['#'],
                                     'options' => ['class' => 'nav-item'],
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fa fa-bars"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
+                                    'visible' =>
+                                        P::can("categories/index") ||
+                                        P::can("reasons/index")
+                                    ,
                                     'items' => [
                                         [
                                             'label' => Yii::t('app', 'Stop type'),
