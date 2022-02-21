@@ -9,6 +9,7 @@ use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\plm\models\BaseModel;
 use app\modules\plm\models\PlmNotificationMessage;
 use app\modules\plm\models\PlmSectorRelHrDepartment;
+use Faker\Provider\Base;
 use Yii;
 use app\modules\plm\models\PlmNotificationsList;
 use app\modules\plm\models\PlmNotificationsListSearch;
@@ -105,6 +106,26 @@ class PlmNotificationsListController extends Controller
         ]);
     }
 
+    public function actionAccepted($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->status_id < BaseModel::STATUS_ACCEPTED){
+                $model->status_id = BaseModel::STATUS_ACCEPTED;
+                if($model->save()){
+                    Yii::$app->session->setFlash('success',Yii::t("app","Checked successfully"));
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }else{
+                    Yii::$app->session->setFlash('error',Yii::t("app","Checked not successfully"));
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            }
+        }
+
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+
     /**
      * Deletes an existing PlmNotificationsList model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -158,16 +179,28 @@ class PlmNotificationsListController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         $response = [];
         $data = Yii::$app->request->post();
-        \yii\helpers\VarDumper::dump($data,10,true);die();
         if(!empty($data)){
             $plmNotificationMessage = new PlmNotificationMessage();
             $plmNotificationMessage->setAttributes([
                 'plm_notification_list_id' => $data['list_id'],
                 'message' => $data['message'],
             ]);
+            /**
+              *  @var  $plmNotificationList PlmNotificationsList
+             **/
             if($plmNotificationMessage->save()){
-                $response['status'] = true;
-                $response['message'] = Yii::t('app', 'Checked Successfully');
+                $plmNotificationList = PlmNotificationsList::find()
+                    ->where(['id' => $data['list_id'],'status_id' => BaseModel::STATUS_ACTIVE])
+                    ->orderBy(['id' => SORT_DESC])
+                    ->limit(1)
+                    ->one();
+                if(!empty($plmNotificationList)){
+                    $plmNotificationList->status_id = BaseModel::STATUS_REJECTED; // rad etilgan list
+                    if($plmNotificationList->save()){
+                        $response['status'] = true;
+                        $response['message'] = Yii::t('app', 'Checked Successfully');
+                    }
+                }
             }else{
                 $response['status'] = false;
                 $response['message'] = Yii::t('app', 'Checked not saved');
