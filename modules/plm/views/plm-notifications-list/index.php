@@ -112,18 +112,18 @@ $this->params['breadcrumbs'][] = $this->title;
                //'created_at',
                //'updated_by',
                //'updated_at',
-               [
+              /* [
                    'attribute' => 'add_info',
                    'label' => Yii::t("app","Add Info"),
                    'value' => function($model){
                        return $model['add_info'];
                    }
-               ],
+               ],*/
 
                [
                    'class' => 'yii\grid\ActionColumn',
                    'template' => '{view}',
-                   'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
+                   'contentOptions' => ['class' => 'no-print','style' => 'width:50px;'],
                    'visibleButtons' => [
                        'view' => Yii::$app->user->can('plm-notifications-list/view'),
                        /*'update' => function($model) {
