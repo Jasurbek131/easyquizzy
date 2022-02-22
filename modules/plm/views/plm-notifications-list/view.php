@@ -114,7 +114,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'label' => Yii::t("app","Add Info"),
                         'value' => function($model){
-                            return $model['reason_info'];
+                            return $model['add_info'];
                         },
                         'visible' => P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
                     ],
