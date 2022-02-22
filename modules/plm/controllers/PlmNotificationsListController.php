@@ -44,10 +44,8 @@ class PlmNotificationsListController extends Controller
      */
     public function actionIndex()
     {
-
         $searchModel = new PlmNotificationsListSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -106,26 +104,6 @@ class PlmNotificationsListController extends Controller
         ]);
     }
 
-    public function actionAccepted($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post())) {
-            if($model->status_id < BaseModel::STATUS_ACCEPTED){
-                $model->status_id = BaseModel::STATUS_ACCEPTED;
-                if($model->save()){
-                    Yii::$app->session->setFlash('success',Yii::t("app","Checked successfully"));
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }else{
-                    Yii::$app->session->setFlash('error',Yii::t("app","Checked not successfully"));
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }
-            }
-        }
-
-        return $this->redirect(['view', 'id' => $model->id]);
-    }
-
     /**
      * Deletes an existing PlmNotificationsList model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -174,8 +152,35 @@ class PlmNotificationsListController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
-    
-    public function actionAjaxReturn(){
+
+    public function actionAccepted($id)
+    {
+        $model = $this->findModel($id);
+        $transaction = Yii::$app->db->beginTransaction();
+        $saved = false;
+        try {   
+            if($model->status_id < BaseModel::STATUS_ACCEPTED){
+                $model->status_id = BaseModel::STATUS_ACCEPTED;
+                if($model->save()){
+                    $saved = true;
+                }
+                if($saved) {
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success',Yii::t("app","Checked successfully"));
+                }else{
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error',Yii::t("app","Checked not successfully"));
+                }
+            }
+        } catch (\Exception $e) {
+            Yii::info('Not saved' . $e, 'save');
+            $transaction->rollBack();
+        }
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+
+    public function actionAjaxRejected(){
         Yii::$app->response->format = Response::FORMAT_JSON;
         $response = [];
         $data = Yii::$app->request->post();
@@ -184,6 +189,7 @@ class PlmNotificationsListController extends Controller
             $plmNotificationMessage->setAttributes([
                 'plm_notification_list_id' => $data['list_id'],
                 'message' => $data['message'],
+                'status_id' => BaseModel::STATUS_ACTIVE,
             ]);
             /**
               *  @var  $plmNotificationList PlmNotificationsList

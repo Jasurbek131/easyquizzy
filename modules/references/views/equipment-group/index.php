@@ -13,12 +13,12 @@ $this->title = Yii::t('app', 'Equipment Groups');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card equipment-group-index">
-<!--    --><?php //if (Yii::$app->user->can('equipment-group/create')): ?>
-<!--    <div class="card-header pull-right no-print">-->
-<!--        --><?//= Html::a('<span class="fa fa-plus"></span>', ['create'],
-//        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
-<!--    </div>-->
-<!--    --><?php //endif; ?>
+    <?php if (Yii::$app->user->can('equipment-group/create')): ?>
+    <div class="card-header pull-right no-print">
+        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
+        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
+    </div>
+    <?php endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'equipment-group_pjax']); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
