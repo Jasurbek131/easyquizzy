@@ -5,6 +5,7 @@ namespace app\api\modules\v1\controllers;
 use app\api\modules\v1\models\ApiPlmDocument;
 use app\models\BaseModel;
 use app\modules\hr\models\HrDepartments;
+use app\modules\references\models\Categories;
 use app\modules\references\models\Defects;
 use app\modules\references\models\Reasons;
 use app\modules\references\models\EquipmentGroup;
@@ -124,6 +125,12 @@ class DocumentController extends ActiveController
             case "SAVE_MODAL":
                 $response = ApiPlmDocument::saveModalData($post);
                 break;
+            case "SAVE_STOPS":
+                $response = ApiPlmDocument::saveStops($post);
+                break;
+            case "DELETE_STOPS":
+                $response = ApiPlmDocument::deleteStops($post);
+                break;
         }
         return $response;
     }
@@ -149,13 +156,16 @@ class DocumentController extends ActiveController
                     'today' => date('D M j G:i:s T Y'),
                     'yesterday' => date('D M j G:i:s T Y', strtotime("-1 days")),
                     'tomorrow' => date('D M j G:i:s T Y', strtotime("+1 day")),
-                    'reasonList' => Reasons::getList(),
+                    'reasonPlannedList' => Reasons::getList(Categories::PLANNED_TYPE),
+                    'reasonUnPlannedList' => Reasons::getList(Categories::UNPLANNED_TYPE),
                     'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED),
                     'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED),
                 ];
                 if (!is_null($id)) {
                     $plm_document = ApiPlmDocument::getDocumentElements($id);
                     if (!empty($plm_document)) {
+                        $response['plm_document_items'] = $plm_document["plm_document_items"];
+                        unset($plm_document["plm_document_items"]);
                         $response['plm_document'] = $plm_document;
                     } else {
                         $response['status'] = false;

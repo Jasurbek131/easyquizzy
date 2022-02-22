@@ -11,7 +11,21 @@ import {loadingContent, removeElement} from "../../../actions/functions";
 import {Link} from "react-router-dom";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
-
+const planned_stops = {
+    id: "",
+    begin_date: "",
+    end_time: "",
+    add_info: "",
+    reason_id: ""
+};
+const unplanned_stops = {
+    id: "",
+    begin_date: "",
+    end_time: "",
+    add_info: "",
+    reason_id: "",
+    bypass: ""
+};
 class Form extends React.Component {
     constructor(props, context) {
         super(props, context);
@@ -44,7 +58,8 @@ class Form extends React.Component {
             },
             plm_document_items: [JSON.parse(JSON.stringify(items))],
             departmentList: [],
-            reasonList: [],
+            reasonPlannedList: [],
+            reasonUnPlannedList: [],
             repairedList: [],
             scrappedList: [],
             equipmentGroupList: [],
@@ -72,7 +87,7 @@ class Form extends React.Component {
                 let shiftList = departments ? (departments[0]?.shifts ?? []) : [];
                 this.setState({
                     plm_document: response.data?.plm_document,
-                    plm_document_items: response.data?.plm_document?.plm_document_items,
+                    plm_document_items: response.data?.plm_document_items,
                     shiftList: shiftList,
                 });
             }
@@ -90,7 +105,8 @@ class Form extends React.Component {
             this.setState({
                 equipmentGroupList: response.data.equipmentGroupList,
                 timeTypeList: response.data.timeTypeList,
-                reasonList: response.data.reasonList,
+                reasonPlannedList: response.data.reasonPlannedList,
+                reasonUnPlannedList: response.data.reasonUnPlannedList,
                 repairedList: response.data.repaired,
                 scrappedList: response.data.scrapped,
                 plm_document: plm_document,
@@ -264,7 +280,7 @@ class Form extends React.Component {
         let block = "none";
         switch (type) {
             case "planned_stops":
-                store = plm_document_items[key][type];
+                store = planned_stops;
                 if (plm_document_items[key]['start_work'] && plm_document_items[key]['end_work']) {
                     block = "block";
                 } else {
@@ -272,7 +288,7 @@ class Form extends React.Component {
                 }
                 break;
             case "unplanned_stops":
-                store = plm_document_items[key][type];
+                store = unplanned_stops;
                 if (plm_document_items[key]['start_work'] && plm_document_items[key]['end_work']) {
                     block = "block";
                 } else {
@@ -306,8 +322,8 @@ class Form extends React.Component {
         this.setState({temporarily: temporarily});
     };
 
-    onHandleSave = (e) => {
-        let {temporarily, plm_document_items} = this.state;
+    onHandleSave =  async (e)  => {
+        let {temporarily, plm_document_items, plm_document} = this.state;
         let stored = temporarily.store;
         if (temporarily.type === 'repaired' || temporarily.type === 'scrapped') {
             plm_document_items[temporarily.key]['products'][temporarily.itemKey][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
@@ -315,7 +331,7 @@ class Form extends React.Component {
             this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
         }
 
-        if (temporarily.type === 'planned_stopped') {
+        if (temporarily.type === 'planned_stops') {
             let isSave = true;
             if (stored.reason_id === "") {
                 isSave = false;
@@ -329,15 +345,38 @@ class Form extends React.Component {
                 isSave = false;
                 $('#end_time').css("border", "1px solid red");
             }
-            if (isSave) {
-                plm_document_items[temporarily.key][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
-                plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
-                temporarily.display = "none";
-                this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
+            if (isSave && this.onRequiredDoc(plm_document)) {
+                let response = await axios.post(API_URL + 'save-properties?type=SAVE_STOPS', {
+                    plm_document: plm_document,
+                    plm_document_items: plm_document_items[temporarily.key],
+                    stops: temporarily.store,
+                    type: temporarily.type
+                });
+                if (response.data.status){
+                    plm_document_items[temporarily.key]["id"] = response.data.document_item_id ?? "";
+                    plm_document["id"] = response.data.document_id ?? "";
+
+                    if (temporarily?.store?.id){
+
+                    }else{
+                        temporarily.store.id = response.data.stop_id ?? "";
+                        temporarily.store.format_begin_date = response.data.format_begin_date ?? "";
+                        temporarily.store.format_end_time = response.data.format_end_time ?? "";
+                        plm_document_items[temporarily.key][temporarily.type].push(JSON.parse(JSON.stringify(temporarily.store)));
+                    }
+
+                    plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
+                    temporarily["store"] = JSON.parse(JSON.stringify(unplanned_stops));
+
+                    this.setState({temporarily, plm_document_items, plm_document});
+                    toast.success(response.data.message);
+                }else{
+                    toast.error(response.data.message);
+                }
             }
         }
 
-        if (temporarily.type === 'unplanned_stopped') {
+        if (temporarily.type === 'unplanned_stops') {
             let isSave = true;
             if (stored.bypass === "") {
                 isSave = false;
@@ -379,7 +418,7 @@ class Form extends React.Component {
     };
 
     onPush = async (type, model, key, index, e) => {
-        let {plm_document_items} = this.state;
+        let {plm_document_items, temporarily} = this.state;
         switch (type) {
             case "add":
                 let newItems = items;
@@ -421,6 +460,18 @@ class Form extends React.Component {
                     let elements = plm_document_items[key]['products'];
                     plm_document_items[key]['products'] = removeElement(elements, index);
                     this.setState({plm_document_items: plm_document_items});
+                }
+                break;
+            case "stops-remove":
+                if (confirm("Rostdan ham o'chirmoqchimisiz?")) {
+                    let response = await axios.post(API_URL + 'save-properties?type=DELETE_STOPS', model);
+                    if (response.data.status) {
+                        plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
+                        this.setState({plm_document_items});
+                        toast.success(response.data.message);
+                    } else {
+                        toast.error(response.data.message);
+                    }
                 }
                 break;
         }
@@ -538,14 +589,22 @@ class Form extends React.Component {
             plm_document_items,
             departmentList,
             equipmentGroupList,
-            reasonList,
+            reasonPlannedList,
+            reasonUnPlannedList,
             shiftList
         } = this.state;
         if (isLoading)
             return loadingContent();
 
-        // let modalData = plm_document_items[temporarily.itemKey][temporarily.type] ?? [];
         let equipmentGroupValue = [];
+        let reasonList = [];
+        let  modalData = plm_document_items ? plm_document_items[temporarily.key]?.[temporarily.type] ?? [] : [];
+
+        if (temporarily?.type === "planned_stops")
+            reasonList = reasonPlannedList;
+        else if (temporarily?.type === "unplanned_stops")
+            reasonList = reasonUnPlannedList;
+
         return (
             <div>
                 <div className="no-print">
@@ -859,8 +918,7 @@ class Form extends React.Component {
                                                 <div className={"align-center"}>
                                                     <div className={'row planned_stopped'}>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label className={"control-label middle-size"}>Rejali
-                                                                to'xtalishlar</label>
+                                                            <label className={"control-label middle-size"}>Rejali to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             {/*<label*/}
@@ -880,8 +938,7 @@ class Form extends React.Component {
                                                 <div className={"align-center"}>
                                                     <div className={'row unplanned_stopped'}>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label className={"control-label middle-size"}>Rejasiz
-                                                                to'xtalishlar</label>
+                                                            <label className={"control-label middle-size"}>Rejasiz to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             {/*<label*/}
@@ -998,28 +1055,6 @@ class Form extends React.Component {
                                                             value={temporarily?.store?.add_info} id={"add_info"}/>
                                                     </div>
                                                 </div>
-                                                {/*<div className="row">*/}
-                                                {/*    {*/}
-                                                {/*        modalData.length > 0 ? (*/}
-                                                {/*            <div className={"col-lg-12"}>*/}
-                                                {/*                <table*/}
-                                                {/*                    className={"table table-bordered table-stripped table-hover"}>*/}
-                                                {/*                    <thead>*/}
-                                                {/*                    <tr>*/}
-                                                {/*                        <th></th>*/}
-                                                {/*                        <th></th>*/}
-                                                {/*                        <th></th>*/}
-                                                {/*                        <th></th>*/}
-                                                {/*                        <th></th>*/}
-                                                {/*                    </tr>*/}
-                                                {/*                    </thead>*/}
-                                                {/*                    <tbody>*/}
-                                                {/*                    </tbody>*/}
-                                                {/*                </table>*/}
-                                                {/*            </div>*/}
-                                                {/*        ) : (<span></span>)*/}
-                                                {/*    }*/}
-                                                {/*</div>*/}
                                             </div>
                                             : temporarily?.type === "repaired" || temporarily?.type === "scrapped" ?
                                             <div className={'row'}>
@@ -1057,6 +1092,54 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div className="row">
+                                    {
+                                        modalData.length > 0 ? (
+                                            <div className={"col-lg-12"}>
+                                                <table
+                                                    className={"table table-bordered table-stripped table-hover"}>
+                                                    <thead>
+                                                    <tr>
+                                                        <th>№</th>
+                                                        <th>Boshlandi</th>
+                                                        <th>Tugadi</th>
+                                                        {temporarily?.type === 'unplanned_stops' ? (
+                                                            <td>Bypass (m)</td>
+                                                        ) : ("")}
+                                                        <th>Izoh</th>
+                                                        <th></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {
+                                                        modalData.map((item, index) => {
+                                                            return (
+                                                                <tr key={index}>
+                                                                    <td>{+index + 1}</td>
+                                                                    <td>{item.format_begin_date}</td>
+                                                                    <td>{item.format_end_time}</td>
+                                                                    {temporarily?.type === 'unplanned_stops' ? (
+                                                                        <td>{item.bypass}</td>
+                                                                    ) : ("")}
+                                                                    <td>{item.add_info}</td>
+                                                                    <td>
+                                                                        {/*<button class={"btn btn-sm btn-outline-primary"}><i className={"fa fa-pencil-alt"}></i></button>*/}
+                                                                        &nbsp;
+                                                                        <button
+                                                                            class={"btn btn-sm btn-outline-danger"}
+                                                                            onClick={this.onPush.bind(this, 'stops-remove', item, index, '')}
+                                                                        ><i className={"fa fa-times"}></i></button>
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })
+                                                    }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ) : (<span></span>)
+                                    }
                                 </div>
                             </div>
                         </div>
