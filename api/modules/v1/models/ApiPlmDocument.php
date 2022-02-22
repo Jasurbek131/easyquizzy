@@ -535,10 +535,8 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                     PlmDocItemEquipments::deleteAll(["document_item_id" => $docItem->id]);
                     PlmDocItemProducts::deleteAll(["document_item_id" => $docItem->id]);
                     PlmNotificationsList::deleteAll(["plm_doc_item_id" => $docItem->id]);
-
+                    PlmStops::deleteAll(["document_item_id" => $docItem->id]);
                     $docItem->setAttributes([
-                        "planned_stop_id" => "",
-                        "unplanned_stop_id" => "",
                         "processing_time_id" => "",
                     ]);
                     if (!$docItem->save())
@@ -547,12 +545,6 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             'errors' => $docItem->getErrors(),
                             'message' => Yii::t('app', 'Doc item saved'),
                         ];
-
-                    if (!empty($docItem->planned_stop_id))
-                        PlmStops::deleteAll(['id' => $docItem->planned_stop_id]);
-
-                    if (!empty($docItem->unplanned_stop_id))
-                        PlmStops::deleteAll(['id' => $docItem->unplanned_stop_id]);
 
                     if (!empty($docItem->processing_time_id))
                         PlmProcessingTime::findAll(["id" => $docItem->processing_time_id]);
