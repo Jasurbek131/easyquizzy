@@ -180,12 +180,28 @@ $js = <<< JS
             success:function(response) {
                 if(response.status){
                     call_pnotify('success',response.message);
+                    window.location.reload();
                 }else{
                     call_pnotify('fail',response.message);
                 }
             }
       });
    });
+function call_pnotify(status,text) {
+    switch (status) {
+        case 'success':
+            PNotify.defaults.styling = "bootstrap4";
+            PNotify.defaults.delay = 2000;
+            PNotify.alert({text:text,type:'success'});
+            break;
+        case 'fail':
+            PNotify.defaults.styling = "bootstrap4";
+            PNotify.defaults.delay = 2000;
+            PNotify.alert({text:text,type:'error'});
+            break;
+    }
+}
+
 JS;
 
 $this->registerJs($js,\yii\web\View::POS_READY);

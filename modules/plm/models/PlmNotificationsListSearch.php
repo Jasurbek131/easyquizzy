@@ -118,6 +118,8 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         ]);
 
         $query->andFilterWhere(['ilike', 'add_info', $this->add_info]);
+        $query->andFilterWhere(['!=', 'pnl.status_id', BaseModel::STATUS_REJECTED]);
+        $query->orderBy(['pnl.id' => SORT_ASC,'pnl.status_id' => SORT_DESC]);
         return $dataProvider;
     }
 }
