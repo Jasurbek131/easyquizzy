@@ -191,12 +191,12 @@ function call_pnotify(status,text) {
     switch (status) {
         case 'success':
             PNotify.defaults.styling = "bootstrap4";
-            PNotify.defaults.delay = 2000;
+            PNotify.defaults.delay = 3000;
             PNotify.alert({text:text,type:'success'});
             break;
         case 'fail':
             PNotify.defaults.styling = "bootstrap4";
-            PNotify.defaults.delay = 2000;
+            PNotify.defaults.delay = 3000;
             PNotify.alert({text:text,type:'error'});
             break;
     }

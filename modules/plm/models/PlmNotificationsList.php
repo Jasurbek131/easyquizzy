@@ -150,6 +150,7 @@ class PlmNotificationsList extends BaseModel
                 ],'product.document_item_id = pnl.plm_doc_item_id')
             ->where(['pnl.id' => $id])
             ->andWhere(['=','psrd.hr_department_id', $hr_department['hr_department_id']])
+            ->andFilterWhere(['!=','pnl.status_id', BaseModel::STATUS_REJECTED])
             ->asArray()
             ->one();
         }

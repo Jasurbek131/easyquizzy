@@ -189,6 +189,7 @@ class PlmNotificationsListController extends Controller
             $plmNotificationMessage->setAttributes([
                 'plm_notification_list_id' => $data['list_id'],
                 'message' => $data['message'],
+                'status_id' => BaseModel::STATUS_ACTIVE,
             ]);
             /**
               *  @var  $plmNotificationList PlmNotificationsList
