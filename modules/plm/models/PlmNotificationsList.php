@@ -121,7 +121,7 @@ class PlmNotificationsList extends BaseModel
                     'product.product',
                     'r.name_uz AS reason',
                     'defect.defect',
-                    'defect.count',
+                    'defect.count AS defect_count',
                 ])
                 ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
                 ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')

@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                ],
                [
                    'attribute' => 'shift',
-                   'label' => Yii::t("app","Shifts"),
+                   'label' => Yii::t("app","Shift Name"),
                    'value' => function($model){
                        return $model['shift'];
                    }
@@ -71,6 +71,15 @@ $this->params['breadcrumbs'][] = $this->title;
                    'label' => Yii::t("app","Defects"),
                    'value' => function($model){
                        return $model['defect'];
+                   },
+                   'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
+
+               ],
+               [
+                   'attribute' => 'defect_count',
+                   'label' => Yii::t("app","Defects Count"),
+                   'value' => function($model){
+                       return $model['defect_count'];
                    },
                    'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
 

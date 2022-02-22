@@ -53,7 +53,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                     'pnl.end_time',
                     'r.name_uz AS reason',
                     'defect.defect',
-                    'defect.count',
+                    'defect.count AS defect_count',
                     'pnl.status_id',
                     'pnl.plm_sector_list_id'
                 ]);

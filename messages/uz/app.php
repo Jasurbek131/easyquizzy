@@ -93,6 +93,7 @@ return [
     'Defect Type ID' => '',
     'Defect Uz' => '@@Muammo nomi (Uzbek)@@',
     'Defects' => 'Nomuvofiqliklar',
+    'Defects Count' => 'Nomuvofiqlik soni',
     'Delete' => 'O\'chirish',
     'Deleted' => '',
     'Deleted Successfully' => 'Muvaffaqqiyatili o\'chirildi',
