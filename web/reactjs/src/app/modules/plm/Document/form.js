@@ -127,23 +127,33 @@ class Form extends React.Component {
         let diff = this.onReturnMin(item?.end_work, item?.start_work);
         let { equipmentGroupList } = this.state;
         let equipmentGroupValue = equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id);
+        let planned = this.stoppedSummary(item?.planned_stops??[]);
+        let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
 
-        // let planned = this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date);
-        // let unplanned = this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date);
         if (item?.products?.length > 0){
             let lifecycle, bypass;
             item?.products.forEach(function (product, index) {
                 lifecycle = product ? (product.lifecycle ? product.lifecycle : 1) : 1;
                 bypass =  product ? (product.bypass ? product.bypass : 1) : 0;
                 if (equipmentGroupValue[0]?.equipments_group_type_id == 1){
-                    item["products"][index].target_qty = ((diff ) * 60 / (+lifecycle)).toFixed(0);//- planned - unplanned
+                    item["products"][index].target_qty = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
                 }else{
-                    item["products"][index].target_qty = ((+lifecycle * +product.fact_qty / 60) + ((+bypass * +product.qty / 60)) ).toFixed(0);//- planned - unplanned
+                    item["products"][index].target_qty = ((+lifecycle * +product.fact_qty / 60) + ((+bypass * +product.qty / 60)) ).toFixed(0);
                 }
 
             });
         }
         return item;
+    };
+
+    stoppedSummary = (stops) =>{
+        let summ = 0;
+        if(stops.length > 0){
+            stops.forEach((item) => {
+                summ += this.onReturnMin(new Date(item?.end_time), new Date(item?.begin_date));
+            });
+        }
+        return summ;
     };
 
     onHandleChange = (type, model, name, key, index, value, e) => {
@@ -467,6 +477,7 @@ class Form extends React.Component {
                     let response = await axios.post(API_URL + 'save-properties?type=DELETE_STOPS', model);
                     if (response.data.status) {
                         plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
+                        plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
                         this.setState({plm_document_items});
                         toast.success(response.data.message);
                     } else {
@@ -925,9 +936,9 @@ class Form extends React.Component {
                                                             <label className={"control-label middle-size"}>Rejali to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            {/*<label*/}
-                                                            {/*    className={'mr-2'}>{this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date)}*/}
-                                                            {/*    <small>min</small></label>*/}
+                                                            <label
+                                                                className={'mr-2'}>{this.stoppedSummary(item?.planned_stops ?? [])}
+                                                                <small>min</small></label>
                                                             <button
                                                                 onClick={this.onOpenModal.bind(this, 'planned_stops', "Rejali to'xtalishlar", key, '')}
                                                                 className={"btn btn-xs btn-warning"}>
@@ -945,9 +956,9 @@ class Form extends React.Component {
                                                             <label className={"control-label middle-size"}>Rejasiz to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            {/*<label*/}
-                                                            {/*    className={'mr-2'}>{this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date)}*/}
-                                                            {/*    <small>min</small></label>*/}
+                                                            <label
+                                                                className={'mr-2'}>{this.stoppedSummary(item?.unplanned_stops??[])}
+                                                                <small>min</small></label>
                                                             <button
                                                                 onClick={this.onOpenModal.bind(this, 'unplanned_stops', "Rejasiz to'xtalishlar", key, '')}
                                                                 className={'btn btn-info btn-xs'}>
@@ -1131,12 +1142,12 @@ class Form extends React.Component {
                                                                     <td>{item.add_info}</td>
                                                                     <td>
                                                                         <button
-                                                                            class={"btn btn-sm btn-outline-primary"}
+                                                                            className={"btn btn-sm btn-outline-primary"}
                                                                             onClick={this.onPush.bind(this, 'stops-update', item, index, '')}
                                                                         ><i className={"fa fa-pencil-alt"}></i></button>
                                                                         &nbsp;
                                                                         <button
-                                                                            class={"btn btn-sm btn-outline-danger"}
+                                                                            className={"btn btn-sm btn-outline-danger"}
                                                                             onClick={this.onPush.bind(this, 'stops-remove', item, index, '')}
                                                                         ><i className={"fa fa-times"}></i></button>
                                                                     </td>
