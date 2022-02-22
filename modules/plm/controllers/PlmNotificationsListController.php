@@ -9,6 +9,7 @@ use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\plm\models\BaseModel;
 use app\modules\plm\models\PlmNotificationMessage;
 use app\modules\plm\models\PlmSectorRelHrDepartment;
+use Faker\Provider\Base;
 use Yii;
 use app\modules\plm\models\PlmNotificationsList;
 use app\modules\plm\models\PlmNotificationsListSearch;
@@ -43,10 +44,8 @@ class PlmNotificationsListController extends Controller
      */
     public function actionIndex()
     {
-
         $searchModel = new PlmNotificationsListSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -153,21 +152,61 @@ class PlmNotificationsListController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
-    
-    public function actionAjaxReturn(){
+
+    public function actionAccepted($id)
+    {
+        $model = $this->findModel($id);
+        $transaction = Yii::$app->db->beginTransaction();
+        $saved = false;
+        try {   
+            if($model->status_id < BaseModel::STATUS_ACCEPTED){
+                $model->status_id = BaseModel::STATUS_ACCEPTED;
+                if($model->save()){
+                    $saved = true;
+                }
+                if($saved) {
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success',Yii::t("app","Checked successfully"));
+                }else{
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error',Yii::t("app","Checked not successfully"));
+                }
+            }
+        } catch (\Exception $e) {
+            Yii::info('Not saved' . $e, 'save');
+            $transaction->rollBack();
+        }
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+
+    public function actionAjaxRejected(){
         Yii::$app->response->format = Response::FORMAT_JSON;
         $response = [];
         $data = Yii::$app->request->post();
-        \yii\helpers\VarDumper::dump($data,10,true);die();
         if(!empty($data)){
             $plmNotificationMessage = new PlmNotificationMessage();
             $plmNotificationMessage->setAttributes([
                 'plm_notification_list_id' => $data['list_id'],
                 'message' => $data['message'],
+                'status_id' => BaseModel::STATUS_ACTIVE,
             ]);
+            /**
+              *  @var  $plmNotificationList PlmNotificationsList
+             **/
             if($plmNotificationMessage->save()){
-                $response['status'] = true;
-                $response['message'] = Yii::t('app', 'Checked Successfully');
+                $plmNotificationList = PlmNotificationsList::find()
+                    ->where(['id' => $data['list_id'],'status_id' => BaseModel::STATUS_ACTIVE])
+                    ->orderBy(['id' => SORT_DESC])
+                    ->limit(1)
+                    ->one();
+                if(!empty($plmNotificationList)){
+                    $plmNotificationList->status_id = BaseModel::STATUS_REJECTED; // rad etilgan list
+                    if($plmNotificationList->save()){
+                        $response['status'] = true;
+                        $response['message'] = Yii::t('app', 'Checked Successfully');
+                    }
+                }
             }else{
                 $response['status'] = false;
                 $response['message'] = Yii::t('app', 'Checked not saved');

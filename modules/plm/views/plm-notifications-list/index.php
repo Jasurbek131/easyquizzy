@@ -4,6 +4,8 @@ use app\modules\plm\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\components\PermissionHelper as P;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\plm\models\PlmNotificationsListSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -20,6 +22,9 @@ $this->params['breadcrumbs'][] = $this->title;
            'dataProvider' => $dataProvider,
            'filterRowOptions' => ['class' => 'filters no-print'],
            'filterModel' => $searchModel,
+           'rowOptions' => function($model){
+                if($model['status_id'] == BaseModel::STATUS_ACCEPTED) return ['style' => 'background:#92d7ff'];
+           },
            'columns' => [
                ['class' => 'yii\grid\SerialColumn'],
 
@@ -33,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                ],
                [
                    'attribute' => 'shift',
-                   'label' => Yii::t("app","Shifts"),
+                   'label' => Yii::t("app","Shift Name"),
                    'value' => function($model){
                        return $model['shift'];
                    }
@@ -45,29 +50,47 @@ $this->params['breadcrumbs'][] = $this->title;
                        return $model['product'];
                    }
                ],
-               'begin_time',
-               'end_time',
-//            'defect_id',
-               /* [
-                    'attribute' => 'defect_type_id',
-                    'label' => Yii::t("app","Defect Type"),
-                    'value' => function($model){
-                        return $model['reason'];
-                    }
-                ],*/
+               [
+                   'attribute' => 'begin_time',
+                   'label' => Yii::t("app","Begin Time"),
+                   'value' => function($model){
+                       return $model['begin_time'];
+                   },
+                   'visible' => P::can('plm-notifications-list/working-time'),
+               ],
+               [
+                   'attribute' => 'end_time',
+                   'label' => Yii::t("app","End Time"),
+                   'value' => function($model){
+                       return $model['end_time'];
+                   },
+                   'visible' => P::can('plm-notifications-list/working-time'),
+               ],
                [
                    'attribute' => 'defect_id',
                    'label' => Yii::t("app","Defects"),
                    'value' => function($model){
                        return $model['defect'];
-                   }
+                   },
+                   'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
+
+               ],
+               [
+                   'attribute' => 'defect_count',
+                   'label' => Yii::t("app","Defects Count"),
+                   'value' => function($model){
+                       return $model['defect_count'];
+                   },
+                   'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
+
                ],
                [
                    'attribute' => 'reason_id',
                    'label' => Yii::t("app","Reasons"),
                    'value' => function($model){
                        return $model['reason'];
-                   }
+                   },
+                   'visible' => P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
                ],
                [
                    'attribute' => 'status_id',
@@ -81,7 +104,13 @@ $this->params['breadcrumbs'][] = $this->title;
                //'created_at',
                //'updated_by',
                //'updated_at',
-               'add_info:ntext',
+               [
+                   'attribute' => 'add_info',
+                   'label' => Yii::t("app","Add Info"),
+                   'value' => function($model){
+                       return $model['add_info'];
+                   }
+               ],
                //'plm_sector_list_id',
 
                [

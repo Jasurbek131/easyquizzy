@@ -12,6 +12,7 @@ use Yii;
  *
  * @property int $id
  * @property int $plm_doc_item_id
+ * @property int $plm_sector_list_id
  * @property string $begin_time
  * @property string $end_time
  * @property int $defect_id
@@ -120,7 +121,7 @@ class PlmNotificationsList extends BaseModel
                     'product.product',
                     'r.name_uz AS reason',
                     'defect.defect',
-                    'defect.count',
+                    'defect.count AS defect_count',
                 ])
                 ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
                 ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
@@ -149,6 +150,7 @@ class PlmNotificationsList extends BaseModel
                 ],'product.document_item_id = pnl.plm_doc_item_id')
             ->where(['pnl.id' => $id])
             ->andWhere(['=','psrd.hr_department_id', $hr_department['hr_department_id']])
+            ->andFilterWhere(['!=','pnl.status_id', BaseModel::STATUS_REJECTED])
             ->asArray()
             ->one();
         }

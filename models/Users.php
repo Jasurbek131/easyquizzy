@@ -286,7 +286,6 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
                         'message' => Yii::t('app', 'This hr employee has user')
                     ];
             }
-
             if ($response['status'])
                 if (!$this->save())
                     $response = [
@@ -310,7 +309,6 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
                         'errors' => $hrEmployeeRelUsers->getErrors()
                     ];
             }
-
             /**
              * Rollarni saqlaydi
              */

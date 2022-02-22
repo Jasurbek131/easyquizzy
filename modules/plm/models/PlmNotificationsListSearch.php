@@ -53,8 +53,9 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                     'pnl.end_time',
                     'r.name_uz AS reason',
                     'defect.defect',
-                    'defect.count',
-                    'pnl.status_id'
+                    'defect.count AS defect_count',
+                    'pnl.status_id',
+                    'pnl.plm_sector_list_id'
                 ]);
         $query = $query
             ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
@@ -117,6 +118,8 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         ]);
 
         $query->andFilterWhere(['ilike', 'add_info', $this->add_info]);
+        $query->andFilterWhere(['!=', 'pnl.status_id', BaseModel::STATUS_REJECTED]);
+        $query->orderBy(['pnl.id' => SORT_ASC,'pnl.status_id' => SORT_DESC]);
         return $dataProvider;
     }
 }

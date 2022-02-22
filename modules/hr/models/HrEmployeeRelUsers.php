@@ -38,6 +38,7 @@ class HrEmployeeRelUsers extends BaseModel
         return [
             [['hr_employee_id', 'user_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['hr_employee_id', 'user_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['status_id'],'default','value' => \app\models\BaseModel::STATUS_ACTIVE],
             [['hr_employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrEmployee::class, 'targetAttribute' => ['hr_employee_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
