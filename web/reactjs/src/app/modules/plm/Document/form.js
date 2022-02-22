@@ -330,9 +330,8 @@ class Form extends React.Component {
             temporarily.display = "none";
             this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
         }
-
+        let isSave = true;
         if (temporarily.type === 'planned_stops') {
-            let isSave = true;
             if (stored.reason_id === "") {
                 isSave = false;
                 $('#reason_id').children('div').css("border", "1px solid red");
@@ -345,39 +344,9 @@ class Form extends React.Component {
                 isSave = false;
                 $('#end_time').css("border", "1px solid red");
             }
-            if (isSave && this.onRequiredDoc(plm_document)) {
-                let response = await axios.post(API_URL + 'save-properties?type=SAVE_STOPS', {
-                    plm_document: plm_document,
-                    plm_document_items: plm_document_items[temporarily.key],
-                    stops: temporarily.store,
-                    type: temporarily.type
-                });
-                if (response.data.status){
-                    plm_document_items[temporarily.key]["id"] = response.data.document_item_id ?? "";
-                    plm_document["id"] = response.data.document_id ?? "";
-
-                    if (temporarily?.store?.id){
-
-                    }else{
-                        temporarily.store.id = response.data.stop_id ?? "";
-                        temporarily.store.format_begin_date = response.data.format_begin_date ?? "";
-                        temporarily.store.format_end_time = response.data.format_end_time ?? "";
-                        plm_document_items[temporarily.key][temporarily.type].push(JSON.parse(JSON.stringify(temporarily.store)));
-                    }
-
-                    plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
-                    temporarily["store"] = JSON.parse(JSON.stringify(unplanned_stops));
-
-                    this.setState({temporarily, plm_document_items, plm_document});
-                    toast.success(response.data.message);
-                }else{
-                    toast.error(response.data.message);
-                }
-            }
         }
 
         if (temporarily.type === 'unplanned_stops') {
-            let isSave = true;
             if (stored.bypass === "") {
                 isSave = false;
                 $('#bypass').css("border", "1px solid red");
@@ -394,11 +363,42 @@ class Form extends React.Component {
                 isSave = false;
                 $('#end_time').css("border", "1px solid red");
             }
-            if (isSave) {
-                plm_document_items[temporarily.key][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
-                plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
-                temporarily.display = "none";
-                this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
+        }
+
+        if (temporarily.type === 'unplanned_stops' || temporarily.type === 'planned_stops'){
+            if (isSave && this.onRequiredDoc(plm_document)) {
+                let response = await axios.post(API_URL + 'save-properties?type=SAVE_STOPS', {
+                    plm_document: plm_document,
+                    plm_document_items: plm_document_items[temporarily.key],
+                    stops: temporarily.store,
+                    type: temporarily.type
+                });
+                if (response.data.status){
+                    plm_document_items[temporarily.key]["id"] = response.data.document_item_id ?? "";
+                    plm_document["id"] = response.data.document_id ?? "";
+                    temporarily.store.format_begin_date = response.data.format_begin_date ?? "";
+                    temporarily.store.format_end_time = response.data.format_end_time ?? "";
+                    temporarily.store.reason_name = response.data.reason_name ?? "";
+
+                    if (temporarily?.store?.id){
+                        plm_document_items[temporarily.key][temporarily.type][temporarily.itemKey] = JSON.parse(JSON.stringify(temporarily.store));
+                    }else{
+                        temporarily.store.id = response.data.stop_id ?? "";
+                        plm_document_items[temporarily.key][temporarily.type].push(JSON.parse(JSON.stringify(temporarily.store)));
+                    }
+
+                    plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
+
+                    if(temporarily.type === 'unplanned_stops')
+                        temporarily["store"] = JSON.parse(JSON.stringify(unplanned_stops));
+                    if(temporarily.type === 'planned_stops')
+                        temporarily["store"] = JSON.parse(JSON.stringify(planned_stops));
+
+                    this.setState({temporarily, plm_document_items, plm_document});
+                    toast.success(response.data.message);
+                }else{
+                    toast.error(response.data.message);
+                }
             }
         }
     };
@@ -473,6 +473,10 @@ class Form extends React.Component {
                         toast.error(response.data.message);
                     }
                 }
+                break;
+            case "stops-update":
+                temporarily["store"] = model;
+                temporarily["itemKey"] = key;
                 break;
         }
         this.setState({plm_document_items: plm_document_items});
@@ -1102,6 +1106,7 @@ class Form extends React.Component {
                                                     <thead>
                                                     <tr>
                                                         <th>№</th>
+                                                        <th>Sabablar</th>
                                                         <th>Boshlandi</th>
                                                         <th>Tugadi</th>
                                                         {temporarily?.type === 'unplanned_stops' ? (
@@ -1117,6 +1122,7 @@ class Form extends React.Component {
                                                             return (
                                                                 <tr key={index}>
                                                                     <td>{+index + 1}</td>
+                                                                    <td>{item.reason_name}</td>
                                                                     <td>{item.format_begin_date}</td>
                                                                     <td>{item.format_end_time}</td>
                                                                     {temporarily?.type === 'unplanned_stops' ? (
@@ -1124,7 +1130,10 @@ class Form extends React.Component {
                                                                     ) : ("")}
                                                                     <td>{item.add_info}</td>
                                                                     <td>
-                                                                        {/*<button class={"btn btn-sm btn-outline-primary"}><i className={"fa fa-pencil-alt"}></i></button>*/}
+                                                                        <button
+                                                                            class={"btn btn-sm btn-outline-primary"}
+                                                                            onClick={this.onPush.bind(this, 'stops-update', item, index, '')}
+                                                                        ><i className={"fa fa-pencil-alt"}></i></button>
                                                                         &nbsp;
                                                                         <button
                                                                             class={"btn btn-sm btn-outline-danger"}
