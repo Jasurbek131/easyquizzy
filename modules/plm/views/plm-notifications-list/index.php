@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
            'filterModel' => $searchModel,
            'rowOptions' => function($model){
                 if($model['status_id'] == BaseModel::STATUS_ACCEPTED) return ['style' => 'background:#92d7ff'];
+                if($model['status_id'] == BaseModel::STATUS_REJECTED) return ['style' => 'background:#ffcfcf'];
            },
            'columns' => [
                ['class' => 'yii\grid\SerialColumn'],
@@ -51,6 +52,13 @@ $this->params['breadcrumbs'][] = $this->title;
                    }
                ],
                [
+                   'attribute' => 'equipment',
+                   'label' => Yii::t("app","Equipments"),
+                   'value' => function($model){
+                       return $model['equipment'];
+                   }
+               ],
+               /*[
                    'attribute' => 'begin_time',
                    'label' => Yii::t("app","Begin Time"),
                    'value' => function($model){
@@ -91,7 +99,7 @@ $this->params['breadcrumbs'][] = $this->title;
                        return $model['reason'];
                    },
                    'visible' => P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
-               ],
+               ],*/
                [
                    'attribute' => 'status_id',
                    'format' => 'raw',
@@ -111,7 +119,6 @@ $this->params['breadcrumbs'][] = $this->title;
                        return $model['add_info'];
                    }
                ],
-               //'plm_sector_list_id',
 
                [
                    'class' => 'yii\grid\ActionColumn',

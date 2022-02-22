@@ -3,6 +3,7 @@
 namespace app\modules\plm\models;
 
 use app\modules\hr\models\HrEmployeeRelPosition;
+use app\modules\references\models\Equipments;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\plm\models\PlmNotificationsList;
@@ -48,6 +49,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                     'hd.name AS department',
                     'sh.name shift',
                     'product.product',
+                    'equipment.equipment',
                     'pnl.defect_type_id',
                     'pnl.begin_time',
                     'pnl.end_time',
@@ -55,7 +57,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                     'defect.defect',
                     'defect.count AS defect_count',
                     'pnl.status_id',
-                    'pnl.plm_sector_list_id'
+                    'pnl.plm_sector_list_id',
                 ]);
         $query = $query
             ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
@@ -82,7 +84,17 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                                     ])
                 ->leftJoin(['p' => 'products'],'pdip.product_id = p.id')
                 ->groupBy(['pdip.document_item_id'])
-            ],'product.document_item_id = pnl.plm_doc_item_id');
+            ],'product.document_item_id = pnl.plm_doc_item_id')
+            ->leftJoin(['equipment' => PlmDocItemEquipments::find()
+                                    ->alias('pdie')
+                                    ->select([
+                                        "pdi.id",
+                                        "STRING_AGG(DISTINCT e.name,', ') AS equipment",
+                                    ])
+                ->leftJoin(['e' => 'equipments'],'e.id = pdie.equipment_id')
+                ->leftJoin(['pdi' => 'plm_document_items'],'pdi.id = pdie.document_item_id')
+                ->groupBy(['pdi.id'])
+            ],'equipment.id = pdi.id');
 
         // add conditions that should always apply here
 
@@ -118,8 +130,8 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         ]);
 
         $query->andFilterWhere(['ilike', 'add_info', $this->add_info]);
-        $query->andFilterWhere(['!=', 'pnl.status_id', BaseModel::STATUS_REJECTED]);
-        $query->orderBy(['pnl.id' => SORT_ASC,'pnl.status_id' => SORT_DESC]);
+        $query->andFilterWhere(['!=', 'pnl.status_id', BaseModel::STATUS_INACTIVE]);
+        $query->orderBy(['pnl.status_id' => SORT_ASC]);
         return $dataProvider;
     }
 }

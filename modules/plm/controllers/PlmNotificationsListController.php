@@ -183,8 +183,10 @@ class PlmNotificationsListController extends Controller
     public function actionAjaxRejected(){
         Yii::$app->response->format = Response::FORMAT_JSON;
         $response = [];
+        $response['status'] = false;
+        $response['status'] = "Not saved";
         $data = Yii::$app->request->post();
-        if(!empty($data)){
+        if(!empty($data['message'])){
             $plmNotificationMessage = new PlmNotificationMessage();
             $plmNotificationMessage->setAttributes([
                 'plm_notification_list_id' => $data['list_id'],
@@ -204,13 +206,19 @@ class PlmNotificationsListController extends Controller
                     $plmNotificationList->status_id = BaseModel::STATUS_REJECTED; // rad etilgan list
                     if($plmNotificationList->save()){
                         $response['status'] = true;
-                        $response['message'] = Yii::t('app', 'Checked Successfully');
+                        $response['message'] = Yii::t('app', 'Checked successfully');
+                        return $response;
                     }
                 }
             }else{
                 $response['status'] = false;
-                $response['message'] = Yii::t('app', 'Checked not saved');
+                $response['message'] = Yii::t('app', 'Checked not successfully');
+                return $response;
             }
+        }else{
+            $response['status'] = false;
+            $response['message'] = Yii::t('app', 'Reason is not empty');
+            return $response;
         }
         return $response;
     }
