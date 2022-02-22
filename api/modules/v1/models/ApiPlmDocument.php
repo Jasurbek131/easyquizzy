@@ -17,6 +17,7 @@ use app\modules\plm\models\PlmProcessingTime;
 use app\modules\plm\models\PlmSectorList;
 use app\modules\plm\models\PlmStops;
 use app\modules\references\models\Defects;
+use app\modules\references\models\EquipmentGroup;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -57,63 +58,64 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                     'line' => __LINE__
                 ];
 
+
             if ($response['status']) {
                 foreach ($documentItems as $item) {
-                    $plannedStopped = $item['planned_stopped'];
-                    $unplannedStopped = $item['unplanned_stopped'];
-
-                    /**
-                     * Planned stop
-                     */
-                    if (!empty($plannedStopped)) {
-                        $planStop = new PlmStops();
-                        if ($item['planned_stop_id'])
-                            $planStop = PlmStops::findOne($item['planned_stop_id']);
-                        $planStop->setAttributes([
-                            'reason_id' => $plannedStopped['reason_id'],
-                            'begin_date' => date('Y-m-d H:i', strtotime($plannedStopped['begin_date'])),
-                            'end_time' => date('Y-m-d H:i', strtotime($plannedStopped['end_time'])),
-                            'add_info' => $plannedStopped['add_info'],
-                            'status_id' => BaseModel::STATUS_ACTIVE,
-                            'stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP
-                        ]);
-                        if (!$planStop->save()) {
-                            $response = [
-                                'status' => false,
-                                'line' => __LINE__,
-                                'errors' => $planStop->getErrors(),
-                                'message' => Yii::t('app', 'Planned stop not saved'),
-                            ];
-                            break;
-                        }
-                    }
-
-                    /**
-                     * Un planned stop
-                     */
-                    if (!empty($unplannedStopped) && $response['status']) {
-                        $unPlanStop = new PlmStops();
-                        if ($item['unplanned_stop_id'])
-                            $unPlanStop = PlmStops::findOne($item['unplanned_stop_id']);
-                        $unPlanStop->setAttributes([
-                            'reason_id' => $unplannedStopped['reason_id'],
-                            'begin_date' => date('Y-m-d H:i', strtotime($unplannedStopped['begin_date'])),
-                            'end_time' => date('Y-m-d H:i', strtotime($unplannedStopped['end_time'])),
-                            'bypass' => $unplannedStopped['bypass'],
-                            'add_info' => $unplannedStopped['add_info'],
-                            'status_id' => BaseModel::STATUS_ACTIVE,
-                            'stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP
-                        ]);
-                        if (!$unPlanStop->save()) {
-                            $response = [
-                                'status' => false,
-                                'line' => __LINE__,
-                                'errors' => $unPlanStop->getErrors(),
-                                'message' => Yii::t('app', 'Unplanned stop not saved'),
-                            ];
-                            break;
-                        }
-                    }
+//                    $plannedStopped = $item['planned_stopped'];
+//                    $unplannedStopped = $item['unplanned_stopped'];
+//
+//                    /**
+//                     * Planned stop
+//                     */
+//                    if (!empty($plannedStopped)) {
+//                        $planStop = new PlmStops();
+//                        if ($item['planned_stop_id'])
+//                            $planStop = PlmStops::findOne($item['planned_stop_id']);
+//                        $planStop->setAttributes([
+//                            'reason_id' => $plannedStopped['reason_id'],
+//                            'begin_date' => date('Y-m-d H:i', strtotime($plannedStopped['begin_date'])),
+//                            'end_time' => date('Y-m-d H:i', strtotime($plannedStopped['end_time'])),
+//                            'add_info' => $plannedStopped['add_info'],
+//                            'status_id' => BaseModel::STATUS_ACTIVE,
+//                            'stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP
+//                        ]);
+//                        if (!$planStop->save()) {
+//                            $response = [
+//                                'status' => false,
+//                                'line' => __LINE__,
+//                                'errors' => $planStop->getErrors(),
+//                                'message' => Yii::t('app', 'Planned stop not saved'),
+//                            ];
+//                            break;
+//                        }
+//                    }
+//
+//                    /**
+//                     * Un planned stop
+//                     */
+//                    if (!empty($unplannedStopped) && $response['status']) {
+//                        $unPlanStop = new PlmStops();
+//                        if ($item['unplanned_stop_id'])
+//                            $unPlanStop = PlmStops::findOne($item['unplanned_stop_id']);
+//                        $unPlanStop->setAttributes([
+//                            'reason_id' => $unplannedStopped['reason_id'],
+//                            'begin_date' => date('Y-m-d H:i', strtotime($unplannedStopped['begin_date'])),
+//                            'end_time' => date('Y-m-d H:i', strtotime($unplannedStopped['end_time'])),
+//                            'bypass' => $unplannedStopped['bypass'],
+//                            'add_info' => $unplannedStopped['add_info'],
+//                            'status_id' => BaseModel::STATUS_ACTIVE,
+//                            'stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP
+//                        ]);
+//                        if (!$unPlanStop->save()) {
+//                            $response = [
+//                                'status' => false,
+//                                'line' => __LINE__,
+//                                'errors' => $unPlanStop->getErrors(),
+//                                'message' => Yii::t('app', 'Unplanned stop not saved'),
+//                            ];
+//                            break;
+//                        }
+//                    }
 
                     if ($response['status'] && $item['start_work'] && $item['end_work']) {
                         $processing = new PlmProcessingTime();
@@ -141,12 +143,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             $docItem = PlmDocumentItems::findOne($item['id']);
                         $docItem->setAttributes([
                             'document_id' => $doc->id,
-                            'planned_stop_id' => $planStop->id ?? "",
-                            'unplanned_stop_id' => $unPlanStop->id ?? "",
                             'processing_time_id' => $processing->id ?? "",
-                            'lifecycle' => $item["lifecycle"] ? (int)$item["lifecycle"] : "",
-                            'bypass' => $item["bypass"] ? (int)$item["bypass"] : "",
-                            'target_qty' => $item["target_qty"] ? (int)$item["target_qty"] : "",
                             'equipment_group_id' => $item['equipmentGroup']['value'] ?? "",
                         ]);
                         if (!$docItem->save()) {
@@ -167,9 +164,12 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                 $newProductItem->setAttributes([
                                     'document_item_id' => $docItem->id,
                                     'product_id' => $product['product_id'],
-                                    'product_lifecycle_id' => $product['product_lifecycle_id'],
+                                    'product_lifecycle_id' => $product['product_lifecycle_id'] ?? "",
                                     'qty' => $product['qty'],
-                                    'fact_qty' => $product['fact_qty']
+                                    'fact_qty' => $product['fact_qty'],
+                                    'lifecycle' => $product['lifecycle'],
+                                    'bypass' => $product['bypass'],
+                                    'target_qty' => $product['target_qty'],
                                 ]);
                                 if (!$newProductItem->save()) {
                                     $response = [
@@ -231,6 +231,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
 
                             }
                         }
+
                         $equipments = $item['equipments'];
                         if (!empty($equipments)) {
                             PlmDocItemEquipments::deleteAll(['document_item_id' => $docItem->id]);
@@ -261,7 +262,6 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             } else {
                 $transaction->rollBack();
             }
-
         } catch (\Exception $e) {
             $transaction->rollBack();
             $response = [
@@ -581,12 +581,12 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
 
     /**
      * @param $id
-     * @return array|\yii\db\ActiveRecord|null
+     * @return array
      */
-    public static function getDocumentElements($id)
+    public static function getDocumentElements($id): array
     {
         $language = Yii::$app->language;
-        return PlmDocuments::find()
+        $data =  PlmDocuments::find()
             ->select([
                 'id', 'doc_number', 'reg_date', 'hr_department_id', 'add_info', 'shift_id', 'organisation_id'
             ])->with([
@@ -594,9 +594,6 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                     $q->from(['pdi' => 'plm_document_items'])
                         ->select([
                             'pdi.*',
-                            "pdi.lifecycle",
-                            "pdi.bypass",
-                            "pdi.target_qty",
                             'ppt.begin_date as start_work',
                             'ppt.end_date as end_work',
                         ])->with([
@@ -608,6 +605,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                     'p.product_id as value',
                                     'p.qty',
                                     'p.fact_qty',
+                                    'p.lifecycle',
+                                    'p.bypass',
+                                    'p.target_qty',
                                     'p.document_item_id',
                                 ])
                                 ->with([
@@ -646,7 +646,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                                 'e.id as value'
                                             ])->leftJoin('equipments e', 'egr.equipment_id = e.id');
                                         },
-                                        'lifecycles' => function ($pl) {
+                                        'cycles' => function ($pl) {
                                             $pl->from(['pl' => 'product_lifecycle'])
                                                 ->select([
                                                     'pl.id as product_lifecycle_id',
@@ -666,6 +666,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                                         ->leftJoin('products p', 'rp.product_id = p.id');
                                                 }]);
                                         }
+
                                     ])->where(['eg.status_id' => BaseModel::STATUS_ACTIVE]);
                             },
                             'equipments' => function ($e) {
@@ -693,6 +694,14 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             ->asArray()
             ->limit(1)
             ->one();
+
+        if ($data && $data["plm_document_items"]){
+            foreach ($data["plm_document_items"] as $key =>  $item){
+                $data["plm_document_items"][$key]["equipmentGroup"] = EquipmentGroup::getProductList([$item["equipmentGroup"]],$item["equipmentGroup"], 0);
+                unset($data["plm_document_items"][$key]["equipmentGroup"]["cycles"]);
+            }
+        }
+        return  $data ?? [];
     }
 
     /**

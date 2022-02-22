@@ -291,4 +291,20 @@ class EquipmentGroupController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    /**
+     * @return string
+     */
+    public function actionNewCreate()
+    {
+        return $this->render('new_create');
+    }
+
+    /**
+     * @return string
+     */
+    public function actionNewUpdate()
+    {
+        return $this->render('new_update');
+    }
 }

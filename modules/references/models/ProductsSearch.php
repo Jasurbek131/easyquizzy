@@ -62,4 +62,22 @@ class ProductsSearch extends Products
 
         return $dataProvider;
     }
+
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function searchLifeCycle($params)
+    {
+        $query = EquipmentGroup::find()
+            ->orderBy(["id" => SORT_DESC]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        return $dataProvider;
+    }
 }

@@ -20,6 +20,8 @@ return [
     '(New)' => '@@(Yangi)@@',
     '(new)' => '(yangi)',
     'Active' => 'Faol',
+    'Group Name' => 'Uskunalar guruhi nomi',
+    'Product data & Group equipment' => 'Mahsulot ma\'lumotlari & Uskunalar guruhi',
     'Add Info' => '',
     'Admin' => '@@Admin@@',
     'Administrator' => '',

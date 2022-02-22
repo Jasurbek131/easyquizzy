@@ -1,33 +1,14 @@
 export const items = {
     id: "",
-    product_id: "",
-    planned_stop_id: "",
-    unplanned_stop_id: "",
     processing_time_id: "",
     equipment_group_id: "",
     start_work: "",
     end_work: "",
-    lifecycle: "",
-    bypass: "",
-    target_qty: 0,
-    planned_stopped: {
-        id: "",
-        begin_date: "",
-        end_time: "",
-        add_info: "",
-        reason_id: ""
-    },
-    unplanned_stopped: {
-        id: "",
-        begin_date: "",
-        end_time: "",
-        add_info: "",
-        reason_id: "",
-        bypass: ""
-    },
+    planned_stops: [],
+    unplanned_stops: [],
     equipmentGroup: {
         equipments: [],
-        productLifecycles: [],
+        product_list: [],
     },
     products: [{
         label: "",
@@ -35,8 +16,10 @@ export const items = {
         qty: "",
         fact_qty: "",
         product_id: "",
-        product_lifecycle_id: "",
         lifecycle: "",
+        bypass: "",
+        target_qty: 0,
+        product_lifecycle_id: "",
         repaired: [],
         scrapped: [],
     }],
