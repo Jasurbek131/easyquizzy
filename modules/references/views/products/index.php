@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="card products-index">
 <!--    --><?php //if (Yii::$app->user->can('products/create')): ?>
     <div class="card-header pull-right no-print">
-        <?= Html::a('<span class="fa fa-plus"></span>', ['new-create'],
+        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
 <!--    --><?php //endif; ?>
@@ -34,9 +34,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'name',
                     'format' => 'raw',
-                    'value' => function(ReferencesProductGroup $model) {
-                        return ReferencesProductGroupRelProduct::getProductsByGroup($model->id);
-                    },
+//                    'value' => function(ReferencesProductGroup $model) {
+//                        return ReferencesProductGroupRelProduct::getProductsByGroup($model->id);
+//                    },
                 ],
                 [
                     'attribute' => 'status_id',
@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{new-update}{view}{delete}',
+                    'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                     'visibleButtons' => [
 //                        'view' => Yii::$app->user->can('products/view'),
@@ -60,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                        }
                     ],
                     'buttons' => [
-                        'new-update' => function ($url, $model) {
+                        'update' => function ($url, $model) {
                             return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
                                 'title' => Yii::t('app', 'Update'),
                                 'class'=> 'update-dialog btn btn-xs btn-success mr1',

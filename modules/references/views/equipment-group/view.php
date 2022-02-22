@@ -14,12 +14,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="equipment-group-view">
     <?php if(!Yii::$app->request->isAjax){?>
     <div class="pull-right" style="margin-bottom: 15px;">
-        <?php if (Yii::$app->user->can('equipment-group/update')): ?>
+        <?php if (Yii::$app->user->can('equipment_group/update')): ?>
             <?php  if ($model->status < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             <?php endif; ?>
         <?php endif; ?>
-        <?php if (Yii::$app->user->can('equipment-group/delete')): ?>
+        <?php if (Yii::$app->user->can('equipment_group/delete')): ?>
             <?php  if ($model->status < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
                     'class' => 'btn btn-danger',

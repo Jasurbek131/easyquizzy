@@ -13,15 +13,12 @@ $this->title = Yii::t('app', 'Equipment Groups');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card equipment-group-index">
-    <?php if (Yii::$app->user->can('equipment-group/create')): ?>
     <div class="card-header pull-right no-print">
-        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
-        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
+        <?= Html::a('<span class="fa fa-plus"></span>', ['new-create'],
+            ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
-    <?php endif; ?>
     <div class="card-body">
-        <?php Pjax::begin(['id' => 'equipment-group_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<!--        --><?php //Pjax::begin(['id' => 'equipment-group_pjax']); ?>
     
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -56,25 +53,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view}', /*{update} {delete}*/
+                'template' => '{view} {new-update}', /* {delete}*/
                 'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                 'visibleButtons' => [
-//                    'view' => Yii::$app->user->can('equipment-group/view'),
+//                    'view' => Yii::$app->user->can('equipment_group/view'),
 //                    'update' => function($model) {
-//                        return Yii::$app->user->can('equipment-group/update'); // && $model->status < $model::STATUS_SAVED;
+//                        return Yii::$app->user->can('equipment_group/update'); // && $model->status < $model::STATUS_SAVED;
 //                    },
 //                    'delete' => function($model) {
-//                        return Yii::$app->user->can('equipment-group/delete'); // && $model->status < $model::STATUS_SAVED;
+//                        return Yii::$app->user->can('equipment_group/delete'); // && $model->status < $model::STATUS_SAVED;
 //                    }
                 ],
                 'buttons' => [
-//                    'update' => function ($url, $model) {
-//                        return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
-//                            'title' => Yii::t('app', 'Update'),
-//                            'class'=> 'update-dialog btn btn-xs btn-success mr1',
-//                            'data-form-id' => $model->id,
-//                        ]);
-//                    },
+                    'new-update' => function ($url, $model) {
+                        return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
+                            'title' => Yii::t('app', 'Update'),
+                            'class'=> 'update-dialog btn btn-xs btn-success mr1',
+                            'data-form-id' => $model->id,
+                        ]);
+                    },
                     'view' => function ($url, $model) {
                         return Html::a('<span class="fa fa-eye"></span>', $url, [
                             'title' => Yii::t('app', 'View'),
@@ -94,20 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-        <?php Pjax::end(); ?>
+<!--        --><?php //Pjax::end(); ?>
     </div>
 </div>
-<?=  \app\widgets\ModalWindow\ModalWindow::widget([
-    'model' => 'equipment-group',
-    'crud_name' => 'equipment-group',
-    'modal_id' => 'equipment-group-modal',
-    'modal_header' => '<h5>'. Yii::t('app', 'Equipment Group') . '</h5>',
-    'active_from_class' => 'customAjaxForm',
-    'update_button' => 'update-dialog',
-    'create_button' => 'create-dialog',
-    'view_button' => 'view-dialog',
-    'delete_button' => 'delete-dialog',
-    'modal_size' => 'modal-md',
-    'grid_ajax' => 'equipment-group_pjax',
-    'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
-]); ?>
+

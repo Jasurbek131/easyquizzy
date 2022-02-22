@@ -43,7 +43,6 @@ class Form extends React.Component {
                 add_info: ""
             },
             plm_document_items: [JSON.parse(JSON.stringify(items))],
-            // organisationList: [],
             departmentList: [],
             reasonList: [],
             repairedList: [],
@@ -110,22 +109,35 @@ class Form extends React.Component {
 
     onPlanSummary = (item) => {
         let diff = this.onReturnMin(item?.end_work, item?.start_work);
-        let planned = this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date);
-        let unplanned = this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date);
-        let lifecycle = item ? (item.lifecycle ? item.lifecycle : 1) : 1;
-        item.target_qty = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
+        let { equipmentGroupList } = this.state;
+        let equipmentGroupValue = equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id);
+
+        // let planned = this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date);
+        // let unplanned = this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date);
+        if (item?.products?.length > 0){
+            let lifecycle, bypass;
+            item?.products.forEach(function (product, index) {
+                lifecycle = product ? (product.lifecycle ? product.lifecycle : 1) : 1;
+                bypass =  product ? (product.bypass ? product.bypass : 1) : 0;
+                if (equipmentGroupValue[0]?.equipments_group_type_id == 1){
+                    item["products"][index].target_qty = ((diff ) * 60 / (+lifecycle)).toFixed(0);//- planned - unplanned
+                }else{
+                    item["products"][index].target_qty = ((+lifecycle * +product.fact_qty / 60) + ((+bypass * +product.qty / 60)) ).toFixed(0);//- planned - unplanned
+                }
+
+            });
+        }
         return item;
     };
 
     onHandleChange = (type, model, name, key, index, value, e) => {
         let v = value;
         let element = $('#' + name);
-        if (key !== '' && index !== ''){
+        if (key !== '' && index !== '') {
             element = $('#' + name + "_" + key + "_" + index);
-        }else if(key !== ''){
+        } else if (key !== '') {
             element = $('#' + name + "_" + key);
         }
-        console.log("element", element);
         let {plm_document_items, temporarily} = this.state;
         switch (type) {
             case "select":
@@ -153,9 +165,12 @@ class Form extends React.Component {
                     plm_document_items[key]['products'][index][name] = v;
                     plm_document_items[key]['products'][index]["repaired"] = [];
                     plm_document_items[key]['products'][index]["scrapped"] = [];
+                    plm_document_items[key]['products'][index]["lifecycle"] = e?.lifecycle;
+                    plm_document_items[key]['products'][index]["bypass"] = e?.bypass;
                 } else {
                     plm_document_items[key]['products'][index][name] = v;
                 }
+                plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                 this.setState({plm_document_items: plm_document_items});
                 break;
             case "plm_document":
@@ -177,8 +192,19 @@ class Form extends React.Component {
                 if (name === 'equipment_group_id') {
                     plm_document_items[key]['equipmentGroup'] = e;
                     plm_document_items[key]['equipments'] = [];
-                    plm_document_items[key]['lifecycle'] = e?.lifecycles?.lifecycle;
-                    plm_document_items[key]['bypass'] = e?.lifecycles?.bypass;
+                    plm_document_items[key]['products'] = [{
+                        label: "",
+                        value: "",
+                        qty: "",
+                        fact_qty: "",
+                        product_id: "",
+                        lifecycle: "",
+                        bypass: "",
+                        target_qty: 0,
+                        product_lifecycle_id: "",
+                        repaired: [],
+                        scrapped: [],
+                    }];
                 }
                 if (name === 'product_id') {
                     plm_document_items[key]['products'][index] = e;
@@ -186,7 +212,7 @@ class Form extends React.Component {
                 if (name === "start_work") {
                     plm_document_items[key]['end_work'] = "";
                 }
-                if (name === "end_work" || name === "equipment_group_id") {
+                if (name === "end_work") {
                     plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                 }
                 this.setState({plm_document_items: plm_document_items});
@@ -237,7 +263,7 @@ class Form extends React.Component {
         let store;
         let block = "none";
         switch (type) {
-            case "planned_stopped":
+            case "planned_stops":
                 store = plm_document_items[key][type];
                 if (plm_document_items[key]['start_work'] && plm_document_items[key]['end_work']) {
                     block = "block";
@@ -245,7 +271,7 @@ class Form extends React.Component {
                     toast.error("«Boshlanish» va «Tugash» vaqtlarini kiriting!");
                 }
                 break;
-            case "unplanned_stopped":
+            case "unplanned_stops":
                 store = plm_document_items[key][type];
                 if (plm_document_items[key]['start_work'] && plm_document_items[key]['end_work']) {
                     block = "block";
@@ -503,10 +529,6 @@ class Form extends React.Component {
         this.setState({appearance: appearance});
     };
 
-    onSaveProps = async (type, model) => {
-
-    };
-
     render() {
         const {
             language,
@@ -521,6 +543,9 @@ class Form extends React.Component {
         } = this.state;
         if (isLoading)
             return loadingContent();
+
+        // let modalData = plm_document_items[temporarily.itemKey][temporarily.type] ?? [];
+        let equipmentGroupValue = [];
         return (
             <div>
                 <div className="no-print">
@@ -544,15 +569,15 @@ class Form extends React.Component {
                                     <DatePicker onChange={(e) => {
                                         this.onHandleChange('date', 'plm_document', 'reg_date', '', '', '', new Date(e))
                                     }}
-                                        id={"reg_date"}
-                                        locale={language === "uz" ? uz : ru}
-                                        dateFormat="dd.MM.yyyy"
-                                        className={"form-control aria-required"}
-                                        selected={plm_document?.reg_date ? new Date(plm_document.reg_date) : ""}
-                                        autoComplete={'off'}
-                                        peekNextMonth
-                                        showMonthDropdown
-                                        showYearDropdown
+                                                id={"reg_date"}
+                                                locale={language === "uz" ? uz : ru}
+                                                dateFormat="dd.MM.yyyy"
+                                                className={"form-control aria-required"}
+                                                selected={plm_document?.reg_date ? new Date(plm_document.reg_date) : ""}
+                                                autoComplete={'off'}
+                                                peekNextMonth
+                                                showMonthDropdown
+                                                showYearDropdown
                                     />
                                 </div>
                             </div>
@@ -600,8 +625,10 @@ class Form extends React.Component {
                     <div className={'card-body'}>
                         {
                             plm_document_items?.length > 0 && plm_document_items.map((item, key) => {
+                                equipmentGroupValue = equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id);
                                 return (
-                                    <div className={item.is_change ? "border-block" : "border-block success-block"} key={key}>
+                                    <div className={item.is_change ? "border-block" : "border-block success-block"}
+                                         key={key}>
                                         <div className={'pull-right'}>
                                             {
                                                 key === 0 ?
@@ -621,7 +648,8 @@ class Form extends React.Component {
                                             <br/>
                                             <br/>
                                             {item.is_change ? (
-                                                <button onClick={this.onSave.bind(this, key)} className={"btn btn-xs btn-success"}>
+                                                <button onClick={this.onSave.bind(this, key)}
+                                                        className={"btn btn-xs btn-success"}>
                                                     <i className={"fa fa-check"}/>
                                                 </button>
                                             ) : (<span></span>)}
@@ -638,7 +666,7 @@ class Form extends React.Component {
                                                                     id={"equipment_group_id_" + key}
                                                                     onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'equipment_group_id', key, '', '')}
                                                                     placeholder={"Qurilmalar guruhi"}
-                                                                    value={equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id)}
+                                                                    value={equipmentGroupValue}
                                                                     options={equipmentGroupList}
                                                                     styles={customStyles}
                                                             />
@@ -708,82 +736,42 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
 
-                                            <div className="col-lg-1">
-                                                <div className={"align-center text-center"}>
-                                                    <div>
-                                                        <label className={'control-label middle-size'}>Reja</label>
-                                                        <input value={item?.target_qty ?? ""} readOnly={true}
-                                                               className={'form-control plan text-center'}/>
-                                                        <label className={'control-label middle-size'}>Cycle time (s)</label>
-                                                        <input value={item?.lifecycle ?? ""} readOnly={true}
-                                                               className={'form-control text-center'}/>
-                                                        <label className={'control-label middle-size'}>Bypass (s)</label>
-                                                        <input value={item?.bypass ?? ""} readOnly={true}
-                                                               className={'form-control text-center'}/>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className={'col-lg-5'}>
+                                            <div className={'col-lg-6'}>
                                                 <div className={"align-center"}>
                                                     <div>
-                                                        <div className={'row'}>
-                                                            <div className={'col-lg-3 pb-1'}>
-                                                                <button
-                                                                    onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
-                                                                    className={"btn btn-xs btn-primary wh-28"}>
-                                                                    <i className={"fa fa-plus"}/>
-                                                                </button>
-                                                            </div>
-
-                                                            <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label middle-size"}>Ish/chiq</label>
-                                                            </div>
-                                                            <div className={'col-lg-2 text-center'}>
-                                                                <label className={"control-label middle-size"}>Ish/chiq(Bs)</label>
-                                                            </div>
-                                                            <div className={'col-lg-2 text-center repaired'}>
-                                                                <label className={"control-label middle-size"}>Ta'mirlangan</label>
-                                                            </div>
-                                                            <div className={'col-lg-2 text-center scrapped'}>
-                                                                <label className={"control-label middle-size"}>Yaroqsiz</label>
-                                                            </div>
-                                                            <div className={"col-lg-1 text-center"}></div>
-                                                        </div>
-
                                                         {
                                                             item?.products?.length > 0 && item.products.map((product, prKey) => {
                                                                 return (
-                                                                    <div className={'row'} key={key +"_"+ prKey}>
-                                                                        <div className={'col-lg-3'}>
-                                                                            <Select className={"aria-required"}
-                                                                                    id={"product_id_" + key + "_" + prKey}
-                                                                                    onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
-                                                                                    placeholder={"Tanlang"}
-                                                                                    value={item?.equipmentGroup?.lifecycles?.productGroup?.products.filter(({value}) => +value === +product?.product_id)}
-                                                                                    options={item?.equipmentGroup?.lifecycles?.productGroup?.products}
-                                                                                    styles={customStyles}
-                                                                            />
+                                                                    <div className={'row product'}
+                                                                         key={key + "_" + prKey}>
+                                                                        <div className="col-lg-3">
+                                                                            <label
+                                                                                className={'control-label middle-size'}>Reja {
+                                                                                equipmentGroupValue[0]?.equipments_group_type_id !== 1 ? "(vaqtda)" : "(sonda)"
+                                                                            }</label>
+                                                                            <input value={product?.target_qty ?? ""}
+                                                                                   readOnly={true}
+                                                                                   className={'form-control plan text-center'}/>
                                                                         </div>
-                                                                        <div className={'col-lg-2'}>
-                                                                            <input
-                                                                                onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
-                                                                                type={'number'}
-                                                                                className={'form-control aria-required'}
-                                                                                id={"fact_qty_" + key + "_" + prKey}
-                                                                                min={0}
-                                                                                value={product?.fact_qty ?? ""}/>
+                                                                        <div className="col-lg-3">
+                                                                            <label
+                                                                                className={'control-label middle-size'}>Cycle
+                                                                                time (s)</label>
+                                                                            <input value={product?.lifecycle ?? ""}
+                                                                                   readOnly={true}
+                                                                                   className={'form-control text-center'}/>
                                                                         </div>
-                                                                        <div className={'col-lg-2'}>
-                                                                            <input
-                                                                                onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
-                                                                                type={'number'}
-                                                                                className={'form-control aria-required'}
-                                                                                id={"qty_" + prKey}
-                                                                                min={0}
-                                                                                value={product?.qty ?? ""}/>
+                                                                        <div className="col-lg-3">
+                                                                            <label
+                                                                                className={'control-label middle-size'}>Bypass CT (s)</label>
+                                                                            <input value={product?.bypass ?? ""}
+                                                                                   readOnly={true}
+                                                                                   className={'form-control text-center'}/>
                                                                         </div>
-                                                                        <div className={'col-lg-2 text-center repaired'}>
+                                                                        <div
+                                                                            className={'col-lg-3 text-center repaired'}>
+                                                                            <label
+                                                                                className={"control-label middle-size"}>Ta'mirlangan</label>
                                                                             <label
                                                                                 className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
                                                                             <button
@@ -792,7 +780,45 @@ class Form extends React.Component {
                                                                                 <i className={'fa fa-plus'}/>
                                                                             </button>
                                                                         </div>
-                                                                        <div className={'col-lg-2 text-center scrapped'}>
+                                                                        <div className={'col-lg-3'}>
+                                                                            <label
+                                                                                className={"control-label middle-size"}>Mahsulot</label>
+                                                                            <Select className={"aria-required"}
+                                                                                    id={"product_id_" + key + "_" + prKey}
+                                                                                    onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
+                                                                                    placeholder={"Tanlang"}
+                                                                                    value={item?.equipmentGroup?.product_list.filter(({value}) => +value === +product?.product_id)}
+                                                                                    options={item?.equipmentGroup?.product_list ?? []}
+                                                                                    styles={customStyles}
+                                                                            />
+                                                                        </div>
+                                                                        <div className={'col-lg-3'}>
+                                                                            <label
+                                                                                className={"control-label middle-size"}>Ish/chiq</label>
+                                                                            <input
+                                                                                onChange={this.onHandleChange.bind(this, 'input', 'products', 'fact_qty', key, prKey, '')}
+                                                                                type={'number'}
+                                                                                className={'form-control aria-required'}
+                                                                                id={"fact_qty_" + key + "_" + prKey}
+                                                                                min={0}
+                                                                                value={product?.fact_qty ?? ""}/>
+                                                                        </div>
+                                                                        <div className={'col-lg-3'}>
+                                                                            <label
+                                                                                className={"control-label middle-size"}>Ish/chiq(Bs)</label>
+                                                                            <input
+                                                                                onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
+                                                                                type={'number'}
+                                                                                className={'form-control aria-required'}
+                                                                                id={"qty_" + prKey}
+                                                                                min={0}
+                                                                                value={product?.qty ?? ""}/>
+                                                                        </div>
+
+                                                                        <div
+                                                                            className={'col-lg-3 text-center scrapped'}>
+                                                                            <label
+                                                                                className={"control-label middle-size"}>Yaroqsiz</label>
                                                                             <label
                                                                                 className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
                                                                             <button
@@ -801,12 +827,25 @@ class Form extends React.Component {
                                                                                 <i className={'fa fa-plus'}/>
                                                                             </button>
                                                                         </div>
-                                                                        <div className={'col-lg-1 mb-1'}>
-                                                                            <button
-                                                                                onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
-                                                                                className={"btn btn-xs wh-28 btn-outline-danger"}>
-                                                                                <i className={"fa fa-times"}/>
-                                                                            </button>
+                                                                        <div className={'button-absolute'}>
+                                                                            {
+                                                                                prKey !== 0 ? (
+                                                                                    <button
+                                                                                        onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
+                                                                                        className={"btn btn-xs wh-28 btn-danger"}>
+                                                                                        <i className={"fa fa-times"}/>
+                                                                                    </button>
+                                                                                ) : (
+                                                                                    equipmentGroupValue[0]?.equipments_group_type_id !== 1 ? (
+                                                                                        <button
+                                                                                            onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
+                                                                                            className={"btn btn-xs btn-primary wh-28"}>
+                                                                                            <i className={"fa fa-plus"}/>
+                                                                                        </button>
+                                                                                    ) : (<span></span>)
+                                                                                )
+                                                                            }
+
                                                                         </div>
                                                                     </div>
                                                                 )
@@ -815,18 +854,20 @@ class Form extends React.Component {
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row planned_stopped'}>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label className={"control-label middle-size"}>Rejali to'xtalishlar</label>
+                                                            <label className={"control-label middle-size"}>Rejali
+                                                                to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label
-                                                                className={'mr-2'}>{this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date)}
-                                                                <small>min</small></label>
+                                                            {/*<label*/}
+                                                            {/*    className={'mr-2'}>{this.onReturnMin(item?.planned_stopped?.end_time, item?.planned_stopped?.begin_date)}*/}
+                                                            {/*    <small>min</small></label>*/}
                                                             <button
-                                                                onClick={this.onOpenModal.bind(this, 'planned_stopped', "Rejali to'xtalishlar", key, '')}
+                                                                onClick={this.onOpenModal.bind(this, 'planned_stops', "Rejali to'xtalishlar", key, '')}
                                                                 className={"btn btn-xs btn-warning"}>
                                                                 <i className={'fa fa-plus'}/>
                                                             </button>
@@ -834,18 +875,20 @@ class Form extends React.Component {
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row unplanned_stopped'}>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label className={"control-label middle-size"}>Rejasiz to'xtalishlar</label>
+                                                            <label className={"control-label middle-size"}>Rejasiz
+                                                                to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label
-                                                                className={'mr-2'}>{this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date)}
-                                                                <small>min</small></label>
+                                                            {/*<label*/}
+                                                            {/*    className={'mr-2'}>{this.onReturnMin(item?.unplanned_stopped?.end_time, item?.unplanned_stopped?.begin_date)}*/}
+                                                            {/*    <small>min</small></label>*/}
                                                             <button
-                                                                onClick={this.onOpenModal.bind(this, 'unplanned_stopped', "Rejasiz to'xtalishlar", key, '')}
+                                                                onClick={this.onOpenModal.bind(this, 'unplanned_stops', "Rejasiz to'xtalishlar", key, '')}
                                                                 className={'btn btn-info btn-xs'}>
                                                                 <i className={'fa fa-plus'}/>
                                                             </button>
@@ -853,6 +896,7 @@ class Form extends React.Component {
                                                     </div>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 )
@@ -875,7 +919,7 @@ class Form extends React.Component {
                             <div className="modal-body none-scroll">
                                 <div className={'card-body'}>
                                     {
-                                        temporarily?.type === "planned_stopped" || temporarily?.type === "unplanned_stopped" ?
+                                        temporarily?.type === "planned_stops" || temporarily?.type === "unplanned_stops" ?
                                             <div className={'row'}>
                                                 <div className={'col-lg-12'}>
                                                     <div className={"form-group"}>
@@ -934,7 +978,7 @@ class Form extends React.Component {
                                                     </div>
                                                 </div>
                                                 {
-                                                    temporarily?.type === 'unplanned_stopped' ?
+                                                    temporarily?.type === 'unplanned_stops' ?
                                                         <div className={'col-lg-12'}>
                                                             <div className={"form-group"}>
                                                                 <label className={"control-label"}>Bypass (m)</label>
@@ -954,6 +998,28 @@ class Form extends React.Component {
                                                             value={temporarily?.store?.add_info} id={"add_info"}/>
                                                     </div>
                                                 </div>
+                                                {/*<div className="row">*/}
+                                                {/*    {*/}
+                                                {/*        modalData.length > 0 ? (*/}
+                                                {/*            <div className={"col-lg-12"}>*/}
+                                                {/*                <table*/}
+                                                {/*                    className={"table table-bordered table-stripped table-hover"}>*/}
+                                                {/*                    <thead>*/}
+                                                {/*                    <tr>*/}
+                                                {/*                        <th></th>*/}
+                                                {/*                        <th></th>*/}
+                                                {/*                        <th></th>*/}
+                                                {/*                        <th></th>*/}
+                                                {/*                        <th></th>*/}
+                                                {/*                    </tr>*/}
+                                                {/*                    </thead>*/}
+                                                {/*                    <tbody>*/}
+                                                {/*                    </tbody>*/}
+                                                {/*                </table>*/}
+                                                {/*            </div>*/}
+                                                {/*        ) : (<span></span>)*/}
+                                                {/*    }*/}
+                                                {/*</div>*/}
                                             </div>
                                             : temporarily?.type === "repaired" || temporarily?.type === "scrapped" ?
                                             <div className={'row'}>

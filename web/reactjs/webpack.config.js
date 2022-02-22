@@ -56,7 +56,7 @@ let all = {
     entry: {
         document: `${SRC_DIR}/app/modules/plm/Document/Document.js`,
         plmDocumentReport: `${SRC_DIR}/app/modules/plm/Report/PlmDocumentReport.js`,
-        product: `${SRC_DIR}/app/modules/references/product/Product.js`,
+        product: `${SRC_DIR}/app/modules/references/equipment_group/EquipmentGroup.js`,
     },
     output: {
         path: `${DIST_DIR}/app`,
@@ -81,12 +81,12 @@ let plm_document_report = {
     entry: `./src/app/modules/plm/Report/PlmDocumentReport.js`,
     mode: 'development',
 };
-let product = {
+let equipment_group = {
     output: {
-        filename: './app/product.bundle.js',
+        filename: './app/EquipmentGroup.bundle.js',
     },
-    name: 'product',
-    entry: `./src/app/modules/references/product/Product.js`,
+    name: 'equipment_group',
+    entry: `./src/app/modules/references/equipment_group/EquipmentGroup.js`,
     mode: 'development',
 };
 
@@ -95,7 +95,7 @@ config = [
     {...all, ...other},
     {...document, ...other},
     {...plm_document_report, ...other},
-    {...product, ...other},
+    {...equipment_group, ...other},
 ];
 
 module.exports = config;
