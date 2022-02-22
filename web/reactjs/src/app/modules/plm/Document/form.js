@@ -126,22 +126,12 @@ class Form extends React.Component {
     onPlanSummary = (item) => {
         let diff = this.onReturnMin(item?.end_work, item?.start_work);
         let { equipmentGroupList } = this.state;
-        let equipmentGroupValue = equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id);
         let planned = this.stoppedSummary(item?.planned_stops??[]);
-        let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
+        // let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
+        let lifecycle = item ? (item.lifecycle ? item.lifecycle : "") : "";
 
-        if (item?.products?.length > 0){
-            let lifecycle, bypass;
-            item?.products.forEach(function (product, index) {
-                lifecycle = product ? (product.lifecycle ? product.lifecycle : 1) : 1;
-                bypass =  product ? (product.bypass ? product.bypass : 1) : 0;
-                if (equipmentGroupValue[0]?.equipments_group_type_id == 1){
-                    item["products"][index].target_qty = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
-                }else{
-                    item["products"][index].target_qty = ((+lifecycle * +product.fact_qty / 60) + ((+bypass * +product.qty / 60)) ).toFixed(0);
-                }
-
-            });
+        if(lifecycle){
+            item.target_qty = ((diff - planned) * 60 / (+lifecycle)).toFixed(0); // - unplanned
         }
         return item;
     };
@@ -191,8 +181,9 @@ class Form extends React.Component {
                     plm_document_items[key]['products'][index][name] = v;
                     plm_document_items[key]['products'][index]["repaired"] = [];
                     plm_document_items[key]['products'][index]["scrapped"] = [];
-                    plm_document_items[key]['products'][index]["lifecycle"] = e?.lifecycle;
-                    plm_document_items[key]['products'][index]["bypass"] = e?.bypass;
+                    plm_document_items[key]["lifecycle"] = e?.lifecycle;
+                    plm_document_items[key]["bypass"] = e?.bypass;
+                    plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                 } else {
                     plm_document_items[key]['products'][index][name] = v;
                 }
@@ -216,6 +207,14 @@ class Form extends React.Component {
                 plm_document_items[key][name] = v;
                 plm_document_items[key]['is_change'] = true;
                 if (name === 'equipment_group_id') {
+                    if (+e.equipments_group_type_id === 2 && e.product_list.length > 0){
+                        plm_document_items[key]["lifecycle"] = e.product_list[0]["lifecycle"] ?? 0;
+                        plm_document_items[key]["bypass"] = e.product_list[0]["bypass"] ?? 0;
+                    }else{
+                        plm_document_items[key]["lifecycle"] = "";
+                        plm_document_items[key]["bypass"] = "";
+                    }
+                    plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                     plm_document_items[key]['equipmentGroup'] = e;
                     plm_document_items[key]['equipments'] = [];
                     plm_document_items[key]['products'] = [{
@@ -224,16 +223,10 @@ class Form extends React.Component {
                         qty: "",
                         fact_qty: "",
                         product_id: "",
-                        lifecycle: "",
-                        bypass: "",
-                        target_qty: 0,
                         product_lifecycle_id: "",
                         repaired: [],
                         scrapped: [],
                     }];
-                }
-                if (name === 'product_id') {
-                    plm_document_items[key]['products'][index] = e;
                 }
                 if (name === "start_work") {
                     plm_document_items[key]['end_work'] = "";
@@ -811,50 +804,37 @@ class Form extends React.Component {
                                             </div>
 
                                             <div className={'col-lg-6'}>
-                                                <div className={"align-center"}>
-                                                    <div>
-                                                        {
-                                                            item?.products?.length > 0 && item.products.map((product, prKey) => {
-                                                                return (
-                                                                    <div className={'row product'}
-                                                                         key={key + "_" + prKey}>
-                                                                        <div className="col-lg-3">
-                                                                            <label
-                                                                                className={'control-label middle-size'}>Reja {
-                                                                                equipmentGroupValue[0]?.equipments_group_type_id !== 1 ? "(vaqtda)" : "(sonda)"
-                                                                            }</label>
-                                                                            <input value={product?.target_qty ?? ""}
-                                                                                   readOnly={true}
-                                                                                   className={'form-control plan text-center'}/>
-                                                                        </div>
-                                                                        <div className="col-lg-3">
-                                                                            <label
-                                                                                className={'control-label middle-size'}>Cycle
-                                                                                time (s)</label>
-                                                                            <input value={product?.lifecycle ?? ""}
-                                                                                   readOnly={true}
-                                                                                   className={'form-control text-center'}/>
-                                                                        </div>
-                                                                        <div className="col-lg-3">
-                                                                            <label
-                                                                                className={'control-label middle-size'}>Bypass CT (s)</label>
-                                                                            <input value={product?.bypass ?? ""}
-                                                                                   readOnly={true}
-                                                                                   className={'form-control text-center'}/>
-                                                                        </div>
-                                                                        <div
-                                                                            className={'col-lg-3 text-center repaired'}>
-                                                                            <label
-                                                                                className={"control-label middle-size"}>Ta'mirlangan</label>
-                                                                            <label
-                                                                                className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
-                                                                            <button
-                                                                                onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
-                                                                                className={'btn btn-warning btn-xs wh-28'}>
-                                                                                <i className={'fa fa-plus'}/>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div className={'col-lg-3'}>
+                                                <div className="row">
+                                                    <div className="col-lg-4">
+                                                        <label className={'control-label middle-size'}>Reja </label>
+                                                        <input value={item?.target_qty ?? ""}
+                                                               readOnly={true}
+                                                               className={'form-control plan text-center'}/>
+                                                    </div>
+                                                    <div className="col-lg-4">
+                                                        <label
+                                                            className={'control-label middle-size'}>Cycle
+                                                            time (s)</label>
+                                                        <input value={item?.lifecycle ?? ""}
+                                                               readOnly={true}
+                                                               className={'form-control text-center'}/>
+                                                    </div>
+                                                    <div className="col-lg-4">
+                                                        <label
+                                                            className={'control-label middle-size'}>Bypass CT (s)</label>
+                                                        <input value={item?.bypass ?? ""}
+                                                               readOnly={true}
+                                                               className={'form-control text-center'}/>
+                                                    </div>
+                                                </div>
+                                                {
+                                                    item?.products?.length > 0 && item.products.map((product, prKey) => {
+                                                        return (
+                                                            <div className={'row product'}
+                                                                 key={key + "_" + prKey}>
+                                                                <div className={"col-lg-8"}>
+                                                                    <div className={"row"}>
+                                                                        <div className={'col-lg-6'}>
                                                                             <label
                                                                                 className={"control-label middle-size"}>Mahsulot</label>
                                                                             <Select className={"aria-required"}
@@ -878,55 +858,77 @@ class Form extends React.Component {
                                                                                 value={product?.fact_qty ?? ""}/>
                                                                         </div>
                                                                         <div className={'col-lg-3'}>
-                                                                            <label
-                                                                                className={"control-label middle-size"}>Ish/chiq(Bs)</label>
-                                                                            <input
-                                                                                onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
-                                                                                type={'number'}
-                                                                                className={'form-control aria-required'}
-                                                                                id={"qty_" + prKey}
-                                                                                min={0}
-                                                                                value={product?.qty ?? ""}/>
-                                                                        </div>
-
-                                                                        <div
-                                                                            className={'col-lg-3 text-center scrapped'}>
-                                                                            <label
-                                                                                className={"control-label middle-size"}>Yaroqsiz</label>
-                                                                            <label
-                                                                                className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
-                                                                            <button
-                                                                                onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
-                                                                                className={'btn btn-info btn-xs wh-28'}>
-                                                                                <i className={'fa fa-plus'}/>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div className={'button-absolute'}>
-                                                                            {
-                                                                                prKey !== 0 ? (
+                                                                        <label
+                                                                            className={"control-label middle-size"}>Ish/chiq(Bs)</label>
+                                                                        <input
+                                                                            onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
+                                                                            type={'number'}
+                                                                            className={'form-control aria-required'}
+                                                                            id={"qty_" + prKey}
+                                                                            min={0}
+                                                                            value={product?.qty ?? ""}/>
+                                                                    </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className={"col-lg-4"}>
+                                                                    <div className="row">
+                                                                        <div className="col-lg-6 text-center repaired">
+                                                                            <div className={"align-center"}>
+                                                                                <div>
+                                                                                    <label
+                                                                                        className={"control-label middle-size"}>Ta'mirlangan</label>
+                                                                                    <label
+                                                                                        className={'mr-2'}>{this.onSumma(product?.repaired)}</label>
                                                                                     <button
-                                                                                        onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
-                                                                                        className={"btn btn-xs wh-28 btn-danger"}>
-                                                                                        <i className={"fa fa-times"}/>
+                                                                                        onClick={this.onOpenModal.bind(this, 'repaired', "Ta'mirlangan", key, prKey)}
+                                                                                        className={'btn btn-warning btn-xs wh-28'}>
+                                                                                        <i className={'fa fa-plus'}/>
                                                                                     </button>
-                                                                                ) : (
-                                                                                    equipmentGroupValue[0]?.equipments_group_type_id !== 1 ? (
-                                                                                        <button
-                                                                                            onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
-                                                                                            className={"btn btn-xs btn-primary wh-28"}>
-                                                                                            <i className={"fa fa-plus"}/>
-                                                                                        </button>
-                                                                                    ) : (<span></span>)
-                                                                                )
-                                                                            }
-
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className={'col-lg-6 text-center scrapped'}>
+                                                                            <div className={"align-center"}>
+                                                                                <div>
+                                                                                    <label
+                                                                                        className={"control-label middle-size"}>Yaroqsiz</label>
+                                                                                    <label
+                                                                                        className={'mr-2'}>{this.onSumma(product?.scrapped)}</label>
+                                                                                    <button
+                                                                                        onClick={this.onOpenModal.bind(this, 'scrapped', "Yaroqsiz", key, prKey)}
+                                                                                        className={'btn btn-info btn-xs wh-28'}>
+                                                                                        <i className={'fa fa-plus'}/>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                )
-                                                            })
-                                                        }
-                                                    </div>
-                                                </div>
+                                                                </div>
+
+                                                                <div className={'button-absolute'}>
+                                                                    {
+                                                                        prKey !== 0 ? (
+                                                                            <button
+                                                                                onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
+                                                                                className={"btn btn-xs wh-28 btn-danger"}>
+                                                                                <i className={"fa fa-times"}/>
+                                                                            </button>
+                                                                        ) : (
+                                                                            equipmentGroupValue[0]?.equipments_group_type_id !== 1 ? (
+                                                                                <button
+                                                                                    onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
+                                                                                    className={"btn btn-xs btn-primary wh-28"}>
+                                                                                    <i className={"fa fa-plus"}/>
+                                                                                </button>
+                                                                            ) : (<span></span>)
+                                                                        )
+                                                                    }
+
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
                                             </div>
 
                                             <div className={'col-lg-1'}>
