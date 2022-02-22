@@ -33,4 +33,18 @@ interface ApiPlmDocumentInterface
      * Index oyna uchun hujjat to'plamini qayatarib beradi
      */
     public static function getPlmDocuments($params);
+
+    /**
+     * @param $post
+     * @return array
+     * Doc item stops ni saqlaydi
+     */
+    public static function saveStops($post): array;
+
+    /**
+     * @param $post
+     * @return array
+     * Doc item stops ni holatini ozgartiradi
+     */
+    public static function deleteStops($post): array;
 }

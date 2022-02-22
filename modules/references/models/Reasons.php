@@ -84,17 +84,21 @@ class Reasons extends BaseModel
     {
         return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
+
     /**
+     * @param null $type
      * @return array
      */
-    public static  function getList():array
+    public static  function getList($type = null):array
     {
         $language = Yii::$app->language;
         return self::find()
             ->select([
                 'id as value',
                 "name_{$language} as label"
-            ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
+            ])
+            ->where(['status_id' => BaseModel::STATUS_ACTIVE])
+            ->andFilterWhere(['category_id' => $type])
             ->asArray()
             ->all();
     }
