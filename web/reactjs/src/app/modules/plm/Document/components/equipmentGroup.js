@@ -49,7 +49,7 @@ function EquipmentGroup(props){
     const onSave = (event) => {
         let isSend = true;
         switch (props.appearance.type) {
-            case "equipment-group":
+            case "equipment_group":
                 if (variables.name === "") {
                     isSend = false;
                     $('#name').css("border", "1px solid red");
@@ -93,7 +93,7 @@ function EquipmentGroup(props){
     }
     let HTML = "";
     switch (props.appearance.type) {
-        case "equipment-group":
+        case "equipment_group":
             HTML = <div className={'row'}>
                 <div className={"col-sm-12"}>
                     <div className={'form-group'}>

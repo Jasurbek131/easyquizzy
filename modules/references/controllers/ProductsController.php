@@ -38,7 +38,7 @@ class ProductsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ReferencesProductGroupSearch();
+        $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -203,22 +203,6 @@ class ProductsController extends Controller
             return $model;
         }
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
-
-    /**
-     * @return string
-     */
-    public function actionNewCreate()
-    {
-        return $this->render('new_create');
-    }
-
-    /**
-     * @return string
-     */
-    public function actionNewUpdate()
-    {
-        return $this->render('new_update');
     }
 
 }

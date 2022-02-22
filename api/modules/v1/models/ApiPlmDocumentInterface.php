@@ -22,10 +22,10 @@ interface ApiPlmDocumentInterface
 
     /**
      * @param $id
-     * @return mixed
+     * @return []
      * Saqlangan ($id) ga tegishli hujjat malumotlarni formaga yangilash uchun qaytarib beradi
      */
-    public static function getDocumentElements($id);
+    public static function getDocumentElements($id): array ;
 
     /**
      * @param $params

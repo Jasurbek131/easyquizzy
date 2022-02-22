@@ -149,3 +149,18 @@ textarea.form-control{
 .success-block{
     background: #ecf5ec!important;
 }
+.col-lg-1{
+    padding: 1px!important;
+}
+.product{
+    border: 2px solid #dedede;
+    padding: 2px!important;
+    margin: 2px!important;
+    border-radius: 4px;
+    position: relative;
+}
+.product .button-absolute{
+    position: absolute;
+    right: -3px;
+    top: -4px;
+}

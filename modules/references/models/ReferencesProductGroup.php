@@ -3,6 +3,7 @@
 namespace app\modules\references\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "references_product_group".
@@ -78,5 +79,46 @@ class ReferencesProductGroup extends BaseModel
     public function getProductLifecycles()
     {
         return $this->hasMany(ProductLifecycle::class, ['product_group_id' => 'id']);
+    }
+
+    /**
+     * @param $products
+     * @return array
+     * Mahulotlardan tashkil topgan guruh borligini tekshiradi
+     * Agar bor bor bo'lsa uni id qaytarib beradi [status => true, product_group_id => 1]
+     * Aks holda [status => false]
+     */
+    public static function existsProductGroup($products):array
+    {
+        $rel = ReferencesProductGroupRelProduct::find()
+            ->select([
+                "array_agg(product_id) as product_ids",
+                "MAX(product_group_id) as product_group_id"
+            ])
+            ->groupBy([
+                "product_group_id"
+            ])
+            ->asArray()
+            ->all();
+
+        if (!empty($rel))
+            $rel = ArrayHelper::index($rel, 'product_ids');
+
+        $key = "{";
+        if (!empty($products)){
+            $products = ArrayHelper::getColumn($products, 'value');
+            $key .= join(",", $products);
+        }
+        $key .= "}";
+
+        if (isset($rel[$key]))
+            return [
+                'status' => true,
+                'product_group_id' => $rel[$key]["product_group_id"],
+            ];
+        else
+            return [
+                'status' => false,
+            ];
     }
 }

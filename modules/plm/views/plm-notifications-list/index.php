@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
            'filterModel' => $searchModel,
            'rowOptions' => function($model){
                 if($model['status_id'] == BaseModel::STATUS_ACCEPTED) return ['style' => 'background:#92d7ff'];
+                if($model['status_id'] == BaseModel::STATUS_REJECTED) return ['style' => 'background:#ffcfcf'];
            },
            'columns' => [
                ['class' => 'yii\grid\SerialColumn'],
@@ -38,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                ],
                [
                    'attribute' => 'shift',
-                   'label' => Yii::t("app","Shifts"),
+                   'label' => Yii::t("app","Shift Name"),
                    'value' => function($model){
                        return $model['shift'];
                    }
@@ -51,6 +52,13 @@ $this->params['breadcrumbs'][] = $this->title;
                    }
                ],
                [
+                   'attribute' => 'equipment',
+                   'label' => Yii::t("app","Equipments"),
+                   'value' => function($model){
+                       return $model['equipment'];
+                   }
+               ],
+               /*[
                    'attribute' => 'begin_time',
                    'label' => Yii::t("app","Begin Time"),
                    'value' => function($model){
@@ -76,13 +84,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
                ],
                [
+                   'attribute' => 'defect_count',
+                   'label' => Yii::t("app","Defects Count"),
+                   'value' => function($model){
+                       return $model['defect_count'];
+                   },
+                   'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
+
+               ],
+               [
                    'attribute' => 'reason_id',
                    'label' => Yii::t("app","Reasons"),
                    'value' => function($model){
                        return $model['reason'];
                    },
                    'visible' => P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
-               ],
+               ],*/
                [
                    'attribute' => 'status_id',
                    'format' => 'raw',
@@ -95,19 +112,18 @@ $this->params['breadcrumbs'][] = $this->title;
                //'created_at',
                //'updated_by',
                //'updated_at',
-               [
+              /* [
                    'attribute' => 'add_info',
                    'label' => Yii::t("app","Add Info"),
                    'value' => function($model){
                        return $model['add_info'];
                    }
-               ],
-               //'plm_sector_list_id',
+               ],*/
 
                [
                    'class' => 'yii\grid\ActionColumn',
                    'template' => '{view}',
-                   'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
+                   'contentOptions' => ['class' => 'no-print','style' => 'width:50px;'],
                    'visibleButtons' => [
                        'view' => Yii::$app->user->can('plm-notifications-list/view'),
                        /*'update' => function($model) {

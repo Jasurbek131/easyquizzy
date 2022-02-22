@@ -58,12 +58,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     ],
                     [
+                        'attribute' => 'equipment',
+                        'label' => Yii::t("app","Equipments"),
+                        'value' => function($model){
+                            return $model['equipment'];
+                        }
+                    ],
+                    [
                         'attribute' => 'begin_time',
                         'label' => Yii::t("app","Begin Time"),
                         'value' => function($model){
                             return $model['begin_time'];
                         },
-                        'visible' => P::can('plm-notifications-list/working-time'),
+                        'visible' => P::can('plm-notifications-list/working-time') || P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
                     ],
                     [
                         'attribute' => 'end_time',
@@ -71,13 +78,21 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => function($model){
                             return $model['end_time'];
                         },
-                        'visible' => P::can('plm-notifications-list/working-time'),
+                        'visible' => P::can('plm-notifications-list/working-time') || P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
                     ],
                     [
                         'attribute' => 'defect_id',
                         'label' => Yii::t("app","Defects"),
                         'value' => function($model){
                             return $model['defect'];
+                        },
+                        'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
+                    ],
+                    [
+                        'attribute' => 'defect_count',
+                        'label' => Yii::t("app","Defects Count"),
+                        'value' => function($model){
+                            return ($model['defect_count']) ? ($model['defect_count'])." ta" : " ";
                         },
                         'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
                     ],
@@ -90,41 +105,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         'visible' => P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
                     ],
                     [
-                        'attribute' => 'created_by',
-                        'label' => Yii::t("app","Created By"),
+                        'label' => Yii::t("app","Bypass Time"),
                         'value' => function($model){
-                            $username = \app\models\Users::findOne($model['created_by'])['username'];
-                            return isset($username)?$username:$model['created_by'];
-                        }
+                            return $model['by_pass'];
+                        },
+                        'visible' => P::can('plm-notifications-list/unplanned'),
                     ],
                     [
-                        'attribute' => 'created_at',
-                        'label' => Yii::t("app","Created At"),
+                        'label' => Yii::t("app","Add Info"),
                         'value' => function($model){
-                            return (time()-$model['created_at']<(60*60*24))?Yii::$app->formatter->format(date($model['created_at']), 'relativeTime'):date('d.m.Y H:i',$model->created_at);
-                        }
+                            return $model['reason_info'];
+                        },
+                        'visible' => P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
                     ],
-                    [
-                        'attribute' => 'updated_by',
-                        'label' => Yii::t("app","Updated By"),
-                        'value' => function($model){
-                            $username = \app\models\Users::findOne($model['updated_by'])['username'];
-                            return isset($username)?$username:$model['updated_by'];
-                        }
-                    ],
-                    [
-                        'attribute' => 'updated_at',
-                        'label' => Yii::t("app","Updated At"),
-                        'value' => function($model){
-                            return (time()-$model['updated_at']<(60*60*24))?Yii::$app->formatter->format(date($model['updated_at']), 'relativeTime'):date('d.m.Y H:i',$model['updated_at']);
-                        }
-                    ],
-                    [
-                        'attribute' => 'add_info',
-                    ],
-                    /*[
-                        'attribute' => 'plm_sector_list_id',
-                    ],*/
+
                 ],
             ]) ?>
             <div class="modal md"  id="modal_rejected" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="true">
@@ -149,7 +143,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -174,12 +167,13 @@ $js = <<< JS
             url: urlRejected,
             data:{
                 list_id:list_id,
-                message: message,
+                message: message
             },
             type:"POST",
             success:function(response) {
+                console.log(response);
                 if(response.status){
-                    call_pnotify('success',response.message);
+                    call_pnotify('success',response.message);                     
                     window.location.reload();
                 }else{
                     call_pnotify('fail',response.message);
@@ -191,12 +185,12 @@ function call_pnotify(status,text) {
     switch (status) {
         case 'success':
             PNotify.defaults.styling = "bootstrap4";
-            PNotify.defaults.delay = 3000;
+            PNotify.defaults.delay = 4000;
             PNotify.alert({text:text,type:'success'});
             break;
         case 'fail':
             PNotify.defaults.styling = "bootstrap4";
-            PNotify.defaults.delay = 3000;
+            PNotify.defaults.delay = 4000;
             PNotify.alert({text:text,type:'error'});
             break;
     }

@@ -24,6 +24,7 @@ use Yii;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
+ * @property float $by_pass
  * @property string $add_info
  *
  * @property Defects $defects
@@ -37,6 +38,7 @@ class PlmNotificationsList extends BaseModel
     public $product;
     public $defect;
     public $reason;
+    public $equipment;
     /**
      * {@inheritdoc}
      */
@@ -51,7 +53,7 @@ class PlmNotificationsList extends BaseModel
     public function rules()
     {
         return [
-            [['plm_doc_item_id', 'defect_id', 'defect_type_id', 'defect_count', 'reason_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
+            [['plm_doc_item_id', 'defect_id', 'defect_type_id', 'defect_count', 'reason_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','by_pass'], 'default', 'value' => null],
             [['plm_doc_item_id', 'defect_id', 'defect_type_id', 'defect_count', 'reason_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['begin_time', 'end_time'], 'safe'],
             [['add_info'], 'string'],
@@ -81,6 +83,7 @@ class PlmNotificationsList extends BaseModel
             'updated_by' => Yii::t('app', 'Updated By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'add_info' => Yii::t('app', 'Add Info'),
+            'by_pass' => Yii::t('app', 'Bypass Time'),
         ];
     }
 
@@ -119,9 +122,10 @@ class PlmNotificationsList extends BaseModel
                     'hd.name AS department',
                     'sh.name shift',
                     'product.product',
+                    'equipment.equipment',
                     'r.name_uz AS reason',
                     'defect.defect',
-                    'defect.count',
+                    'defect.count AS defect_count',
                 ])
                 ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
                 ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
@@ -148,9 +152,19 @@ class PlmNotificationsList extends BaseModel
                     ->leftJoin(['p' => 'products'],'pdip.product_id = p.id')
                     ->groupBy(['pdip.document_item_id'])
                 ],'product.document_item_id = pnl.plm_doc_item_id')
+                ->leftJoin(['equipment' => PlmDocItemEquipments::find()
+                    ->alias('pdie')
+                    ->select([
+                        "pdi.id",
+                        "STRING_AGG(DISTINCT e.name,', ') AS equipment",
+                    ])
+                    ->leftJoin(['e' => 'equipments'],'e.id = pdie.equipment_id')
+                    ->leftJoin(['pdi' => 'plm_document_items'],'pdi.id = pdie.document_item_id')
+                    ->groupBy(['pdi.id'])
+                ],'equipment.id = pdi.id')
             ->where(['pnl.id' => $id])
             ->andWhere(['=','psrd.hr_department_id', $hr_department['hr_department_id']])
-            ->andFilterWhere(['!=','pnl.status_id', BaseModel::STATUS_REJECTED])
+            ->andFilterWhere(['!=','pnl.status_id', BaseModel::STATUS_INACTIVE])
             ->asArray()
             ->one();
         }

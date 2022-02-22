@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\plm\models\PlmSectorList;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -41,7 +42,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($model){
                     $info = $model->plmSectorList->name_uz;
                     return $info;
-                }
+                },
+                'filter' => PlmSectorList::getList(),
             ],
             [
                 'attribute' => 'status_id',
