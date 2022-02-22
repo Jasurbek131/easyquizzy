@@ -14,6 +14,7 @@ use Yii;
  * @property string $add_info
  * @property int $status_id
  * @property int $created_by
+ * @property int $document_item_id
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
@@ -95,4 +96,17 @@ class PlmStops extends BaseModel
         return $this->hasMany(PlmDocumentItems::class, ['id' => "document_item_id"]);
     }
 
+    /**
+     * @param $type
+     * @return int|string
+     */
+    public static function getStoppingType($type){
+        if ($type == "planned_stops"){
+            return BaseModel::PLANNED_STOP;
+        }
+        if ($type == "unplanned_stops"){
+            return BaseModel::UNPLANNED_STOP;
+        }
+        return "";
+    }
 }

@@ -625,15 +625,35 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                     },
                                 ]);
                             },
-                            'planned_stopped' => function ($e) {
+                            'planned_stops' => function ($e) {
                                 $e->from(['ps1' => 'plm_stops'])->select([
-                                    'ps1.id', 'ps1.begin_date', 'ps1.end_time', 'ps1.add_info', 'ps1.reason_id'
-                                ])->where(['ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP]);
+                                    'ps1.id',
+                                    'ps1.begin_date',
+                                    "to_char(ps1.begin_date, 'DD.MM.YYYY HH24:MI:SS') as format_begin_date",
+                                    "to_char(ps1.end_time, 'DD.MM.YYYY HH24:MI:SS') as format_end_time",
+                                    'ps1.end_time',
+                                    'ps1.add_info',
+                                    'ps1.reason_id',
+                                    "ps1.document_item_id"
+                                ])
+                                ->where([
+                                    'ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP,
+                                    'ps1.status_id' => BaseModel::STATUS_ACTIVE,
+                                ]);
                             },
-                            'unplanned_stopped' => function ($e) {
+                            'unplanned_stops' => function ($e) {
                                 $e->from(['ps2' => 'plm_stops'])->select([
-                                    'ps2.id', 'ps2.begin_date', 'ps2.end_time', 'ps2.add_info', 'ps2.reason_id', 'ps2.bypass'
-                                ])->where(['ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP]);
+                                    'ps2.id',
+                                    'ps2.begin_date',
+                                    'ps2.end_time',
+                                    'ps2.add_info',
+                                    'ps2.reason_id',
+                                    'ps2.bypass',
+                                    "ps2.document_item_id"
+                                ])->where([
+                                    'ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP,
+                                    'ps2.status_id' => BaseModel::STATUS_ACTIVE,
+                                ]);
                             },
                             'equipmentGroup' => function ($eg) {
                                 $eg->from(['eg' => 'equipment_group'])->select(['eg.id', 'eg.id as value'])
@@ -773,5 +793,155 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                 'page' => $params['page'] ?? 0
             ]
         ]);
+    }
+
+    /**
+     * @param $post
+     * @return array
+     */
+    public static function saveStops($post):array 
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app','Success'),
+        ];
+        try{
+            $stop = $post["stops"];
+            if(!empty($stop)){
+                if ($stop["id"]){
+                    $plmStop = PlmStops::findOne(["id" => $stop["id"]]);
+                }else{
+                    $documentItem = $post["plm_document_items"];
+                    $document = $post["plm_document"];
+
+                    if (!$documentItem["id"]){
+                        if (!$document["id"]){
+                            $doc = new PlmDocuments();
+                            $doc->setAttributes([
+                                'reg_date' => date("Y-m-d", strtotime($document['reg_date'])),
+                                'hr_department_id' => $document['hr_department_id'],
+                                'organisation_id' => $document['organisation_id'],
+                                'shift_id' => $document['shift_id'],
+                                'add_info' => $document['add_info'],
+                                'status_id' => BaseModel::STATUS_ACTIVE
+                            ]);
+                            if (!$doc->save()){
+                                $response = [
+                                    'status' => false,
+                                    'errors' => $doc->getErrors(),
+                                    'message' => Yii::t('app','Document not saved'),
+                                ];
+                            }else{
+                                $document["id"] = $doc->id;
+                            }
+                        }
+
+                        if ($response["status"]){
+                            $docItem = new PlmDocumentItems();
+                            $docItem->setAttributes([
+                                'document_id' => $document["id"],
+                                'processing_time_id' => $processing->id ?? "",
+                                'equipment_group_id' => $documentItem['equipmentGroup']['value'] ?? "",
+                            ]);
+                            if (!$docItem->save()){
+                                $response = [
+                                    'status' => false,
+                                    'errors' => $doc->getErrors(),
+                                    'message' => Yii::t('app','Document not saved'),
+                                ];
+                            }else{
+                                $documentItem["id"] = $docItem->id;
+                            }
+                        }
+                    }
+                    $plmStop = new PlmStops();
+                }
+
+                $plmStop->setAttributes($stop);
+                $plmStop->document_item_id = $documentItem["id"] ?? "";
+                $plmStop->stopping_type = PlmStops::getStoppingType($post["type"]);
+                $plmStop->status_id = BaseModel::STATUS_ACTIVE;
+                if(!$plmStop->save()){
+                    $response = [
+                        'status' => false,
+                        'errors' => $plmStop->getErrors(),
+                        'message' => Yii::t('app','Stops data not saved'),
+                    ];
+                }
+            }else{
+                $response = [
+                    'status' => false,
+                    'message' => Yii::t('app','Data empty'),
+                ];
+            }
+
+            if($response['status']){
+                $response["stop_id"] = $plmStop->id;
+                $response["document_id"] = $document["id"] ?? "";
+                $response["format_begin_date"] = $plmStop->begin_date ? date('d.m.Y H:i:s', strtotime($plmStop->begin_date)) : "";
+                $response["format_end_time"] = $plmStop->end_time ? date('d.m.Y H:i:s', strtotime($plmStop->end_time)) : "";
+                $transaction->commit();
+            }else{
+                $transaction->rollBack();
+            }
+        } catch(\Exception $e){
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        return $response;
+    }
+
+    /**
+     * @param $post
+     * @return array
+     */
+    public static function deleteStops($post):array
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app','Success'),
+        ];
+        try{
+            if (!empty($post)){
+                $stop = PlmStops::findOne(["id" => $post["id"]]);
+                if(!empty($stop)){
+                    $stop->status_id = BaseModel::STATUS_INACTIVE;
+                    if(!$stop->save()){
+                        $response = [
+                            'status' => false,
+                            'errors' => $stop->getErrors(),
+                            'message' => Yii::t('app','Stop data not saved'),
+                        ];
+                    }
+                }else{
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app','Stop data not found'),
+                    ];
+                }
+            }else{
+                $response = [
+                    'status' => false,
+                    'message' => Yii::t('app','Data empty'),
+                ];
+            }
+            if($response['status']){
+                $transaction->commit();
+            }else{
+                $transaction->rollBack();
+            }
+        } catch(\Exception $e){
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        return  $response;
     }
 }
