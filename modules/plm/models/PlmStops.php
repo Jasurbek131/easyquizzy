@@ -48,6 +48,7 @@ class PlmStops extends BaseModel
             [['bypass'], 'string', 'max' => 255],
             [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reasons::class, 'targetAttribute' => ['reason_id' => 'id']],
             [['document_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['document_item_id' => 'id']],
+            [["document_item_id"], 'required']
         ];
     }
 
@@ -77,7 +78,7 @@ class PlmStops extends BaseModel
      */
     public function getReasons()
     {
-        return $this->hasMany(Reasons::class, ['reason_id' => 'id']);
+        return $this->hasOne(Reasons::class, ['id' => 'reason_id']);
     }
 
     /**

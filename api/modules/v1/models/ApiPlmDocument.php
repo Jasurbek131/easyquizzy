@@ -18,6 +18,7 @@ use app\modules\plm\models\PlmSectorList;
 use app\modules\plm\models\PlmStops;
 use app\modules\references\models\Defects;
 use app\modules\references\models\EquipmentGroup;
+use app\widgets\Language;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -255,7 +256,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                 }
             }
 
-            if ($response['status']){
+            if ($response['status']) {
                 $response["doc_item_id"] = $docItem->id ?? "";
                 $response["doc_id"] = $doc->id ?? "";
                 $transaction->commit();
@@ -359,7 +360,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             foreach ($products as $product) {
                                 /** REPAIRED(DEFECTS) start **/
                                 $repaired = $product['repaired'] ?? [];
-                                if($repaired){
+                                if ($repaired) {
                                     $plmNotifications = new PlmNotificationsList();
                                     $plmNotifications->setAttributes([
                                         'plm_doc_item_id' => $docItem->id,
@@ -385,7 +386,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                                 'defect_count' => $repair['count'],
                                                 'status_id' => BaseModel::STATUS_ACTIVE,
                                             ]);
-                                            if(!$plmNotificationRelDefects->save()){
+                                            if (!$plmNotificationRelDefects->save()) {
                                                 $response = [
                                                     'status' => false,
                                                     'line' => __LINE__,
@@ -402,7 +403,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
 
                                 /** INVALID(DEFECTS) start **/
                                 $scrapped = $product['scrapped'] ?? [];
-                                if($scrapped){
+                                if ($scrapped) {
                                     $plmNotifications = new PlmNotificationsList();
                                     $plmNotifications->setAttributes([
                                         'plm_doc_item_id' => $docItem->id,
@@ -428,7 +429,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                                 'defect_count' => $scrap['count'],
                                                 'status_id' => BaseModel::STATUS_ACTIVE,
                                             ]);
-                                            if(!$plmNotificationRelDefects->save()){
+                                            if (!$plmNotificationRelDefects->save()) {
                                                 $response = [
                                                     'status' => false,
                                                     'line' => __LINE__,
@@ -523,13 +524,13 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
             'status' => true,
-            'message' => Yii::t('app','Deleted'),
+            'message' => Yii::t('app', 'Deleted'),
         ];
-        try{
-            if (!empty($post["plm_document_items"]) && !empty($post["plm_document_items"]["id"])){
+        try {
+            if (!empty($post["plm_document_items"]) && !empty($post["plm_document_items"]["id"])) {
 
                 $docItem = PlmDocumentItems::findOne(["id" => $post["plm_document_items"]["id"]]);
-                if (!empty($docItem)){
+                if (!empty($docItem)) {
                     PlmDocItemDefects::deleteAll(["doc_item_id" => $docItem->id]);
                     PlmDocItemEquipments::deleteAll(["document_item_id" => $docItem->id]);
                     PlmDocItemProducts::deleteAll(["document_item_id" => $docItem->id]);
@@ -544,7 +545,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                         $response = [
                             'status' => false,
                             'errors' => $docItem->getErrors(),
-                            'message' => Yii::t('app','Doc item saved'),
+                            'message' => Yii::t('app', 'Doc item saved'),
                         ];
 
                     if (!empty($docItem->planned_stop_id))
@@ -559,17 +560,17 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                     if ($docItem->delete() == false)
                         $response = [
                             'status' => false,
-                            'message' => Yii::t('app','Not deleted'),
+                            'message' => Yii::t('app', 'Not deleted'),
                         ];
                 }
             }
 
-            if($response['status'])
+            if ($response['status'])
                 $transaction->commit();
             else
                 $transaction->rollBack();
 
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             $transaction->rollBack();
             $response = [
                 'status' => false,
@@ -586,7 +587,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
     public static function getDocumentElements($id): array
     {
         $language = Yii::$app->language;
-        $data =  PlmDocuments::find()
+        $data = PlmDocuments::find()
             ->select([
                 'id', 'doc_number', 'reg_date', 'hr_department_id', 'add_info', 'shift_id', 'organisation_id'
             ])->with([
@@ -610,50 +611,57 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                     'p.target_qty',
                                     'p.document_item_id',
                                 ])
-                                ->with([
-                                    'repaired' => function ($r) use ($language) {
-                                        $r->from(['r' => 'plm_doc_item_defects'])->select([
-                                            'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
-                                        ])->leftJoin('defects d', 'r.defect_id = d.id')
-                                            ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
-                                    },
-                                    'scrapped' => function ($r) use ($language) {
-                                        $r->from(['s' => 'plm_doc_item_defects'])->select([
-                                            's.defect_id as value', "d.name_{$language} as label", 's.qty as count', 's.doc_item_product_id'
-                                        ])->leftJoin('defects d', 's.defect_id = d.id')
-                                            ->where(['s.type' => \app\models\BaseModel::DEFECT_SCRAPPED]);
-                                    },
-                                ]);
+                                    ->with([
+                                        'repaired' => function ($r) use ($language) {
+                                            $r->from(['r' => 'plm_doc_item_defects'])->select([
+                                                'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
+                                            ])->leftJoin('defects d', 'r.defect_id = d.id')
+                                                ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
+                                        },
+                                        'scrapped' => function ($r) use ($language) {
+                                            $r->from(['s' => 'plm_doc_item_defects'])->select([
+                                                's.defect_id as value', "d.name_{$language} as label", 's.qty as count', 's.doc_item_product_id'
+                                            ])->leftJoin('defects d', 's.defect_id = d.id')
+                                                ->where(['s.type' => \app\models\BaseModel::DEFECT_SCRAPPED]);
+                                        },
+                                    ]);
                             },
-                            'planned_stops' => function ($e) {
-                                $e->from(['ps1' => 'plm_stops'])->select([
-                                    'ps1.id',
-                                    'ps1.begin_date',
-                                    "to_char(ps1.begin_date, 'DD.MM.YYYY HH24:MI:SS') as format_begin_date",
-                                    "to_char(ps1.end_time, 'DD.MM.YYYY HH24:MI:SS') as format_end_time",
-                                    'ps1.end_time',
-                                    'ps1.add_info',
-                                    'ps1.reason_id',
-                                    "ps1.document_item_id"
-                                ])
-                                ->where([
-                                    'ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP,
-                                    'ps1.status_id' => BaseModel::STATUS_ACTIVE,
-                                ]);
+                            'planned_stops' => function ($e) use ($language) {
+                                $e->from(['ps1' => 'plm_stops'])
+                                    ->select([
+                                        'ps1.id',
+                                        'ps1.begin_date',
+                                        "to_char(ps1.begin_date, 'DD.MM.YYYY HH24:MI:SS') as format_begin_date",
+                                        "to_char(ps1.end_time, 'DD.MM.YYYY HH24:MI:SS') as format_end_time",
+                                        'ps1.end_time',
+                                        'ps1.add_info',
+                                        'ps1.reason_id',
+                                        "ps1.document_item_id",
+                                        "r.name_{$language} as reason_name",
+                                    ])
+                                    ->leftJoin(["r" => "reasons"], "ps1.reason_id = r.id")
+                                    ->where([
+                                        'ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP,
+                                        'ps1.status_id' => BaseModel::STATUS_ACTIVE,
+                                    ]);
                             },
-                            'unplanned_stops' => function ($e) {
-                                $e->from(['ps2' => 'plm_stops'])->select([
-                                    'ps2.id',
-                                    'ps2.begin_date',
-                                    'ps2.end_time',
-                                    'ps2.add_info',
-                                    'ps2.reason_id',
-                                    'ps2.bypass',
-                                    "ps2.document_item_id"
-                                ])->where([
-                                    'ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP,
-                                    'ps2.status_id' => BaseModel::STATUS_ACTIVE,
-                                ]);
+                            'unplanned_stops' => function ($e) use ($language){
+                                $e->from(['ps2' => 'plm_stops'])
+                                    ->select([
+                                        'ps2.id',
+                                        'ps2.begin_date',
+                                        'ps2.end_time',
+                                        'ps2.add_info',
+                                        'ps2.reason_id',
+                                        'ps2.bypass',
+                                        "ps2.document_item_id",
+                                        "r.name_{$language} as reason_name",
+                                    ])
+                                    ->leftJoin(["r" => "reasons"], "ps2.reason_id = r.id")
+                                    ->where([
+                                        'ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP,
+                                        'ps2.status_id' => BaseModel::STATUS_ACTIVE,
+                                    ]);
                             },
                             'equipmentGroup' => function ($eg) {
                                 $eg->from(['eg' => 'equipment_group'])->select(['eg.id', 'eg.id as value'])
@@ -715,13 +723,13 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             ->limit(1)
             ->one();
 
-        if ($data && $data["plm_document_items"]){
-            foreach ($data["plm_document_items"] as $key =>  $item){
-                $data["plm_document_items"][$key]["equipmentGroup"] = EquipmentGroup::getProductList([$item["equipmentGroup"]],$item["equipmentGroup"], 0);
+        if ($data && $data["plm_document_items"]) {
+            foreach ($data["plm_document_items"] as $key => $item) {
+                $data["plm_document_items"][$key]["equipmentGroup"] = EquipmentGroup::getProductList([$item["equipmentGroup"]], $item["equipmentGroup"], 0);
                 unset($data["plm_document_items"][$key]["equipmentGroup"]["cycles"]);
             }
         }
-        return  $data ?? [];
+        return $data ?? [];
     }
 
     /**
@@ -799,24 +807,24 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
      * @param $post
      * @return array
      */
-    public static function saveStops($post):array 
+    public static function saveStops($post): array
     {
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
             'status' => true,
-            'message' => Yii::t('app','Success'),
+            'message' => Yii::t('app', 'Success'),
         ];
-        try{
+        try {
             $stop = $post["stops"];
-            if(!empty($stop)){
-                if ($stop["id"]){
-                    $plmStop = PlmStops::findOne(["id" => $stop["id"]]);
-                }else{
-                    $documentItem = $post["plm_document_items"];
-                    $document = $post["plm_document"];
+            $documentItem = $post["plm_document_items"];
+            $document = $post["plm_document"];
 
-                    if (!$documentItem["id"]){
-                        if (!$document["id"]){
+            if (!empty($stop)) {
+                if ($stop["id"]) {
+                    $plmStop = PlmStops::findOne(["id" => $stop["id"]]);
+                } else {
+                    if (!$documentItem["id"]) {
+                        if (!$document["id"]) {
                             $doc = new PlmDocuments();
                             $doc->setAttributes([
                                 'reg_date' => date("Y-m-d", strtotime($document['reg_date'])),
@@ -826,31 +834,31 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                 'add_info' => $document['add_info'],
                                 'status_id' => BaseModel::STATUS_ACTIVE
                             ]);
-                            if (!$doc->save()){
+                            if (!$doc->save()) {
                                 $response = [
                                     'status' => false,
                                     'errors' => $doc->getErrors(),
-                                    'message' => Yii::t('app','Document not saved'),
+                                    'message' => Yii::t('app', 'Document not saved'),
                                 ];
-                            }else{
+                            } else {
                                 $document["id"] = $doc->id;
                             }
                         }
 
-                        if ($response["status"]){
+                        if ($response["status"]) {
                             $docItem = new PlmDocumentItems();
                             $docItem->setAttributes([
                                 'document_id' => $document["id"],
                                 'processing_time_id' => $processing->id ?? "",
                                 'equipment_group_id' => $documentItem['equipmentGroup']['value'] ?? "",
                             ]);
-                            if (!$docItem->save()){
+                            if (!$docItem->save()) {
                                 $response = [
                                     'status' => false,
                                     'errors' => $doc->getErrors(),
-                                    'message' => Yii::t('app','Document not saved'),
+                                    'message' => Yii::t('app', 'Document not saved'),
                                 ];
-                            }else{
+                            } else {
                                 $documentItem["id"] = $docItem->id;
                             }
                         }
@@ -862,30 +870,31 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                 $plmStop->document_item_id = $documentItem["id"] ?? "";
                 $plmStop->stopping_type = PlmStops::getStoppingType($post["type"]);
                 $plmStop->status_id = BaseModel::STATUS_ACTIVE;
-                if(!$plmStop->save()){
+                if (!$plmStop->save()) {
                     $response = [
                         'status' => false,
                         'errors' => $plmStop->getErrors(),
-                        'message' => Yii::t('app','Stops data not saved'),
+                        'message' => Yii::t('app', 'Stops data not saved'),
                     ];
                 }
-            }else{
+            } else {
                 $response = [
                     'status' => false,
-                    'message' => Yii::t('app','Data empty'),
+                    'message' => Yii::t('app', 'Data empty'),
                 ];
             }
-
-            if($response['status']){
+            if ($response['status']) {
                 $response["stop_id"] = $plmStop->id;
+                $response["reason_name"] = $plmStop->reasons[sprintf("name_%s", Yii::$app->language)];
                 $response["document_id"] = $document["id"] ?? "";
+                $response["document_item_id"] = $documentItem["id"] ?? "";
                 $response["format_begin_date"] = $plmStop->begin_date ? date('d.m.Y H:i:s', strtotime($plmStop->begin_date)) : "";
                 $response["format_end_time"] = $plmStop->end_time ? date('d.m.Y H:i:s', strtotime($plmStop->end_time)) : "";
                 $transaction->commit();
-            }else{
+            } else {
                 $transaction->rollBack();
             }
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             $transaction->rollBack();
             $response = [
                 'status' => false,
@@ -899,49 +908,49 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
      * @param $post
      * @return array
      */
-    public static function deleteStops($post):array
+    public static function deleteStops($post): array
     {
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
             'status' => true,
-            'message' => Yii::t('app','Success'),
+            'message' => Yii::t('app', 'Success'),
         ];
-        try{
-            if (!empty($post)){
+        try {
+            if (!empty($post)) {
                 $stop = PlmStops::findOne(["id" => $post["id"]]);
-                if(!empty($stop)){
+                if (!empty($stop)) {
                     $stop->status_id = BaseModel::STATUS_INACTIVE;
-                    if(!$stop->save()){
+                    if (!$stop->save()) {
                         $response = [
                             'status' => false,
                             'errors' => $stop->getErrors(),
-                            'message' => Yii::t('app','Stop data not saved'),
+                            'message' => Yii::t('app', 'Stop data not saved'),
                         ];
                     }
-                }else{
+                } else {
                     $response = [
                         'status' => false,
-                        'message' => Yii::t('app','Stop data not found'),
+                        'message' => Yii::t('app', 'Stop data not found'),
                     ];
                 }
-            }else{
+            } else {
                 $response = [
                     'status' => false,
-                    'message' => Yii::t('app','Data empty'),
+                    'message' => Yii::t('app', 'Data empty'),
                 ];
             }
-            if($response['status']){
+            if ($response['status']) {
                 $transaction->commit();
-            }else{
+            } else {
                 $transaction->rollBack();
             }
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             $transaction->rollBack();
             $response = [
                 'status' => false,
                 'message' => $e->getMessage(),
             ];
         }
-        return  $response;
+        return $response;
     }
 }
