@@ -711,7 +711,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             ->asArray()
             ->limit(1)
             ->one();
-\yii\helpers\VarDumper::dump($data,10,true);die;
+
         if ($data && $data["plm_document_items"]) {
             foreach ($data["plm_document_items"] as $key => $item) {
                 $data["plm_document_items"][$key]["equipmentGroup"] = EquipmentGroup::getProductList([$item["equipmentGroup"]], $item["equipmentGroup"], 0);
