@@ -2,9 +2,9 @@
 
 namespace app\modules\plm\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\plm\models\PlmSectorRelHrDepartment;
 
 /**
  * PlmSectorRelHrDepartmentSearch represents the model behind the search form of `app\modules\plm\models\PlmSectorRelHrDepartment`.
@@ -17,7 +17,8 @@ class PlmSectorRelHrDepartmentSearch extends PlmSectorRelHrDepartment
     public function rules()
     {
         return [
-            [['id', 'hr_department_id', 'plm_sector_list_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['id', 'plm_sector_list_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['category_id', 'hr_department_id'], 'safe']
         ];
     }
 
@@ -26,7 +27,6 @@ class PlmSectorRelHrDepartmentSearch extends PlmSectorRelHrDepartment
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -39,9 +39,19 @@ class PlmSectorRelHrDepartmentSearch extends PlmSectorRelHrDepartment
      */
     public function search($params)
     {
-        $query = PlmSectorRelHrDepartment::find();
-
-        // add conditions that should always apply here
+        $query = PlmSectorRelHrDepartment::find()
+            ->alias("psrhd")
+            ->select([
+                "MAX(psrhd.hr_department_id) as id",
+                "MAX(psrhd.hr_department_id) as hr_department_id",
+                "psrhd.status_id",
+            ])
+            ->joinWith("hrDepartments hd")
+            ->joinWith("category as c")
+            ->groupBy([
+                "psrhd.hr_department_id",
+                "psrhd.status_id",
+            ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -50,23 +60,10 @@ class PlmSectorRelHrDepartmentSearch extends PlmSectorRelHrDepartment
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'hr_department_id' => $this->hr_department_id,
-            'plm_sector_list_id' => $this->plm_sector_list_id,
-            'status_id' => $this->status_id,
-            'created_by' => $this->created_by,
-            'created_at' => $this->created_at,
-            'updated_by' => $this->updated_by,
-            'updated_at' => $this->updated_at,
-        ]);
-
+        $query->andFilterWhere(['ilike', "hd.name" , $this->hr_department_id])
+            ->andFilterWhere(['ilike', sprintf("c.name_%s", Yii::$app->language), $this->category_id]);
         return $dataProvider;
     }
 }

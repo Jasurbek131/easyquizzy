@@ -41,7 +41,7 @@ class Categories extends BaseModel
         return [
             [['type', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['type', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['name_uz', 'name_ru'], 'string', 'max' => 255],
+            [['name_uz', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
     }
 
@@ -66,15 +66,25 @@ class Categories extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getReasonss()
+    public function getReasons()
     {
-        return $this->hasMany(Reasons::className(), ['category_id' => 'id']);
+        return $this->hasMany(Reasons::class, ['category_id' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getHrDepartment()
     {
         return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
-    public static function getCategoryTypeList($key = null){
+
+    /**
+     * @param null $key
+     * @return array|mixed
+     */
+    public static function getCategoryTypeList($key = null):array
+    {
         $result = [
             self::PLANNED_TYPE => Yii::t('app','Planned Type'),
             self::UNPLANNED_TYPE => Yii::t('app','Unplanned Type'),
@@ -84,7 +94,11 @@ class Categories extends BaseModel
         }
         return $result;
     }
-    public static function  getList()
+
+    /**
+     * @return array
+     */
+    public static function  getList():array
     {
         $query = self::find()->select(['id','name_uz as name'])->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])->asArray()->all();
         if(!empty($query)){

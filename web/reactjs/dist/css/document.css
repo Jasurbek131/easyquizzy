@@ -121,7 +121,6 @@ textarea.form-control{
 .scrapped,
 .unplanned_stopped{
     background-color: #00ffff2e;
-    padding: 4px!important;
 }
 .control-label{
     font-weight: bold!important;
@@ -134,12 +133,6 @@ textarea.form-control{
 .react-datepicker{
     zoom: 0.7;
 }
-.col-lg-5{
-    padding: 0!important;
-}
-.col-lg-2{
-    padding: 1px;
-}
 .border-block .react-datepicker__day-name,
 .border-block .react-datepicker__day,
 .border-block .react-datepicker__time-name{
@@ -149,18 +142,27 @@ textarea.form-control{
 .success-block{
     background: #ecf5ec!important;
 }
-.col-lg-1{
-    padding: 1px!important;
-}
 .product{
     border: 2px solid #dedede;
-    padding: 2px!important;
-    margin: 2px!important;
     border-radius: 4px;
     position: relative;
+    margin: 5px 0px;
 }
 .product .button-absolute{
     position: absolute;
-    right: -3px;
-    top: -4px;
+    right: -10px;
+    top: -5px;
+}
+.status-block{
+    position:relative;
+    width: 100%!important;
+}
+.status{
+    position: absolute;
+    right: 0!important;
+    transform: translate(40%, -40%);
+    font-size: 16px;
+}
+.fa-times-circle{
+    color: red!important;
 }

@@ -146,6 +146,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             'document_id' => $doc->id,
                             'processing_time_id' => $processing->id ?? "",
                             'equipment_group_id' => $item['equipmentGroup']['value'] ?? "",
+                            'lifecycle' => $item['lifecycle'],
+                            'bypass' => $item['bypass'],
+                            'target_qty' => $item['target_qty'],
                         ]);
                         if (!$docItem->save()) {
                             $response = [
@@ -168,9 +171,6 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                     'product_lifecycle_id' => $product['product_lifecycle_id'] ?? "",
                                     'qty' => $product['qty'],
                                     'fact_qty' => $product['fact_qty'],
-                                    'lifecycle' => $product['lifecycle'],
-                                    'bypass' => $product['bypass'],
-                                    'target_qty' => $product['target_qty'],
                                 ]);
                                 if (!$newProductItem->save()) {
                                     $response = [
@@ -598,9 +598,6 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                     'p.product_id as value',
                                     'p.qty',
                                     'p.fact_qty',
-                                    'p.lifecycle',
-                                    'p.bypass',
-                                    'p.target_qty',
                                     'p.document_item_id',
                                 ])
                                     ->with([
@@ -714,10 +711,12 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             ->asArray()
             ->limit(1)
             ->one();
-
         if ($data && $data["plm_document_items"]) {
-            foreach ($data["plm_document_items"] as $key => $item) {
-                $data["plm_document_items"][$key]["equipmentGroup"] = EquipmentGroup::getProductList([$item["equipmentGroup"]], $item["equipmentGroup"], 0);
+            foreach ($data["plm_document_items"] as $key => $item) {;
+                $data["plm_document_items"][$key]["equipmentGroup"] = is_array($item["equipmentGroup"]) && count($item["equipmentGroup"]) > 0 ?
+                    EquipmentGroup::getProductList([$item["equipmentGroup"]], $item["equipmentGroup"], 0) : [
+                        "product_list" => []
+                    ];
                 unset($data["plm_document_items"][$key]["equipmentGroup"]["cycles"]);
             }
         }
