@@ -28,8 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
            },
            'columns' => [
                ['class' => 'yii\grid\SerialColumn'],
-
-//            'id',
                [
                    'attribute' => 'department',
                    'label' => Yii::t("app","Hr Department"),
@@ -45,101 +43,31 @@ $this->params['breadcrumbs'][] = $this->title;
                    }
                ],
                [
-                   'attribute' => 'product',
-                   'label' => Yii::t("app","Products"),
-                   'value' => function($model){
-                       return $model['product'];
-                   }
-               ],
-               [
                    'attribute' => 'equipment',
                    'label' => Yii::t("app","Equipments"),
                    'value' => function($model){
                        return $model['equipment'];
                    }
                ],
-               /*[
-                   'attribute' => 'begin_time',
-                   'label' => Yii::t("app","Begin Time"),
-                   'value' => function($model){
-                       return $model['begin_time'];
-                   },
-                   'visible' => P::can('plm-notifications-list/working-time'),
-               ],
-               [
-                   'attribute' => 'end_time',
-                   'label' => Yii::t("app","End Time"),
-                   'value' => function($model){
-                       return $model['end_time'];
-                   },
-                   'visible' => P::can('plm-notifications-list/working-time'),
-               ],
-               [
-                   'attribute' => 'defect_id',
-                   'label' => Yii::t("app","Defects"),
-                   'value' => function($model){
-                       return $model['defect'];
-                   },
-                   'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
-
-               ],
-               [
-                   'attribute' => 'defect_count',
-                   'label' => Yii::t("app","Defects Count"),
-                   'value' => function($model){
-                       return $model['defect_count'];
-                   },
-                   'visible' => P::can('plm-notifications-list/repaired') || P::can('plm-notifications-list/invalid'),
-
-               ],
-               [
-                   'attribute' => 'reason_id',
-                   'label' => Yii::t("app","Reasons"),
-                   'value' => function($model){
-                       return $model['reason'];
-                   },
-                   'visible' => P::can('plm-notifications-list/planned') || P::can('plm-notifications-list/unplanned'),
-               ],*/
                [
                    'attribute' => 'status_id',
                    'format' => 'raw',
                    'value' => function($model) {
                        return BaseModel::getStatusList($model['status_id']);
                    },
-                   'filter' => BaseModel::getStatusList()
+                   'headerOptions' => [
+                           'style' => 'width:15%;'
+                   ],
+                   'filter' => BaseModel::getStatusList(),
                ],
-               //'created_by',
-               //'created_at',
-               //'updated_by',
-               //'updated_at',
-              /* [
-                   'attribute' => 'add_info',
-                   'label' => Yii::t("app","Add Info"),
-                   'value' => function($model){
-                       return $model['add_info'];
-                   }
-               ],*/
-
                [
                    'class' => 'yii\grid\ActionColumn',
                    'template' => '{view}',
                    'contentOptions' => ['class' => 'no-print','style' => 'width:50px;'],
                    'visibleButtons' => [
                        'view' => Yii::$app->user->can('plm-notifications-list/view'),
-                       /*'update' => function($model) {
-                           return Yii::$app->user->can('plm-notifications-list/update') && $model->status_id < $model::STATUS_SAVED;
-                       },
-                       'delete' => function($model) {
-                           return Yii::$app->user->can('plm-notifications-list/delete') && $model->status_id < $model::STATUS_SAVED;
-                       }*/
                    ],
                    'buttons' => [
-                       /*'update' => function ($url, $model) {
-                           return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
-                               'title' => Yii::t('app', 'Update'),
-                               'class'=>"btn btn-xs btn-success"
-                           ]);
-                       },*/
                        'view' => function ($url, $model) {
                            return Html::a('<span class="fa fa-eye"></span>', $url, [
                                'title' => Yii::t('app', 'View'),
@@ -147,17 +75,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                'data-form-id' => $model['id'],
                            ]);
                        },
-                       /*'delete' => function ($url, $model) {
-                           return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
-                               'title' => Yii::t('app', 'Delete'),
-                               'class' => "btn btn-xs btn-danger",
-                               'data' => [
-                                   'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                                   'method' => 'post',
-                               ],
-                           ]);
-                       },*/
-
                    ],
                ],
            ],
