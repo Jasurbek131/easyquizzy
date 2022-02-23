@@ -695,6 +695,16 @@ class Form extends React.Component {
                         {
                             plm_document_items?.length > 0 && plm_document_items.map((item, key) => {
                                 equipmentGroupValue = equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id);
+                                item.products =  item?.products?.length > 0 ? item?.products : [{
+                                    label: "",
+                                    value: "",
+                                    qty: "",
+                                    fact_qty: "",
+                                    product_id: "",
+                                    product_lifecycle_id: "",
+                                    repaired: [],
+                                    scrapped: [],
+                                }];
                                 return (
                                     <div className={item.is_change ? "border-block" : "border-block success-block"}
                                          key={key}>
@@ -719,7 +729,7 @@ class Form extends React.Component {
                                             {item.is_change ? (
                                                 <button onClick={this.onSave.bind(this, key)}
                                                         className={"btn btn-xs btn-success"}>
-                                                    <i className={"fa fa-check"}/>
+                                                    <i className={"fab fa-telegram"}/>
                                                 </button>
                                             ) : (<span></span>)}
 
@@ -761,6 +771,9 @@ class Form extends React.Component {
                                             <div className={'col-lg-2'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row time'}>
+                                                        <div className={"status-block"}>
+                                                            <i className={"fa fa-times-circle status"}></i> {/*fa-check-circle*/}
+                                                        </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Boshlanishi</label>
                                                             <DatePicker locale={ru}
@@ -830,7 +843,7 @@ class Form extends React.Component {
                                                     </div>
                                                 </div>
                                                 {
-                                                    item?.products?.length > 0 && item.products.map((product, prKey) => {
+                                                    item.products.map((product, prKey) => {
                                                         return (
                                                             <div className={'row product'}
                                                                  key={key + "_" + prKey}>
@@ -936,6 +949,9 @@ class Form extends React.Component {
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row planned_stopped'}>
+                                                        <div className={"status-block"}>
+                                                            <i className={"fa fa-times-circle status"}></i> {/*fa-check-circle*/}
+                                                        </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label middle-size"}>Rejali to'xtalishlar</label>
                                                         </div>
@@ -956,6 +972,9 @@ class Form extends React.Component {
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row unplanned_stopped'}>
+                                                        <div className={"status-block"}>
+                                                            <i className={"fa fa-times-circle status"}></i> {/*fa-check-circle*/}
+                                                        </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label middle-size"}>Rejasiz to'xtalishlar</label>
                                                         </div>

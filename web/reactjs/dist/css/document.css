@@ -121,7 +121,6 @@ textarea.form-control{
 .scrapped,
 .unplanned_stopped{
     background-color: #00ffff2e;
-    padding: 4px!important;
 }
 .control-label{
     font-weight: bold!important;
@@ -153,4 +152,17 @@ textarea.form-control{
     position: absolute;
     right: -10px;
     top: -5px;
+}
+.status-block{
+    position:relative;
+    width: 100%!important;
+}
+.status{
+    position: absolute;
+    right: 0!important;
+    transform: translate(40%, -40%);
+    font-size: 16px;
+}
+.fa-times-circle{
+    color: red!important;
 }

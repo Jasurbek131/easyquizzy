@@ -711,10 +711,12 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             ->asArray()
             ->limit(1)
             ->one();
-
         if ($data && $data["plm_document_items"]) {
-            foreach ($data["plm_document_items"] as $key => $item) {
-                $data["plm_document_items"][$key]["equipmentGroup"] = EquipmentGroup::getProductList([$item["equipmentGroup"]], $item["equipmentGroup"], 0);
+            foreach ($data["plm_document_items"] as $key => $item) {;
+                $data["plm_document_items"][$key]["equipmentGroup"] = is_array($item["equipmentGroup"]) && count($item["equipmentGroup"]) > 0 ?
+                    EquipmentGroup::getProductList([$item["equipmentGroup"]], $item["equipmentGroup"], 0) : [
+                        "product_list" => []
+                    ];
                 unset($data["plm_document_items"][$key]["equipmentGroup"]["cycles"]);
             }
         }
