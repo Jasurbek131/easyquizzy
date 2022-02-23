@@ -125,7 +125,6 @@ class Form extends React.Component {
 
     onPlanSummary = (item) => {
         let diff = this.onReturnMin(item?.end_work, item?.start_work);
-        let { equipmentGroupList } = this.state;
         let planned = this.stoppedSummary(item?.planned_stops??[]);
         // let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
         let lifecycle = item ? (item.lifecycle ? item.lifecycle : "") : "";
@@ -606,12 +605,15 @@ class Form extends React.Component {
 
         let equipmentGroupValue = [];
         let reasonList = [];
-        let  modalData = plm_document_items ? plm_document_items[temporarily.key]?.[temporarily.type] ?? [] : [];
+        let  modalData = [];
 
-        if (temporarily?.type === "planned_stops")
+        if (temporarily?.type === "planned_stops"){
             reasonList = reasonPlannedList;
-        else if (temporarily?.type === "unplanned_stops")
+            modalData =  plm_document_items ? plm_document_items[temporarily.key]?.[temporarily.type] ?? [] : [];
+        } else if (temporarily?.type === "unplanned_stops"){
             reasonList = reasonUnPlannedList;
+            modalData =  plm_document_items ? plm_document_items[temporarily.key]?.[temporarily.type] ?? [] : [];
+        }
 
         return (
             <div>
