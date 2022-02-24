@@ -102,4 +102,17 @@ class Reasons extends BaseModel
             ->asArray()
             ->all();
     }
+    public static function getCategoryList($category_id = null){
+        $query = self::find()
+            ->select([
+                "STRING_AGG(name_uz,', ') AS reasons",
+            ])
+            ->where(['category_id' => $category_id])
+            ->asArray()
+            ->all();
+        if(!empty($query)){
+            return $query;
+        }
+        return $query;
+    }
 }

@@ -9,6 +9,7 @@ use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\plm\models\BaseModel;
 use app\modules\plm\models\PlmNotificationMessage;
 use app\modules\plm\models\PlmSectorRelHrDepartment;
+use app\modules\references\models\Reasons;
 use Faker\Provider\Base;
 use Yii;
 use app\modules\plm\models\PlmNotificationsList;
@@ -153,9 +154,10 @@ class PlmNotificationsListController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionAccepted($id)
+    public function actionAccepted($id,$category_id)
     {
         $model = $this->findModel($id);
+        $reasons = Reasons::getCategoryList($category_id);
         $transaction = Yii::$app->db->beginTransaction();
         $saved = false;
         try {   
@@ -176,7 +178,7 @@ class PlmNotificationsListController extends Controller
             Yii::info('Not saved' . $e, 'save');
             $transaction->rollBack();
         }
-        return $this->redirect(['view', 'id' => $model->id]);
+        return $this->redirect(['view', 'id' => $model->id,'reasons' => $reasons]);
     }
 
 
