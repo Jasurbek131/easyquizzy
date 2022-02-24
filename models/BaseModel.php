@@ -21,6 +21,8 @@ class BaseModel extends ActiveRecord
     const STATUS_ACTIVE             = 1;
     const STATUS_INACTIVE           = 2;
     const STATUS_SAVED              = 3;
+    const STATUS_ACCEPTED           = 4;
+    const STATUS_REJECTED           = 5;
 
 
     // defect type
