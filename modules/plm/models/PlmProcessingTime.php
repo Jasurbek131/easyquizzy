@@ -70,4 +70,8 @@ class PlmProcessingTime extends BaseModel
     {
         return $this->hasMany(PlmDocumentItems::className(), ['processing_time_id' => 'id']);
     }
+
+    public static function saveProcessingTime()
+    {
+    }
 }

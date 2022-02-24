@@ -3,6 +3,7 @@
 namespace app\modules\plm\models;
 
 use app\modules\hr\models\HrEmployeeRelPosition;
+use app\modules\references\models\Categories;
 use app\modules\references\models\Defects;
 use app\modules\references\models\Reasons;
 use Yii;
@@ -57,9 +58,10 @@ class PlmNotificationsList extends BaseModel
             [['plm_doc_item_id', 'defect_id', 'defect_type_id', 'defect_count', 'reason_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['begin_time', 'end_time'], 'safe'],
             [['add_info'], 'string'],
-            [['defect_id'], 'exist', 'skipOnError' => true, 'targetClass' => Defects::className(), 'targetAttribute' => ['defect_id' => 'id']],
-            [['plm_doc_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::className(), 'targetAttribute' => ['plm_doc_item_id' => 'id']],
-            [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reasons::className(), 'targetAttribute' => ['reason_id' => 'id']],
+            [['defect_id'], 'exist', 'skipOnError' => true, 'targetClass' => Defects::class, 'targetAttribute' => ['defect_id' => 'id']],
+            [['plm_doc_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['plm_doc_item_id' => 'id']],
+            [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reasons::class, 'targetAttribute' => ['reason_id' => 'id']],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['category_id' => 'id']],
         ];
     }
 
@@ -92,7 +94,7 @@ class PlmNotificationsList extends BaseModel
      */
     public function getDefects()
     {
-        return $this->hasOne(Defects::className(), ['id' => 'defect_id']);
+        return $this->hasOne(Defects::class, ['id' => 'defect_id']);
     }
 
     /**
@@ -100,7 +102,7 @@ class PlmNotificationsList extends BaseModel
      */
     public function getPlmDocumentItems()
     {
-        return $this->hasOne(PlmDocumentItems::className(), ['id' => 'plm_doc_item_id']);
+        return $this->hasOne(PlmDocumentItems::class, ['id' => 'plm_doc_item_id']);
     }
 
     /**
@@ -108,7 +110,15 @@ class PlmNotificationsList extends BaseModel
      */
     public function getReasons()
     {
-        return $this->hasOne(Reasons::className(), ['id' => 'reason_id']);
+        return $this->hasOne(Reasons::class, ['id' => 'reason_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategories()
+    {
+        return $this->hasOne(Categories::class, ['id' => 'category_id']);
     }
 
     /**
@@ -174,5 +184,24 @@ class PlmNotificationsList extends BaseModel
             ->one();
         }
         return $query;
+    }
+
+    public static function formatterNotificationStatus($lists = [])
+    {
+        $result = [
+            Categories::TOKEN_WORKING_TIME => [
+                "status_id" => ""
+            ],
+            Categories::TOKEN_INVALID => [
+                "status_id" => ""
+            ],
+            Categories::TOKEN_REPAIRED => [
+                "status_id" => ""
+            ],
+        ];
+        foreach ($lists as $list){
+
+        }
+        return $result;
     }
 }

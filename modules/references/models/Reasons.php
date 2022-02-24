@@ -42,7 +42,7 @@ class Reasons extends BaseModel
             [['category_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['category_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['name_uz', 'name_ru'], 'string', 'max' => 255],
-            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::className(), 'targetAttribute' => ['category_id' => 'id']],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['category_id' => 'id']],
         ];
     }
 
@@ -69,7 +69,7 @@ class Reasons extends BaseModel
      */
     public function getCategories()
     {
-        return $this->hasOne(Categories::className(), ['id' => 'category_id']);
+        return $this->hasOne(Categories::class, ['id' => 'category_id']);
     }
 
     /**
@@ -77,29 +77,14 @@ class Reasons extends BaseModel
      */
     public function getPlmDocumentItems()
     {
-        return $this->hasMany(PlmDocumentItems::className(), ['reason_id' => 'id']);
-    }
-
-    public function getHrDepartment()
-    {
-        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
+        return $this->hasMany(PlmDocumentItems::class, ['reason_id' => 'id']);
     }
 
     /**
-     * @param null $type
-     * @return array
+     * @return \yii\db\ActiveQuery
      */
-    public static  function getList($type = null):array
+    public function getHrDepartment()
     {
-        $language = Yii::$app->language;
-        return self::find()
-            ->select([
-                'id as value',
-                "name_{$language} as label"
-            ])
-            ->where(['status_id' => BaseModel::STATUS_ACTIVE])
-            ->andFilterWhere(['category_id' => $type])
-            ->asArray()
-            ->all();
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
 }
