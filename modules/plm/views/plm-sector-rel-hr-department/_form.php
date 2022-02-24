@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
     ]) ?>
 
     <?php echo $form->field($model, 'categories')->widget(Select2::class, [
-        'data' => Categories::getList(),
+        'data' => Categories::getList(true),
         'options' => ['placeholder' => Yii::t("app","Select ...")],
         'pluginOptions' => [
             'allowClear' => true,

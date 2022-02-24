@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
  * @property int $id
  * @property string $name_uz
  * @property string $name_ru
+ * @property string $token
  * @property int $type
  * @property int $status_id
  * @property int $created_by
@@ -25,6 +26,11 @@ class Categories extends BaseModel
     const PLANNED_TYPE  = 1; // rejali to'xtalish turi
     const UNPLANNED_TYPE  = 2; // rejasiz to'xtalish turi
 
+    const TOKEN_WORKING_TIME = "WORKING_TIME";
+    const TOKEN_REPAIRED = "REPAIRED";
+    const TOKEN_INVALID = "INVALID";
+    const TOKEN_PLANNED = "PLANNED";
+    const TOKEN_UNPLANNED = "UNPLANNED";
     /**
      * {@inheritdoc}
      */
@@ -43,6 +49,17 @@ class Categories extends BaseModel
             [['type', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['name_uz', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if($this->type == self::PLANNED_TYPE)
+            $this->token = self::TOKEN_PLANNED;
+
+        if($this->type == self::UNPLANNED_TYPE)
+            $this->token = self::TOKEN_UNPLANNED;
+
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -83,7 +100,7 @@ class Categories extends BaseModel
      * @param null $key
      * @return array|mixed
      */
-    public static function getCategoryTypeList($key = null):array
+    public static function getCategoryTypeList($key = null)
     {
         $result = [
             self::PLANNED_TYPE => Yii::t('app','Planned Type'),
@@ -96,14 +113,37 @@ class Categories extends BaseModel
     }
 
     /**
+     * @param bool $isMap
+     * @param null $type
      * @return array
      */
-    public static function  getList():array
+    public static function  getList($isMap = false, $type = null): array
     {
-        $query = self::find()->select(['id','name_uz as name'])->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])->asArray()->all();
-        if(!empty($query)){
+        $language = Yii::$app->language;
+        $query = self::find()
+            ->select([
+                'id',
+                'id as value',
+                "name_{$language} as label",
+                "name_{$language} as name",
+            ])
+            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->andFilterWhere(['type' => $type])
+            ->asArray()->all();
+        if(!empty($query) && $isMap){
             return ArrayHelper::map($query, 'id', 'name');
         }
+        return  $query;
     }
 
+    /**
+     * @param null $token
+     * @return int|null
+     */
+    public static function getIdByToken($token = null){
+        if($token && $result = self::findOne(['token' => $token])){
+            return $result->id ?? null;
+        }
+        return null;
+    }
 }

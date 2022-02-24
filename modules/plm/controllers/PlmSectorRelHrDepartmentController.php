@@ -114,7 +114,9 @@ class PlmSectorRelHrDepartmentController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id)->getCategoriesIdListByDepartment();
+        $model = $this->findModel($id)
+            ->getCategoriesIdListByDepartment();
+
         $model->scenario = PlmSectorRelHrDepartment::SCENARIO_CREATE;
         $request = Yii::$app->request;
         if ($request->isPost) {
@@ -156,26 +158,20 @@ class PlmSectorRelHrDepartmentController extends Controller
      */
     public function actionDelete($id)
     {
-        $transaction = Yii::$app->db->beginTransaction();
-        $isDeleted = false;
-        $model = $this->findModel($id);
+        $isDeleted = true;
         try {
-            if($model->delete()){
-                $isDeleted = true;
-            }
-            if($isDeleted){
-                $transaction->commit();
-            }else{
-                $transaction->rollBack();
-            }
+            if ($id)
+                PlmSectorRelHrDepartment::deleteAll(["hr_department_id" => $id]);
+
         }catch (\Exception $e){
             Yii::info('Not saved' . $e, 'save');
+            $isDeleted = false;
         }
         if(Yii::$app->request->isAjax){
             Yii::$app->response->format = Response::FORMAT_JSON;
             $response = [];
             $response['status'] = 1;
-            $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
+            $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
             if($isDeleted){
                 $response['status'] = 0;
                 $response['message'] = Yii::t('app','Deleted Successfully');
@@ -185,9 +181,6 @@ class PlmSectorRelHrDepartmentController extends Controller
         if($isDeleted){
             Yii::$app->session->setFlash('success',Yii::t('app','Deleted Successfully'));
             return $this->redirect(['index']);
-        }else{
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Ma\'lumotlar yetarli emas!'));
-            return $this->redirect(['view', 'id' => $model->id]);
         }
     }
 

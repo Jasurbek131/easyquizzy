@@ -122,12 +122,9 @@ class DocumentController extends ActiveController
             case "DELETE_DOCUMENT_ITEM":
                 $response = ApiPlmDocument::deleteDocumentItem($post);
                 break;
-            case "SAVE_MODAL":
-                $response = ApiPlmDocument::saveModalData($post);
-                break;
-            case "SAVE_STOPS":
-                $response = ApiPlmDocument::saveStops($post);
-                break;
+//            case "SAVE_MODAL":
+//                $response = ApiPlmDocument::saveModalData($post);
+//                break;
             case "DELETE_STOPS":
                 $response = ApiPlmDocument::deleteStops($post);
                 break;
@@ -156,8 +153,8 @@ class DocumentController extends ActiveController
                     'today' => date('D M j G:i:s T Y'),
                     'yesterday' => date('D M j G:i:s T Y', strtotime("-1 days")),
                     'tomorrow' => date('D M j G:i:s T Y', strtotime("+1 day")),
-                    'reasonPlannedList' => Reasons::getList(Categories::PLANNED_TYPE),
-                    'reasonUnPlannedList' => Reasons::getList(Categories::UNPLANNED_TYPE),
+                    'categoriesPlannedList' => Categories::getList(false, Categories::PLANNED_TYPE),
+                    'categoriesUnPlannedList' => Categories::getList(false,Categories::UNPLANNED_TYPE),
                     'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED),
                     'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED),
                 ];

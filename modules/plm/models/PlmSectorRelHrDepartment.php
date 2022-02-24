@@ -108,7 +108,10 @@ class PlmSectorRelHrDepartment extends BaseModel
         return $this->hasOne(Categories::class, ['id' => 'category_id']);
     }
 
-    public function saveRelHrDepartment()
+    /**
+     * @return array
+     */
+    public function saveRelHrDepartment():array
     {
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
@@ -180,7 +183,7 @@ class PlmSectorRelHrDepartment extends BaseModel
 
         $new = clone $this;
         $new->categories = $data;
-        return $new;
+        return $data;
     }
 
     /**

@@ -111,9 +111,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      */
     public function getPlanned_stops()
     {
-        return $this->hasMany(PlmStops::class, [
-            'document_item_id' => 'id'
-        ]);
+        return $this->hasMany(PlmStops::class, ['document_item_id' => 'id']);
     }
 
     /**
@@ -121,9 +119,7 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      */
     public function getUnplanned_stops()
     {
-        return $this->hasMany(PlmStops::class, [
-            'document_item_id' => 'id'
-        ]);
+        return $this->hasMany(PlmStops::class, ['document_item_id' => 'id']);
     }
 
     /**
@@ -148,5 +144,13 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     public function getEquipments()
     {
         return $this->hasMany(PlmDocItemEquipments::class, ['document_item_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNotifications_status()
+    {
+        return $this->hasMany(PlmNotificationsList::class, ['plm_doc_item_id' => 'id']);
     }
 }
