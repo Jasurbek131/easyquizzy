@@ -45,7 +45,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             if (!empty($document['id']))
                 $doc = PlmDocuments::findOne($document['id']);
             $doc->setAttributes([
-                'reg_date' => date("Y-m-d", strtotime($document['reg_date'])),
+                'reg_date' => date("Y-m-d H:i:s", strtotime($document['reg_date'])),
                 'hr_department_id' => $document['hr_department_id'],
                 'organisation_id' => $document['organisation_id'],
                 'shift_id' => $document['shift_id'],
@@ -619,7 +619,10 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
         $plm_document = PlmDocuments::find()
             ->alias('pd')
             ->select([
-                "pd.*", "sh.name as shift", 'hd.name as department'
+                "pd.*",
+                "to_char(pd.reg_date, 'DD.MM.YYYY HH24:MI:SS') as format_reg_date",
+                "sh.name as shift",
+                'hd.name as department'
             ])->with([
                 'plm_document_items' => function ($q) use ($language) {
                     $q->from(['pdi' => 'plm_document_items'])
