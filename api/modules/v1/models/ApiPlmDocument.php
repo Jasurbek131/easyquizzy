@@ -495,9 +495,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                         'ps1.add_info',
                                         'ps1.category_id',
                                         "ps1.document_item_id",
-                                        "r.name_{$language} as reason_name",
+                                        "c.name_{$language} as category_name",
                                     ])
-                                    ->leftJoin(["r" => "reasons"], "ps1.reason_id = r.id")
+                                    ->leftJoin(["c" => "categories"], "ps1.category_id = c.id")
                                     ->where([
                                         'ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP,
                                         'ps1.status_id' => BaseModel::STATUS_ACTIVE,
@@ -513,9 +513,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                         'ps2.category_id',
                                         'ps2.bypass',
                                         "ps2.document_item_id",
-                                        "r.name_{$language} as reason_name",
+                                        "c.name_{$language} as category_name",
                                     ])
-                                    ->leftJoin(["r" => "reasons"], "ps2.reason_id = r.id")
+                                    ->leftJoin(["c" => "categories"], "ps2.category_id = c.id")
                                     ->where([
                                         'ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP,
                                         'ps2.status_id' => BaseModel::STATUS_ACTIVE,
@@ -605,7 +605,6 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                 $data["plm_document_items"][$key]["notifications_status"] = PlmNotificationsList::formatterNotificationStatus($item["notifications_status"]);
             }
         }
-//        \yii\helpers\VarDumper::dump($data,10,true);die;
         return $data ?? [];
     }
 
