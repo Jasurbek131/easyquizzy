@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                        return BaseModel::getStatusList($model['status_id']);
                    },
                    'headerOptions' => [
-                           'style' => 'width:15%;'
+                           'style' => 'width:10%;'
                    ],
                    'filter' => BaseModel::getStatusList(),
                ],

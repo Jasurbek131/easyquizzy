@@ -4,6 +4,8 @@ namespace app\modules\plm\controllers;
 
 use app\modules\plm\models\BaseModel;
 use app\modules\plm\models\PlmNotificationMessage;
+use app\modules\plm\models\PlmNotificationRelDefect;
+use app\modules\plm\models\PlmNotificationsListRelReason;
 use Yii;
 use app\modules\plm\models\PlmNotificationsList;
 use app\modules\plm\models\PlmNotificationsListSearch;
@@ -54,9 +56,14 @@ class PlmNotificationsListController extends Controller
      */
     public function actionView($id)
     {
+
         $model = PlmNotificationsList::getViews($id);
+        $plmNotRelReasons = PlmNotificationsListRelReason::getReasonList($id);
+        $plmNotRelDefects = PlmNotificationRelDefect::getDefectList($id);
         return $this->render('view', [
             'model' => $model,
+            'plmNotRelReasons' => $plmNotRelReasons,
+            'plmNotRelDefects' => $plmNotRelDefects
         ]);
     }
 
@@ -154,6 +161,39 @@ class PlmNotificationsListController extends Controller
         $response['status'] = false;
         $response['status'] = "Not saved";
         $data = Yii::$app->request->post();
+        $saved = false;
+        if(!empty($data['plm_notification_list_id'])){
+            if($data['form']){
+                $reasons = $data['form'];
+                foreach ($reasons as $reason){
+                    $plmNotificationRelReason = new PlmNotificationsListRelReason();
+                    $plmNotificationRelReason->plm_notification_list_id = $data['plm_notification_list_id'];
+                    $plmNotificationRelReason->reason_id = $reason['value'];
+                    $plmNotificationRelReason->status_id = BaseModel::STATUS_ACTIVE;
+                    if($plmNotificationRelReason->save()){
+                        $saved = true;
+                    }
+                }
+            }else{
+                if(empty($data['empty_reason'])){
+                    $saved = true;
+                }
+            }
+            if($saved){
+                $model = $this->findModel($data['plm_notification_list_id']);
+                if(($model->status_id < BaseModel::STATUS_ACCEPTED) && ($model->status_id != BaseModel::STATUS_INACTIVE)){
+                    $model->status_id = BaseModel::STATUS_ACCEPTED;
+                    if($model->save()){
+                        $saved = true;
+                    }
+                }
+            }
+            if($saved){
+                $response['status'] = true;
+                $response['message'] = Yii::t("app","Saved successfully");
+            }
+        }
+        return $response;
     }
 
 

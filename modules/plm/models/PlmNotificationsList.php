@@ -117,7 +117,9 @@ class PlmNotificationsList extends BaseModel
                     'equipment.equipment',
                     'defect.defect',
                     'defect.count AS defect_count',
-                    'c.id AS category_id'
+                    'c.id AS category_id',
+                    'c.token',
+                    'pnl.add_info'
                 ])
                 ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.category_id = psrd.category_id')
                 ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
@@ -159,8 +161,11 @@ class PlmNotificationsList extends BaseModel
             ->andFilterWhere(['!=','pnl.status_id', BaseModel::STATUS_INACTIVE])
             ->asArray()
             ->one();
+            if($query){
+                return $query;
+            }
         }
-        return $query;
+        return [];
     }
 
     public static function formatterNotificationStatus($lists = [])

@@ -419,7 +419,7 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fa fa-cog"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => P::can("plm-report/document"),
+                            'visible' => P::can("plm-sector-rel-hr-department/index"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'PlmSectorRelHrDepartment'),
