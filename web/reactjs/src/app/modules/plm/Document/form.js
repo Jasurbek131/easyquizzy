@@ -24,7 +24,8 @@ const planned_stops = {
     begin_date: "",
     end_time: "",
     add_info: "",
-    category_id: ""
+    category_id: "",
+    category_name: "",
 };
 const unplanned_stops = {
     id: "",
@@ -32,7 +33,8 @@ const unplanned_stops = {
     end_time: "",
     add_info: "",
     category_id: "",
-    bypass: ""
+    category_name: "",
+    bypass: "",
 };
 
 class Form extends React.Component {
@@ -257,6 +259,9 @@ class Form extends React.Component {
                 temporarily.store[name] = v;
                 if (name === "begin_date") {
                     temporarily.store.end_time = "";
+                }
+                if (name === "category_id") {
+                    temporarily.store.category_name = e?.label ?? "";
                 }
                 this.setState({temporarily: temporarily});
                 break;
@@ -1158,7 +1163,7 @@ class Form extends React.Component {
                                                                 <label className={"control-label"}>Bypass (m)</label>
                                                                 <input
                                                                     onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}
-                                                                    className={"form-control"}t
+                                                                    className={"form-control"}
                                                                     type={"number"}
                                                                     value={temporarily?.store?.bypass} id={"bypass"}/>
                                                             </div>
@@ -1224,9 +1229,9 @@ class Form extends React.Component {
                                                             return (
                                                                 <tr key={index}>
                                                                     <td>{+index + 1}</td>
-                                                                    <td>{item.categories_name}</td>
-                                                                    <td>{item.format_begin_date}</td>
-                                                                    <td>{item.format_end_time}</td>
+                                                                    <td>{item.category_name}</td>
+                                                                    <td>{item.begin_date}</td>
+                                                                    <td>{item.end_time}</td>
                                                                     {temporarily?.type === 'unplanned_stops' ? (
                                                                         <td>{item.bypass}</td>
                                                                     ) : ("")}

@@ -179,7 +179,8 @@ class DocumentController extends ActiveController
      */
     public function actionSearch(): array
     {
-        $dataProvider = ApiPlmDocument::getPlmDocuments([]);
+        $post = Yii::$app->request->post();
+        $dataProvider = ApiPlmDocument::getPlmDocuments($post);
         $response['documents'] = $dataProvider->getModels();
         $response['pagination'] = $dataProvider->getPagination();
         $response['status'] = true;
