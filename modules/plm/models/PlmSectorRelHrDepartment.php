@@ -26,6 +26,14 @@ use yii\helpers\ArrayHelper;
 class PlmSectorRelHrDepartment extends BaseModel
 {
     public $department;
+    public $shift;
+    public $product;
+    public $defect;
+    public $reason;
+    public $equipment;
+    public $reg_date;
+    public $token;
+    public $types;
     /**
      * @var array
      */
