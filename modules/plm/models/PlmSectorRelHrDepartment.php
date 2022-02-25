@@ -183,7 +183,7 @@ class PlmSectorRelHrDepartment extends BaseModel
 
         $new = clone $this;
         $new->categories = $data;
-        return $data;
+        return $new;
     }
 
     /**

@@ -166,6 +166,9 @@ textarea.form-control{
 .fa-times-circle{
     color: red!important;
 }
+.fa-check-circle{
+    color: green!important;
+}
 .sticky-top{
     position: sticky;
     top: 0;

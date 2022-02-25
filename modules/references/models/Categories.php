@@ -28,7 +28,7 @@ class Categories extends BaseModel
 
     const TOKEN_WORKING_TIME = "WORKING_TIME";
     const TOKEN_REPAIRED = "REPAIRED";
-    const TOKEN_INVALID = "INVALID";
+    const TOKEN_SCRAPPED = "SCRAPPED";
     const TOKEN_PLANNED = "PLANNED";
     const TOKEN_UNPLANNED = "UNPLANNED";
     /**

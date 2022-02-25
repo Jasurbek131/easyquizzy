@@ -9,14 +9,23 @@ import uz from "date-fns/locale/uz/index.js";
 import {items} from "../../../actions/elements";
 import {loadingContent, removeElement} from "../../../actions/functions";
 import {Link} from "react-router-dom";
+import {
+    TOKEN_WORKING_TIME,
+    TOKEN_REPAIRED,
+    TOKEN_SCRAPPED,
+    TOKEN_PLANNED,
+    TOKEN_UNPLANNED,
+} from "../../../actions/consts";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
+
 const planned_stops = {
     id: "",
     begin_date: "",
     end_time: "",
     add_info: "",
-    category_id: ""
+    category_id: "",
+    category_name: "",
 };
 const unplanned_stops = {
     id: "",
@@ -24,9 +33,12 @@ const unplanned_stops = {
     end_time: "",
     add_info: "",
     category_id: "",
-    bypass: ""
+    category_name: "",
+    bypass: "",
 };
+
 class Form extends React.Component {
+
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -123,21 +135,29 @@ class Form extends React.Component {
         }
     };
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        window.addEventListener('beforeunload', (ev) =>
+        {
+            ev.preventDefault();
+            return ev.returnValue = 'Are you sure you want to close?';
+        });
+    }
+
     onPlanSummary = (item) => {
         let diff = this.onReturnMin(item?.end_work, item?.start_work);
-        let planned = this.stoppedSummary(item?.planned_stops??[]);
+        let planned = this.stoppedSummary(item?.planned_stops ?? []);
         // let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
         let lifecycle = item ? (item.lifecycle ? item.lifecycle : "") : "";
 
-        if(lifecycle){
+        if (lifecycle) {
             item.target_qty = ((diff - planned) * 60 / (+lifecycle)).toFixed(0); // - unplanned
         }
         return item;
     };
 
-    stoppedSummary = (stops) =>{
+    stoppedSummary = (stops) => {
         let summ = 0;
-        if(stops.length > 0){
+        if (stops.length > 0) {
             stops.forEach((item) => {
                 summ += this.onReturnMin(new Date(item?.end_time), new Date(item?.begin_date));
             });
@@ -206,10 +226,10 @@ class Form extends React.Component {
                 plm_document_items[key][name] = v;
                 plm_document_items[key]['is_change'] = true;
                 if (name === 'equipment_group_id') {
-                    if (+e.equipments_group_type_id === 2 && e.product_list.length > 0){
+                    if (+e.equipments_group_type_id === 2 && e.product_list.length > 0) {
                         plm_document_items[key]["lifecycle"] = e.product_list[0]["lifecycle"] ?? 0;
                         plm_document_items[key]["bypass"] = e.product_list[0]["bypass"] ?? 0;
-                    }else{
+                    } else {
                         plm_document_items[key]["lifecycle"] = "";
                         plm_document_items[key]["bypass"] = "";
                     }
@@ -239,6 +259,9 @@ class Form extends React.Component {
                 temporarily.store[name] = v;
                 if (name === "begin_date") {
                     temporarily.store.end_time = "";
+                }
+                if (name === "category_id") {
+                    temporarily.store.category_name = e?.label ?? "";
                 }
                 this.setState({temporarily: temporarily});
                 break;
@@ -324,8 +347,10 @@ class Form extends React.Component {
         this.setState({temporarily: temporarily});
     };
 
-    onHandleSave =  async (e)  => {
+    onHandleSave = async (e) => {
         let {temporarily, plm_document_items, plm_document} = this.state;
+        plm_document_items[temporarily.key]['is_change'] = true;
+
         let stored = temporarily.store;
         if (temporarily.type === 'repaired' || temporarily.type === 'scrapped') {
             plm_document_items[temporarily.key]['products'][temporarily.itemKey][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
@@ -367,40 +392,17 @@ class Form extends React.Component {
             }
         }
 
-        if (temporarily.type === 'unplanned_stops' || temporarily.type === 'planned_stops'){
+        if (temporarily.type === 'unplanned_stops' || temporarily.type === 'planned_stops') {
             if (isSave) {
-                // let response = await axios.post(API_URL + 'save-properties?type=SAVE_STOPS', {
-                //     plm_document: plm_document,
-                //     plm_document_items: plm_document_items[temporarily.key],
-                //     stops: temporarily.store,
-                //     type: temporarily.type
-                // });
-                // if (response.data.status){
-                //     plm_document_items[temporarily.key]["id"] = response.data.document_item_id ?? "";
-                //     plm_document["id"] = response.data.document_id ?? "";
-                //     temporarily.store.format_begin_date = response.data.format_begin_date ?? "";
-                //     temporarily.store.format_end_time = response.data.format_end_time ?? "";
-                //     temporarily.store.categories_name = response.data.categories_name ?? "";
+                plm_document_items[temporarily.key][temporarily.type].push(JSON.parse(JSON.stringify(temporarily.store)));
+                plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
 
-                    // if (temporarily?.store?.id){
-                    //     plm_document_items[temporarily.key][temporarily.type][temporarily.itemKey] = JSON.parse(JSON.stringify(temporarily.store));
-                    // }else{
-                    //     temporarily.store.id = response.data.stop_id ?? "";
-                        plm_document_items[temporarily.key][temporarily.type].push(JSON.parse(JSON.stringify(temporarily.store)));
-                    // }
+                if (temporarily.type === 'unplanned_stops')
+                    temporarily["store"] = JSON.parse(JSON.stringify(unplanned_stops));
+                if (temporarily.type === 'planned_stops')
+                    temporarily["store"] = JSON.parse(JSON.stringify(planned_stops));
 
-                    plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
-
-                    if(temporarily.type === 'unplanned_stops')
-                        temporarily["store"] = JSON.parse(JSON.stringify(unplanned_stops));
-                    if(temporarily.type === 'planned_stops')
-                        temporarily["store"] = JSON.parse(JSON.stringify(planned_stops));
-
-                    this.setState({temporarily, plm_document_items, plm_document});
-                    // toast.success(response.data.message);
-                // }else{
-                //     toast.error(response.data.message);
-                // }
+                this.setState({temporarily, plm_document_items, plm_document});
             }
         }
     };
@@ -465,17 +467,23 @@ class Form extends React.Component {
                 }
                 break;
             case "stops-remove":
-                if (confirm("Rostdan ham o'chirmoqchimisiz?")) {
-                    let response = await axios.post(API_URL + 'save-properties?type=DELETE_STOPS', model);
-                    if (response.data.status) {
-                        plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
-                        plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
-                        this.setState({plm_document_items});
-                        toast.success(response.data.message);
-                    } else {
-                        toast.error(response.data.message);
+                if(model["id"]){
+                    if (confirm("Rostdan ham o'chirmoqchimisiz?")) {
+                        let response = await axios.post(API_URL + 'save-properties?type=DELETE_STOPS', model);
+                        if (response.data.status) {
+                            plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
+                            plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
+                            this.setState({plm_document_items});
+                            toast.success(response.data.message);
+                        } else {
+                            toast.error(response.data.message);
+                        }
                     }
+                }else{
+                    plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
+                    this.setState({plm_document_items});
                 }
+
                 break;
             case "stops-update":
                 temporarily["store"] = model;
@@ -526,7 +534,7 @@ class Form extends React.Component {
             })
         }
         return isEmpty;
-    }
+    };
 
     onRequiredDoc(document) {
         let isEmpty = true;
@@ -543,7 +551,7 @@ class Form extends React.Component {
             $("#reg_date").css("border", "1px solid red");
         }
         return isEmpty;
-    }
+    };
 
     onSave = async (key, e) => {
         let {plm_document, plm_document_items} = this.state;
@@ -587,6 +595,16 @@ class Form extends React.Component {
         this.setState({appearance: appearance});
     };
 
+    unplannedBypassSum = (item) => {
+        let bypass = 0;
+        if(item && item["unplanned_stops"].length > 0){
+            item["unplanned_stops"].forEach(function (stopItem, stopIndex) {
+                bypass += +stopItem.bypass;
+            });
+        }
+        return bypass;
+    };
+
     render() {
         const {
             language,
@@ -605,14 +623,24 @@ class Form extends React.Component {
 
         let equipmentGroupValue = [];
         let categoriesList = [];
-        let  modalData = [];
+        let modalData = [];
 
-        if (temporarily?.type === "planned_stops"){
+        let statusTime, statusRepaired, statusScrapped  ;
+
+        let statusRepairedOrScrapped = false;
+        if (temporarily?.type === "repaired")
+            statusRepairedOrScrapped = temporarily?.item?.notifications_status ? (temporarily?.item?.notifications_status[TOKEN_REPAIRED]?.status_id == 4) : false;
+
+        if (temporarily?.type === "scrapped")
+            statusRepairedOrScrapped = temporarily?.item?.notifications_status ? (temporarily?.item?.notifications_status[TOKEN_SCRAPPED]?.status_id == 4) : false;
+
+
+        if (temporarily?.type === "planned_stops") {
             categoriesList = categoriesPlannedList;
-            modalData =  plm_document_items ? plm_document_items[temporarily.key]?.[temporarily.type] ?? [] : [];
-        } else if (temporarily?.type === "unplanned_stops"){
+            modalData = plm_document_items ? plm_document_items[temporarily.key]?.[temporarily.type] ?? [] : [];
+        } else if (temporarily?.type === "unplanned_stops") {
             categoriesList = categoriesUnPlannedList;
-            modalData =  plm_document_items ? plm_document_items[temporarily.key]?.[temporarily.type] ?? [] : [];
+            modalData = plm_document_items ? plm_document_items[temporarily.key]?.[temporarily.type] ?? [] : [];
         }
 
         return (
@@ -695,7 +723,7 @@ class Form extends React.Component {
                         {
                             plm_document_items?.length > 0 && plm_document_items.map((item, key) => {
                                 equipmentGroupValue = equipmentGroupList.filter(({value}) => +value === +item?.equipment_group_id);
-                                item.products =  item?.products?.length > 0 ? item?.products : [{
+                                item.products = item?.products?.length > 0 ? item?.products : [{
                                     label: "",
                                     value: "",
                                     qty: "",
@@ -705,6 +733,9 @@ class Form extends React.Component {
                                     repaired: [],
                                     scrapped: [],
                                 }];
+                                statusTime = item?.notifications_status ? (item?.notifications_status[TOKEN_WORKING_TIME]?.status_id == 4 ) : false;
+                                statusRepaired = item?.notifications_status ? (item?.notifications_status[TOKEN_REPAIRED]?.status_id == 4) : false;
+                                statusScrapped = item?.notifications_status ? (item?.notifications_status[TOKEN_SCRAPPED]?.status_id == 4) : false;
                                 return (
                                     <div className={item.is_change ? "border-block" : "border-block success-block"}
                                          key={key}>
@@ -740,7 +771,8 @@ class Form extends React.Component {
                                                 <div className={"align-center"}>
                                                     <div className={'row'}>
                                                         <div className={'col-lg-12 mb-2'}>
-                                                            <label htmlFor={"equipment_group_id" + key}>Uskunalar guruhi</label>
+                                                            <label htmlFor={"equipment_group_id" + key}>Uskunalar
+                                                                guruhi</label>
                                                             <Select className={"aria-required"}
                                                                     id={"equipment_group_id_" + key}
                                                                     onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'equipment_group_id', key, '', '')}
@@ -772,7 +804,9 @@ class Form extends React.Component {
                                                 <div className={"align-center"}>
                                                     <div className={'row time'}>
                                                         <div className={"status-block"}>
-                                                            <i className={"fa fa-times-circle status"}></i> {/*fa-check-circle*/}
+                                                            {
+                                                                statusTime ? (<i className={"fa fa-check-circle status"}></i>) : (<i className={"fa fa-times-circle status"}></i>)
+                                                            }
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Boshlanishi</label>
@@ -782,6 +816,7 @@ class Form extends React.Component {
                                                                         onChange={(e) => {
                                                                             this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
                                                                         }}
+                                                                        readOnly={statusTime}
                                                                         className={"form-control text-center aria-required"}
                                                                         selected={item?.start_work ? new Date(item.start_work) : ""}
                                                                         autoComplete={'off'}
@@ -797,21 +832,22 @@ class Form extends React.Component {
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Tugashi</label>
                                                             <DatePicker locale={ru}
-                                                                  dateFormat="dd.MM.yyyy HH:mm"
-                                                                  id={"end_work_" + key}
-                                                                  className={"form-control text-center aria-required"}
-                                                                  onChange={(e) => {
-                                                                      this.onHandleChange('date', 'plm_document_items', 'end_work', key, '', '', new Date(e))
-                                                                  }}
-                                                                  selected={item?.end_work ? new Date(item.end_work) : ""}
-                                                                  filterTime={(e) => {
-                                                                      return new Date(item?.start_work) < new Date(e)
-                                                                  }}
-                                                                  autoComplete={'off'}
-                                                                  showTimeSelect
-                                                                  minDate={item.start_work}
-                                                                  timeIntervals={5}
-                                                                  timeCaption="Вақт"
+                                                                        dateFormat="dd.MM.yyyy HH:mm"
+                                                                        id={"end_work_" + key}
+                                                                        className={"form-control text-center aria-required"}
+                                                                        onChange={(e) => {
+                                                                            this.onHandleChange('date', 'plm_document_items', 'end_work', key, '', '', new Date(e))
+                                                                        }}
+                                                                        selected={item?.end_work ? new Date(item.end_work) : ""}
+                                                                        filterTime={(e) => {
+                                                                            return new Date(item?.start_work) < new Date(e)
+                                                                        }}
+                                                                        readOnly={statusTime}
+                                                                        autoComplete={'off'}
+                                                                        showTimeSelect
+                                                                        minDate={item.start_work}
+                                                                        timeIntervals={5}
+                                                                        timeCaption="Вақт"
                                                             />
                                                         </div>
                                                     </div>
@@ -836,7 +872,8 @@ class Form extends React.Component {
                                                     </div>
                                                     <div className="col-lg-4">
                                                         <label
-                                                            className={'control-label middle-size'}>Bypass CT (s)</label>
+                                                            className={'control-label middle-size'}>Bypass CT
+                                                            (s)</label>
                                                         <input value={item?.bypass ?? ""}
                                                                readOnly={true}
                                                                className={'form-control text-center'}/>
@@ -873,16 +910,17 @@ class Form extends React.Component {
                                                                                 value={product?.fact_qty ?? ""}/>
                                                                         </div>
                                                                         <div className={'col-lg-3'}>
-                                                                        <label
-                                                                            className={"control-label middle-size"}>Ish/chiq(Bs)</label>
-                                                                        <input
-                                                                            onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
-                                                                            type={'number'}
-                                                                            className={'form-control aria-required'}
-                                                                            id={"qty_" + prKey}
-                                                                            min={0}
-                                                                            value={product?.qty ?? ""}/>
-                                                                    </div>
+                                                                            <label
+                                                                                className={"control-label middle-size"}>Ish/chiq(Bs)</label>
+                                                                            <input
+                                                                                onChange={this.onHandleChange.bind(this, 'input', 'products', 'qty', key, prKey, '')}
+                                                                                type={'number'}
+                                                                                className={'form-control aria-required'}
+                                                                                id={"qty_" + prKey}
+                                                                                min={0}
+                                                                                readOnly={this.unplannedBypassSum(item) > 0 ? false : true}
+                                                                                value={product?.qty ?? ""}/>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                                 <div className={"col-lg-4"}>
@@ -902,7 +940,8 @@ class Form extends React.Component {
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div className={'col-lg-6 text-center scrapped'}>
+                                                                        <div
+                                                                            className={'col-lg-6 text-center scrapped'}>
                                                                             <div className={"align-center"}>
                                                                                 <div>
                                                                                     <label
@@ -944,16 +983,34 @@ class Form extends React.Component {
                                                         )
                                                     })
                                                 }
+                                                <div className={"row"}>
+                                                    <div className={"col-lg-8"}></div>
+                                                    <div className={"col-lg-4"}>
+                                                        <div className={"row"}>
+                                                            <div className={"col-lg-6 text-center"}>
+                                                                {
+                                                                    statusRepaired ? (<i className={"fa fa-check-circle"}></i>) : (<i className={"fa fa-times-circle"}></i>)
+                                                                }
+                                                            </div>
+                                                            <div className={"col-lg-6 text-center"}>
+                                                                {
+                                                                    statusScrapped ? (<i className={"fa fa-check-circle"}></i>) : (<i className={"fa fa-times-circle"}></i>)
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row planned_stopped'}>
-                                                        <div className={"status-block"}>
-                                                            <i className={"fa fa-times-circle status"}></i> {/*fa-check-circle*/}
-                                                        </div>
+                                                        {/*<div className={"status-block"}>*/}
+                                                        {/*    <i className={"fa fa-times-circle status"}></i>*/}
+                                                        {/*</div>*/}
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label className={"control-label middle-size"}>Rejali to'xtalishlar</label>
+                                                            <label className={"control-label middle-size"}>Rejali
+                                                                to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label
@@ -972,15 +1029,16 @@ class Form extends React.Component {
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row unplanned_stopped'}>
-                                                        <div className={"status-block"}>
-                                                            <i className={"fa fa-times-circle status"}></i> {/*fa-check-circle*/}
-                                                        </div>
+                                                        {/*<div className={"status-block"}>*/}
+                                                        {/*    <i className={"fa fa-times-circle status"}></i>*/}
+                                                        {/*</div>*/}
                                                         <div className={'col-lg-12 text-center'}>
-                                                            <label className={"control-label middle-size"}>Rejasiz to'xtalishlar</label>
+                                                            <label className={"control-label middle-size"}>Rejasiz
+                                                                to'xtalishlar</label>
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label
-                                                                className={'mr-2'}>{this.stoppedSummary(item?.unplanned_stops??[])}
+                                                                className={'mr-2'}>{this.stoppedSummary(item?.unplanned_stops ?? [])}
                                                                 <small>min</small></label>
                                                             <button
                                                                 onClick={this.onOpenModal.bind(this, 'unplanned_stops', "Rejasiz to'xtalishlar", key, '')}
@@ -1058,6 +1116,11 @@ class Form extends React.Component {
                                                                     selected={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
                                                                     autoComplete={'off'}
                                                                     peekNextMonth
+                                                                    minDate={temporarily?.item?.start_work ? new Date(temporarily?.item?.start_work) : ""}
+                                                                    maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
+                                                                    filterTime={(e) => {
+                                                                        return new Date(temporarily?.item?.start_work) <= new Date(e) &&  new Date(temporarily?.item?.end_work) >= new Date(e)
+                                                                    }}
                                                                     showMonthDropdown
                                                                     showYearDropdown
                                                                     showTimeSelect
@@ -1079,6 +1142,10 @@ class Form extends React.Component {
                                                                     selected={temporarily?.store?.end_time ? new Date(temporarily.store.end_time) : ""}
                                                                     autoComplete={'off'}
                                                                     minDate={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
+                                                                    maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
+                                                                    filterTime={(e) => {
+                                                                        return new Date(temporarily?.store?.begin_date) <= new Date(e) &&  new Date(temporarily?.item?.end_work) >= new Date(e)
+                                                                    }}
                                                                     peekNextMonth
                                                                     showMonthDropdown
                                                                     showYearDropdown
@@ -1097,6 +1164,7 @@ class Form extends React.Component {
                                                                 <input
                                                                     onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}
                                                                     className={"form-control"}
+                                                                    type={"number"}
                                                                     value={temporarily?.store?.bypass} id={"bypass"}/>
                                                             </div>
                                                         </div> : ""
@@ -1120,6 +1188,7 @@ class Form extends React.Component {
                                                                 <div className={"form-group"}>
                                                                     <label>{item?.label}</label>
                                                                     <input
+                                                                        readOnly={statusRepairedOrScrapped}
                                                                         onChange={this.onHandleChange.bind(this, 'input', temporarily?.type, 'count', temporarily?.key, itemKey, '')}
                                                                         type={"number"} className={"form-control"}
                                                                         value={item?.count ?? 0}/>
@@ -1153,26 +1222,37 @@ class Form extends React.Component {
                                                     <tbody>
                                                     {
                                                         modalData.map((item, index) => {
+                                                            let statusUnplanned = false;
+                                                            if(temporarily?.type === 'unplanned_stops'){
+                                                                statusUnplanned =  temporarily?.item?.notifications_status ? (temporarily?.item?.notifications_status[TOKEN_UNPLANNED][item.id]?.status_id == 4) : false;
+                                                            }
                                                             return (
                                                                 <tr key={index}>
                                                                     <td>{+index + 1}</td>
-                                                                    <td>{item.categories_name}</td>
-                                                                    <td>{item.format_begin_date}</td>
-                                                                    <td>{item.format_end_time}</td>
+                                                                    <td>{item.category_name}</td>
+                                                                    <td>{item.begin_date}</td>
+                                                                    <td>{item.end_time}</td>
                                                                     {temporarily?.type === 'unplanned_stops' ? (
                                                                         <td>{item.bypass}</td>
                                                                     ) : ("")}
                                                                     <td>{item.add_info}</td>
                                                                     <td>
                                                                         <button
+                                                                            disabled={statusUnplanned}
                                                                             className={"btn btn-sm btn-outline-primary"}
                                                                             onClick={this.onPush.bind(this, 'stops-update', item, index, '')}
                                                                         ><i className={"fa fa-pencil-alt"}></i></button>
                                                                         &nbsp;
                                                                         <button
+                                                                            disabled={statusUnplanned}
                                                                             className={"btn btn-sm btn-outline-danger"}
                                                                             onClick={this.onPush.bind(this, 'stops-remove', item, index, '')}
                                                                         ><i className={"fa fa-times"}></i></button>
+                                                                        <div className={"status-block"}>
+                                                                            {
+                                                                                temporarily?.type === 'unplanned_stops' ? ( statusUnplanned ? (<i className={"fa fa-check-circle status"}></i>) : (<i className={"fa fa-times-circle status"}></i>)) : ""
+                                                                            }
+                                                                        </div>
                                                                     </td>
                                                                 </tr>
                                                             )

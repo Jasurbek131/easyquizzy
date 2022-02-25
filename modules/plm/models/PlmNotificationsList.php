@@ -15,6 +15,8 @@ use Yii;
  * @property int $plm_sector_list_id
  * @property string $begin_time
  * @property string $end_time
+ * @property int $defect_id
+ * @property int $stop_id
  * @property int $defect_type_id
  * @property int $defect_count
  * @property int $reason_id
@@ -60,6 +62,7 @@ class PlmNotificationsList extends BaseModel
             [['add_info'], 'string'],
             [['plm_doc_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['plm_doc_item_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['category_id' => 'id']],
+            [['stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::class, 'targetAttribute' => ['stop_id' => 'id']],
         ];
     }
 
@@ -75,6 +78,8 @@ class PlmNotificationsList extends BaseModel
             'end_time' => Yii::t('app', 'End Time'),
             'defect_type_id' => Yii::t('app', 'Defect Type ID'),
             'defect_count' => Yii::t('app', 'Defect Count'),
+            'reason_id' => Yii::t('app', 'Reason ID'),
+            'stop_id' => Yii::t('app', 'Stop'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_by' => Yii::t('app', 'Created By'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -173,16 +178,43 @@ class PlmNotificationsList extends BaseModel
             Categories::TOKEN_WORKING_TIME => [
                 "status_id" => ""
             ],
-            Categories::TOKEN_INVALID => [
+            Categories::TOKEN_SCRAPPED => [
                 "status_id" => ""
             ],
             Categories::TOKEN_REPAIRED => [
                 "status_id" => ""
             ],
+            Categories::TOKEN_UNPLANNED => [
+
+            ],
+            Categories::TOKEN_PLANNED => [
+
+            ],
         ];
         foreach ($lists as $list){
-
+            switch ($list["token"]){
+                case Categories::TOKEN_WORKING_TIME:
+                case Categories::TOKEN_SCRAPPED:
+                case Categories::TOKEN_REPAIRED:
+                    $result[$list["token"]] = $list;
+                    break;
+                case Categories::TOKEN_UNPLANNED:
+                case Categories::TOKEN_PLANNED:
+                    $result[$list["token"]][$list["stop_id"]] = $list;
+                    break;
+            }
         }
         return $result;
+    }
+
+    /**
+     * @param array $query
+     * @return bool
+     */
+    public static function existsNotification(array $query)
+    {
+        return self::find()
+            ->where($query)
+            ->exists();
     }
 }

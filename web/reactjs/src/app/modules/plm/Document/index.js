@@ -24,9 +24,12 @@ class Index extends React.Component {
     }
 
     async componentDidMount() {
+        await this.onChangeItems(this.state.searchParams);
+    }
+
+    onChangeItems = async (searchParams) => {
         let {history} = this.props;
-        let {searchParams} = this.state;
-        const response = await axios.get(API_URL + 'search', searchParams);
+        const response = await axios.post(API_URL + 'search', searchParams);
         if (response.data.status) {
             this.setState({
                 documents: response.data.documents,
@@ -40,14 +43,14 @@ class Index extends React.Component {
                 history.goBack()
             }, 5000);
         }
-    }
+    };
 
     onPageChange = async (e) => {
         this.setState({isLoadingSearch: true});
-        let page = e?.selected ? +e.selected : 0;
+        let page = e?.selected ? + e.selected : 0;
         let {searchParams} = this.state;
         searchParams.page = page;
-
+        await this.onChangeItems( searchParams );
     };
 
 
@@ -59,11 +62,12 @@ class Index extends React.Component {
             searchParams
         } = this.state;
         if (isLoading) return loadingContent();
-        let pageCount  = Math.ceil(pagination.totalCount/pagination.defaultPageSize);
+        let pageCount = Math.ceil(pagination.totalCount / pagination.defaultPageSize);
         return (
             <div>
                 <div className="no-print">
-                    <ToastContainer autoClose={3000} position={'top-right'} transition={Flip} draggablePercent={60} closeOnClick={true} pauseOnHover closeButton={true}/>
+                    <ToastContainer autoClose={3000} position={'top-right'} transition={Flip} draggablePercent={60}
+                                    closeOnClick={true} pauseOnHover closeButton={true}/>
                 </div>
                 <div className={'card'}>
                     <div className={'card-header'}>
@@ -84,8 +88,8 @@ class Index extends React.Component {
                             {
                                 documents?.length > 0 && documents.map((item, key) => {
                                     return (
-                                        <tr>
-                                            <td>{key+1}</td>
+                                        <tr key={key}>
+                                            <td>{key + 1}</td>
                                             <td>{item.doc_number}</td>
                                             <td>{item.department}</td>
                                             <td>{item.shift}</td>
@@ -94,7 +98,7 @@ class Index extends React.Component {
                                                     <i className={"fa fa-eye"}/>
                                                 </button>
                                                 &nbsp;
-                                                <Link to={'/update/'+item.id} className={"btn btn-success btn-xs"}>
+                                                <Link to={'/update/' + item.id} className={"btn btn-success btn-xs"}>
                                                     <i className={"fa fa-pencil-alt"}/>
                                                 </Link>
                                             </td>

@@ -122,9 +122,6 @@ class DocumentController extends ActiveController
             case "DELETE_DOCUMENT_ITEM":
                 $response = ApiPlmDocument::deleteDocumentItem($post);
                 break;
-//            case "SAVE_MODAL":
-//                $response = ApiPlmDocument::saveModalData($post);
-//                break;
             case "DELETE_STOPS":
                 $response = ApiPlmDocument::deleteStops($post);
                 break;
@@ -182,7 +179,8 @@ class DocumentController extends ActiveController
      */
     public function actionSearch(): array
     {
-        $dataProvider = ApiPlmDocument::getPlmDocuments([]);
+        $post = Yii::$app->request->post();
+        $dataProvider = ApiPlmDocument::getPlmDocuments($post);
         $response['documents'] = $dataProvider->getModels();
         $response['pagination'] = $dataProvider->getPagination();
         $response['status'] = true;
