@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
  * @property int $id
  * @property string $name_uz
  * @property string $name_ru
+ * @property string $token
  * @property int $type
  * @property int $status_id
  * @property int $created_by
@@ -25,6 +26,11 @@ class Categories extends BaseModel
     const PLANNED_TYPE  = 1; // rejali to'xtalish turi
     const UNPLANNED_TYPE  = 2; // rejasiz to'xtalish turi
 
+    const TOKEN_WORKING_TIME = "WORKING_TIME";
+    const TOKEN_REPAIRED = "REPAIRED";
+    const TOKEN_SCRAPPED = "SCRAPPED";
+    const TOKEN_PLANNED = "PLANNED";
+    const TOKEN_UNPLANNED = "UNPLANNED";
     /**
      * {@inheritdoc}
      */
@@ -41,8 +47,19 @@ class Categories extends BaseModel
         return [
             [['type', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['type', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['name_uz', 'name_ru'], 'string', 'max' => 255],
+            [['name_uz', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if($this->type == self::PLANNED_TYPE)
+            $this->token = self::TOKEN_PLANNED;
+
+        if($this->type == self::UNPLANNED_TYPE)
+            $this->token = self::TOKEN_UNPLANNED;
+
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -66,15 +83,25 @@ class Categories extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getReasonss()
+    public function getReasons()
     {
-        return $this->hasMany(Reasons::className(), ['category_id' => 'id']);
+        return $this->hasMany(Reasons::class, ['category_id' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getHrDepartment()
     {
         return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
-    public static function getCategoryTypeList($key = null){
+
+    /**
+     * @param null $key
+     * @return array|mixed
+     */
+    public static function getCategoryTypeList($key = null)
+    {
         $result = [
             self::PLANNED_TYPE => Yii::t('app','Planned Type'),
             self::UNPLANNED_TYPE => Yii::t('app','Unplanned Type'),
@@ -84,12 +111,39 @@ class Categories extends BaseModel
         }
         return $result;
     }
-    public static function  getList()
+
+    /**
+     * @param bool $isMap
+     * @param null $type
+     * @return array
+     */
+    public static function  getList($isMap = false, $type = null): array
     {
-        $query = self::find()->select(['id','name_uz as name'])->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])->asArray()->all();
-        if(!empty($query)){
+        $language = Yii::$app->language;
+        $query = self::find()
+            ->select([
+                'id',
+                'id as value',
+                "name_{$language} as label",
+                "name_{$language} as name",
+            ])
+            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->andFilterWhere(['type' => $type])
+            ->asArray()->all();
+        if(!empty($query) && $isMap){
             return ArrayHelper::map($query, 'id', 'name');
         }
+        return  $query;
     }
 
+    /**
+     * @param null $token
+     * @return int|null
+     */
+    public static function getIdByToken($token = null){
+        if($token && $result = self::findOne(['token' => $token])){
+            return $result->id ?? null;
+        }
+        return null;
+    }
 }

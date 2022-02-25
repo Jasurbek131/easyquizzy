@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\references\models\Categories;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -19,8 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'categories_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterRowOptions' => ['class' => 'filters no-print'],
@@ -28,29 +28,23 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-//            'id',
             'name_uz',
             'name_ru',
             [
                 'attribute' => 'type',
-                'value' => function(\app\modules\references\models\Categories $model){
-                    $info = $model::getCategoryTypeList($model->type);
-                    return $info;
-                }
+                'value' => function(Categories $model){
+                    $type = $model::getCategoryTypeList($model->type);
+                    return is_string($type) ? $type : "";
+                },
+                'filter' => Categories::getCategoryTypeList()
             ],
             [
                 'attribute' => 'status_id',
-                'value' => function($model){
-                    $info = $model::getStatusList($model->status_id);
-                    return $info;
+                'value' => function(Categories $model){
+                    return $model::getStatusList($model->status_id);
                 },
                 'format' => 'html'
             ],
-            //'created_by',
-            //'created_at',
-            //'updated_by',
-            //'updated_at',
-
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',

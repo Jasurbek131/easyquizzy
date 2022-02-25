@@ -1,9 +1,12 @@
 <?php
 
 use app\modules\plm\models\PlmSectorList;
+use app\modules\plm\models\PlmSectorRelHrDepartment;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\plm\models\PlmSectorRelHrDepartmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,62 +16,53 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card plm-setting-accepted-sector-rel-hr-department-index">
     <?php if (Yii::$app->user->can('plm-sector-rel-hr-department/create')): ?>
-    <div class="card-header pull-right no-print">
-        <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
-        ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
-    </div>
+        <div class="card-header pull-right no-print">
+            <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
+                ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
+        </div>
     <?php endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'plm-setting-accepted-sector-rel-hr-department_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterRowOptions' => ['class' => 'filters no-print'],
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-//            'id',
-            [
-                'attribute' => 'hr_department_id',
-                'value' => function($model){
-                    $info = $model->hrDepartments->name;
-                    return $info;
-                }
-            ],
-            [
-                'attribute' => 'plm_sector_list_id',
-                'value' => function($model){
-                    $info = $model->plmSectorList->name_uz;
-                    return $info;
-                },
-                'filter' => PlmSectorList::getList(),
-            ],
-            [
-                'attribute' => 'status_id',
-                'value' => function($model){
-                    $info = $model::getStatusList($model->status_id);
-                    return $info;
-                },
-                'format' => 'html'
-            ],
-//            'status_id',
-//            'created_by',
-            //'created_at',
-            //'updated_by',
-            //'updated_at',
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterRowOptions' => ['class' => 'filters no-print'],
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
+                [
+                    'attribute' => 'hr_department_id',
+                    'value' => function ($model) {
+                        return $model->hrDepartments->name;
+                    }
+                ],
+                [
+                    'attribute' => 'category_id',
+                    'label' => Yii::t("app","Categories"),
+                    'format' => 'raw',
+                    'value' => function(PlmSectorRelHrDepartment $model) {
+                        return PlmSectorRelHrDepartment::getCategoriesByDepartment($model->id);
+                    }
+                ],
+                [
+                    'attribute' => 'status_id',
+                    'value' => function (PlmSectorRelHrDepartment $model) {
+                        return  $model::getStatusList($model->status_id);
+                    },
+                    'format' => 'html'
+                ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
-                    'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
+                    'contentOptions' => ['class' => 'no-print text-center', 'style' => 'width:100px;'],
                     'visibleButtons' => [
                         'view' => Yii::$app->user->can('plm-sector-rel-hr-department/view'),
-                        'update' => function($model) {
+                        'update' => function ($model) {
                             return Yii::$app->user->can('plm-sector-rel-hr-department/update'); // && $model->status < $model::STATUS_SAVED;
                         },
-                        'delete' => function($model) {
+                        'delete' => function ($model) {
                             return Yii::$app->user->can('plm-sector-rel-hr-department/delete'); // && $model->status < $model::STATUS_SAVED;
                         }
                     ],
@@ -76,14 +70,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'update' => function ($url, $model) {
                             return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
                                 'title' => Yii::t('app', 'Update'),
-                                'class'=> 'update-dialog btn btn-xs btn-success mr1',
+                                'class' => 'update-dialog btn btn-xs btn-success mr1',
                                 'data-form-id' => $model->id,
                             ]);
                         },
                         'view' => function ($url, $model) {
                             return Html::a('<span class="fa fa-eye"></span>', $url, [
                                 'title' => Yii::t('app', 'View'),
-                                'class'=> 'btn btn-xs btn-primary view-dialog mr1',
+                                'class' => 'btn btn-xs btn-primary view-dialog mr1',
                                 'data-form-id' => $model->id,
                             ]);
                         },
@@ -102,11 +96,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php Pjax::end(); ?>
     </div>
 </div>
-<?=  \app\widgets\ModalWindow\ModalWindow::widget([
+<?= \app\widgets\ModalWindow\ModalWindow::widget([
     'model' => 'plm-sector-rel-hr-department',
     'crud_name' => 'plm-sector-rel-hr-department',
     'modal_id' => 'plm-sector-rel-hr-department-modal',
-    'modal_header' => '<h5>'. Yii::t('app', 'Plm Sector Rel Hr Department') . '</h5>',
+    'modal_header' => '<h5>' . Yii::t('app', 'Plm Sector Rel Hr Department') . '</h5>',
     'active_from_class' => 'customAjaxForm',
     'update_button' => 'update-dialog',
     'create_button' => 'create-dialog',

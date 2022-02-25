@@ -71,49 +71,35 @@ class PlmSectorRelHrDepartmentController extends Controller
      */
     public function actionCreate()
     {
-        $model = new PlmSectorRelHrDepartment();
-        if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    if($model->save()){
-                        $saved = true;
-                    }else{
-                        $saved = false;
-                    }
-                    if($saved) {
-                        $transaction->commit();
-                    }else{
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    Yii::info('Not saved' . $e, 'save');
-                    $transaction->rollBack();
-                }
-                if (Yii::$app->request->isAjax) {
+        $model = new PlmSectorRelHrDepartment([
+            "scenario" => PlmSectorRelHrDepartment::SCENARIO_CREATE
+        ]);
+
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            if ($model->load($request->post())) {
+                $response = $model->saveRelHrDepartment();
+                if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    $response = [];
-                    if ($saved) {
+                    if ($response['status'])
                         $response['status'] = 0;
-                        $response['message'] = Yii::t('app', 'Saved Successfully');
-                    } else {
+                    else
                         $response['status'] = 1;
-                        $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
-                    }
+
                     return $response;
                 }
-                if ($saved) {
+
+                if ($response['status'])
                     return $this->redirect(['view', 'id' => $model->id]);
-                }
+
             }
         }
-        if (Yii::$app->request->isAjax) {
+
+        if ($request->isAjax)
             return $this->renderAjax('create', [
                 'model' => $model,
             ]);
-        }
+
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -128,51 +114,37 @@ class PlmSectorRelHrDepartmentController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-        if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $saved = false;
-                try {
-                    if($model->save()){
-                        $saved = true;
-                    }else{
-                        $saved = false;
-                    }
-                    if($saved) {
-                        $transaction->commit();
-                    }else{
-                        $transaction->rollBack();
-                    }
-                } catch (\Exception $e) {
-                    Yii::info('Not saved' . $e, 'save');
-                    $transaction->rollBack();
-                }
-                if (Yii::$app->request->isAjax) {
+        $model = $this->findModel($id)
+            ->getCategoriesIdListByDepartment();
+
+        $model->scenario = PlmSectorRelHrDepartment::SCENARIO_CREATE;
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            if ($model->load($request->post())) {
+                $model->isUpdate = true;
+                $response = $model->saveRelHrDepartment();
+                if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    $response = [];
-                    if ($saved) {
+                    if ($response['status'])
                         $response['status'] = 0;
-                        $response['message'] = Yii::t('app', 'Saved Successfully');
-                    } else {
+                    else
                         $response['status'] = 1;
-                        $response['errors'] = $model->getErrors();
-                        $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
-                    }
+
                     return $response;
                 }
-                if ($saved) {
+
+                if ($response['status'])
                     return $this->redirect(['view', 'id' => $model->id]);
-                }
+
             }
         }
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('update', [
+
+        if ($request->isAjax)
+            return $this->renderAjax('create', [
                 'model' => $model,
             ]);
-        }
 
-        return $this->render('update', [
+        return $this->render('create', [
             'model' => $model,
         ]);
     }
@@ -186,26 +158,20 @@ class PlmSectorRelHrDepartmentController extends Controller
      */
     public function actionDelete($id)
     {
-        $transaction = Yii::$app->db->beginTransaction();
-        $isDeleted = false;
-        $model = $this->findModel($id);
+        $isDeleted = true;
         try {
-            if($model->delete()){
-                $isDeleted = true;
-            }
-            if($isDeleted){
-                $transaction->commit();
-            }else{
-                $transaction->rollBack();
-            }
+            if ($id)
+                PlmSectorRelHrDepartment::deleteAll(["hr_department_id" => $id]);
+
         }catch (\Exception $e){
             Yii::info('Not saved' . $e, 'save');
+            $isDeleted = false;
         }
         if(Yii::$app->request->isAjax){
             Yii::$app->response->format = Response::FORMAT_JSON;
             $response = [];
             $response['status'] = 1;
-            $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
+            $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
             if($isDeleted){
                 $response['status'] = 0;
                 $response['message'] = Yii::t('app','Deleted Successfully');
@@ -215,30 +181,9 @@ class PlmSectorRelHrDepartmentController extends Controller
         if($isDeleted){
             Yii::$app->session->setFlash('success',Yii::t('app','Deleted Successfully'));
             return $this->redirect(['index']);
-        }else{
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Ma\'lumotlar yetarli emas!'));
-            return $this->redirect(['view', 'id' => $model->id]);
         }
     }
 
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "plm-setting-accepted-sector-rel-hr-department_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => PlmSectorRelHrDepartment::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
     /**
      * Finds the PlmSectorRelHrDepartment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -248,7 +193,7 @@ class PlmSectorRelHrDepartmentController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = PlmSectorRelHrDepartment::findOne($id)) !== null) {
+        if (($model = PlmSectorRelHrDepartment::findOne(["hr_department_id" => $id])) !== null) {
             return $model;
         }
 

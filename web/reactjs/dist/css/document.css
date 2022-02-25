@@ -131,7 +131,7 @@ textarea.form-control{
     font-size: 16px!important;
 }
 .react-datepicker{
-    zoom: 0.7;
+    zoom: 0.5;
 }
 .border-block .react-datepicker__day-name,
 .border-block .react-datepicker__day,
@@ -165,4 +165,11 @@ textarea.form-control{
 }
 .fa-times-circle{
     color: red!important;
+}
+.fa-check-circle{
+    color: green!important;
+}
+.sticky-top{
+    position: sticky;
+    top: 0;
 }

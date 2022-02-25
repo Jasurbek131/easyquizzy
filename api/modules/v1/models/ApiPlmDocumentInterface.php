@@ -37,13 +37,6 @@ interface ApiPlmDocumentInterface
     /**
      * @param $post
      * @return array
-     * Doc item stops ni saqlaydi
-     */
-    public static function saveStops($post): array;
-
-    /**
-     * @param $post
-     * @return array
      * Doc item stops ni holatini ozgartiradi
      */
     public static function deleteStops($post): array;

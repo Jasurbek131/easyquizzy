@@ -1,7 +1,8 @@
 <?php
 
+use app\models\BaseModel;
 use app\modules\hr\models\HrDepartments;
-use app\modules\plm\models\PlmSectorList;
+use app\modules\references\models\Categories;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -15,7 +16,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
-    <?= $form->field($model, 'hr_department_id')->widget(Select2::classname(), [
+    <?php echo $form->field($model, 'hr_department_id')->widget(Select2::class, [
         'data' => HrDepartments::getList(),
         'options' => ['placeholder' => Yii::t("app","Select ...")],
         'pluginOptions' => [
@@ -23,18 +24,19 @@ use yii\widgets\ActiveForm;
         ]
     ]) ?>
 
-    <?= $form->field($model, 'plm_sector_list_id')->widget(Select2::classname(), [
-        'data' => PlmSectorList::getList(),
+    <?php echo $form->field($model, 'categories')->widget(Select2::class, [
+        'data' => Categories::getList(true),
         'options' => ['placeholder' => Yii::t("app","Select ...")],
         'pluginOptions' => [
             'allowClear' => true,
+            'multiple' => true,
         ]
     ]) ?>
 
-    <?= $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
+    <?php echo $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList()) ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

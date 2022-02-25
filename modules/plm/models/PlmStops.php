@@ -2,6 +2,7 @@
 
 namespace app\modules\plm\models;
 
+use app\modules\references\models\Categories;
 use app\modules\references\models\Reasons;
 use Yii;
 
@@ -22,6 +23,7 @@ use Yii;
  * @property int $reason_id
  * @property string $bypass
  * @property Reasons[] $reasons
+ * @property Reasons[] $categories
  * @property PlmDocumentItems[] $plmDocumentItems
  * @property PlmDocumentItems[] $plmDocumentItem
  */
@@ -48,6 +50,7 @@ class PlmStops extends BaseModel
             [['bypass'], 'string', 'max' => 255],
             [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reasons::class, 'targetAttribute' => ['reason_id' => 'id']],
             [['document_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['document_item_id' => 'id']],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['category_id' => 'id']],
             [["document_item_id"], 'required']
         ];
     }
@@ -79,6 +82,14 @@ class PlmStops extends BaseModel
     public function getReasons()
     {
         return $this->hasOne(Reasons::class, ['id' => 'reason_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategories()
+    {
+        return $this->hasOne(Categories::class, ['id' => 'category_id']);
     }
 
     /**
