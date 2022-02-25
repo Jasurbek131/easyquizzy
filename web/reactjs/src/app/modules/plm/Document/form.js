@@ -590,6 +590,16 @@ class Form extends React.Component {
         this.setState({appearance: appearance});
     };
 
+    unplannedBypassSum = (item) => {
+        let bypass = 0;
+        if(item && item["unplanned_stops"].length > 0){
+            item["unplanned_stops"].forEach(function (stopItem, stopIndex) {
+                bypass += +stopItem.bypass;
+            });
+        }
+        return bypass;
+    };
+
     render() {
         const {
             language,
@@ -903,6 +913,7 @@ class Form extends React.Component {
                                                                                 className={'form-control aria-required'}
                                                                                 id={"qty_" + prKey}
                                                                                 min={0}
+                                                                                readOnly={this.unplannedBypassSum(item) > 0 ? false : true}
                                                                                 value={product?.qty ?? ""}/>
                                                                         </div>
                                                                     </div>
@@ -1100,6 +1111,11 @@ class Form extends React.Component {
                                                                     selected={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
                                                                     autoComplete={'off'}
                                                                     peekNextMonth
+                                                                    minDate={temporarily?.item?.start_work ? new Date(temporarily?.item?.start_work) : ""}
+                                                                    maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
+                                                                    filterTime={(e) => {
+                                                                        return new Date(temporarily?.item?.start_work) <= new Date(e) &&  new Date(temporarily?.item?.end_work) >= new Date(e)
+                                                                    }}
                                                                     showMonthDropdown
                                                                     showYearDropdown
                                                                     showTimeSelect
@@ -1121,6 +1137,10 @@ class Form extends React.Component {
                                                                     selected={temporarily?.store?.end_time ? new Date(temporarily.store.end_time) : ""}
                                                                     autoComplete={'off'}
                                                                     minDate={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
+                                                                    maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
+                                                                    filterTime={(e) => {
+                                                                        return new Date(temporarily?.store?.begin_date) <= new Date(e) &&  new Date(temporarily?.item?.end_work) >= new Date(e)
+                                                                    }}
                                                                     peekNextMonth
                                                                     showMonthDropdown
                                                                     showYearDropdown
@@ -1138,7 +1158,8 @@ class Form extends React.Component {
                                                                 <label className={"control-label"}>Bypass (m)</label>
                                                                 <input
                                                                     onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}
-                                                                    className={"form-control"}
+                                                                    className={"form-control"}t
+                                                                    type={"number"}
                                                                     value={temporarily?.store?.bypass} id={"bypass"}/>
                                                             </div>
                                                         </div> : ""
