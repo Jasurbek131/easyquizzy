@@ -146,11 +146,11 @@ class Form extends React.Component {
     onPlanSummary = (item) => {
         let diff = this.onReturnMin(item?.end_work, item?.start_work);
         let planned = this.stoppedSummary(item?.planned_stops ?? []);
-        // let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
+        let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
         let lifecycle = item ? (item.lifecycle ? item.lifecycle : "") : "";
 
         if (lifecycle) {
-            item.target_qty = ((diff - planned) * 60 / (+lifecycle)).toFixed(0); // - unplanned
+            item.target_qty = ((diff - planned - unplanned) * 60 / (+lifecycle)).toFixed(0);
         }
         return item;
     };
@@ -401,10 +401,20 @@ class Form extends React.Component {
                     temporarily["store"] = JSON.parse(JSON.stringify(unplanned_stops));
                 if (temporarily.type === 'planned_stops')
                     temporarily["store"] = JSON.parse(JSON.stringify(planned_stops));
-
                 this.setState({temporarily, plm_document_items, plm_document});
+                this.setByPassQtyNull();
             }
         }
+    };
+
+    setByPassQtyNull = () => {
+        let { plm_document_items, temporarily } = this.state;
+        if (this.unplannedBypassSum(plm_document_items[temporarily.key]) <= 0 && plm_document_items[temporarily.key]?.products?.length > 0) {
+            plm_document_items[temporarily.key]?.products.forEach(function(product, pKey){
+                plm_document_items[temporarily.key]["products"][pKey]["qty"] = ''
+            });
+        }
+        this.setState({ plm_document_items });
     };
 
     onHandleCancel = (e) => {
@@ -483,11 +493,13 @@ class Form extends React.Component {
                     plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
                     this.setState({plm_document_items});
                 }
-
+                this.setByPassQtyNull();
                 break;
             case "stops-update":
                 temporarily["store"] = model;
                 plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
+                this.setState({plm_document_items: plm_document_items});
+                this.setByPassQtyNull();
                 break;
         }
         this.setState({plm_document_items: plm_document_items});

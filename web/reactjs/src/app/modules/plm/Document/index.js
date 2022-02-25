@@ -81,6 +81,7 @@ class Index extends React.Component {
                                 <th>Hujjat raqami</th>
                                 <th>Bo'lim</th>
                                 <th>Smena</th>
+                                <th>Sana</th>
                                 <th width={"100px"}/>
                             </tr>
                             </thead>
@@ -90,9 +91,10 @@ class Index extends React.Component {
                                     return (
                                         <tr key={key}>
                                             <td>{key + 1}</td>
-                                            <td>{item.doc_number}</td>
-                                            <td>{item.department}</td>
-                                            <td>{item.shift}</td>
+                                            <td>{item.doc_number ?? ""}</td>
+                                            <td>{item.department ?? ""}</td>
+                                            <td>{item.shift ?? ""}</td>
+                                            <td>{item.format_reg_date ?? ""}</td>
                                             <td className={"text-center"}>
                                                 <button className={"btn btn-info btn-xs"}>
                                                     <i className={"fa fa-eye"}/>
