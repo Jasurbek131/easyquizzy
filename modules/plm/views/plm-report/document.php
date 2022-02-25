@@ -5,7 +5,7 @@ use app\assets\ReactAsset;
 use yii\web\View;
 
 /* @var $this View */
-$this->title = Yii::t('app', 'Document Report');
+$this->title = Yii::t('app', 'OEE');
 $this->params['breadcrumbs'][] = $this->title;
 
 ReactAsset::$reactFileName = 'plmDocumentReport';

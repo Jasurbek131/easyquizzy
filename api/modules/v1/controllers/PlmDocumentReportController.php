@@ -2,6 +2,7 @@
 
 namespace app\api\modules\v1\controllers;
 
+use app\api\modules\v1\models\ApiPlmDocument;
 use app\api\modules\v1\models\PlmDocumentReport;
 use Yii;
 use yii\web\Response;
@@ -70,7 +71,8 @@ class PlmDocumentReportController extends ActiveController
         ];
         switch ($type){
             case "PLM_DOCUMENT_DATA":
-                $response = PlmDocumentReport::documentData();
+//                $response = PlmDocumentReport::documentData();
+                $data = ApiPlmDocument::getPlmDocuments();
                 break;
         }
 

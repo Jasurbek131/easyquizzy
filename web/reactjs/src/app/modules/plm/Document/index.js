@@ -96,9 +96,9 @@ class Index extends React.Component {
                                             <td>{item.shift ?? ""}</td>
                                             <td>{item.format_reg_date ?? ""}</td>
                                             <td className={"text-center"}>
-                                                <button className={"btn btn-info btn-xs"}>
+                                                {/*<button className={"btn btn-info btn-xs"}>
                                                     <i className={"fa fa-eye"}/>
-                                                </button>
+                                                </button>*/}
                                                 &nbsp;
                                                 <Link to={'/update/' + item.id} className={"btn btn-success btn-xs"}>
                                                     <i className={"fa fa-pencil-alt"}/>
