@@ -56,7 +56,6 @@ class PlmSectorRelHrDepartment extends BaseModel
             [['hr_department_id','status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['hr_department_id','status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
-            [['plm_sector_list_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmSectorList::class, 'targetAttribute' => ['plm_sector_list_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['category_id' => 'id']],
             [['hr_department_id'], 'required'],
             [['categories'], 'safe'],
