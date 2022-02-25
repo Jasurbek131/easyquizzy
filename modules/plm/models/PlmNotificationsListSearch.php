@@ -40,8 +40,8 @@ class PlmNotificationsListSearch extends PlmNotificationsList
      */
     public function search($params)
     {
-        $query = PlmNotificationsList::find()
-            ->alias('pnl')
+        $query = PlmSectorRelHrDepartment::find()
+            ->alias('psrd')
             ->select([
                     'pnl.id',
                     'pd.reg_date',
@@ -58,7 +58,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                     'c.token',
                 ]);
         $query = $query
-            ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.category_id = psrd.category_id')
+            ->leftJoin(['pnl' => 'plm_notifications_list'],'pnl.category_id = psrd.category_id')
             ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
             ->leftJoin(['pd' => 'plm_documents'],'pdi.document_id = pd.id')
             ->leftJoin(['sh' => 'shifts'],'pd.shift_id = sh.id')
