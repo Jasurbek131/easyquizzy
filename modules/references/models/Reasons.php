@@ -87,4 +87,18 @@ class Reasons extends BaseModel
     {
         return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
+    public static function getCategoryList($category_id = null){
+        $query = self::find()
+            ->select([
+                "id",
+                "name_uz AS name",
+            ])
+            ->where(['category_id' => $category_id])
+            ->asArray()
+            ->all();
+        if(!empty($query)){
+            return $query;
+        }
+        return $query;
+    }
 }

@@ -475,9 +475,9 @@ $('body').delegate('.update-tree-elements', 'click', function(e) {
 // delete tree
 $('body').delegate('.delete-tree', 'click', function(e) {
     e.preventDefault();
+    var id = $(this).attr('data-id');
     var url = $(this).attr('href');
     var value = $('#kt_tree_1 li');
-    var id = $(this).attr('data-id');
     if(id > 0){
         swal({
             title: message_delete_title,
@@ -508,12 +508,11 @@ $('body').delegate('.delete-tree', 'click', function(e) {
                 $.ajax({
                     url:url,
                     data:{id:id},
-                    type:'GET',
-                    dataType: 'json',
+                    type:'POST',
                     success: function(response){
-                        if(response.status){
-                            swal(message_deleted,'','success');
-                            $('#kt_tree_1').jstree(true).settings.core.data = response.result;
+                        if(response.delete){
+                            swal(response.message,'','success');
+                            // $('#kt_tree_1').jstree(true).settings.core.data = response.result;
                             $('#kt_tree_1').jstree(true).refresh();
                         }               
                     }

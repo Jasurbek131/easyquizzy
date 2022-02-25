@@ -275,43 +275,28 @@ class HrDepartmentsController extends NodeController
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete()
     {
-        $transaction = Yii::$app->db->beginTransaction();
-        $isDeleted = false;
-        $model = $this->findModel($id);
-        try {
-            if($model->status_id < BaseModel::STATUS_SAVED){
-                $model->status_id = BaseModel::STATUS_INACTIVE;
-                if($model->save()){
-                    $isDeleted = true;
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $id = Yii::$app->request->post('id');
+        $response = [];
+        if (!empty($id)){
+            $child = HrDepartments::find()
+                ->where(['parent_id' => $id])
+                ->andWhere(['status_id' => BaseModel::STATUS_ACTIVE])
+                ->one();
+            if (empty($child)) {
+                $hrDepartment = HrDepartments::findOne(['id' => $id]);
+                if(!empty($hrDepartment)){
+                    $hrDepartment->status_id = BaseModel::STATUS_INACTIVE;
+                    if($hrDepartment->save()){
+                        $response['delete'] = true;
+                        $response['message'] = "Delete successfully";
+                    }
                 }
             }
-            if($isDeleted){
-                $transaction->commit();
-            }else{
-                $transaction->rollBack();
-            }
-        }catch (\Exception $e){
-            Yii::info('Not saved' . $e, 'save');
-        }
-        if(Yii::$app->request->isAjax){
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            $response = [];
-            $response['status'] = 1;
-            $response['message'] = Yii::t('app', 'Ma\'lumotlar yetarli emas!');
-            if($isDeleted){
-                $response['status'] = 0;
-                $response['message'] = Yii::t('app','Deleted Successfully');
-            }
+
             return $response;
-        }
-        if($isDeleted){
-            Yii::$app->session->setFlash('success',Yii::t('app','Deleted Successfully'));
-            return $this->redirect(['index']);
-        }else{
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Ma\'lumotlar yetarli emas!'));
-            return $this->redirect(['view', 'id' => $model->id]);
         }
     }
 

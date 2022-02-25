@@ -3,10 +3,8 @@
 namespace app\modules\plm\models;
 
 use app\modules\hr\models\HrEmployeeRelPosition;
-use app\modules\references\models\Equipments;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\plm\models\PlmNotificationsList;
 
 /**
  * PlmNotificationsListSearch represents the model behind the search form of `app\modules\plm\models\PlmNotificationsList`.
@@ -19,7 +17,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
     public function rules()
     {
         return [
-            [['id', 'plm_doc_item_id', 'defect_id', 'defect_type_id', 'defect_count', 'reason_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'plm_sector_list_id'], 'integer'],
+            [['id', 'plm_doc_item_id', 'defect_type_id', 'defect_count', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','category_id'], 'integer'],
             [['begin_time', 'end_time', 'add_info'], 'safe'],
         ];
     }
@@ -46,6 +44,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
             ->alias('pnl')
             ->select([
                     'pnl.id',
+                    'pd.reg_date',
                     'hd.name AS department',
                     'sh.name shift',
                     'product.product',
@@ -53,19 +52,18 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                     'pnl.defect_type_id',
                     'pnl.begin_time',
                     'pnl.end_time',
-                    'r.name_uz AS reason',
                     'defect.defect',
                     'defect.count AS defect_count',
                     'pnl.status_id',
-                    'pnl.plm_sector_list_id',
+                    'c.token',
                 ]);
         $query = $query
-            ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
+            ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.category_id = psrd.category_id')
             ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
             ->leftJoin(['pd' => 'plm_documents'],'pdi.document_id = pd.id')
             ->leftJoin(['sh' => 'shifts'],'pd.shift_id = sh.id')
             ->leftJoin(['hd' => 'hr_departments'],'pd.hr_department_id = hd.id')
-            ->leftJoin(['r' => 'reasons'],'pnl.reason_id = r.id')
+            ->leftJoin(['c' => 'categories'],'pnl.category_id = c.id')
             ->leftJoin(['defect' => PlmNotificationRelDefect::find()
                                     ->alias('pnrd')
                                     ->select([
@@ -95,7 +93,6 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                 ->leftJoin(['pdi' => 'plm_document_items'],'pdi.id = pdie.document_item_id')
                 ->groupBy(['pdi.id'])
             ],'equipment.id = pdi.id');
-
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -117,16 +114,14 @@ class PlmNotificationsListSearch extends PlmNotificationsList
             'plm_doc_item_id' => $this->plm_doc_item_id,
             'begin_time' => $this->begin_time,
             'end_time' => $this->end_time,
-            'defect_id' => $this->defect_id,
             'defect_type_id' => $this->defect_type_id,
             'defect_count' => $this->defect_count,
-            'reason_id' => $this->reason_id,
             'status_id' => $this->status_id,
             'created_by' => $this->created_by,
             'created_at' => $this->created_at,
             'updated_by' => $this->updated_by,
             'updated_at' => $this->updated_at,
-            'plm_sector_list_id' => $this->plm_sector_list_id,
+            'category_id' => $this->category_id,
         ]);
 
         $query->andFilterWhere(['ilike', 'add_info', $this->add_info]);

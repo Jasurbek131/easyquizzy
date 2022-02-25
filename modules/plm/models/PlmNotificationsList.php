@@ -4,7 +4,6 @@ namespace app\modules\plm\models;
 
 use app\modules\hr\models\HrEmployeeRelPosition;
 use app\modules\references\models\Categories;
-use app\modules\references\models\Defects;
 use app\modules\references\models\Reasons;
 use Yii;
 
@@ -26,12 +25,11 @@ use Yii;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
+ * @property int $category_id
  * @property float $by_pass
  * @property string $add_info
  *
- * @property Defects $defects
  * @property PlmDocumentItems $plmDocumentItems
- * @property Reasons $reasons
  */
 class PlmNotificationsList extends BaseModel
 {
@@ -41,6 +39,9 @@ class PlmNotificationsList extends BaseModel
     public $defect;
     public $reason;
     public $equipment;
+    public $reg_date;
+    public $token;
+    public $types;
     /**
      * {@inheritdoc}
      */
@@ -55,13 +56,11 @@ class PlmNotificationsList extends BaseModel
     public function rules()
     {
         return [
-            [['plm_doc_item_id', 'defect_id', 'defect_type_id', 'defect_count', 'reason_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','by_pass'], 'default', 'value' => null],
-            [['plm_doc_item_id', 'defect_id', 'defect_type_id', 'defect_count', 'reason_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['plm_doc_item_id', 'defect_type_id', 'defect_count','status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','by_pass'], 'default', 'value' => null],
+            [['plm_doc_item_id','defect_type_id', 'defect_count',  'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['begin_time', 'end_time'], 'safe'],
             [['add_info'], 'string'],
-            [['defect_id'], 'exist', 'skipOnError' => true, 'targetClass' => Defects::class, 'targetAttribute' => ['defect_id' => 'id']],
             [['plm_doc_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['plm_doc_item_id' => 'id']],
-            [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reasons::class, 'targetAttribute' => ['reason_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['category_id' => 'id']],
             [['stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::class, 'targetAttribute' => ['stop_id' => 'id']],
         ];
@@ -77,7 +76,6 @@ class PlmNotificationsList extends BaseModel
             'plm_doc_item_id' => Yii::t('app', 'Plm Doc Item ID'),
             'begin_time' => Yii::t('app', 'Begin Time'),
             'end_time' => Yii::t('app', 'End Time'),
-            'defect_id' => Yii::t('app', 'Defect ID'),
             'defect_type_id' => Yii::t('app', 'Defect Type ID'),
             'defect_count' => Yii::t('app', 'Defect Count'),
             'reason_id' => Yii::t('app', 'Reason ID'),
@@ -89,15 +87,8 @@ class PlmNotificationsList extends BaseModel
             'updated_at' => Yii::t('app', 'Updated At'),
             'add_info' => Yii::t('app', 'Add Info'),
             'by_pass' => Yii::t('app', 'Bypass Time'),
+            'types' => Yii::t('app', 'Production Type'),
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getDefects()
-    {
-        return $this->hasOne(Defects::class, ['id' => 'defect_id']);
     }
 
     /**
@@ -107,15 +98,6 @@ class PlmNotificationsList extends BaseModel
     {
         return $this->hasOne(PlmDocumentItems::class, ['id' => 'plm_doc_item_id']);
     }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getReasons()
-    {
-        return $this->hasOne(Reasons::class, ['id' => 'reason_id']);
-    }
-
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -137,20 +119,21 @@ class PlmNotificationsList extends BaseModel
                 ->alias('pnl')
                 ->select([
                     'pnl.*',
+                    "pd.reg_date",
                     'hd.name AS department',
                     'sh.name shift',
                     'product.product',
                     'equipment.equipment',
-                    'r.name_uz AS reason',
                     'defect.defect',
                     'defect.count AS defect_count',
+                    'c.id AS category_id'
                 ])
-                ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.plm_sector_list_id = psrd.plm_sector_list_id')
+                ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.category_id = psrd.category_id')
                 ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
                 ->leftJoin(['pd' => 'plm_documents'],'pdi.document_id = pd.id')
                 ->leftJoin(['sh' => 'shifts'],'pd.shift_id = sh.id')
                 ->leftJoin(['hd' => 'hr_departments'],'pd.hr_department_id = hd.id')
-                ->leftJoin(['r' => 'reasons'],'pnl.reason_id = r.id')
+                ->leftJoin(['c' => 'categories'],'pnl.category_id = c.id')
                 ->leftJoin(['defect' => PlmNotificationRelDefect::find()
                     ->alias('pnrd')
                     ->select([
