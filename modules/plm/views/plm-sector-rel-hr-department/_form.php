@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="plm-setting-accepted-sector-rel-hr-department-form">
+<div class="plm-sector-rel-hr-department-form">
 
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
