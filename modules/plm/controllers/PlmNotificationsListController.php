@@ -154,31 +154,13 @@ class PlmNotificationsListController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionAccepted($id,$category_id)
+    public function actionAjaxAccepted()
     {
-        $model = $this->findModel($id);
-        $reasons = Reasons::getCategoryList($category_id);
-        $transaction = Yii::$app->db->beginTransaction();
-        $saved = false;
-        try {   
-            if($model->status_id < BaseModel::STATUS_ACCEPTED){
-                $model->status_id = BaseModel::STATUS_ACCEPTED;
-                if($model->save()){
-                    $saved = true;
-                }
-                if($saved) {
-                    $transaction->commit();
-                    Yii::$app->session->setFlash('success',Yii::t("app","Checked successfully"));
-                }else{
-                    $transaction->rollBack();
-                    Yii::$app->session->setFlash('error',Yii::t("app","Checked not successfully"));
-                }
-            }
-        } catch (\Exception $e) {
-            Yii::info('Not saved' . $e, 'save');
-            $transaction->rollBack();
-        }
-        return $this->redirect(['view', 'id' => $model->id,'reasons' => $reasons]);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $response = [];
+        $response['status'] = false;
+        $response['status'] = "Not saved";
+        $data = Yii::$app->request->post();
     }
 
 

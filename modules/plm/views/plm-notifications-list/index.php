@@ -36,6 +36,13 @@ $this->params['breadcrumbs'][] = $this->title;
                    }
                ],
                [
+                   'attribute' => 'reg_date',
+                   'label' => Yii::t("app","Reg Date"),
+                   'value' => function($model){
+                       return date('d.m.Y',strtotime($model['reg_date']));
+                   }
+               ],
+               [
                    'attribute' => 'shift',
                    'label' => Yii::t("app","Shift Name"),
                    'value' => function($model){
@@ -48,6 +55,19 @@ $this->params['breadcrumbs'][] = $this->title;
                    'value' => function($model){
                        return $model['equipment'];
                    }
+               ],
+               [
+                    'attribute' => 'types',
+                    'label' => Yii::t("app","Production Type"),
+                    'value' => function($model){
+                       switch ($model['token']){
+                           case 'WORKING_TIME': return Yii::t("app","Working Time");
+                           case 'REPAIRED': return Yii::t("app","Repaired");
+                           case 'SCRAPPED': return Yii::t("app","Scrapped");
+                           case 'PLANNED': return Yii::t("app","Planned Stop");
+                           case 'UNPLANNED': return Yii::t("app","Unplanned Stop");
+                       }
+                    }
                ],
                [
                    'attribute' => 'status_id',

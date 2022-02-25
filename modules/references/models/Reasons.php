@@ -90,7 +90,8 @@ class Reasons extends BaseModel
     public static function getCategoryList($category_id = null){
         $query = self::find()
             ->select([
-                "STRING_AGG(name_uz,', ') AS reasons",
+                "id",
+                "name_uz AS name",
             ])
             ->where(['category_id' => $category_id])
             ->asArray()
