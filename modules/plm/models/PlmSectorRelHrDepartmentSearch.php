@@ -17,7 +17,7 @@ class PlmSectorRelHrDepartmentSearch extends PlmSectorRelHrDepartment
     public function rules()
     {
         return [
-            [['id', 'plm_sector_list_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['category_id', 'hr_department_id'], 'safe']
         ];
     }
