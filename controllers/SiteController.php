@@ -61,7 +61,7 @@ class SiteController extends MyController
      */
     public function actionIndex()
     {
-        $user_redirect_url = Yii::$app->user->identity->redirectUrl->url;
+        $user_redirect_url = Yii::$app->user->identity->redirectUrl->url ?? "";
 
         if(!empty($user_redirect_url) && !is_null($user_redirect_url)){
             return $this->redirect([$user_redirect_url]);
