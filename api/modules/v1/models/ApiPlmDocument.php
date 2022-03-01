@@ -612,7 +612,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
      * @param $params
      * @return ActiveDataProvider
      */
-    public static function getPlmDocuments($params)
+    public static function getPlmDocuments($params = [])
     {
         $pageSize = $params['page_size'] ?? 20;
         $language = Yii::$app->language;

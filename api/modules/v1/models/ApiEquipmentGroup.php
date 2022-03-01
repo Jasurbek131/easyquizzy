@@ -100,7 +100,7 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                      * O'zim ham zo'rga yozib oldim tushunmoqchi bo'lganlarga sabr
                      */
                     $relGroupCreate = false;
-                    if ($item["equipment_group_id"]){
+                    if (isset($item["equipment_group_id"]) && !empty($item["equipment_group_id"])){
                         EquipmentGroupRelationEquipment::deleteAll(["equipment_group_id" => $item["equipment_group_id"]]);
                         $existsEquipmentGroup = EquipmentGroup::existsGroup($item["equipments"]);
                         if ($existsEquipmentGroup["status"]){
@@ -120,7 +120,6 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                         }
                     }
                     $existsEquipmentGroup["equipments_group_type_id"] = $equipmentGroup->equipments_group_type_id;
-
                     $equipmentGroup->setAttributes([
                         'name' => $item['name'],
                         'equipments_group_type_id' => $item['equipments_group_type_id'],
@@ -134,8 +133,7 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                         ];
                         break;
                     }
-                    
-                    if ($response['status'] && $item["equipment_group_id"]){
+                    if ($response['status'] && isset($item["equipment_group_id"]) && !empty($item["equipment_group_id"])){
                         if ($existsEquipmentGroup["equipments_group_type_id"] != $equipmentGroup->equipments_group_type_id){
                             ProductLifecycle::deleteAll(["equipment_group_id" => $item["equipment_group_id"]]);
                             $relGroupCreate = true;

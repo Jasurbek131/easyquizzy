@@ -68,17 +68,33 @@ class PlmDocumentReport extends Component {
         />;
         let dataBody = "";
         let iterator = 0;
+        let docItemLength = 0;
 
         if (items.length > 0){
             dataBody =  items.map(function (item, index) {
-                return (
-                    <tr key={index}>
-                        <td>{++iterator}</td>
-                        <td>{item.department_name}</td>
-                        <td>{item.shift_name}</td>
-                        <td>{item.shift_name}</td>
-                    </tr>
-                );
+                docItemLength = item?.plm_document_items.length ?? 0;
+                let returnDocItemData;
+                if(docItemLength > 0){
+                    returnDocItemData = item?.plm_document_items.map((docItem, docIndex) => {
+                        if (docIndex == 0){
+                            return (
+                                <tr key={index}>
+                                    <td rowSpan={docItemLength}>{++iterator}</td>
+                                    <td rowSpan={docItemLength}>{item.department ?? ""}</td>
+                                    <td rowSpan={docItemLength}>{item.shift ?? ""}</td>
+                                    <td rowSpan={docItemLength}>{item.reg_date ?? ""}</td>
+                                    <td>{docItem.start_work}</td>
+                                    <td>{docItem.end_work}</td>
+                                </tr>
+                            )
+                        }
+                        return (<tr>
+                            <td>{docItem.start_work}</td>
+                            <td>{docItem.end_work}</td>
+                        </tr>)
+                    })
+                }
+                return (returnDocItemData);
             });
         }
 
@@ -93,6 +109,8 @@ class PlmDocumentReport extends Component {
                                 <th>Bo'lim</th>
                                 <th>Smena</th>
                                 <th>Sana</th>
+                                <th>Boshlanish vaqti</th>
+                                <th>Tugash vaqti</th>
                             </tr>
                         </thead>
                         <tbody>

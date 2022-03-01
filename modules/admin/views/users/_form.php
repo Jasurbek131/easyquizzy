@@ -87,7 +87,7 @@ use yii\widgets\ActiveForm;
                             <label class="checkbox-transform">
                                 <input type="checkbox"
                                        name="Users[roles][<?php echo $key ?>]"
-                                    <?php echo $model["roles"][$key] !== null ? "checked" : "" ?>
+                                    <?php echo isset($model["roles"][$key]) && $model["roles"][$key] !== null ? "checked" : "" ?>
                                        class="checkbox">
                                 <span class="checkmark"></span>
                                 <span class="p-10"><?php echo $role ?></span>

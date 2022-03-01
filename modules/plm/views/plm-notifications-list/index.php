@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="plm-notifications-list-index card">
    <div class="card-body">
        <?php Pjax::begin(); ?>
-       <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
        <?= GridView::widget([
            'dataProvider' => $dataProvider,

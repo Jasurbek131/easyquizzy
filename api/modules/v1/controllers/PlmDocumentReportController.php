@@ -71,8 +71,7 @@ class PlmDocumentReportController extends ActiveController
         ];
         switch ($type){
             case "PLM_DOCUMENT_DATA":
-//                $response = PlmDocumentReport::documentData();
-                $data = ApiPlmDocument::getPlmDocuments();
+                $response = PlmDocumentReport::getData();
                 break;
         }
 

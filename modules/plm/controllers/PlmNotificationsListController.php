@@ -119,25 +119,6 @@ class PlmNotificationsListController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "plm-notifications-list_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => PlmNotificationsList::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
-
     /**
      * Finds the PlmNotificationsList model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -154,7 +135,11 @@ class PlmNotificationsListController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionAjaxAccepted()
+    /**
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionAjaxAccepted(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $response = [];
@@ -163,7 +148,7 @@ class PlmNotificationsListController extends Controller
         $data = Yii::$app->request->post();
         $saved = false;
         if(!empty($data['plm_notification_list_id'])){
-            if($data['form']){
+            if(isset($data['form']) && $data['form']){
                 $reasons = $data['form'];
                 foreach ($reasons as $reason){
                     $plmNotificationRelReason = new PlmNotificationsListRelReason();

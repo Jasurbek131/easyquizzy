@@ -27,6 +27,7 @@ const planned_stops = {
     category_id: "",
     category_name: "",
 };
+
 const unplanned_stops = {
     id: "",
     begin_date: "",
@@ -212,14 +213,6 @@ class Form extends React.Component {
             case "plm_document":
                 let {plm_document} = this.state;
                 plm_document[name] = v;
-                if (name === 'organisation_id') {
-                    plm_document['hr_department_id'] = "";
-                    this.setState({departmentList: e?.departments ?? []});
-                }
-                if (name === 'hr_department_id') {
-                    plm_document_items['shift_id'] = "";
-                    this.setState({shiftList: e?.shifts});
-                }
                 this.setState({plm_document: plm_document});
                 break;
             case "plm_document_items":
@@ -745,7 +738,7 @@ class Form extends React.Component {
                                     repaired: [],
                                     scrapped: [],
                                 }];
-                                statusTime = item?.notifications_status ? (item?.notifications_status[TOKEN_WORKING_TIME]?.status_id == 4 ) : false;
+                                statusTime = item?.notifications_status ? (item?.notifications_status[TOKEN_WORKING_TIME]?.status_id == 4) : false;
                                 statusRepaired = item?.notifications_status ? (item?.notifications_status[TOKEN_REPAIRED]?.status_id == 4) : false;
                                 statusScrapped = item?.notifications_status ? (item?.notifications_status[TOKEN_SCRAPPED]?.status_id == 4) : false;
                                 return (
@@ -852,7 +845,7 @@ class Form extends React.Component {
                                                                         }}
                                                                         selected={item?.end_work ? new Date(item.end_work) : ""}
                                                                         filterTime={(e) => {
-                                                                            return new Date(item?.start_work) < new Date(e)
+                                                                            return new Date(item?.start_work) < new Date(e);
                                                                         }}
                                                                         readOnly={statusTime}
                                                                         autoComplete={'off'}
