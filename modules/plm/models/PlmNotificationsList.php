@@ -205,12 +205,12 @@ class PlmNotificationsList extends BaseModel
 
     /**
      * @param array $query
-     * @return bool
      */
     public static function existsNotification(array $query)
     {
         return self::find()
             ->where($query)
-            ->exists();
+            ->orderBy(["id" => SORT_DESC])
+            ->one();
     }
 }
