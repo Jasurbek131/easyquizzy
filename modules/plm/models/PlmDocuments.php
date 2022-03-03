@@ -6,6 +6,7 @@ use app\modules\hr\models\HrDepartments;
 use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\references\models\Shifts;
 use Yii;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "plm_documents".
@@ -48,9 +49,9 @@ class PlmDocuments extends BaseModel
             [['hr_department_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'shift_id', 'organisation_id'], 'integer'],
             [['add_info'], 'string'],
             [['doc_number'], 'string', 'max' => 255],
-            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['hr_department_id' => 'id']],
-            [['organisation_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['organisation_id' => 'id']],
-            [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shifts::className(), 'targetAttribute' => ['shift_id' => 'id']],
+            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
+            [['organisation_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['organisation_id' => 'id']],
+            [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shifts::class, 'targetAttribute' => ['shift_id' => 'id']],
         ];
     }
 
@@ -76,15 +77,14 @@ class PlmDocuments extends BaseModel
 
     public function beforeSave($insert)
     {
-        if ($this->isNewRecord){
-            $last = self::find()->orderBy(['id' => SORT_DESC])->one();
-            if (!empty($last))
-                $last = $last['id'] + 1;
-            else
-                $last = 1;
-            $this->doc_number =  "PD-".$last;
+        if ($this->isNewRecord) {
+            $lastDoc = self::find()->orderBy(['id' => SORT_DESC])->one();
+            $last = 1;
+            if (!empty($lastDoc))
+                $last = $lastDoc["id"] + 1;
+            $this->doc_number = "PD-" . $last;
             $organisation = UsersRelationHrDepartments::findOne(["user_id" => Yii::$app->user->identity->id, 'is_root' => UsersRelationHrDepartments::ROOT]);
-            $this->organisation_id =  $organisation ? $organisation->hr_department_id : "";
+            $this->organisation_id = $organisation ? $organisation->hr_department_id : "";
         }
         return parent::beforeSave($insert);
     }
@@ -94,7 +94,7 @@ class PlmDocuments extends BaseModel
      */
     public function getHrDepartments()
     {
-        return $this->hasOne(HrDepartments::className(), ['id' => 'hr_department_id']);
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
 
     /**
@@ -102,7 +102,7 @@ class PlmDocuments extends BaseModel
      */
     public function getOrganisation()
     {
-        return $this->hasOne(HrDepartments::className(), ['id' => 'organisation_id']);
+        return $this->hasOne(HrDepartments::class, ['id' => 'organisation_id']);
     }
 
     /**
@@ -110,7 +110,7 @@ class PlmDocuments extends BaseModel
      */
     public function getShifts()
     {
-        return $this->hasOne(Shifts::className(), ['id' => 'shift_id']);
+        return $this->hasOne(Shifts::class, ['id' => 'shift_id']);
     }
 
     /**
@@ -118,13 +118,14 @@ class PlmDocuments extends BaseModel
      */
     public function getPlmDocumentItems()
     {
-        return $this->hasMany(PlmDocumentItems::className(), ['document_id' => 'id']);
+        return $this->hasMany(PlmDocumentItems::class, ['document_id' => 'id']);
     }
+
     /**
      * @return yii\db\ActiveQuery
      */
     public function getPlm_document_items()
     {
-        return $this->hasMany(PlmDocumentItems::className(), ['document_id' => 'id']);
+        return $this->hasMany(PlmDocumentItems::class, ['document_id' => 'id']);
     }
 }
