@@ -214,23 +214,23 @@ function EquipmentGroup(props){
 
 
     return <React.Fragment>
-        <div className="fade modal show" role="dialog" tabIndex="-1" style={{display: onOpen ? "block" : "none"}} aria-modal="true">
-            <div className="modal-dialog modal-lg" role="document">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5>{props.appearance.title}</h5>
-                        <button onClick={props.onCancel} className="close" data-dismiss="modal">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div className="modal-body" style={{minHeight: "420px"}}>
-                        <div className={'card-body'}>
-                            {HTML}
+                <div className="fade modal show" role="dialog" tabIndex="-1" style={{display: onOpen ? "block" : "none"}} aria-modal="true">
+                    <div className="modal-dialog modal-lg" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5>{props.appearance.title}</h5>
+                                <button onClick={props.onCancel} className="close" data-dismiss="modal">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{minHeight: "420px"}}>
+                                <div className={'card-body'}>
+                                    {HTML}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
     </React.Fragment>
 }
 
