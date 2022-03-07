@@ -17,7 +17,7 @@ class AuthItemSearch extends AuthItem
     {
         return [
             [['name', 'description', 'rule_name', 'data', 'category', 'name_for_user'], 'safe'],
-            [['type', 'created_at', 'updated_at'], 'integer'],
+            [['type', 'created_at', 'updated_at', 'role_type'], 'integer'],
         ];
     }
 
@@ -55,6 +55,7 @@ class AuthItemSearch extends AuthItem
             'type' => $this->type,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'role_type' => $this->role_type,
         ]);
 
         $query->andFilterWhere(['ilike', 'name', $this->name])

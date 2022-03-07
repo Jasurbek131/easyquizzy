@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\models;
 
+use app\models\BaseModel;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\rbac\Item;
@@ -16,6 +17,7 @@ use yii\rbac\Item;
  * @property string $rule_name
  * @property resource $data
  * @property int $created_at
+ * @property int $role_type
  * @property int $updated_at
  *
  * @property AuthAssignment[] $authAssignments
@@ -28,10 +30,19 @@ use yii\rbac\Item;
  */
 class AuthItem extends \yii\db\ActiveRecord
 {
+    /**
+     * @var array
+     */
     public $perms = [];
 
+    /**
+     * @var array
+     */
     public $parents = [];
 
+    /**
+     * @var array
+     */
     public $new_permissions = [];
 
     /**
@@ -66,7 +77,7 @@ class AuthItem extends \yii\db\ActiveRecord
                     }
                 }
             }],
-            [['type', 'created_at', 'updated_at'], 'integer'],
+            [['type', 'created_at', 'updated_at', 'role_type'], 'integer'],
             [['description', 'data', 'name_for_user'], 'string'],
             [['name', 'rule_name'], 'string', 'max' => 64],
             [['name'], 'unique'],
@@ -90,6 +101,7 @@ class AuthItem extends \yii\db\ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'category' => Yii::t('app', 'Category'),
+            'role_type' => Yii::t('app', 'Role type'),
         ];
     }
 
@@ -156,15 +168,6 @@ class AuthItem extends \yii\db\ActiveRecord
         return $this->hasMany(AuthItem::class, ['name' => 'parent'])->viaTable('auth_item_child', ['child' => 'name']);
     }
 
-//    /**
-//     * @param $parent
-//     * @return false|int|string|null
-//     */
-//    public function havePermittionsChecked($parent)
-//    {
-//        return AuthItemChild::find()->where(['parent' => $parent])->andWhere(['like', 'child', '%/%', false])->scalar();
-//    }
-
     /**
      * @param $child
      * @return false|int|string|null
@@ -173,15 +176,6 @@ class AuthItem extends \yii\db\ActiveRecord
     {
         return AuthItemChild::find()->where(['parent' => $this->name])->andWhere(['child' => $child])->scalar();
     }
-
-//    /**
-//     * @param $parent
-//     * @return false|int|string|null
-//     */
-//    public function haveParent($parent)
-//    {
-//        return AuthItemChild::find()->where(['parent' => $parent])->scalar();
-//    }
 
     /**
      * @param null $name
@@ -219,58 +213,31 @@ class AuthItem extends \yii\db\ActiveRecord
         return $model;
     }
 
-//    /**
-//     * @return array
-//     */
-//    public function getPermissions()
-//    {
-//        $models = AuthItem::find()->where(['type' => 2])->all();
-//        return ArrayHelper::map($models, 'name', 'name');
-//    }
-
     /**
      * @param bool $isMap
      * @return array
      */
     public static function getRoles($isMap = false)
     {
-        $models = AuthItem::find()->where(['type' => Item::TYPE_ROLE])->asArray()->all();
-        if (!empty($models) && $isMap)
-            return ArrayHelper::map($models, 'name', 'name_for_user');
-
+        $models = AuthItem::find()
+            ->where(['type' => Item::TYPE_ROLE])
+            ->asArray()
+            ->orderBy([
+                "role_type" => SORT_ASC,
+                "name" => SORT_DESC
+            ])
+            ->all();
+        if (!empty($models) && $isMap){
+            $models = ArrayHelper::index($models, 'name','role_type');
+            if ($models){
+                foreach ($models as $key => $model){
+                    $models[$key] =  ArrayHelper::map($model, 'name', 'name_for_user');
+                }
+            }
+            return $models;
+        }
         return [];
     }
-
-
-//    /**
-//     * @param $name
-//     * @return array
-//     */
-//    public function getSelectedParents($name)
-//    {
-//        $models = AuthItemChild::find()->where(['parent' => $name])->all();
-//
-//        $names = [];
-//        foreach ($models as $model)
-//            array_push($names, $model->child);
-//
-//        return $names;
-//    }
-
-//    /**
-//     * @param $name
-//     * @return array
-//     */
-//    public static function getChilds($name)
-//    {
-//        $models = AuthItemChild::find()->where(['parent' => $name])->all();
-//        $names = [];
-//        foreach ($models as $model) {
-//            if (!strpos($model->child, '/'))
-//                array_push($names, $model->child);
-//        }
-//        return $names;
-//    }
 
     /**
      * @param $id
@@ -285,25 +252,20 @@ class AuthItem extends \yii\db\ActiveRecord
         return null;
     }
 
-//    /**
-//     * @param $id
-//     * @return string|null
-//     */
-//    public static function getPermissionChildSecond($id)
-//    {
-//        if (!empty($id)) {
-//            $res = "";
-//            $allIds = AuthItemChild::find()
-//                ->where(['parent' => $id])
-//                ->andWhere(['not like', 'child', '%/%', false])
-//                ->asArray()
-//                ->all();
-//            foreach ($allIds as $name) {
-//                $res .= "<span class='label-info label' style='font-size:13px;margin-left: 3px;padding: 3px'>{$name["child"]}</span>";
-//            }
-//            return $res;
-//        }
-//        return null;
-//    }
-
+    /**
+     * @param null $key
+     * @return array|mixed|string
+     */
+    public static function getRoleType($key = null)
+    {
+        $data = [
+            BaseModel::CREATE =>  Yii::t('app', 'Create'),
+            BaseModel::UPDATE =>  Yii::t('app', 'Update'),
+            BaseModel::VIEW =>  Yii::t('app', 'View'),
+            BaseModel::DELETE =>  Yii::t('app', 'Delete'),
+        ];
+        if ($key)
+            return  $data[$key] ?? "";
+        return $data;
+    }
 }

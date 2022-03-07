@@ -35,10 +35,17 @@ $this->params['breadcrumbs'][] = $this->title;
                    }
                ],
                [
+                   'attribute' => 'doc_number',
+                   'label' => Yii::t("app","Doc number"),
+                   'value' => function($model){
+                       return $model['doc_number'] ? $model['doc_number'] : "";
+                   }
+               ],
+               [
                    'attribute' => 'reg_date',
                    'label' => Yii::t("app","Reg Date"),
                    'value' => function($model){
-                       return date('d.m.Y',strtotime($model['reg_date']));
+                       return date('d.m.Y H:i:s ',strtotime($model['reg_date']));
                    }
                ],
                [

@@ -1,6 +1,7 @@
 <?php
 
 use app\modules\references\models\EquipmentTypes;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -34,9 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'equipment_type_id',
                     'format' => 'raw',
                     'value' => function($model) {
-                        return EquipmentTypes::findOne($model->equipment_type_id)->name;
+                        return $model->equipmentTypes->name ?? "";
                     },
-                    'filter' => \kartik\select2\Select2::widget([
+                    'filter' => Select2::widget([
                         'model' =>  $searchModel,
                         'attribute' => 'equipment_type_id',
                         'data' => EquipmentTypes::getList(),

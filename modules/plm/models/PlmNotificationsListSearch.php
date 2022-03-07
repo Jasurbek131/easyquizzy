@@ -27,7 +27,6 @@ class PlmNotificationsListSearch extends PlmNotificationsList
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -56,8 +55,8 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                     'defect.count AS defect_count',
                     'pnl.status_id',
                     'c.token',
-                ]);
-        $query = $query
+                    'pd.doc_number',
+                ])
             ->leftJoin(['pnl' => 'plm_notifications_list'],'pnl.category_id = psrd.category_id')
             ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
             ->leftJoin(['pd' => 'plm_documents'],'pdi.document_id = pd.id')
@@ -93,7 +92,6 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                 ->leftJoin(['pdi' => 'plm_document_items'],'pdi.id = pdie.document_item_id')
                 ->groupBy(['pdi.id'])
             ],'equipment.id = pdi.id');
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -102,13 +100,10 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
         $hr_department = HrEmployeeRelPosition::getActiveHrDepartment();
         $query = $query->andWhere(['=','psrd.hr_department_id', $hr_department['hr_department_id']]);
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'plm_doc_item_id' => $this->plm_doc_item_id,
@@ -116,7 +111,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
             'end_time' => $this->end_time,
             'defect_type_id' => $this->defect_type_id,
             'defect_count' => $this->defect_count,
-            'status_id' => $this->status_id,
+            'pnl.status_id' => $this->status_id,
             'created_by' => $this->created_by,
             'created_at' => $this->created_at,
             'updated_by' => $this->updated_by,

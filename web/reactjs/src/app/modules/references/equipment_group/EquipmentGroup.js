@@ -274,6 +274,18 @@ class EquipmentGroup extends Component {
                                    onChange={this.onHandleChange.bind(this, 'input', 'name', 'groups', index, '')}
                                />
                            </div>
+                           <div className={"col-lg-2"}>
+                               <label htmlFor={"equipments_group_type_id_"+index}><span className={"required"}>*</span> {messages.group_type}</label>
+                               <Select
+                                   styles={style}
+                                   id={"equipments_group_type_id_"+index}
+                                   onChange={this.onHandleChange.bind(this, 'select', 'equipments_group_type_id','groups',index, '')}
+                                   value={equipments_group_type_list.filter(({value}) => +value === +item.equipments_group_type_id)}
+                                   placeholder={"Выбрать"}
+                                   isClearable={true}
+                                   options={equipments_group_type_list}
+                               />
+                           </div>
                            <div className={"col-lg-3"}>
                                <label htmlFor={"equipments_"+index}><span className={"required"}>*</span> {messages.equipments}</label>
                                <Select
@@ -286,18 +298,6 @@ class EquipmentGroup extends Component {
                                    placeholder={"Выбрать"}
                                    isClearable={true}
                                    options={equipments_list}
-                               />
-                           </div>
-                           <div className={"col-lg-2"}>
-                               <label htmlFor={"equipments_group_type_id_"+index}><span className={"required"}>*</span> {messages.group_type}</label>
-                               <Select
-                                   styles={style}
-                                   id={"equipments_group_type_id_"+index}
-                                   onChange={this.onHandleChange.bind(this, 'select', 'equipments_group_type_id','groups',index, '')}
-                                   value={equipments_group_type_list.filter(({value}) => +value === +item.equipments_group_type_id)}
-                                   placeholder={"Выбрать"}
-                                   isClearable={true}
-                                   options={equipments_group_type_list}
                                />
                            </div>
                            <div className="col-lg-5">
@@ -413,7 +413,7 @@ class EquipmentGroup extends Component {
                             </div>
                             <div className="row">
                                 <div className="col-lg-12">
-                                    <a href="/references/equipment-group/index" className={"btn btn-info"}>{messages.back ?? ""}</a>
+                                    <a href="/references/equipment-group/index" className={"btn btn-warning"}>{messages.back ?? ""}</a>
                                 </div>
                             </div>
                         </div>

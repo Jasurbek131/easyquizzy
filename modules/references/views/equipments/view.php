@@ -1,5 +1,7 @@
 <?php
 
+use app\models\BaseModel;
+use app\modules\references\models\EquipmentTypes;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -44,9 +46,17 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'equipment_type_id',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return $model->equipmentTypes->name ?? "";
+                },
             ],
             [
                 'attribute' => 'status_id',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return BaseModel::getStatusList($model->status_id);
+                },
             ],
             [
                 'attribute' => 'created_at',

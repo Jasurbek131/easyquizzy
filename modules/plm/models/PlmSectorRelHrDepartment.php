@@ -34,6 +34,7 @@ class PlmSectorRelHrDepartment extends BaseModel
     public $reg_date;
     public $token;
     public $types;
+    public $doc_number;
     /**
      * @var array
      */

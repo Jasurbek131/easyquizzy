@@ -18,7 +18,7 @@ class EquipmentGroupSearch extends EquipmentGroup
     {
         return [
             [['id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['name', 'value'], 'safe'],
+            [['name', 'value', 'equipments'], 'safe'],
         ];
     }
 
@@ -27,7 +27,6 @@ class EquipmentGroupSearch extends EquipmentGroup
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -41,7 +40,10 @@ class EquipmentGroupSearch extends EquipmentGroup
     public function search($params)
     {
         $query = EquipmentGroup::find()
-            ->orderBy(["id" => SORT_DESC]);
+            ->alias("eg")
+            ->leftJoin(["egre" => 'equipment_group_relation_equipment'], 'egre.equipment_group_id = eg.id')
+            ->leftJoin(["e" => 'equipments'], 'egre.equipment_id = e.id')
+            ->orderBy(["eg.id" => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -53,16 +55,12 @@ class EquipmentGroupSearch extends EquipmentGroup
             return $dataProvider;
 
         $query->andFilterWhere([
-            'id' => $this->id,
-            'status_id' => $this->status_id,
-            'value' => $this->value,
-            'created_at' => $this->created_at,
-            'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
+            'eg.status_id' => $this->status_id,
+            'eg.value' => $this->value,
         ]);
 
-        $query->andFilterWhere(['ilike', 'name', $this->name]);
+        $query->andFilterWhere(['ilike', 'eg.name', $this->name]);
+        $query->andFilterWhere(['ilike', 'e.name', $this->equipments]);
 
         return $dataProvider;
     }

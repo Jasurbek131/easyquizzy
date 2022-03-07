@@ -98,22 +98,6 @@ class AuthItemController extends Controller
                     'name' => 'index',
                     'description' => 'Index',
                 ],
-                [
-                    'name' => 'create',
-                    'description' => 'Create',
-                ],
-                [
-                    'name' => 'update',
-                    'description' => 'Update',
-                ],
-                [
-                    'name' => 'delete',
-                    'description' => 'Delete',
-                ],
-                [
-                    'name' => 'view',
-                    'description' => 'View',
-                ],
             ];
         }
         if ($model->load(Yii::$app->request->post())) {
@@ -192,67 +176,14 @@ class AuthItemController extends Controller
         ]);
     }
 
-    public function actionCreatePermission()
-    {
-        $model = new AuthItem();
-        $model->type = 2;
-        $models = [new AuthItem()];
-        $model->new_permissions = [
-            [
-                'name' => 'index',
-                'description' => 'Index',
-            ],
-            [
-                'name' => 'create',
-                'description' => 'Create',
-            ],
-            [
-                'name' => 'update',
-                'description' => 'Update',
-            ],
-            [
-                'name' => 'delete',
-                'description' => 'Delete',
-            ],
-            [
-                'name' => 'view',
-                'description' => 'View',
-            ],
-        ];
-        if (Yii::$app->request->isPost) {
-            $data = Yii::$app->request->post();
-            if (!empty($data['AuthItem']['new_permissions'])) {
-                foreach ($data['AuthItem']['new_permissions'] as $item) {
-                    $dataAI = [];
-                    $m = new AuthItem();
-                    $dataAI['AuthItem']['name'] = $data['AuthItem']['name'] . '/' . $item['name'];
-                    $dataAI['AuthItem']['category'] = $data['AuthItem']['category'];
-                    $dataAI['AuthItem']['description'] = $item['description'];
-                    $dataAI['AuthItem']['type'] = 2;
-
-                    if ($m->load($dataAI) && $m->save()) {
-                        $auth = Yii::$app->authManager;
-                        $role = Yii::$app->authManager->getRole($m->category);
-                        $permission = Yii::$app->authManager->getPermission($m->name);
-                        $auth->addChild($role, $permission);
-                    }
-                }
-            }
-            return $this->redirect(['permissions']);
-        }
-
-        return $this->render('create_permission', [
-            'model' => $model,
-        ]);
-    }
-
     /**
      * @param $id
+     * @param $permission
      * @return array|string|Response
      * @throws NotFoundHttpException
      * @throws \Throwable
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $permission = null)
     {
         $model = $this->findModel($id);
         $models = AuthItem::find()->where(['type' => 2])->all();
@@ -265,9 +196,9 @@ class AuthItemController extends Controller
                     $response = [];
                     if ($model->save()) {
                         if ($model->type !== 2) {
-                            $auth = Yii::$app->authManager;
+//                            $auth = Yii::$app->authManager;
                             $perms = Yii::$app->request->post()['AuthItem']['perms'];
-                            $parents = Yii::$app->request->post()['AuthItem']['parents'];
+//                            $parents = Yii::$app->request->post()['AuthItem']['parents'];
 
                             $this->deletePerms($model->name);
                             ArrayHelper::remove($perms, 0);
@@ -336,12 +267,14 @@ class AuthItemController extends Controller
             return $this->renderAjax('update', [
                 'model' => $model,
                 'perms' => $perms,
+                'permission' => $permission,
             ]);
         }
 
         return $this->render('update', [
             'model' => $model,
             'perms' => $perms,
+            'permission' => $permission,
         ]);
     }
 
