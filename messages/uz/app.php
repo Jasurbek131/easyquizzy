@@ -107,7 +107,7 @@ return [
     'Doc ID' => '',
     'Doc Item ID' => '',
     'Doc Item Product ID' => '',
-    'Doc Number' => '',
+    'Doc Number' => 'Hujjat raqami',
     'Doc item equipment not saved' => '',
     'Doc item not saved' => '',
     'Doc item product not saved' => '',

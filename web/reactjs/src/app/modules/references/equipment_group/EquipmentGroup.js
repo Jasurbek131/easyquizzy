@@ -17,7 +17,7 @@ const initialItem = {
 const  initialLifeCycle = {
     name : '',
     equipments : '',
-    equipments_group_type_id : 1,
+    equipment_type_id : 1,
     cycles: [JSON.parse(JSON.stringify(initialItem))]
 };
 
@@ -97,7 +97,7 @@ class EquipmentGroup extends Component {
                 forms["groups"][index][model][subIndex][name] = value;
                 break;
             case "groups":
-                if (name == "equipments_group_type_id") {
+                if (name == "equipment_type_id") {
                     forms[model][index]["cycles"] = [JSON.parse(JSON.stringify(initialItem))];
                 }
                 forms[model][index][name] = value;
@@ -275,12 +275,12 @@ class EquipmentGroup extends Component {
                                />
                            </div>
                            <div className={"col-lg-2"}>
-                               <label htmlFor={"equipments_group_type_id_"+index}><span className={"required"}>*</span> {messages.group_type}</label>
+                               <label htmlFor={"equipment_type_id_"+index}><span className={"required"}>*</span> {messages.group_type}</label>
                                <Select
                                    styles={style}
-                                   id={"equipments_group_type_id_"+index}
-                                   onChange={this.onHandleChange.bind(this, 'select', 'equipments_group_type_id','groups',index, '')}
-                                   value={equipments_group_type_list.filter(({value}) => +value === +item.equipments_group_type_id)}
+                                   id={"equipment_type_id_"+index}
+                                   onChange={this.onHandleChange.bind(this, 'select', 'equipment_type_id','groups',index, '')}
+                                   value={equipments_group_type_list.filter(({value}) => +value === +item.equipment_type_id)}
                                    placeholder={"Выбрать"}
                                    isClearable={true}
                                    options={equipments_group_type_list}
@@ -297,7 +297,7 @@ class EquipmentGroup extends Component {
                                    value={item.equipments}
                                    placeholder={"Выбрать"}
                                    isClearable={true}
-                                   options={equipments_list}
+                                   options={equipments_list.filter(({equipment_type_id}) => +equipment_type_id === +item.equipment_type_id )}
                                />
                            </div>
                            <div className="col-lg-5">
@@ -359,7 +359,7 @@ class EquipmentGroup extends Component {
                                                         </div>
                                                         <div className={"col-lg-1"}>
                                                             {
-                                                                +item.equipments_group_type_id === 1 ? (<div>
+                                                                +item.equipment_type_id === 1 ? (<div>
                                                                     {subIndex != 0 ?
                                                                         <button  className={"btn btn-xs btn-outline-danger"}  onClick={this.removeData.bind(this, "cycles", index, subIndex)}><i className={"fa fa-times"}></i></button>
                                                                         :

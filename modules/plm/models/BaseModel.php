@@ -38,15 +38,20 @@ class BaseModel extends ActiveRecord
         ];
     }
 
-    public static function getStatusList($key = null, $isArray = false) {
+    public static function getStatusList($key = null, $isArray = false, $badge = true) {
         $language = Yii::$app->language;
         if (!is_null($key)) {
             $status = StatusList::findOne(['id' => $key]);
             if (!empty($status)) {
-                if ($status['id'] == self::STATUS_INACTIVE) {
-                    return "<span class='badge badge-danger d-block'>".$status["name_{$language}"]."</span>";
+                if ($badge){
+                    if ($status['id'] == self::STATUS_INACTIVE) {
+                        return "<span class='badge badge-danger d-block'>".$status["name_{$language}"]."</span>";
+                    }
+                    return "<span class='badge badge-success d-block'>".$status["name_{$language}"]."</span>";
+                }else{
+                    return $status["name_{$language}"];
                 }
-                return "<span class='badge badge-success d-block'>".$status["name_{$language}"]."</span>";
+
             }
             return "";
         }
