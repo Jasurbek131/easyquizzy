@@ -42,17 +42,6 @@ class HrDepartmentsController extends NodeController
     }
 
     /**
-     * Lists all HrDepartments models.
-     * @return mixed
-     */
-    /*public function actionIndex()
-    {
-        return $this->render('index', [
-            'query' => HrDepartments::find()->addOrderBy('root, lft')
-        ]);
-    }*/
-
-    /**
      * @return Response
      * @throws ErrorException
      * @throws InvalidConfigException
@@ -311,15 +300,15 @@ class HrDepartmentsController extends NodeController
     }
 
     /**
-     * @param null $deb
+     * @param null $dep
      * @return string
      */
-    public function actionIndex($deb = null): string
+    public function actionIndex($dep = null): string
     {
-        $tree = HrDepartments::getTreeViewHtmlForm(null, null, UsersRelationHrDepartments::getDepartmentByUser());
+        $tree = HrDepartments::getTreeViewHtmlForm(null, $dep, UsersRelationHrDepartments::getDepartmentByUser());
         return $this->render('dep-index',[
             'tree' => $tree,
-            'deb' => $deb,
+            'dep' => $dep,
         ]);
     }
 
