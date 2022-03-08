@@ -98,6 +98,7 @@ class HrDepartmentRelDefectsController extends Controller
                     $response = [];
                     if ($saved) {
                         $response['status'] = 0;
+                        $response['hr_department_id'] = $model->hr_department_id;
                         $response['message'] = Yii::t('app', 'Saved Successfully');
                     } else {
                         $response['status'] = 1;
@@ -155,6 +156,7 @@ class HrDepartmentRelDefectsController extends Controller
                     $response = [];
                     if ($saved) {
                         $response['status'] = 0;
+                        $response['hr_department_id'] = $model->hr_department_id;
                         $response['message'] = Yii::t('app', 'Saved Successfully');
                     } else {
                         $response['status'] = 1;

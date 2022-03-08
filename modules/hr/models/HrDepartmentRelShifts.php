@@ -1,9 +1,10 @@
 <?php
 
 namespace app\modules\hr\models;
-use app\models;
 use app\modules\references\models\Shifts;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "hr_department_rel_shifts".
@@ -38,8 +39,8 @@ class HrDepartmentRelShifts extends BaseModel
         return [
             [['hr_department_id', 'shift_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['hr_department_id', 'shift_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::className(), 'targetAttribute' => ['hr_department_id' => 'id']],
-            [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shifts::className(), 'targetAttribute' => ['shift_id' => 'id']],
+            [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
+            [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shifts::class, 'targetAttribute' => ['shift_id' => 'id']],
         ];
     }
 
@@ -61,22 +62,27 @@ class HrDepartmentRelShifts extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getHrDepartments()
+    public function getHrDepartments(): ActiveQuery
     {
-        return $this->hasOne(HrDepartments::className(), ['id' => 'hr_department_id']);
+        return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getShifts()
+    public function getShifts(): ActiveQuery
     {
-        return $this->hasOne(Shifts::className(), ['id' => 'shift_id']);
+        return $this->hasOne(Shifts::class, ['id' => 'shift_id']);
     }
 
-    public static function getHrRelShift($department_id = null){
+    /**
+     * @param null $department_id
+     * @return array|ActiveRecord[]
+     */
+    public static function getHrRelShift($department_id = null): array
+    {
         if(!empty($department_id)){
             $data = self::find()
                 ->alias('hers')

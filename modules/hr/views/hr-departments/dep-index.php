@@ -1,9 +1,10 @@
 <?php
 
+use app\assets\SweetAlertAsset;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
 use yii\widgets\Pjax;
-use app\components\PermissionHelper as P;
+
 /* @var $this yii\web\View */
 /* @var $tree */
 
@@ -77,13 +78,15 @@ $create = Yii::t('app', 'Create');
                         <br>
                         <button class="btn btn-xs btn-outline-info department-create"
                                 style="border: 1px solid #8950fc;" disabled="disabled"
-                                href="<?php echo Url::to(['hr-departments/create']) ?>" ><i class="fa fa-plus"></i></button>
+                                href="<?php echo Url::to(['hr-departments/create']) ?>"><i class="fa fa-plus"></i>
+                        </button>
 
-                        <?php if(Yii::$app->user->can("super-admin")):?>
-                            <button class="btn btn-xs btn-outline-success tree-create" style="border: 1px solid #1bc5bd;"
-                                href="<?php echo Url::to(['hr-departments/create']) ?>"><i
-                                class="fa fa-tree"></i></button>
-                        <?php endif;?>
+                        <?php if (Yii::$app->user->can("super-admin")): ?>
+                            <button class="btn btn-xs btn-outline-success tree-create"
+                                    style="border: 1px solid #1bc5bd;"
+                                    href="<?php echo Url::to(['hr-departments/create']) ?>"><i
+                                        class="fa fa-tree"></i></button>
+                        <?php endif; ?>
 
                         <button class="btn btn-xs btn-outline-danger delete-tree disabled-danger-delete"
                                 disabled="disabled"
@@ -91,7 +94,8 @@ $create = Yii::t('app', 'Create');
                         </button>
                         <button class="btn btn-xs btn-outline-primary department-update"
                                 disabled="disabled"
-                                style="border: 1px solid #3699ff;" href="<?php echo Url::to(['hr-departments/update']); ?>">
+                                style="border: 1px solid #3699ff;"
+                                href="<?php echo Url::to(['hr-departments/update']); ?>">
                             <i class="fa fa-pencil-alt"></i></button>
                         <button class="btn btn-xs btn-outline-warning"
                                 style="border: 1px solid #ffaf36;" href="#" onclick="window.location.reload()">
@@ -115,11 +119,13 @@ $create = Yii::t('app', 'Create');
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="equipments-tab" data-toggle="tab" href="#equipment" role="tab"
-                               aria-controls="equipments" aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
+                               aria-controls="equipments"
+                               aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"
-                               aria-controls="products" aria-selected="false"><?php echo Yii::t('app', 'Products') ?></a>
+                               aria-controls="products"
+                               aria-selected="false"><?php echo Yii::t('app', 'Products') ?></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="defects-tab" data-toggle="tab" href="#defect" role="tab"
@@ -132,7 +138,8 @@ $create = Yii::t('app', 'Create');
                                 <div class="col-md-4">
                                     <button href="<?php echo Url::to(['hr-department-rel-shifts/create']) ?>"
                                             class="btn btn-xs-button  btn-outline-success text-sm shifts-create"
-                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus"
+                                                                                                    style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
                                     </button>
                                 </div>
                                 <div class="col-md-8">&nbsp;</div>
@@ -162,7 +169,8 @@ $create = Yii::t('app', 'Create');
                                 <div class="col-md-4">
                                     <button href="<?php echo Url::to(['hr-department-rel-equipment/create']) ?>"
                                             class="btn btn-xs-button  btn-outline-success text-sm equipments-create"
-                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus"
+                                                                                                    style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
                                     </button>
                                 </div>
                                 <div class="col-md-8">&nbsp;</div>
@@ -191,7 +199,8 @@ $create = Yii::t('app', 'Create');
                                 <div class="col-md-4">
                                     <button href="<?php echo Url::to(['hr-department-rel-product/create']) ?>"
                                             class="btn btn-xs-button  btn-outline-success text-sm products-create"
-                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus"
+                                                                                                    style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
                                     </button>
                                 </div>
                                 <div class="col-md-8">&nbsp;</div>
@@ -220,7 +229,8 @@ $create = Yii::t('app', 'Create');
                                 <div class="col-md-4">
                                     <button href="<?php echo Url::to(['hr-department-rel-defects/create']) ?>"
                                             class="btn btn-xs-button  btn-outline-success text-sm defects-create"
-                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus" style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; "><i class="fa fa-plus"
+                                                                                                    style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
                                     </button>
                                 </div>
                                 <div class="col-md-8">&nbsp;</div>
@@ -268,26 +278,10 @@ $create = Yii::t('app', 'Create');
         </div>
     </div>
 
-<?php /*= \app\widgets\ModalWindow\ModalWindow::widget([
-    'model' => 'toquv-department-musteri-address',
-    'crud_name' => 'toquv-department-musteri-address',
-    'modal_id' => 'toquv-department-musteri-address-modal',
-    'modal_header' => '<h3>' . Yii::t('app', 'Toquv Department Musteri Address') . '</h3>',
-    'active_from_class' => 'customAjaxFormMusteri',
-    'update_button' => 'address-update-dialog',
-    'create_button' => 'shifts-create',
-    'view_button' => 'address-view-dialog',
-    'delete_button' => 'delete-dialog',
-    'modal_size' => 'modal-md',
-    'grid_ajax' => 'department_pjax',
-    'confirm_message' => Yii::t('app', 'Haqiqatan ham ushbu mahsulotni yo\'q qilmoqchimisiz?')
-]); */?>
-
 <?php
 
 $lang = Yii::$app->language;
-//$urlToGetItems = Url::to(['department/get-items-ajax']);
-$deb = Yii::$app->request->get('deb') ?? null;
+$dep = Yii::$app->request->get('dep') ?? null;
 $this->registerJsVar('message_active', Yii::t('app', "Active"));
 $this->registerJsVar('message_inactive', Yii::t('app', "Inactive"));
 $this->registerJsVar('message_delete_title', Yii::t('app', "Ishonchingiz komilmi?"));
@@ -308,14 +302,14 @@ $urlProductUpdate = Url::to(['hr-department-rel-product/update']);
 $urlProductDelete = Url::to(['hr-department-rel-product/delete']);
 $urlDefectUpdate = Url::to(['hr-department-rel-defects/update']);
 $urlDefectDelete = Url::to(['hr-department-rel-defects/delete']);
-$this->registerJsVar('urlShiftUpdate',$urlShiftUpdate);
-$this->registerJsVar('urlShiftDelete',$urlShiftDelete);
-$this->registerJsVar('urlEquipmentUpdate',$urlEquipmentUpdate);
-$this->registerJsVar('urlEquipmentDelete',$urlEquipmentDelete);
-$this->registerJsVar('urlProductUpdate',$urlProductUpdate);
-$this->registerJsVar('urlProductDelete',$urlProductDelete);
-$this->registerJsVar('urlDefectsUpdate',$urlDefectUpdate);
-$this->registerJsVar('urlDefectsDelete',$urlDefectDelete);
+$this->registerJsVar('urlShiftUpdate', $urlShiftUpdate);
+$this->registerJsVar('urlShiftDelete', $urlShiftDelete);
+$this->registerJsVar('urlEquipmentUpdate', $urlEquipmentUpdate);
+$this->registerJsVar('urlEquipmentDelete', $urlEquipmentDelete);
+$this->registerJsVar('urlProductUpdate', $urlProductUpdate);
+$this->registerJsVar('urlProductDelete', $urlProductDelete);
+$this->registerJsVar('urlDefectsUpdate', $urlDefectUpdate);
+$this->registerJsVar('urlDefectsDelete', $urlDefectDelete);
 $this->registerJsVar('tempSelectMenuMessage', Yii::t('app', "Avval bo'lim tanlang"));
 $this->registerJsVar('urlUserGroup', Url::to(['/admin/users-group']));
 $this->registerJsVar('lang', $lang);
@@ -331,51 +325,49 @@ $css = <<<CSS
     table {
         border: 1px solid #F9F9F9!important;
     }
-.btn > i{
-  padding: 3px;
-  font-size: 20px;
-}
-
-.disabled-danger-delete{
-    border: 1px solid #cd868e; 
-    cursor: default;!important;
-}
-.disabled-danger-delete >i {
-    color: #cd868e;
-     padding: 3px;
-}
-.btn-icon{
-    width: 25px;   
-     align-items: center;
-    padding: 0px;
-
-    font-size: 10px;
-    background: #ffffff;
-    margin-left: 3px;
-}
-.btn-icon>i{
-    font-size: 14px;
-}
-.shifts-create{
-    margin:5px 0 5px 0;
-}
-.equipments-create{
-   margin:5px 0 5px 0;
-}
-.products-create{
-  margin:5px 0 5px 0;
-}
-.defects-create{
+    .btn > i{
+        padding: 3px;
+        font-size: 20px;
+    }
+    .disabled-danger-delete{
+        border: 1px solid #cd868e; 
+        cursor: default;!important;
+    }
+    .disabled-danger-delete >i {
+        color: #cd868e;
+         padding: 3px;
+    }
+    .btn-icon{
+        width: 25px;   
+         align-items: center;
+        padding: 0px;
+    
+        font-size: 10px;
+        background: #ffffff;
+        margin-left: 3px;
+    }
+    .btn-icon>i{
+        font-size: 14px;
+    }
+    .shifts-create{
+        margin:5px 0 5px 0;
+    }
+    .equipments-create{
+       margin:5px 0 5px 0;
+    }
+    .products-create{
       margin:5px 0 5px 0;
-}
+    }
+    .defects-create{
+          margin:5px 0 5px 0;
+    }
 CSS;
 $this->registerCss($css);
 ?>
 <?php $this->registerCssFile('/js/jstree-vakate/themes/default/style.min.css') ?>
 <?php
 $js = <<<JS
-    /* */
-    $('#kt_tree_1').jstree();
+$('#kt_tree_1').jstree();
 
 $('#kt_tree_1').on("changed.jstree", function (e, data) {
     $('#loading').css('display','block');
@@ -383,7 +375,9 @@ $('#kt_tree_1').on("changed.jstree", function (e, data) {
     $(".department-update").attr("disabled",false);
     $(".tree-create").attr("disabled",true);
     $('#loading').css('display','none');
-  $(".delete-tree").attr('data-id', data.node.li_attr.value);
+    if (data.node){
+        $(".delete-tree").attr('data-id', data.node.li_attr.value);
+    }
 });
 
 $('button').on('click', function () {
@@ -391,32 +385,6 @@ $('button').on('click', function () {
   $('#kt_tree_1').jstree('select_node', 'child_node_1');
   $.jstree.reference('#kt_tree_1').select_node('child_node_1');
 });
-    
-if ('{$deb}' != ''){
-    var value = $('#kt_tree_1 li');
-    value.each(function(index, item) {
-        if ($(item).attr('aria-selected') == 'true') {
-            $(item).attr('aria-selected', 'false');
-        }
-        if ($(item).val() == '{$deb}'*1) {
-            $(item).attr('aria-selected', 'true');
-            $('.jstree-icon').css({'color':'#0c5460'});
-            $('.jstree-anchor').css({'background-color':'white','color':'black'});
-            $(item).find('a:first').css({'background-color':'#0c5460','color':'white'});
-            $(item).find('a:first').find('.jstree-icon').css({'color':'white'});
-        }
-    });
-} else {
-    var value = $('#kt_tree_1 li');
-    value.each(function(index, item) {
-        if ($(item).attr('aria-selected') == 'true') {
-            $('.jstree-icon').css({'color':'#0c5460'});
-            $('.jstree-anchor').css({'background-color':'white','color':'black'});
-            $(item).find('a:first').css({'background-color':'#0c5460','color':'white'});
-            $(item).find('a:first').find('.jstree-icon').css({'color':'white'});
-        }
-    });
-}
 
 $('body').delegate('.jstree-anchor', 'click', function() {
     $('.jstree-icon').css({'color':'#0c5460'});
@@ -424,53 +392,6 @@ $('body').delegate('.jstree-anchor', 'click', function() {
     $(this).css({'background-color':'#0c5460','color':'white'});
     $(this).find('.jstree-icon').css({'color':'white'});
 });
-
-// tree create
-/*$('body').delegate('#kt_demo_panel_toggle', 'click', function(e) {
-    let url=$(this).attr('href');
-    var departmentId = $('.delete-tree').attr('data-id');
-     if(departmentId === undefined){
-        swal({
-            icon: 'error',
-            title: notSelectedDepartment,
-            showConfirmButton:false
-        });
-    }else{
-         url = url+"?department_id="+departmentId;
-         $('#view-modal .modal-body').load(url, function(){
-              $('#view-modal .modal-title').html(modalHeaderNameDepartment);
-              $('#view-modal').modal("show");
-        });
-    }
-    
-});
-
-//tree-root create
-$('body').delegate('#kt_demo_panel_toggle_root', 'click', function(e) {
-    e.preventDefault();
-    $(".delete-tree").attr('data-id', '');
-    var value = $('#kt_tree_1 li');
-    value.each(function(index, item) {
-        if ($(item).attr('aria-selected') == 'true') {
-            $(item).attr('aria-selected', 'false');
-            $('.jstree-icon').css({'color':'#0c5460'});
-            $('.jstree-anchor').css({'background-color':'white','color':'black','border-color': 'white'});
-            $(item).css({'background-color':'white','color':'#0C5460'});
-            $(item).find('.jstree-icon').css({'color':'white'});
-        }
-    });
-    $('#kt_demo_panel_toggle').click(); 
-});*/
-
-/*//tree elements update
-$('body').delegate('.update-tree-elements', 'click', function(e) {
-    e.preventDefault();
-    var id = $('.delete-tree').attr('data-id');
-    let url=$(this).attr('href') + '?id=' + id;
-    $('#view-modal .modal-body').load(url, function(){
-      $('#view-modal').modal("show");
-    });
-});*/
 
 // delete tree
 $('body').delegate('.delete-tree', 'click', function(e) {
@@ -592,17 +513,21 @@ $('body').delegate('.shifts-delete,.equipments-delete,.products-delete,.defects-
     }
 });
 
-
 // Ajax yordamida tablelarni toldirish uchun
 $('body').delegate('li', 'click', function(e) {
-//create, update va view larni modal yordamida chiqarish uchun
     let id = $(this).val();
     if ($(this).find('.jstree-anchor').attr('aria-selected') == 'true') {
         $('#loading').css('display','block');
-        $.ajax({
-            url:'{$urlToGetItems}',
-            data:{id:id},
-            type:'GET',
+        ajaxSubmit(id);
+        $('#loading').css('display','none');
+    }
+});
+
+function ajaxSubmit(id){
+     $.ajax({
+            url: '{$urlToGetItems}',
+            data: {id:id},
+            type: 'GET',
             success: function(response){
                 $('tbody').html('');
                 if(response){
@@ -703,30 +628,27 @@ $('body').delegate('li', 'click', function(e) {
                           '</tr>'; 
                          $('#table-defects').find('tbody').append(td_defects);
                     });
-                    $('#loading').css('display','none');
                 }               
             }
         });
-    }
-});
-
+}
 
 $(document).ready(function() {
     var value = $('#kt_tree_1 li');
     value.each(function(index, item) {
-        if ($(item).attr('aria-selected') == 'true') {
-            $(item).click()
+        if ($(item).find('.jstree-anchor').attr('aria-selected') == 'true') {
+            $(item).click();
         }
     });
 });
 
-    $('body').delegate('.button-save-form', 'click', function(e) {
-        e.preventDefault();
-        $('#loading').css('display','block');
-        let formModal = $(this).parents('form');
-        let actionUrl = formModal.attr('action');
-        ajaxModalSave(formModal, actionUrl);
-    });
+$('body').delegate('.button-save-form', 'click', function(e) {
+    e.preventDefault();
+    $('#loading').css('display','block');
+    let formModal = $(this).parents('form');
+    let actionUrl = formModal.attr('action');
+    ajaxModalSave(formModal, actionUrl);
+});
     
 function ajaxModalSave(formModal,actionUrl){
      $.ajax({
@@ -739,80 +661,16 @@ function ajaxModalSave(formModal,actionUrl){
                  $('#loading').css('display','none');
                  $('#view-modal').modal("hide");
                  call_pnotify('success',response.message);
-                 window.location.reload();
+                 ajaxSubmit(response.hr_department_id);
+                 // window.location.reload();
             }else{
                 $('#loading').css('display','none');
                 call_pnotify('fail',response.message);
             }
         }
     });
-}   
-/*$("body").on("submit", ".departmentsAjaxForm", function (e) {
-    e.preventDefault();
-    var self = $(this);
-    var url = self.attr("action");
-    let model_type = "toquvdepartments";
-    let check = true;
-    let required = self.find(".customRequired");
-    $(required).each(function (index, value){
-        if($(this).val()==0||$(this).val()==null){
-            e.preventDefault();
-            $(this).css("border-color","red").parents('.form-group').addClass('has-error');
-            $(this).focus();
-            check = false;
-        }
-    });
-    if(check) {
-        $(this).find("button[type=submit]").hide();
-        // .attr("disabled", false); Bunda knopka 2 marta bosilsa 2 marta zapros ketyapti
-       var data = $(this).serialize();
-            $.ajax({
-                url: url,
-                data: data,
-                type: "POST",
-                success: function (response) {
-                    if (response.status == 0) {
-                        $.fn.eventSubmitSuccess(response);
-                        $('#hided-modal').modal("hide");
-                        if(response.message){
-                            success_message = response.message;
-                        }
-                        call_pnotify('success', success_message);
-                        location.reload();
-                        // $.pjax.reload({container: "#department_pjax"});
-                    } else {
-                        $.fn.eventSubmitError(response);
-                        let tekst = (response.message) ? response.message : fail_message;
-                        let error = response.errors;
-                        if(typeof error == 'object') {
-                            $.each(error, function (key, val) {
-                                self.find(".field-" + model_type.toLowerCase().replace(/[_\W]+/g, "") + "-" + key).addClass("has-error");
-                                self.find(".field-" + model_type.toLowerCase().replace(/[_\W]+/g, "") + "-" + key).find(".help-block").html(val);
-                                if (array_model.length > 0) {
-                                    array_model.forEach(function (index, value) {
-                                        self.find(".field-" + index.toLowerCase().replace(/[_\W]+/g, "") + "-" + key).addClass("has-error");
-                                        self.find(".field-" + index.toLowerCase().replace(/[_\W]+/g, "") + "-" + key).find(".help-block").html(val);
-                                    });
-                                }
-                            });
-                        }else{
-                            call_pnotify('fail',error);
-                        }
-                        self.find("button[type=submit]").show();
-                        //.attr("disabled", false);
-                        call_pnotify('fail', tekst);
-                    }
-                },
-                error: function () {
-                    console.log('ERROR at PHP side!!');
-                    self.find("button[type=submit]").show();
-                },
-            });
-    }else{
-        call_pnotify('fail', "Barcha maydonlar to'ldirilmagan");
-    }
-});*/
-    
+}
+
 function call_pnotify(status,message) {
     switch (status) {
         case 'success':
@@ -830,5 +688,5 @@ function call_pnotify(status,message) {
 JS;
 $this->registerJs($js);
 $this->registerJsFile('/js/jstree-vakate/jstree.min.js', ['depends' => JqueryAsset::class]);
-\app\assets\SweetAlertAsset::register($this);
+SweetAlertAsset::register($this);
 ?>

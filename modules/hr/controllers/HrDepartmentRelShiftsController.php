@@ -19,11 +19,11 @@ class HrDepartmentRelShiftsController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -98,6 +98,7 @@ class HrDepartmentRelShiftsController extends Controller
                     $response = [];
                     if ($saved) {
                         $response['status'] = 0;
+                        $response['hr_department_id'] = $model->hr_department_id;
                         $response['message'] = Yii::t('app', 'Saved Successfully');
                     } else {
                         $response['status'] = 1;
@@ -155,6 +156,7 @@ class HrDepartmentRelShiftsController extends Controller
                     $response = [];
                     if ($saved) {
                         $response['status'] = 0;
+                        $response['hr_department_id'] = $model->hr_department_id;
                         $response['message'] = Yii::t('app', 'Saved Successfully');
                     } else {
                         $response['status'] = 1;
@@ -226,24 +228,6 @@ class HrDepartmentRelShiftsController extends Controller
         }
     }
 
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "hr-department-rel-shifts_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => HrDepartmentRelShifts::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
     /**
      * Finds the HrDepartmentRelShifts model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
