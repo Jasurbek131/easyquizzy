@@ -7,20 +7,16 @@ use app\modules\hr\models\HrDepartmentRelDefects;
 use app\modules\hr\models\HrDepartmentRelEquipment;
 use app\modules\hr\models\HrDepartmentRelProduct;
 use app\modules\hr\models\HrDepartmentRelShifts;
-use app\modules\hr\models\HrEmployeeRelUsers;
 use app\modules\hr\models\UsersRelationHrDepartments;
-use app\modules\references\models\Shifts;
+use Exception;
 use kartik\tree\controllers\NodeController;
-use kartik\tree\models\Tree;
 use kartik\tree\TreeSecurity;
 use kartik\tree\TreeView;
 use Yii;
 use app\modules\hr\models\HrDepartments;
-use app\modules\hr\models\HrDepartmentsSearch;
 use yii\base\ErrorException;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -33,11 +29,11 @@ class HrDepartmentsController extends NodeController
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -57,11 +53,12 @@ class HrDepartmentsController extends NodeController
     }*/
 
     /**
-     * @return \yii\web\Response
+     * @return Response
      * @throws ErrorException
      * @throws InvalidConfigException
+     * @throws Exception
      */
-    public function actionSave()
+    public function actionSave(): Response
     {
         $post = Yii::$app->request->post();
         static::checkValidRequest(false, !isset($post['treeNodeModify']));
@@ -155,7 +152,7 @@ class HrDepartmentsController extends NodeController
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(int $id)
     {
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('view', [
@@ -172,13 +169,13 @@ class HrDepartmentsController extends NodeController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate(): array
     {
         $data = Yii::$app->request->get();
         if(!Yii::$app->request->isAjax)
             return $this->redirect('index');
         $model = new HrDepartments();
-        
+
         if ($model->load(Yii::$app->request->post())) {
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
@@ -212,11 +209,11 @@ class HrDepartmentsController extends NodeController
     /**
      * Updates an existing HrDepartments model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $department_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($department_id)
+    public function actionUpdate(int $department_id): array
     {
         $model = $this->findModel($department_id);
         if (Yii::$app->request->isPost) {
@@ -234,7 +231,7 @@ class HrDepartmentsController extends NodeController
                     }else{
                         $transaction->rollBack();
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Yii::info('Not saved' . $e, 'save');
                     $transaction->rollBack();
                 }
@@ -271,11 +268,9 @@ class HrDepartmentsController extends NodeController
     /**
      * Deletes an existing HrDepartments model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete()
+    public function actionDelete(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->post('id');
@@ -295,7 +290,6 @@ class HrDepartmentsController extends NodeController
                     }
                 }
             }
-
             return $response;
         }
     }
@@ -307,7 +301,7 @@ class HrDepartmentsController extends NodeController
      * @return HrDepartments the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): HrDepartments
     {
         if (($model = HrDepartments::findOne($id)) !== null) {
             return $model;
@@ -320,7 +314,7 @@ class HrDepartmentsController extends NodeController
      * @param null $deb
      * @return string
      */
-    public function actionIndex($deb = null)
+    public function actionIndex($deb = null): string
     {
         $tree = HrDepartments::getTreeViewHtmlForm(null, null, UsersRelationHrDepartments::getDepartmentByUser());
         return $this->render('dep-index',[
@@ -332,7 +326,7 @@ class HrDepartmentsController extends NodeController
     /**
      * @return array
      */
-    public function actionGetItemsAjax()
+    public function actionGetItemsAjax(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->get('id');
@@ -342,14 +336,10 @@ class HrDepartmentsController extends NodeController
                 ->where(['parent_id' => $id])
                 ->andWhere(['status_id' => BaseModel::STATUS_ACTIVE])
                 ->all();
-            $shifts = HrDepartmentRelShifts::getHrRelShift($id);
-            $equipments = HrDepartmentRelEquipment::getHrRelEquipment($id);
-            $products = HrDepartmentRelProduct::getHrRelProduct($id);
-            $defects = HrDepartmentRelDefects::getHrRelDefect($id);
-            $response['shifts'] = $shifts;
-            $response['equipments'] = $equipments;
-            $response['products'] = $products;
-            $response['defects'] = $defects;
+            $response['shifts'] = HrDepartmentRelShifts::getHrRelShift($id);
+            $response['equipments'] = HrDepartmentRelEquipment::getHrRelEquipment($id);
+            $response['products'] = HrDepartmentRelProduct::getHrRelProduct($id);
+            $response['defects'] = HrDepartmentRelDefects::getHrRelDefect($id);
             $response['delete'] = false;
             if (!empty($child)) {
                 $response['delete'] = true;
@@ -362,7 +352,7 @@ class HrDepartmentsController extends NodeController
      * @param $parent_id
      * @return array
      */
-    public function actionGetDepartments($parent_id)
+    public function actionGetDepartments($parent_id): array
     {
         $request = Yii::$app->request;
 
