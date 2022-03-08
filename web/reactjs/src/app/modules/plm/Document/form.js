@@ -136,9 +136,10 @@ class Form extends React.Component {
         }
     };
 
+
     componentDidUpdate(prevProps, prevState, snapshot) {
-        window.addEventListener('beforeunload', (ev) =>
-        {
+        $('[data-toggle="tooltip"]').tooltip();
+        window.addEventListener('beforeunload', (ev) => {
             ev.preventDefault();
             return ev.returnValue = 'Are you sure you want to close?';
         });
@@ -147,7 +148,7 @@ class Form extends React.Component {
     onPlanSummary = (item) => {
         let diff = this.onReturnMin(item?.end_work, item?.start_work);
         let planned = this.stoppedSummary(item?.planned_stops ?? []);
-        let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
+        let unplanned = this.stoppedSummary(item?.unplanned_stops ?? []);
         let lifecycle = item ? (item.lifecycle ? item.lifecycle : "") : "";
 
         if (lifecycle) {
@@ -401,13 +402,13 @@ class Form extends React.Component {
     };
 
     setByPassQtyNull = () => {
-        let { plm_document_items, temporarily } = this.state;
+        let {plm_document_items, temporarily} = this.state;
         if (this.unplannedBypassSum(plm_document_items[temporarily.key]) <= 0 && plm_document_items[temporarily.key]?.products?.length > 0) {
-            plm_document_items[temporarily.key]?.products.forEach(function(product, pKey){
+            plm_document_items[temporarily.key]?.products.forEach(function (product, pKey) {
                 plm_document_items[temporarily.key]["products"][pKey]["qty"] = ''
             });
         }
-        this.setState({ plm_document_items });
+        this.setState({plm_document_items});
     };
 
     onHandleCancel = (e) => {
@@ -470,7 +471,7 @@ class Form extends React.Component {
                 }
                 break;
             case "stops-remove":
-                if(model["id"]){
+                if (model["id"]) {
                     if (confirm("Rostdan ham o'chirmoqchimisiz?")) {
                         let response = await axios.post(API_URL + 'save-properties?type=DELETE_STOPS', model);
                         if (response.data.status) {
@@ -482,7 +483,7 @@ class Form extends React.Component {
                             toast.error(response.data.message);
                         }
                     }
-                }else{
+                } else {
                     plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
                     this.setState({plm_document_items});
                 }
@@ -605,7 +606,7 @@ class Form extends React.Component {
 
     unplannedBypassSum = (item) => {
         let bypass = 0;
-        if(item && item["unplanned_stops"].length > 0){
+        if (item && item["unplanned_stops"].length > 0) {
             item["unplanned_stops"].forEach(function (stopItem, stopIndex) {
                 bypass += +stopItem.bypass;
             });
@@ -615,26 +616,35 @@ class Form extends React.Component {
 
     iconGenerator = (item, token, index = null) => {
         let className = "";
-        if (index){
-            className =  item?.notifications_status ? (
-                item?.notifications_status[token][index].status_id === 4 ? "fa fa-check-circle status" : (
-                    item?.notifications_status[token][index]?.status_id === 5 ? "fa fa-minus-circle status" : "fa fa-times-circle status"
-                )
-            ) : "fa fa-times-circle status";
-        }else{
-            className =  item?.notifications_status ? (
-                item?.notifications_status[token]?.status_id === 4 ? "fa fa-check-circle status" : (
-                    item?.notifications_status[token]?.status_id === 5 ? "fa fa-minus-circle status" : "fa fa-times-circle status"
-                )
-            ) : "fa fa-times-circle status";
+        if (item?.notifications_status) {
+            if (index) {
+                if (+(item?.notifications_status[token][index].status_id) === 4) {
+                    className = "fa fa-check-circle status";
+                } else if (+(item?.notifications_status[token][index]?.status_id) === 5) {
+                    className = "fa fa-minus-circle status";
+                } else if (+(item?.notifications_status[token][index]?.status_id) === 1) {
+                    className = "fa fa-times-circle status";
+                }
+            } else {
+                if (+(item?.notifications_status[token]?.status_id) === 4) {
+                    className = "fa fa-check-circle status";
+                } else if (+(item?.notifications_status[token]?.status_id) === 5) {
+                    className = "fa fa-minus-circle status";
+                } else if (+(item?.notifications_status[token]?.status_id) === 1) {
+                    className = "fa fa-times-circle status";
+                }
+            }
         }
-        return (<i className={className}/>)
+        if (item?.notifications_status[token]["messages"] && item?.notifications_status[token]["messages"].length > 0){
+            return className ? (<i className={className} data-toggle="tooltip" title={item?.notifications_status[token]["messages"][0].message}/>) : "";
+        }
+        return className ? (<i className={className}/>) : "";
     };
 
     statusGenerator = (item, token, index = null) => {
-        if (index){
+        if (index) {
             return item?.notifications_status ? (item?.notifications_status[token][index]?.status_id === 4) : false;
-        }else{
+        } else {
             return item?.notifications_status ? (item?.notifications_status[token]?.status_id === 4) : false;
         }
     };
@@ -1021,9 +1031,6 @@ class Form extends React.Component {
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row planned_stopped'}>
-                                                        {/*<div className={"status-block"}>*/}
-                                                        {/*    <i className={"fa fa-times-circle status"}></i>*/}
-                                                        {/*</div>*/}
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label middle-size"}>Rejali
                                                                 to'xtalishlar</label>
@@ -1131,7 +1138,7 @@ class Form extends React.Component {
                                                                     minDate={temporarily?.item?.start_work ? new Date(temporarily?.item?.start_work) : ""}
                                                                     maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
                                                                     filterTime={(e) => {
-                                                                        return new Date(temporarily?.item?.start_work) <= new Date(e) &&  new Date(temporarily?.item?.end_work) >= new Date(e)
+                                                                        return new Date(temporarily?.item?.start_work) <= new Date(e) && new Date(temporarily?.item?.end_work) >= new Date(e)
                                                                     }}
                                                                     showMonthDropdown
                                                                     showYearDropdown
@@ -1156,7 +1163,7 @@ class Form extends React.Component {
                                                                     minDate={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
                                                                     maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
                                                                     filterTime={(e) => {
-                                                                        return new Date(temporarily?.store?.begin_date) <= new Date(e) &&  new Date(temporarily?.item?.end_work) >= new Date(e)
+                                                                        return new Date(temporarily?.store?.begin_date) <= new Date(e) && new Date(temporarily?.item?.end_work) >= new Date(e)
                                                                     }}
                                                                     peekNextMonth
                                                                     showMonthDropdown
@@ -1242,8 +1249,8 @@ class Form extends React.Component {
                                                     {
                                                         modalData.map((item, index) => {
                                                             let statusUnplanned = false;
-                                                            if(temporarily?.type === 'unplanned_stops'){
-                                                                statusUnplanned =  this.statusGenerator(temporarily.item, TOKEN_UNPLANNED, item.id);
+                                                            if (temporarily?.type === 'unplanned_stops') {
+                                                                statusUnplanned = this.statusGenerator(temporarily.item, TOKEN_UNPLANNED, item.id);
                                                             }
                                                             return (
                                                                 <tr key={index}>

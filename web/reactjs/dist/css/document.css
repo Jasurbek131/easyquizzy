@@ -166,14 +166,21 @@ textarea.form-control{
     transform: translate(40%, -40%);
     font-size: 16px;
 }
-.fa-times-circle{
+.card-body .fa-times-circle,
+.modal .fa-times-circle
+{
     color: red!important;
 }
-.fa-check-circle{
+.card-body .fa-check-circle,
+.modal .fa-check-circle
+{
     color: green!important;
 }
-.fa-minus-circle{
+.card-body .fa-minus-circle,
+.modal .fa-minus-circle
+{
     color: #e0a800!important;
+    z-index: 1;
 }
 .sticky-top{
     position: sticky;
