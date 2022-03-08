@@ -9,6 +9,7 @@ use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $roles AuthItem */
+/* @var $role_types AuthItem */
 /* @var $model app\models\Users */
 /* @var $form yii\widgets\ActiveForm */
 
@@ -81,20 +82,35 @@ use yii\widgets\ActiveForm;
         <legend style="text-align: center"><?php echo Yii::t('app', 'Permissions')?>:</legend>
         <div class="container">
             <div class="row checkbox_container">
-                <?php foreach ($roles as $key => $role) : ?>
-                    <div class="col-lg-6">
-                        <div class="form-group small">
-                            <label class="checkbox-transform">
-                                <input type="checkbox"
-                                       name="Users[roles][<?php echo $key ?>]"
-                                    <?php echo $model["roles"][$key] !== null ? "checked" : "" ?>
-                                       class="checkbox">
-                                <span class="checkmark"></span>
-                                <span class="p-10"><?php echo $role ?></span>
-                            </label>
+                <?php
+                    foreach ($role_types as $role_key =>  $role_type):
+                    ?>
+                    <div class="col-lg-3">
+                        <div class="col-lg-12">
+                            <?php echo $role_type; ?>
                         </div>
+                        <?php 
+                        foreach ($roles[$role_key] as $key => $role) :
+                            ?>
+                            <div class="col-lg-12">
+                                <div class="form-group small">
+                                    <label class="checkbox-transform">
+                                        <input type="checkbox"
+                                               name="Users[roles][<?php echo $key ?>]"
+                                            <?php echo ($model["roles"] && array_key_exists($key, $model["roles"]) !== false && $model["roles"][$key] !== null) ? "checked" : "" ?>
+                                               class="checkbox">
+                                        <span class="checkmark"></span>
+                                        <span class="p-10"><?php echo $role ?></span>
+                                    </label>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
+                <?php
+                    endforeach;
+                ?>
+
+
             </div>
         </div>
     </fieldset>

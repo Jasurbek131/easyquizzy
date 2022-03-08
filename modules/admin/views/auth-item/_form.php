@@ -1,6 +1,7 @@
 <?php
 
 use app\components\TabularInput\CustomMultipleInput;
+use app\modules\admin\models\AuthItem;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -15,14 +16,18 @@ use yii\widgets\ActiveForm;
 <div class="auth-item-form">
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
-    <?= $form->field($model, 'name_for_user')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'name_for_user')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 3]) ?>
+    <?php if ($model->type == 1): ?>
+        <?php echo $form->field($model, 'role_type')->dropDownList(AuthItem::getRoleType()) ?>
+    <?php endif;?>
+
+    <?php echo $form->field($model, 'description')->textarea(['rows' => 3]) ?>
 
     <?php if ($model->type == 2): ?>
-        <?=
+        <?php echo
         $form->field($model, 'category')->widget(Select2::class, [
             'data' => $model->getCategory($model->name),
             'options' => ['placeholder' => Yii::t('app','Select_Category'),'value' => $model->category],
@@ -33,15 +38,15 @@ use yii\widgets\ActiveForm;
     <?php endif;?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php if ($model->type !== 2): ?>
-        <h4> <?= $form->field($model, "perms[0]")->checkbox(['label' => Yii::t('app','Permissions'), 'class'=>'checkbox-success','id' => 'check-permissions'])->label(false) ?></h4>
+        <h4> <?php echo $form->field($model, "perms[0]")->checkbox(['label' => Yii::t('app','Permissions'), 'class'=>'checkbox-success','id' => 'check-permissions'])->label(false) ?></h4>
         <div class="col-md-12" id="permissions-content" style="display: none;">
             <?php foreach ($perms as $key => $allperm):?>
                 <fieldset class="col-md-12" style="margin-bottom: -20px">
-                    <legend><?= $key?>
+                    <legend><?php echo $key?>
                         <label>
                             <input type="checkbox" class="checkbox-check" value="1" data-checked="Hammasini tanlash" data-unchecked="Hammasini bekor qilish"> <span class="label_checkbox">Hammasini tanlash</span>
                         </label>
@@ -50,7 +55,7 @@ use yii\widgets\ActiveForm;
                         <div class="panel-body">
                             <?php foreach ($allperm as $key => $perm): ?>
                                 <div class="col-md-4">
-                                    <?= $form->field($model, "perms[{$perm}]")->checkbox(['checked' => $model->checkPermitionChecked($perm), 'label' => $perm])->label(false) ?>
+                                    <?php echo $form->field($model, "perms[{$perm}]")->checkbox(['checked' => $model->checkPermitionChecked($perm), 'label' => $perm])->label(false) ?>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -65,9 +70,9 @@ use yii\widgets\ActiveForm;
     <div class="auth-item-form">
         <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
 
-        <?= $form->field($model,'name')->textInput()?>
+        <?php echo $form->field($model,'name')->textInput()?>
 
-        <?= $form->field($model, 'new_permissions')->widget(CustomMultipleInput::class, [
+        <?php echo $form->field($model, 'new_permissions')->widget(CustomMultipleInput::class, [
             'max' => 30,
             'min' => 0,
             'cloneButton' => true,
@@ -94,7 +99,7 @@ use yii\widgets\ActiveForm;
             ]
         ])->label('Permissions');
         ?>
-        <?=
+        <?php echo
         $form->field($model, 'category')->widget(Select2::class, [
             'data' => $model->getCategory($model->name),
             'options' => ['placeholder' => Yii::t('app','Select_Category'),'value' => $model->category],
@@ -103,7 +108,7 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
         </div>
         <?php ActiveForm::end(); ?>
     </div>

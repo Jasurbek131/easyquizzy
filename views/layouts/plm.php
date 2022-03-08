@@ -396,14 +396,6 @@ AppAsset::register($this);
                                     'active' => $controller == 'products' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-cube nav-icon"></i><p>{label}</p></a>',
                                 ],
-//                                [
-//                                    'label' => Yii::t('app', 'Product Lifecycle'),
-//                                    'url' => '/references/product-lifecycle/index',
-//                                    'options' => ['class' => 'nav-item'],
-//                                    'visible' => P::can("product-lifecycle/index"),
-//                                    'active' => $controller == 'product-lifecycle' && $action  == 'index',
-//                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-clock nav-icon"></i><p>{label}</p></a>',
-//                                ],
                             ],
                         ],
                         [
@@ -427,7 +419,7 @@ AppAsset::register($this);
                             'url' => ['#'],
                             'options' => ['class' => 'nav-item'],
                             'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fa fa-cog"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => P::can("plm-report/document"),
+                            'visible' => P::can("plm-sector-rel-hr-department/index"),
                             'items' => [
                                 [
                                     'label' => Yii::t('app', 'PlmSectorRelHrDepartment'),
@@ -447,7 +439,7 @@ AppAsset::register($this);
                             'visible' => P::can("plm-report/document"),
                             'items' => [
                                 [
-                                    'label' => Yii::t('app', 'Report'),
+                                    'label' => Yii::t('app', 'OEE'),
                                     'url' => '/plm/plm-report/document',
                                     'options' => ['class' => 'nav-item'],
                                     'visible' => P::can("plm-report/document"),

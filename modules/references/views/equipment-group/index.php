@@ -18,8 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
     <div class="card-body">
-<!--        --><?php //Pjax::begin(['id' => 'equipment-group_pjax']); ?>
-    
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterRowOptions' => ['class' => 'filters no-print'],
@@ -90,8 +89,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-
-<!--        --><?php //Pjax::end(); ?>
     </div>
 </div>
 

@@ -17,24 +17,32 @@ use yii\helpers\ArrayHelper;
  */
 class BaseModel extends ActiveRecord
 {
-    const STATUS_DELETE             = 0;
     const STATUS_ACTIVE             = 1;
     const STATUS_INACTIVE           = 2;
     const STATUS_SAVED              = 3;
     const STATUS_ACCEPTED           = 4;
     const STATUS_REJECTED           = 5;
 
-
-    // defect type
+    /**
+     * Nuqsonlar turi
+     */
     const DEFECT_REPAIRED = 1; // Tamirlanadigan
     const DEFECT_SCRAPPED = 2; // Yaroqsiz
 
-    // category type
-    const CATEGORY_PLANNED = 1;
-    const CATEGORY_UNPLANNED = 2;
-
+    /**
+     * Uskunalar guruhi turi uchun
+     */
     const TYPE_EQUIPMENT_GROUP_STATSIONAR = 1;
     const TYPE_EQUIPMENT_GROUP_KONVEYER = 2;
+
+    /**
+     * Rollar turi
+     */
+    const CREATE = 1;
+    const UPDATE = 2;
+    const VIEW = 3;
+    const DELETE = 4;
+
     /**
      * @return array
      */
@@ -42,10 +50,10 @@ class BaseModel extends ActiveRecord
     {
         return [
             [
-                'class' => OurCustomBehavior::className(),
+                'class' => OurCustomBehavior::class,
             ],
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
             ]
         ];
     }

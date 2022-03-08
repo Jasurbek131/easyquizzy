@@ -96,7 +96,11 @@ class Equipments extends BaseModel
      */
     public static function getListForSelect($isMap = false)
     {
-        $list = self::find()->select(["id as value", "name as label"])->asArray()->all();
+        $list = self::find()->select([
+            "id as value",
+            "name as label",
+            "equipment_type_id"
+        ])->asArray()->all();
 
         if ($isMap && !empty($list))
             return ArrayHelper::map($list, "id", "name");

@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
-
+/* @var $permission*/
+/* @var $perms*/
 /* @var $this yii\web\View */
 /* @var $model app\modules\admin\models\AuthItem */
 
@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
     <?= $this->render('_form', [
         'model' => $model,
         'perms' => $perms,
+        'permission' => $permission,
     ]) ?>
 
 </div>

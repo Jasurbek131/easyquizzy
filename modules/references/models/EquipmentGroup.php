@@ -4,6 +4,7 @@ namespace app\modules\references\models;
 
 use app\models\BaseModel;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -13,6 +14,7 @@ use yii\helpers\ArrayHelper;
  * @property string $name
  * @property int $status_id
  * @property int $created_at
+ * @property int $equipment_type_id
  * @property float $value
  * @property int $created_by
  * @property int $updated_at
@@ -43,6 +45,7 @@ class EquipmentGroup extends BaseModel
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'equipments_group_type_id'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
+            [['equipment_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentTypes::class, 'targetAttribute' => ['equipment_type_id' => 'id']],
             [["value"], "number"],
             [['equipments'], 'safe']
         ];
@@ -56,6 +59,7 @@ class EquipmentGroup extends BaseModel
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
+            'equipment_type_id' => Yii::t('app', 'Equipment Type'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -70,33 +74,33 @@ class EquipmentGroup extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEquipments()
+    public function getEquipments(): ActiveQuery
     {
         return $this->hasMany(EquipmentGroupRelationEquipment::class, ['equipment_group_id' => 'id']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCycles()
+    public function getCycles(): ActiveQuery
     {
         return $this->hasMany(ProductLifecycle::class, ['equipment_group_id' => 'id']);
     }
 
-//    /**
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getLifecycles()
-//    {
-//        return $this->hasOne(ProductLifecycle::class ['equipment_group_id' => 'id']);
-//    }
+    /**
+     * @return ActiveQuery
+     */
+    public function getEquipmentType(): ActiveQuery
+    {
+        return $this->hasOne(EquipmentTypes::class,  ['equipment_type_id' => 'id']);
+    }
 
     /**
      * @param null $key
      * @param bool $isArray
-     * @return array|string|\yii\db\ActiveRecord[]
+     * @return array|string|ActiveRecord[]
      */
     public static function getList($key = null, $isArray = false)
     {
@@ -129,7 +133,7 @@ class EquipmentGroup extends BaseModel
                 'eg.id as value',
                 'eg.name as label',
                 'eg.id',
-                'eg.equipments_group_type_id',
+                'eg.equipment_type_id',
             ])->with([
                 'equipments' => function ($e) {
                     $e->from(['egr' => 'equipment_group_relation_equipment'])->select([

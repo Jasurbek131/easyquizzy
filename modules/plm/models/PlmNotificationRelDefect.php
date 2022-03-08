@@ -75,4 +75,19 @@ class PlmNotificationRelDefect extends BaseModel
     {
         return $this->hasOne(PlmNotificationsList::className(), ['id' => 'plm_notification_list_id']);
     }
+    public static function getDefectList($id = null){
+        if(!empty($id)){
+            $query = self::find()
+                ->alias('pnrd')
+                ->select(['d.name_uz AS defect_name','pnrd.defect_count'])
+                ->leftJoin(['d' => 'defects'],'pnrd.defect_id = d.id')
+                ->where(['pnrd.plm_notification_list_id' => $id,'pnrd.status_id' => BaseModel::STATUS_ACTIVE])
+                ->asArray()
+                ->all();
+            if(!empty($query)){
+                return $query;
+            }
+        }
+        return [];
+    }
 }

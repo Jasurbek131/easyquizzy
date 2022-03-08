@@ -21,9 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 <!--    --><?php //endif; ?>
     <div class="card-body">
-        <?php Pjax::begin(['id' => 'products_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    
+
             <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'filterRowOptions' => ['class' => 'filters no-print'],
@@ -86,7 +84,5 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
         ]); ?>
-    
-        <?php Pjax::end(); ?>
     </div>
 </div>

@@ -100,7 +100,7 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                      * O'zim ham zo'rga yozib oldim tushunmoqchi bo'lganlarga sabr
                      */
                     $relGroupCreate = false;
-                    if ($item["equipment_group_id"]){
+                    if (isset($item["equipment_group_id"]) && !empty($item["equipment_group_id"])){
                         EquipmentGroupRelationEquipment::deleteAll(["equipment_group_id" => $item["equipment_group_id"]]);
                         $existsEquipmentGroup = EquipmentGroup::existsGroup($item["equipments"]);
                         if ($existsEquipmentGroup["status"]){
@@ -113,17 +113,16 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                         $existsEquipmentGroup = EquipmentGroup::existsGroup($item["equipments"]);
                         if ($existsEquipmentGroup["status"]){
                             $equipmentGroup =  EquipmentGroup::findOne(['id' => $existsEquipmentGroup['equipment_group_id']]);
-                            $existsEquipmentGroup["equipments_group_type_id"] = $equipmentGroup->equipments_group_type_id;
+                            $existsEquipmentGroup["equipment_type_id"] = $equipmentGroup->equipment_type_id;
                         }else{
                             $equipmentGroup = new EquipmentGroup();
                             $relGroupCreate = true;
                         }
                     }
-                    $existsEquipmentGroup["equipments_group_type_id"] = $equipmentGroup->equipments_group_type_id;
-
+                    $existsEquipmentGroup["equipment_type_id"] = $equipmentGroup->equipment_type_id;
                     $equipmentGroup->setAttributes([
                         'name' => $item['name'],
-                        'equipments_group_type_id' => $item['equipments_group_type_id'],
+                        'equipment_type_id' => $item['equipment_type_id'],
                         'status_id' => BaseModel::STATUS_ACTIVE,
                     ]);
                     if (!$equipmentGroup->save()){
@@ -134,9 +133,8 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                         ];
                         break;
                     }
-                    
-                    if ($response['status'] && $item["equipment_group_id"]){
-                        if ($existsEquipmentGroup["equipments_group_type_id"] != $equipmentGroup->equipments_group_type_id){
+                    if ($response['status'] && isset($item["equipment_group_id"]) && !empty($item["equipment_group_id"])){
+                        if ($existsEquipmentGroup["equipment_type_id"] != $equipmentGroup->equipment_type_id){
                             ProductLifecycle::deleteAll(["equipment_group_id" => $item["equipment_group_id"]]);
                             $relGroupCreate = true;
                         }
@@ -265,7 +263,7 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                 "eg.id as equipment_group_id",
                 "eg.id",
                 "eg.name",
-                "eg.equipments_group_type_id",
+                "eg.equipment_type_id",
             ])
             ->with([
                 'equipments' => function($e){

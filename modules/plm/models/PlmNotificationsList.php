@@ -6,6 +6,7 @@ use app\modules\hr\models\HrEmployeeRelPosition;
 use app\modules\references\models\Categories;
 use app\modules\references\models\Reasons;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "plm_notifications_list".
@@ -83,18 +84,27 @@ class PlmNotificationsList extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPlmDocumentItems()
+    public function getPlmDocumentItems(): ActiveQuery
     {
         return $this->hasOne(PlmDocumentItems::class, ['id' => 'plm_doc_item_id']);
     }
+
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCategories()
+    public function getCategories(): ActiveQuery
     {
         return $this->hasOne(Categories::class, ['id' => 'category_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getMessages(): ActiveQuery
+    {
+        return $this->hasMany(PlmNotificationMessage::class, ['plm_notification_list_id' => 'id']);
     }
 
     /**
@@ -117,7 +127,9 @@ class PlmNotificationsList extends BaseModel
                     'equipment.equipment',
                     'defect.defect',
                     'defect.count AS defect_count',
-                    'c.id AS category_id'
+                    'c.id AS category_id',
+                    'c.token',
+                    'pnl.add_info'
                 ])
                 ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.category_id = psrd.category_id')
                 ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
@@ -159,11 +171,18 @@ class PlmNotificationsList extends BaseModel
             ->andFilterWhere(['!=','pnl.status_id', BaseModel::STATUS_INACTIVE])
             ->asArray()
             ->one();
+            if($query){
+                return $query;
+            }
         }
-        return $query;
+        return [];
     }
 
-    public static function formatterNotificationStatus($lists = [])
+    /**
+     * @param array $lists
+     * @return array
+     */
+    public static function formatterNotificationStatus($lists = []): array
     {
         $result = [
             Categories::TOKEN_WORKING_TIME => [
@@ -200,12 +219,12 @@ class PlmNotificationsList extends BaseModel
 
     /**
      * @param array $query
-     * @return bool
      */
     public static function existsNotification(array $query)
     {
         return self::find()
             ->where($query)
-            ->exists();
+            ->orderBy(["id" => SORT_DESC])
+            ->one();
     }
 }

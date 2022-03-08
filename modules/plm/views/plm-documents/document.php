@@ -10,10 +10,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 ReactAsset::$reactFileName = 'document';
 ReactAsset::$reactCssFileName = 'document';
-\app\assets\ReactAsset::register($this);
+ReactAsset::register($this);
 $this->params['bodyClass'] = "sidebar-collapse";
 ?>
     <div id="root"></div>
 
 <?php
-$this->registerCssFile('/css/loader/contextLoader.min.css', ['depends' => AppAsset::className()]);
+$this->registerCssFile('/css/loader/contextLoader.min.css', ['depends' => AppAsset::class]);

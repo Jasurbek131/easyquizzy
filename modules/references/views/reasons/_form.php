@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'name_ru')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'category_id')->widget(Select2::class, [
-        'data' => Categories::getList(),
+        'data' => Categories::getList(true),
         'options' => ['placeholder' => Yii::t("app","Select ...")],
         'pluginOptions' => [
             'allowClear' => true,
