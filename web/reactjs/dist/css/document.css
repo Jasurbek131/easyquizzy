@@ -172,6 +172,9 @@ textarea.form-control{
 .fa-check-circle{
     color: green!important;
 }
+.fa-minus-circle{
+    color: #e0a800!important;
+}
 .sticky-top{
     position: sticky;
     top: 0;
