@@ -634,9 +634,9 @@ class Form extends React.Component {
                     className = "fa fa-times-circle status";
                 }
             }
-        }
-        if (item?.notifications_status[token]["messages"] && item?.notifications_status[token]["messages"].length > 0){
-            return className ? (<i className={className} data-toggle="tooltip" title={item?.notifications_status[token]["messages"][0].message}/>) : "";
+            if (item?.notifications_status[token]["messages"] && item?.notifications_status[token]["messages"].length > 0){
+                return className ? (<i className={className} data-toggle="tooltip" title={item?.notifications_status[token]["messages"][0].message}/>) : "";
+            }
         }
         return className ? (<i className={className}/>) : "";
     };
