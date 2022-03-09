@@ -5,10 +5,10 @@ namespace app\api\modules\v1\models;
 
 
 use app\models\BaseModel;
+use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocItemEquipments;
 use app\modules\plm\models\PlmDocumentItems;
 use app\modules\plm\models\PlmStops;
-use Yii;
 use yii\data\ActiveDataProvider;
 
 class PlmDocumentReport implements PlmDocumentReportInterface
@@ -45,9 +45,33 @@ class PlmDocumentReport implements PlmDocumentReportInterface
                             "pdip.document_item_id",
                             "pdip.qty",
                             "pdip.fact_qty",
-                            "p.name as product_name"
+                            "p.name as product_name",
+                            "pdidr.repaired_count",
+                            "pdids.scrapped_count",
                         ])
                         ->leftJoin(["p" => "products"], "pdip.product_id = p.id")
+                        ->leftJoin(["pdidr" => PlmDocItemDefects::find()
+                            ->select([
+                                "MAX(doc_item_product_id) as doc_item_product_id",
+                                "SUM(qty) AS repaired_count"
+                            ])
+                            ->where([
+                                'type' => BaseModel::DEFECT_REPAIRED,
+                                "status_id" => BaseModel::STATUS_ACTIVE
+                            ])
+                            ->groupBy(["doc_item_product_id"])
+                        ],'pdip.id = pdidr.doc_item_product_id')
+                        ->leftJoin(["pdids" => PlmDocItemDefects::find()
+                            ->select([
+                                "MAX(doc_item_product_id) as doc_item_product_id",
+                                "SUM(qty) AS scrapped_count"
+                            ])
+                            ->where([
+                                'type' => BaseModel::DEFECT_SCRAPPED,
+                                "status_id" => BaseModel::STATUS_ACTIVE
+                            ])
+                            ->groupBy(["doc_item_product_id"])
+                        ],'pdip.id = pdids.doc_item_product_id')
                     ;
                 },
             ])
@@ -95,7 +119,7 @@ class PlmDocumentReport implements PlmDocumentReportInterface
                 "sh.start_time", "sh.end_time",
                 "pdie.equipment",
             ])
-            ->where(['!=', 'pd.status_id', \app\models\BaseModel::STATUS_INACTIVE])
+            ->where(['!=', 'pd.status_id', BaseModel::STATUS_INACTIVE])
             ->andWhere(["pdi.status_id" => BaseModel::STATUS_ACTIVE])
             ->orderBy(["pd.id" => SORT_DESC])
             ->asArray();

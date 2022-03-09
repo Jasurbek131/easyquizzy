@@ -113,6 +113,18 @@ class PlmDocumentReport extends Component {
             if (itemProductLength > 0){
                 returnDocItemProductData = item?.products.map((productItem, productIndex) => {
                     if(+productIndex === 0){
+
+                        let finalPlanDate =  +item.plan_date - (+item.plan_stop_date) - (+item.unplan_stop_date);
+
+                        let sumFactQty = this.sumValue(item?.products, 'fact_qty');
+                        let sumQty = this.sumValue(item?.products, 'qty');
+                        let sumRepaired = this.sumValue(item?.products, 'repaired_count');
+                        let sumScrapped = this.sumValue(item?.products, 'scrapped_count');
+
+                        let percentA = ( finalPlanDate / item.plan_date * 100).toFixed(2);
+                        let percentP = (( sumFactQty + sumQty) / (+item.target_qty) * 100).toFixed(2);
+                        let percentQ = ((sumFactQty + sumQty - sumRepaired - sumScrapped) /  (sumFactQty +  sumQty) * 100).toFixed(2);
+
                         return (
                             <tr key={index + "_" + productIndex}>
                                 <td rowSpan={itemProductLength}>{++iterator}</td>
@@ -127,11 +139,16 @@ class PlmDocumentReport extends Component {
                                 <td rowSpan={itemProductLength}>{item.lifecycle}</td>
                                 <td rowSpan={itemProductLength}>{item.bypass}</td>
                                 <td rowSpan={itemProductLength}>{item.plan_date}</td>
-                                <td rowSpan={itemProductLength}>{+item.plan_date - (+item.plan_stop_date) - (+item.unplan_stop_date) }</td>
-                                <td rowSpan={itemProductLength}>{((+item.plan_date - (+item.plan_stop_date) - (+item.unplan_stop_date)) / item.plan_date * 100).toFixed(2)}</td>
+                                <td rowSpan={itemProductLength}>{ finalPlanDate }</td>
+                                <td rowSpan={itemProductLength}>{ percentA }</td>
                                 <td rowSpan={itemProductLength}>{+item.target_qty}</td>
                                 <td>{+productItem.fact_qty + (+productItem.qty)}</td>
-                                <td rowSpan={itemProductLength}>{((this.sumValue(item?.products, 'fact_qty') + this.sumValue(item?.products, 'qty')) / (+item.target_qty) * 100).toFixed(2)}</td>
+                                <td rowSpan={itemProductLength}>{ percentP }</td>
+                                <td>{+productItem.fact_qty + (+productItem.qty) - (+productItem.repaired_count) - (+productItem.scrapped_count)}</td>
+                                <td>{(+productItem.repaired_count)}</td>
+                                <td>{(+productItem.scrapped_count)}</td>
+                                <td rowSpan={itemProductLength}>{ percentQ }</td>
+                                <td rowSpan={itemProductLength}>{ (percentA * percentP * percentQ / 10000).toFixed(2)}</td>
                             </tr>
                         );
                     }else{
@@ -139,6 +156,9 @@ class PlmDocumentReport extends Component {
                             <tr key={index + "_" + productIndex}>
                                 <td>{productItem.product_name ?? ""}</td>
                                 <td>{+productItem.fact_qty + (+productItem.qty)}</td>
+                                <td>{+productItem.fact_qty + (+productItem.qty) - (+productItem.repaired_count) - (+productItem.scrapped_count)}</td>
+                                <td>{(+productItem.repaired_count)}</td>
+                                <td>{(+productItem.scrapped_count)}</td>
                             </tr>
                         );
                     }
