@@ -229,24 +229,6 @@ class HrDepartmentRelEquipmentController extends Controller
         }
     }
 
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "hr-department-rel-equipment_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => HrDepartmentRelEquipment::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
     /**
      * Finds the HrDepartmentRelEquipment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

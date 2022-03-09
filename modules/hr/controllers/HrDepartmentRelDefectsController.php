@@ -23,7 +23,7 @@ class HrDepartmentRelDefectsController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -226,25 +226,6 @@ class HrDepartmentRelDefectsController extends Controller
             Yii::$app->session->setFlash('error', Yii::t('app', 'Ma\'lumotlar yetarli emas!'));
             return $this->redirect(['view', 'id' => $model->id]);
         }
-    }
-
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "hr-department-rel-defects_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => HrDepartmentRelDefects::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
     }
     /**
      * Finds the HrDepartmentRelDefects model based on its primary key value.

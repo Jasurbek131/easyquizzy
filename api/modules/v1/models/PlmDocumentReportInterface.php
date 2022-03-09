@@ -3,11 +3,14 @@
 
 namespace app\api\modules\v1\models;
 
+use yii\data\ActiveDataProvider;
+
 interface PlmDocumentReportInterface
 {
+
     /**
-     * @param $params
-     * @return array
+     * @param array $params
+     * @return ActiveDataProvider
      */
-    public static function getData($params = []): array;
+    public static function getData($params = []): ActiveDataProvider;
 }
