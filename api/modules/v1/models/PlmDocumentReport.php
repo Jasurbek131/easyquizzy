@@ -4,92 +4,109 @@
 namespace app\api\modules\v1\models;
 
 
-use app\modules\plm\models\PlmDocuments;
+use app\models\BaseModel;
+use app\modules\plm\models\PlmDocItemEquipments;
+use app\modules\plm\models\PlmDocumentItems;
+use app\modules\plm\models\PlmStops;
 use Yii;
+use yii\data\ActiveDataProvider;
 
 class PlmDocumentReport implements PlmDocumentReportInterface
 {
+
     /**
-     * @param $params
-     * @return array
+     * @param array $params
+     * @return ActiveDataProvider
      */
-    public static function getData($params = []): array
+    public static function getData($params = []): ActiveDataProvider
     {
-//        $pageSize = $params['page_size'] ?? 20;
-        $response = ['status' => false];
-
-        $language = Yii::$app->language;
-        $data = PlmDocuments::find()
-            ->alias('pd')
+        $pageSize = $params['page_size'] ?? 20;
+        $data = PlmDocumentItems::find()
+            ->alias('pdi')
             ->select([
-                "pd.*",
+                "pdi.*",
                 "to_char(pd.reg_date, 'DD.MM.YYYY HH24:MI:SS') as format_reg_date",
-                "sh.name as shift",
-                'hd.name as department'
-            ])->with([
-                'plm_document_items' => function ($q) use ($language) {
-                    $q->from(['pdi' => 'plm_document_items'])
-                        ->select(['pdi.*', 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
-                            'planned_stopped' => function ($e) {
-                                $e->from(['ps1' => 'plm_stops'])->select([
-                                    'ps1.id', 'ps1.begin_date', 'ps1.end_time', 'ps1.add_info', 'ps1.reason_id'
-                                ])->where(['ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP]);
-                            },
-                            'unplanned_stopped' => function ($e) {
-                                $e->from(['ps2' => 'plm_stops'])->select([
-                                    'ps2.id', 'ps2.begin_date', 'ps2.end_time', 'ps2.add_info', 'ps2.reason_id', 'ps2.bypass'
-                                ])->where(['ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP]);
-                            },
-                            'products' => function ($p) use ($language) {
-                                $p->from(['p' => 'plm_doc_item_products'])->select(['p.id', 'p.product_id', 'p.document_item_id'])->with([
-                                    'repaired' => function ($r) use ($language) {
-                                        $r->from(['r' => 'plm_doc_item_defects'])->select([
-                                            'r.defect_id as value', "d.name_{$language} as label", 'r.qty as count', 'r.doc_item_product_id'
-                                        ])->leftJoin('defects d', 'r.defect_id = d.id')
-                                            ->where(['r.type' => \app\models\BaseModel::DEFECT_REPAIRED]);
-                                    },
-                                    'scrapped' => function ($r) use ($language) {
-                                        $r->from(['s' => 'plm_doc_item_defects'])->select([
-                                            's.defect_id as value', "d.name_{$language} as label", 's.qty as count', 's.doc_item_product_id'
-                                        ])->leftJoin('defects d', 's.defect_id = d.id')
-                                            ->where(['s.type' => \app\models\BaseModel::DEFECT_SCRAPPED]);
-                                    },
-                                ]);
-                            },
-                            'equipmentGroup' => function ($eg) {
-                                $eg->from(['eg' => 'equipment_group'])->select(['eg.id'])->with([
-                                    'equipments' => function ($e) {
-                                        return $e->from(['ere' => 'equipment_group_relation_equipment'])
-                                            ->select(['e.id as value', 'e.name as label', 'ere.equipment_group_id', 'ere.equipment_id'])
-                                            ->leftJoin('equipments e', 'ere.equipment_id = e.id')
-                                            ->orderBy(['ere.work_order' => SORT_ASC]);
-                                    }
-                                ]);
-                            }
-                        ])->leftJoin('plm_processing_time ppt', 'pdi.processing_time_id = ppt.id');
+                "o.name as organisation_name",
+                "hd.name as department_name",
+                "CONCAT(sh.name, ' (', sh.start_time , '-', sh.end_time, ')') as shift_name",
+                "to_char(ppt.begin_date, 'DD.MM.YYYY HH24:MI:SS') as begin_date",
+                "to_char(ppt.end_date, 'DD.MM.YYYY HH24:MI:SS') as end_date",
+                "pdie.equipment",
+                "MAX(psp.plan_stop_date) as plan_stop_date",
+                "MAX(psup.unplan_stop_date) as unplan_stop_date",
+                "EXTRACT(EPOCH FROM (ppt.end_date - ppt.begin_date)) AS plan_date"
+            ])
+            ->with([
+                'products' => function ($p){
+                    $p->from(['pdip' => 'plm_doc_item_products'])
+                        ->select([
+                            "pdip.id",
+                            "pdip.product_id",
+                            "pdip.document_item_id",
+                            "pdip.qty",
+                            "pdip.fact_qty",
+                            "p.name as product_name"
+                        ])
+                        ->leftJoin(["p" => "products"], "pdip.product_id = p.id")
+                    ;
                 },
-            ])->leftJoin('hr_departments hd', 'pd.hr_department_id = hd.id')
+            ])
+            ->leftJoin(["pd" => "plm_documents"], 'pdi.document_id = pd.id')
+            ->leftJoin(["psp" => PlmStops::find()
+                ->select([
+                    "MAX(document_item_id) as document_item_id",
+                    "SUM(EXTRACT(EPOCH FROM (end_time - begin_date))) AS plan_stop_date"
+                ])
+                ->where([
+                    'stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP,
+                    "status_id" => BaseModel::STATUS_ACTIVE
+                ])
+                ->groupBy(["document_item_id"])
+            ],'pdi.id = psp.document_item_id')
+            ->leftJoin(["psup" => PlmStops::find()
+                ->select([
+                    "MAX(document_item_id) as document_item_id",
+                    "SUM(EXTRACT(EPOCH FROM (end_time - begin_date))) AS unplan_stop_date"
+                ])
+                ->where([
+                    'stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP,
+                    "status_id" => BaseModel::STATUS_ACTIVE
+                ])
+                ->groupBy(["document_item_id"])
+            ],'pdi.id = psup.document_item_id')
+            ->leftJoin('plm_processing_time ppt', 'pdi.processing_time_id = ppt.id')
+            ->leftJoin(["pdie" => PlmDocItemEquipments::find()
+                ->alias("pdie")
+                ->select([
+                    "pdie.document_item_id",
+                    "STRING_AGG(DISTINCT e.name,', ') AS equipment",
+                ])
+                ->leftJoin(["e" => "equipments"], "e.id = pdie.equipment_id")
+                ->groupBy(["pdie.document_item_id"])
+            ], "pdi.id = pdie.document_item_id")
+            ->leftJoin('hr_departments hd', 'pd.hr_department_id = hd.id')
+            ->leftJoin('hr_departments o', 'pd.organisation_id = o.id')
             ->leftJoin('shifts sh', 'pd.shift_id = sh.id')
+            ->groupBy([
+                "pdi.id", "pd.id",
+                "ppt.begin_date", "ppt.end_date",
+                "pd.reg_date", "o.name",
+                "hd.name", "sh.name",
+                "sh.start_time", "sh.end_time",
+                "pdie.equipment",
+            ])
             ->where(['!=', 'pd.status_id', \app\models\BaseModel::STATUS_INACTIVE])
+            ->andWhere(["pdi.status_id" => BaseModel::STATUS_ACTIVE])
             ->orderBy(["pd.id" => SORT_DESC])
-            ->asArray()
-            ->all();
-        if (!empty($data)){
-            $response = [
-                'status' => true,
-                "items" => $data,
-            ];
-        }
-
-        return $response;
-//        return new ActiveDataProvider([
-//            'query' => $plm_document,
-//            'pagination' => [
-//                'pageSize' => $pageSize,
-//                'pageSizeParam' => $pageSize,
-//                'defaultPageSize' => $pageSize,
-//                'page' => $params['page'] ?? 0
-//            ]
-//        ]);
+            ->asArray();
+            return new ActiveDataProvider([
+                'query' => $data,
+                'pagination' => [
+                    'pageSize' => $pageSize,
+                    'pageSizeParam' => $pageSize,
+                    'defaultPageSize' => $pageSize,
+                    'page' => $params['page'] ?? 0
+                ]
+            ]);
     }
 }
