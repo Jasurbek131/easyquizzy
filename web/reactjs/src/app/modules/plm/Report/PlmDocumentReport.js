@@ -138,27 +138,27 @@ class PlmDocumentReport extends Component {
                                 <td>{productItem.product_name ?? ""}</td>
                                 <td rowSpan={itemProductLength}>{item.lifecycle}</td>
                                 <td rowSpan={itemProductLength}>{item.bypass}</td>
-                                <td rowSpan={itemProductLength}>{item.plan_date}</td>
-                                <td rowSpan={itemProductLength}>{ finalPlanDate }</td>
-                                <td rowSpan={itemProductLength}>{ percentA }</td>
-                                <td rowSpan={itemProductLength}>{+item.target_qty}</td>
-                                <td>{+productItem.fact_qty + (+productItem.qty)}</td>
-                                <td rowSpan={itemProductLength}>{ percentP }</td>
-                                <td>{+productItem.fact_qty + (+productItem.qty) - (+productItem.repaired_count) - (+productItem.scrapped_count)}</td>
-                                <td>{(+productItem.repaired_count)}</td>
-                                <td>{(+productItem.scrapped_count)}</td>
-                                <td rowSpan={itemProductLength}>{ percentQ }</td>
-                                <td rowSpan={itemProductLength}>{ (percentA * percentP * percentQ / 10000).toFixed(2)}</td>
+                                <td rowSpan={itemProductLength} className={"a"}>{item.plan_date}</td>
+                                <td rowSpan={itemProductLength} className={"a"}>{ finalPlanDate }</td>
+                                <td rowSpan={itemProductLength} className={"a"}>{ percentA }</td>
+                                <td rowSpan={itemProductLength} className={"p"}>{+item.target_qty}</td>
+                                <td className={"p"}>{+productItem.fact_qty + (+productItem.qty)}</td>
+                                <td rowSpan={itemProductLength} className={"p"}>{ percentP }</td>
+                                <td className={"q"}>{+productItem.fact_qty + (+productItem.qty) - (+productItem.repaired_count) - (+productItem.scrapped_count)}</td>
+                                <td className={"q"}>{(+productItem.repaired_count)}</td>
+                                <td className={"q"}>{(+productItem.scrapped_count)}</td>
+                                <td className={"q"} rowSpan={itemProductLength}>{ percentQ }</td>
+                                <td className={"oee"} rowSpan={itemProductLength}>{ (percentA * percentP * percentQ / 10000).toFixed(2)}</td>
                             </tr>
                         );
                     }else{
                         return (
                             <tr key={index + "_" + productIndex}>
                                 <td>{productItem.product_name ?? ""}</td>
-                                <td>{+productItem.fact_qty + (+productItem.qty)}</td>
-                                <td>{+productItem.fact_qty + (+productItem.qty) - (+productItem.repaired_count) - (+productItem.scrapped_count)}</td>
-                                <td>{(+productItem.repaired_count)}</td>
-                                <td>{(+productItem.scrapped_count)}</td>
+                                <td className={"p"}>{+productItem.fact_qty + (+productItem.qty)}</td>
+                                <td className={"q"}>{+productItem.fact_qty + (+productItem.qty) - (+productItem.repaired_count) - (+productItem.scrapped_count)}</td>
+                                <td className={"q"}>{(+productItem.repaired_count)}</td>
+                                <td className={"q"}>{(+productItem.scrapped_count)}</td>
                             </tr>
                         );
                     }
@@ -185,23 +185,23 @@ class PlmDocumentReport extends Component {
                             <th rowSpan={2}>Mahsulot</th>
                             <th rowSpan={2}>CT (sec)</th>
                             <th rowSpan={2}>By pass CT(sec)</th>
-                            <th colSpan={3}>A</th>
-                            <th colSpan={3}>P</th>
-                            <th colSpan={4}>Q</th>
-                            <th>OEE</th>
+                            <th colSpan={3} className={"a"}>A</th>
+                            <th colSpan={3} className={"p"}>P</th>
+                            <th colSpan={4} className={"q"}>Q</th>
+                            <th className={"oee"}>OEE</th>
                         </tr>
                         <tr>
-                            <th>Reja</th>
-                            <th>Fakt</th>
-                            <th>%</th>
-                            <th>Reja</th>
-                            <th>Fakt</th>
-                            <th>%</th>
-                            <th>Ok</th>
-                            <th>Tamir</th>
-                            <th>Brak</th>
-                            <th>%</th>
-                            <th>%</th>
+                            <th className={"a"}>Reja</th>
+                            <th className={"a"}>Fakt</th>
+                            <th className={"a"}>%</th>
+                            <th className={"p"}>Reja</th>
+                            <th className={"p"}>Fakt</th>
+                            <th className={"p"}>%</th>
+                            <th className={"q"}>Ok</th>
+                            <th className={"q"}>Tamir</th>
+                            <th className={"q"}>Brak</th>
+                            <th className={"q"}>%</th>
+                            <th className={"oee"}>%</th>
                         </tr>
 
                         </thead>
