@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {render} from "react-dom";
 import axios from "axios";
 import {tr} from "react-date-range/dist/locale";
-import {Search} from "./Search";
+import {Search} from "./search/Search";
 import ReactPaginate from "react-paginate";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/plm-document-reports/";
