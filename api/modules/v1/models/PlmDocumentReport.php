@@ -121,6 +121,11 @@ class PlmDocumentReport implements PlmDocumentReportInterface
             ])
             ->where(['!=', 'pd.status_id', BaseModel::STATUS_INACTIVE])
             ->andWhere(["pdi.status_id" => BaseModel::STATUS_ACTIVE])
+            ->andFilterWhere([
+                "OR",
+                ["between", "ppt.begin_date", $params["start_date"], $params["end_date"]],
+                ["between", "ppt.end_date", $params["start_date"], $params["end_date"]],
+            ])
             ->orderBy(["pd.id" => SORT_DESC])
             ->asArray();
             return new ActiveDataProvider([

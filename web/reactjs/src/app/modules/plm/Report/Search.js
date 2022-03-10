@@ -35,6 +35,9 @@ export function Search(props) {
                                 autoComplete={'off'}
                                 showTimeSelect
                                 minDate={props?.searchParams?.start_date}
+                                filterTime={(e) => {
+                                    return new Date(props?.searchParams?.start_date) <= new Date(e)
+                                }}
                                 timeIntervals={5}
                                 timeCaption="Вақт"
                     />
@@ -44,7 +47,7 @@ export function Search(props) {
             <div className="row">
                 <div className="col-lg-12">
                     <button onClick={props.onHandleSearch} className={"btn btn-success btn-sm"}>Qidiruv</button>&nbsp;
-                    <button onClick={props.onHandleSearch} className={"btn btn-danger btn-sm"}>Bekor qilish</button>
+                    <button onClick={props.onCancelSearch} className={"btn btn-danger btn-sm"}>Bekor qilish</button>
                 </div>
             </div>
         </div>

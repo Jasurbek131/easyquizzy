@@ -6,6 +6,12 @@ import {Search} from "./Search";
 import ReactPaginate from "react-paginate";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/plm-document-reports/";
+const initialSearch = {
+    start_date: null,
+    end_date: null,
+    language: 'uz',
+    page: 0
+};
 
 class PlmDocumentReport extends Component {
     constructor(props) {
@@ -16,12 +22,7 @@ class PlmDocumentReport extends Component {
                 totalCount: 0,
                 defaultPageSize: 20,
             },
-            searchParams: {
-                start_date: null,
-                end_date: null,
-                language: 'uz',
-                page: 0
-            }
+            searchParams: JSON.parse(JSON.stringify(initialSearch))
         }
     }
 
@@ -48,7 +49,18 @@ class PlmDocumentReport extends Component {
     };
 
     onHandleSearch = () => {
+        let { searchParams } = this.state;
+        this.getReportData(searchParams).then(r => {
 
+        });
+    };
+
+    onCancelSearch = () => {
+        let searchParams = JSON.parse(JSON.stringify(initialSearch));
+        this.getReportData(searchParams).then(r => {
+
+        });
+        this.setState({ searchParams });
     };
 
     onPageChange = (e) => {
@@ -102,6 +114,7 @@ class PlmDocumentReport extends Component {
             searchParams={searchParams}
             onHandleChange={this.onHandleChange}
             onHandleSearch={this.onHandleSearch}
+            onCancelSearch={this.onCancelSearch}
             language={language}
         />;
 
