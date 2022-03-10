@@ -19,8 +19,8 @@ class PlmReportController extends Controller
     /**
      * @return string
      */
-    public function actionDefect(): string
+    public function actionStop(): string
     {
-        return  $this->render("defect");
+        return  $this->render("stop");
     }
 }
