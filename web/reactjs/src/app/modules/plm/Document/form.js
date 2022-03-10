@@ -136,9 +136,10 @@ class Form extends React.Component {
         }
     };
 
+
     componentDidUpdate(prevProps, prevState, snapshot) {
-        window.addEventListener('beforeunload', (ev) =>
-        {
+        $('[data-toggle="tooltip"]').tooltip();
+        window.addEventListener('beforeunload', (ev) => {
             ev.preventDefault();
             return ev.returnValue = 'Are you sure you want to close?';
         });
@@ -147,7 +148,7 @@ class Form extends React.Component {
     onPlanSummary = (item) => {
         let diff = this.onReturnMin(item?.end_work, item?.start_work);
         let planned = this.stoppedSummary(item?.planned_stops ?? []);
-        let unplanned = this.stoppedSummary(item?.unplanned_stops??[]);
+        let unplanned = this.stoppedSummary(item?.unplanned_stops ?? []);
         let lifecycle = item ? (item.lifecycle ? item.lifecycle : "") : "";
 
         if (lifecycle) {
@@ -219,7 +220,7 @@ class Form extends React.Component {
                 plm_document_items[key][name] = v;
                 plm_document_items[key]['is_change'] = true;
                 if (name === 'equipment_group_id') {
-                    if (+e.equipments_group_type_id === 2 && e.product_list.length > 0) {
+                    if (+e.equipment_type_id === 2 && e.product_list.length > 0) {
                         plm_document_items[key]["lifecycle"] = e.product_list[0]["lifecycle"] ?? 0;
                         plm_document_items[key]["bypass"] = e.product_list[0]["bypass"] ?? 0;
                     } else {
@@ -401,13 +402,13 @@ class Form extends React.Component {
     };
 
     setByPassQtyNull = () => {
-        let { plm_document_items, temporarily } = this.state;
+        let {plm_document_items, temporarily} = this.state;
         if (this.unplannedBypassSum(plm_document_items[temporarily.key]) <= 0 && plm_document_items[temporarily.key]?.products?.length > 0) {
-            plm_document_items[temporarily.key]?.products.forEach(function(product, pKey){
+            plm_document_items[temporarily.key]?.products.forEach(function (product, pKey) {
                 plm_document_items[temporarily.key]["products"][pKey]["qty"] = ''
             });
         }
-        this.setState({ plm_document_items });
+        this.setState({plm_document_items});
     };
 
     onHandleCancel = (e) => {
@@ -470,7 +471,7 @@ class Form extends React.Component {
                 }
                 break;
             case "stops-remove":
-                if(model["id"]){
+                if (model["id"]) {
                     if (confirm("Rostdan ham o'chirmoqchimisiz?")) {
                         let response = await axios.post(API_URL + 'save-properties?type=DELETE_STOPS', model);
                         if (response.data.status) {
@@ -482,7 +483,7 @@ class Form extends React.Component {
                             toast.error(response.data.message);
                         }
                     }
-                }else{
+                } else {
                     plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
                     this.setState({plm_document_items});
                 }
@@ -605,12 +606,47 @@ class Form extends React.Component {
 
     unplannedBypassSum = (item) => {
         let bypass = 0;
-        if(item && item["unplanned_stops"].length > 0){
+        if (item && item["unplanned_stops"].length > 0) {
             item["unplanned_stops"].forEach(function (stopItem, stopIndex) {
                 bypass += +stopItem.bypass;
             });
         }
         return bypass;
+    };
+
+    iconGenerator = (item, token, index = null) => {
+        let className = "";
+        if (item?.notifications_status) {
+            if (index) {
+                if (+(item?.notifications_status[token][index].status_id) === 4) {
+                    className = "fa fa-check-circle status";
+                } else if (+(item?.notifications_status[token][index]?.status_id) === 5) {
+                    className = "fa fa-minus-circle status";
+                } else if (+(item?.notifications_status[token][index]?.status_id) === 1) {
+                    className = "fa fa-times-circle status";
+                }
+            } else {
+                if (+(item?.notifications_status[token]?.status_id) === 4) {
+                    className = "fa fa-check-circle status";
+                } else if (+(item?.notifications_status[token]?.status_id) === 5) {
+                    className = "fa fa-minus-circle status";
+                } else if (+(item?.notifications_status[token]?.status_id) === 1) {
+                    className = "fa fa-times-circle status";
+                }
+            }
+            if (item?.notifications_status[token]["messages"] && item?.notifications_status[token]["messages"].length > 0){
+                return className ? (<i className={className} data-toggle="tooltip" title={item?.notifications_status[token]["messages"][0].message}/>) : "";
+            }
+        }
+        return className ? (<i className={className}/>) : "";
+    };
+
+    statusGenerator = (item, token, index = null) => {
+        if (index) {
+            return item?.notifications_status ? (item?.notifications_status[token][index]?.status_id === 4) : false;
+        } else {
+            return item?.notifications_status ? (item?.notifications_status[token]?.status_id === 4) : false;
+        }
     };
 
     render() {
@@ -632,16 +668,6 @@ class Form extends React.Component {
         let equipmentGroupValue = [];
         let categoriesList = [];
         let modalData = [];
-
-        let statusTime, statusRepaired, statusScrapped  ;
-
-        let statusRepairedOrScrapped = false;
-        if (temporarily?.type === "repaired")
-            statusRepairedOrScrapped = temporarily?.item?.notifications_status ? (temporarily?.item?.notifications_status[TOKEN_REPAIRED]?.status_id == 4) : false;
-
-        if (temporarily?.type === "scrapped")
-            statusRepairedOrScrapped = temporarily?.item?.notifications_status ? (temporarily?.item?.notifications_status[TOKEN_SCRAPPED]?.status_id == 4) : false;
-
 
         if (temporarily?.type === "planned_stops") {
             categoriesList = categoriesPlannedList;
@@ -741,9 +767,7 @@ class Form extends React.Component {
                                     repaired: [],
                                     scrapped: [],
                                 }];
-                                statusTime = item?.notifications_status ? (item?.notifications_status[TOKEN_WORKING_TIME]?.status_id == 4) : false;
-                                statusRepaired = item?.notifications_status ? (item?.notifications_status[TOKEN_REPAIRED]?.status_id == 4) : false;
-                                statusScrapped = item?.notifications_status ? (item?.notifications_status[TOKEN_SCRAPPED]?.status_id == 4) : false;
+
                                 return (
                                     <div className={item.is_change ? "border-block" : "border-block success-block"}
                                          key={key}>
@@ -812,9 +836,7 @@ class Form extends React.Component {
                                                 <div className={"align-center"}>
                                                     <div className={'row time'}>
                                                         <div className={"status-block"}>
-                                                            {
-                                                                statusTime ? (<i className={"fa fa-check-circle status"}></i>) : (<i className={"fa fa-times-circle status"}></i>)
-                                                            }
+                                                            {this.iconGenerator(item, TOKEN_WORKING_TIME)}
                                                         </div>
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label"}>Boshlanishi</label>
@@ -824,7 +846,7 @@ class Form extends React.Component {
                                                                         onChange={(e) => {
                                                                             this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
                                                                         }}
-                                                                        readOnly={statusTime}
+                                                                        readOnly={this.statusGenerator(item, TOKEN_WORKING_TIME)}
                                                                         className={"form-control text-center aria-required"}
                                                                         selected={item?.start_work ? new Date(item.start_work) : ""}
                                                                         autoComplete={'off'}
@@ -850,7 +872,7 @@ class Form extends React.Component {
                                                                         filterTime={(e) => {
                                                                             return new Date(item?.start_work) < new Date(e);
                                                                         }}
-                                                                        readOnly={statusTime}
+                                                                        readOnly={this.statusGenerator(item, TOKEN_WORKING_TIME)}
                                                                         autoComplete={'off'}
                                                                         showTimeSelect
                                                                         minDate={item.start_work}
@@ -976,7 +998,7 @@ class Form extends React.Component {
                                                                                 <i className={"fa fa-times"}/>
                                                                             </button>
                                                                         ) : (
-                                                                            equipmentGroupValue[0]?.equipments_group_type_id !== 1 ? (
+                                                                            equipmentGroupValue[0]?.equipment_type_id !== 1 ? (
                                                                                 <button
                                                                                     onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
                                                                                     className={"btn btn-xs btn-primary wh-28"}>
@@ -996,14 +1018,10 @@ class Form extends React.Component {
                                                     <div className={"col-lg-4"}>
                                                         <div className={"row"}>
                                                             <div className={"col-lg-6 text-center"}>
-                                                                {
-                                                                    statusRepaired ? (<i className={"fa fa-check-circle"}></i>) : (<i className={"fa fa-times-circle"}></i>)
-                                                                }
+                                                                {this.iconGenerator(item, TOKEN_REPAIRED)}
                                                             </div>
                                                             <div className={"col-lg-6 text-center"}>
-                                                                {
-                                                                    statusScrapped ? (<i className={"fa fa-check-circle"}></i>) : (<i className={"fa fa-times-circle"}></i>)
-                                                                }
+                                                                {this.iconGenerator(item, TOKEN_SCRAPPED)}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1013,9 +1031,6 @@ class Form extends React.Component {
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row planned_stopped'}>
-                                                        {/*<div className={"status-block"}>*/}
-                                                        {/*    <i className={"fa fa-times-circle status"}></i>*/}
-                                                        {/*</div>*/}
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label middle-size"}>Rejali
                                                                 to'xtalishlar</label>
@@ -1066,7 +1081,6 @@ class Form extends React.Component {
                     </div>
                 </div>
 
-
                 <div className="fade modal show" role="dialog" tabIndex="-1" style={{display: temporarily?.display}}
                      aria-modal="true">
                     <div className="modal-dialog modal-lg" role="document">
@@ -1085,9 +1099,6 @@ class Form extends React.Component {
                                                 <button onClick={this.onHandleSave.bind(this)}
                                                         className={"btn btn-sm btn-success mr-3"}>Saqlash
                                                 </button>
-                                                {/*<button onClick={this.onHandleCancel.bind(this)}*/}
-                                                {/*        className={"btn btn-sm btn-danger"}>Bekor qilish*/}
-                                                {/*</button>*/}
                                             </div>
                                             <div className={'pull-right'}>
                                                 <b>{temporarily?.type === "repaired" || temporarily?.type === "scrapped" ? "Jami: " + this.onSumma(temporarily?.store) : ""}</b>
@@ -1127,7 +1138,7 @@ class Form extends React.Component {
                                                                     minDate={temporarily?.item?.start_work ? new Date(temporarily?.item?.start_work) : ""}
                                                                     maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
                                                                     filterTime={(e) => {
-                                                                        return new Date(temporarily?.item?.start_work) <= new Date(e) &&  new Date(temporarily?.item?.end_work) >= new Date(e)
+                                                                        return new Date(temporarily?.item?.start_work) <= new Date(e) && new Date(temporarily?.item?.end_work) >= new Date(e)
                                                                     }}
                                                                     showMonthDropdown
                                                                     showYearDropdown
@@ -1152,7 +1163,7 @@ class Form extends React.Component {
                                                                     minDate={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
                                                                     maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
                                                                     filterTime={(e) => {
-                                                                        return new Date(temporarily?.store?.begin_date) <= new Date(e) &&  new Date(temporarily?.item?.end_work) >= new Date(e)
+                                                                        return new Date(temporarily?.store?.begin_date) <= new Date(e) && new Date(temporarily?.item?.end_work) >= new Date(e)
                                                                     }}
                                                                     peekNextMonth
                                                                     showMonthDropdown
@@ -1191,6 +1202,13 @@ class Form extends React.Component {
                                             <div className={'row'}>
                                                 {
                                                     temporarily?.store?.length > 0 && temporarily.store.map((item, itemKey) => {
+                                                        let statusRepairedOrScrapped = false;
+                                                        if (temporarily?.type === "repaired")
+                                                            statusRepairedOrScrapped = this.statusGenerator(temporarily.item, TOKEN_REPAIRED);
+
+                                                        if (temporarily?.type === "scrapped")
+                                                            statusRepairedOrScrapped = this.statusGenerator(temporarily.item, TOKEN_SCRAPPED);
+
                                                         return (
                                                             <div className={"col-lg-6"} key={itemKey}>
                                                                 <div className={"form-group"}>
@@ -1231,8 +1249,8 @@ class Form extends React.Component {
                                                     {
                                                         modalData.map((item, index) => {
                                                             let statusUnplanned = false;
-                                                            if(temporarily?.type === 'unplanned_stops'){
-                                                                statusUnplanned =  temporarily?.item?.notifications_status ? (temporarily?.item?.notifications_status[TOKEN_UNPLANNED][item.id]?.status_id == 4) : false;
+                                                            if (temporarily?.type === 'unplanned_stops') {
+                                                                statusUnplanned = this.statusGenerator(temporarily.item, TOKEN_UNPLANNED, item.id);
                                                             }
                                                             return (
                                                                 <tr key={index}>
@@ -1258,7 +1276,7 @@ class Form extends React.Component {
                                                                         ><i className={"fa fa-times"}></i></button>
                                                                         <div className={"status-block"}>
                                                                             {
-                                                                                temporarily?.type === 'unplanned_stops' ? ( statusUnplanned ? (<i className={"fa fa-check-circle status"}></i>) : (<i className={"fa fa-times-circle status"}></i>)) : ""
+                                                                                temporarily?.type === 'unplanned_stops' ? this.iconGenerator(temporarily.item, TOKEN_UNPLANNED, item.id) : ""
                                                                             }
                                                                         </div>
                                                                     </td>

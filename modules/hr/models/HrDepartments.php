@@ -149,12 +149,14 @@ class HrDepartments extends BaseModel
             ->all();
 
         $tree = "";
-        foreach ($items as $item)
+        foreach ($items as $item){
             if ($item['id'] == $dep)
-                $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{ \"selected\" : true }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
+                $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{ \"selected\" : true }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id'], $dep) . "</li></ul>";
             else
-                $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{  }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id']) . "</li></ul>";
+                $tree = $tree . "<ul><li value='{$item['id']}'  data-jstree='{  }'>{$item['name']}" . self::getTreeViewHtmlForm($item['id'], $dep) . "</li></ul>";
 
+        }
+            
         return $tree;
     }
 

@@ -64,6 +64,7 @@ class PlmDocumentReportController extends ActiveController
     {
         $request = Yii::$app->request;
         $get = $request->get();
+        $post = $request->post();
         $type = $get["type"];
 
         $response = [
@@ -71,7 +72,10 @@ class PlmDocumentReportController extends ActiveController
         ];
         switch ($type){
             case "PLM_DOCUMENT_DATA":
-                $response = PlmDocumentReport::getData();
+                $dataProvider = PlmDocumentReport::getData($post);
+                $response['items'] = $dataProvider->getModels();
+                $response['pagination'] = $dataProvider->getPagination();
+                $response['status'] = true;
                 break;
         }
 

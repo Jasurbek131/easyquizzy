@@ -81,16 +81,19 @@ class UsersController extends Controller
         }
 
         $roles = AuthItem::getRoles(true);
+        $role_types = AuthItem::getRoleType();
 
         if ($request->isAjax)
             return $this->renderAjax('create', [
                 'model' => $model,
                 'roles' => $roles,
+                'role_types' => $role_types,
             ]);
 
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
+            'role_types' => $role_types,
         ]);
     }
 
@@ -129,16 +132,19 @@ class UsersController extends Controller
         }
 
         $roles = AuthItem::getRoles(true);
+        $role_types = AuthItem::getRoleType();
 
         if ($request->isAjax)
             return $this->renderAjax('update', [
                 'model' => $model,
                 'roles' => $roles,
+                'role_types' => $role_types,
             ]);
 
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,
+            'role_types' => $role_types,
         ]);
     }
 

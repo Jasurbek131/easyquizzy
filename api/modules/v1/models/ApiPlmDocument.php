@@ -603,8 +603,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                         "pnl.stop_id",
                                         "c.token",
                                     ])
-                                    ->leftJoin(["c" => "categories"], 'pnl.category_id = c.id')
-                                    ->where(["NOT IN", "pnl.status_id" , [\app\modules\plm\models\BaseModel::STATUS_REJECTED]]);
+                                    ->joinWith(["messages"])
+                                    ->leftJoin(["c" => "categories"], 'pnl.category_id = c.id');
+//                                    ->where(["NOT IN", "pnl.status_id" , [\app\modules\plm\models\BaseModel::STATUS_REJECTED]]);
                             }
                         ])->leftJoin('plm_processing_time ppt', 'pdi.processing_time_id = ppt.id')
                         ->where(["pdi.status_id" => BaseModel::STATUS_ACTIVE]);

@@ -6,6 +6,7 @@ use app\modules\hr\models\HrEmployeeRelPosition;
 use app\modules\references\models\Categories;
 use app\modules\references\models\Reasons;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "plm_notifications_list".
@@ -83,18 +84,27 @@ class PlmNotificationsList extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPlmDocumentItems()
+    public function getPlmDocumentItems(): ActiveQuery
     {
         return $this->hasOne(PlmDocumentItems::class, ['id' => 'plm_doc_item_id']);
     }
+
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCategories()
+    public function getCategories(): ActiveQuery
     {
         return $this->hasOne(Categories::class, ['id' => 'category_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getMessages(): ActiveQuery
+    {
+        return $this->hasMany(PlmNotificationMessage::class, ['plm_notification_list_id' => 'id']);
     }
 
     /**
@@ -168,7 +178,11 @@ class PlmNotificationsList extends BaseModel
         return [];
     }
 
-    public static function formatterNotificationStatus($lists = [])
+    /**
+     * @param array $lists
+     * @return array
+     */
+    public static function formatterNotificationStatus($lists = []): array
     {
         $result = [
             Categories::TOKEN_WORKING_TIME => [

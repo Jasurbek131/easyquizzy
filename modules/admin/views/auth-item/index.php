@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\models\AuthItem;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -42,6 +43,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($m) {
                         return $m['name'] ?? false;
                     }
+                ],
+                [
+                    'attribute' => 'role_type',
+                    'value' => function(AuthItem $model){
+                        $type = $model::getRoleType($model->role_type);
+                        return is_string($type) ? $type : "";
+                    },
+                    'filter' => AuthItem::getRoleType()
                 ],
                 'description:ntext',
                 [

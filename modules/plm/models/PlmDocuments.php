@@ -75,7 +75,11 @@ class PlmDocuments extends BaseModel
         ];
     }
 
-    public function beforeSave($insert)
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert): bool
     {
         if ($this->isNewRecord) {
             $lastDoc = self::find()->orderBy(['id' => SORT_DESC])->one();

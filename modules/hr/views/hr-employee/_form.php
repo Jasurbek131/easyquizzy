@@ -78,8 +78,9 @@ use yii\widgets\ActiveForm;
             ]) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $form->field($model, 'begin_date')->widget( DatePicker::class,[
-                'data' => $model->begin_date ? date('d.m.Y',($model->begin_date)) : $model->begin_date,
+            <?php 
+            echo $form->field($model, 'begin_date')->widget( DatePicker::class,[
+                'data' => $model->begin_date ? date('d.m.Y',strtotime($model->begin_date)) : $model->begin_date,
                 'removeButton' => false,
                 'options' => [
                     'autocomplete' => 'off',

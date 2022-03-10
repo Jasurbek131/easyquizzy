@@ -114,10 +114,10 @@ class Categories extends BaseModel
 
     /**
      * @param bool $isMap
-     * @param null $type
+     * @param [] $where
      * @return array
      */
-    public static function  getList($isMap = false, $type = null): array
+    public static function  getList($isMap = false, $where = []): array
     {
         $language = Yii::$app->language;
         $query = self::find()
@@ -127,9 +127,12 @@ class Categories extends BaseModel
                 "name_{$language} as label",
                 "name_{$language} as name",
             ])
-            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])
-            ->andFilterWhere(['type' => $type])
-            ->asArray()->all();
+            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE]);
+            if($where){
+                $query->andFilterWhere($where);
+            }
+            $query = $query->asArray()
+            ->all();
         if(!empty($query) && $isMap){
             return ArrayHelper::map($query, 'id', 'name');
         }
