@@ -4,6 +4,10 @@ namespace app\api\modules\v1\controllers;
 
 use app\api\modules\v1\models\ApiPlmDocument;
 use app\api\modules\v1\models\PlmDocumentReport;
+use app\modules\hr\models\HrDepartments;
+use app\modules\references\models\Equipments;
+use app\modules\references\models\Products;
+use app\modules\references\models\Shifts;
 use Yii;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -72,6 +76,12 @@ class PlmDocumentReportController extends ActiveController
         ];
         switch ($type){
             case "PLM_DOCUMENT_DATA":
+                if ($post['is_search'] == false){
+                    $response["hr_department_list"] =  HrDepartments::getList(true);
+                    $response["shift_list"] =  Shifts::getList(false);
+                    $response["equipment_list"] =  Equipments::getList(null,true);
+                    $response["product_list"] =  Products::getList(null, true);
+                }
                 $dataProvider = PlmDocumentReport::getData($post);
                 $response['items'] = $dataProvider->getModels();
                 $response['pagination'] = $dataProvider->getPagination();
