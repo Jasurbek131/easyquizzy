@@ -37,7 +37,7 @@ class PlmDocumentReport implements PlmDocumentReportInterface
                 "EXTRACT(EPOCH FROM (ppt.end_date - ppt.begin_date)) AS plan_date"
             ])
             ->with([
-                'products' => function ($p){
+                'products' => function ($p) use ($params){
                     $p->from(['pdip' => 'plm_doc_item_products'])
                         ->select([
                             "pdip.id",
@@ -72,6 +72,7 @@ class PlmDocumentReport implements PlmDocumentReportInterface
                             ])
                             ->groupBy(["doc_item_product_id"])
                         ],'pdip.id = pdids.doc_item_product_id')
+                        ->andFilterWhere(["p.id" => $params["product_id"]])
                     ;
                 },
             ])
@@ -106,6 +107,7 @@ class PlmDocumentReport implements PlmDocumentReportInterface
                     "STRING_AGG(DISTINCT e.name,', ') AS equipment",
                 ])
                 ->leftJoin(["e" => "equipments"], "e.id = pdie.equipment_id")
+                ->andFilterWhere(["e.id" => $params["equipment_id"]])
                 ->groupBy(["pdie.document_item_id"])
             ], "pdi.id = pdie.document_item_id")
             ->leftJoin('hr_departments hd', 'pd.hr_department_id = hd.id')
@@ -121,6 +123,13 @@ class PlmDocumentReport implements PlmDocumentReportInterface
             ])
             ->where(['!=', 'pd.status_id', BaseModel::STATUS_INACTIVE])
             ->andWhere(["pdi.status_id" => BaseModel::STATUS_ACTIVE])
+            ->andFilterWhere([
+                "OR",
+                ["between", "ppt.begin_date", $params["begin_date"], $params["end_date"]],
+                ["between", "ppt.end_date", $params["begin_date"], $params["end_date"]],
+            ])
+            ->andFilterWhere(["pd.hr_department_id" => $params["hr_department_id"]])
+            ->andFilterWhere(["pd.shift_id" => $params["shift_id"]])
             ->orderBy(["pd.id" => SORT_DESC])
             ->asArray();
             return new ActiveDataProvider([

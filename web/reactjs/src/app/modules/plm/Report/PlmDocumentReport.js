@@ -6,22 +6,32 @@ import {Search} from "./Search";
 import ReactPaginate from "react-paginate";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/plm-document-reports/";
+const initialSearch = {
+    begin_date: null,
+    end_date: null,
+    hr_department_id: '',
+    shift_id: '',
+    equipment_id: '',
+    product_id: '',
+    language: 'uz',
+    page: 0,
+    is_search: false,
+};
 
 class PlmDocumentReport extends Component {
     constructor(props) {
         super(props);
         this.state = {
             items: [],
+            hr_department_list: [],
+            shift_list: [],
+            equipment_list: [],
+            product_list: [],
             pagination: {
                 totalCount: 0,
                 defaultPageSize: 20,
             },
-            searchParams: {
-                start_date: null,
-                end_date: null,
-                language: 'uz',
-                page: 0
-            }
+            searchParams: JSON.parse(JSON.stringify(initialSearch))
         }
     }
 
@@ -48,7 +58,20 @@ class PlmDocumentReport extends Component {
     };
 
     onHandleSearch = () => {
+        let { searchParams } = this.state;
+        searchParams["is_search"] = true;
+        this.getReportData(searchParams).then(r => {
 
+        });
+    };
+
+    onCancelSearch = () => {
+        let searchParams = JSON.parse(JSON.stringify(initialSearch));
+        searchParams["is_search"] = true;
+        this.getReportData(searchParams).then(r => {
+
+        });
+        this.setState({ searchParams });
     };
 
     onPageChange = (e) => {
@@ -68,6 +91,14 @@ class PlmDocumentReport extends Component {
     async getReportData(searchParams) {
         let response = await axios.post(API_URL + 'index?type=PLM_DOCUMENT_DATA', searchParams);
         if (response.data.status) {
+            if (searchParams.is_search === false){
+                this.setState({
+                    hr_department_list: response.data.hr_department_list,
+                    shift_list: response.data.shift_list,
+                    equipment_list: response.data.equipment_list,
+                    product_list: response.data.product_list,
+                });
+            }
             this.setState({
                 items: response.data.items,
                 pagination: response.data.pagination,
@@ -91,6 +122,10 @@ class PlmDocumentReport extends Component {
             items,
             searchParams,
             language,
+            hr_department_list,
+            shift_list,
+            equipment_list,
+            product_list,
             pagination,
         } = this.state;
         let pageCount = Math.ceil(pagination.totalCount / pagination.defaultPageSize);
@@ -102,6 +137,11 @@ class PlmDocumentReport extends Component {
             searchParams={searchParams}
             onHandleChange={this.onHandleChange}
             onHandleSearch={this.onHandleSearch}
+            onCancelSearch={this.onCancelSearch}
+            hr_department_list={hr_department_list}
+            shift_list={shift_list}
+            equipment_list={equipment_list}
+            product_list={product_list}
             language={language}
         />;
 
@@ -170,8 +210,8 @@ class PlmDocumentReport extends Component {
         return (<div>
             {search}
             <div className={"card"}>
-                <div className={"card-body"}>
-                    <table className={"table table-stripped table-condensed table-bordered"}>
+                <div className={"card-body"} style={{overflow: "scroll"}}>
+                    <table className={"table table-stripped table-condensed table-bordered table-reponsive"}>
                         <thead>
                         <tr>
                             <th rowSpan={2}>№</th>

@@ -64,12 +64,27 @@ class Shifts extends BaseModel
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
-    public static function  getList()
+
+    /**
+     * @param bool $isMap
+     * @return array
+     */
+    public static function  getList($isMap = true): array
     {
-        $query = self::find()->select(['id','name'])->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])->asArray()->all();
-        if(!empty($query)){
+        $query = self::find()
+            ->select([
+                "id",
+                "name",
+                "id as value",
+                "CONCAT(name, ' (', start_time , '-', end_time, ')') as label",
+            ])
+            ->where(['status_id' => \app\models\BaseModel::STATUS_ACTIVE])
+            ->asArray()
+            ->all();
+        if(!empty($query) && $isMap){
             return ArrayHelper::map($query, 'id', 'name');
         }
+        return $query;
     }
 
 }
