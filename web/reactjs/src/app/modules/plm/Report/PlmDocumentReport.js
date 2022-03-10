@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {render} from "react-dom";
 import axios from "axios";
 import {tr} from "react-date-range/dist/locale";
-import {Search} from "./Search";
+import {SearchDocument} from "./search/SearchDocument";
 import ReactPaginate from "react-paginate";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/plm-document-reports/";
@@ -133,7 +133,7 @@ class PlmDocumentReport extends Component {
         let iterator = 0;
         let itemProductLength = 0;
 
-        const search = <Search
+        const search = <SearchDocument
             searchParams={searchParams}
             onHandleChange={this.onHandleChange}
             onHandleSearch={this.onHandleSearch}

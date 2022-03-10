@@ -8,8 +8,19 @@ use yii\web\Controller;
 
 class PlmReportController extends Controller
 {
-    public function actionDocument()
+    /**
+     * @return string
+     */
+    public function actionDocument(): string
     {
        return  $this->render("document");
+    }
+
+    /**
+     * @return string
+     */
+    public function actionStop(): string
+    {
+        return  $this->render("stop");
     }
 }
