@@ -74,8 +74,18 @@ class HrDepartmentRelEquipmentController extends Controller
     {
         $model = new HrDepartmentRelEquipment();
         $data = Yii::$app->request->get();
+        $post = Yii::$app->request->post();
+
         if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post())) {
+            $exists = HrDepartmentRelEquipment::findOne([
+                "hr_department_id" => $data['department_id'],
+                "equipment_id" => $post["HrDepartmentRelEquipment"]["equipment_id"],
+            ]);
+            if ($exists){
+                $model = clone $exists;
+                $model->status_id = BaseModel::STATUS_ACTIVE;
+            }
+            if ($model->load($post)) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
@@ -133,7 +143,18 @@ class HrDepartmentRelEquipmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $post = Yii::$app->request->post();
+        $data = Yii::$app->request->get();
+
         if (Yii::$app->request->isPost) {
+            $exists = HrDepartmentRelEquipment::findOne([
+                "hr_department_id" => $data['department_id'],
+                "equipment_id" => $post["HrDepartmentRelEquipment"]["equipment_id"],
+            ]);
+            if ($exists){
+                $model = clone $exists;
+                $model->status_id = BaseModel::STATUS_ACTIVE;
+            }
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
