@@ -618,7 +618,7 @@ class Form extends React.Component {
         let className = "";
         if (item?.notifications_status) {
             if (index) {
-                if (+(item?.notifications_status[token][index].status_id) === 4) {
+                if (+(item?.notifications_status[token][index]?.status_id) === 4) {
                     className = "fa fa-check-circle status";
                 } else if (+(item?.notifications_status[token][index]?.status_id) === 5) {
                     className = "fa fa-minus-circle status";
@@ -645,7 +645,11 @@ class Form extends React.Component {
         if (index) {
             return item?.notifications_status ? (item?.notifications_status[token][index]?.status_id === 4) : false;
         } else {
-            return item?.notifications_status ? (item?.notifications_status[token]?.status_id === 4) : false;
+            return item?.notifications_status
+                ? (item?.notifications_status[token]?.status_id
+                    ? (item?.notifications_status[token]?.status_id === 4)
+                    : false)
+                : false;
         }
     };
 

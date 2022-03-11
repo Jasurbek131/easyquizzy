@@ -20,6 +20,7 @@ return [
     '(New)' => '(Yangi)',
     '(new)' => '(yangi)',
     'Active' => 'Faol',
+    'Stops' => 'To\'xtalishlar',
     'Group Name' => 'Uskunalar guruhi nomi',
     'Product data & Group equipment' => 'Mahsulot ma\'lumotlari & Uskunalar guruhi',
     'Add Info' => 'Izoh',
