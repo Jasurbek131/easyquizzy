@@ -33,8 +33,8 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
      */
     public static function saveData($post): array
     {
-        $document = $post['document'];
-        $documentItems = $post['document_items'];
+        $document = $post['document'] ?? [];
+        $documentItems = $post['document_items'] ?? [];
 
         $transaction = Yii::$app->db->beginTransaction();
         $response = [

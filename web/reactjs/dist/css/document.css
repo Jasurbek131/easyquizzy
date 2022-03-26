@@ -201,3 +201,14 @@ textarea.form-control{
 table{
     text-align: center!important;
 }
+.grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 15px;
+}
+.grid-item{
+    background-color: red
+}
+.percent{
+
+}

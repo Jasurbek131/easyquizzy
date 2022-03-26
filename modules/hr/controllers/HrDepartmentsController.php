@@ -158,11 +158,12 @@ class HrDepartmentsController extends NodeController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate(): array
+    public function actionCreate()
     {
         $data = Yii::$app->request->get();
-        if(!Yii::$app->request->isAjax)
+        if(!Yii::$app->request->isAjax){
             return $this->redirect('index');
+        }
         $model = new HrDepartments();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -202,7 +203,7 @@ class HrDepartmentsController extends NodeController
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $department_id): array
+    public function actionUpdate(int $department_id)
     {
         $model = $this->findModel($department_id);
         if (Yii::$app->request->isPost) {
@@ -259,7 +260,7 @@ class HrDepartmentsController extends NodeController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @return mixed
      */
-    public function actionDelete(): array
+    public function actionDelete()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->post('id');
