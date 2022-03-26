@@ -73,8 +73,17 @@ class HrDepartmentRelShiftsController extends Controller
     {
         $model = new HrDepartmentRelShifts();
         $data = Yii::$app->request->get();
+        $post = Yii::$app->request->post();
         if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post())) {
+            $exists = HrDepartmentRelShifts::findOne([
+                "hr_department_id" => $data['department_id'],
+                "shift_id" => $post["HrDepartmentRelShifts"]["shift_id"],
+            ]);
+            if ($exists){
+                $model = clone $exists;
+                $model->status_id = BaseModel::STATUS_ACTIVE;
+            }
+            if ($model->load($post)) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
@@ -132,7 +141,16 @@ class HrDepartmentRelShiftsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $post = Yii::$app->request->post();
         if (Yii::$app->request->isPost) {
+            $exists = HrDepartmentRelShifts::findOne([
+                "hr_department_id" => $post["HrDepartmentRelShifts"]['department_id'],
+                "shift_id" => $post["HrDepartmentRelShifts"]["shift_id"],
+            ]);
+            if ($exists){
+                $model = clone $exists;
+                $model->status_id = BaseModel::STATUS_ACTIVE;
+            }
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;

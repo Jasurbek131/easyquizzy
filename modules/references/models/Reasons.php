@@ -6,6 +6,7 @@ use app\models\BaseModel;
 use app\modules\hr\models\HrDepartments;
 use app\modules\plm\models\PlmDocumentItems;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "reasons".
@@ -87,6 +88,11 @@ class Reasons extends BaseModel
     {
         return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
+
+    /**
+     * @param null $category_id
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public static function getCategoryList($category_id = null){
         $query = self::find()
             ->select([
@@ -100,5 +106,36 @@ class Reasons extends BaseModel
             return $query;
         }
         return $query;
+    }
+
+    /**
+     * @param bool $isMap
+     * @param null $token
+     * @return array
+     */
+    public static function  getList($isMap = false, $token = null): array
+    {
+        $language = Yii::$app->language;
+        $query = self::find()
+            ->alias("r")
+            ->select([
+                'r.id',
+                'r.id as value',
+                "r.name_{$language} as label",
+                "r.name_{$language} as name",
+            ])
+            ->leftJoin(["c" => "categories"], "r.category_id = c.id")
+            ->where([
+                'r.status_id' => \app\models\BaseModel::STATUS_ACTIVE,
+            ])
+            ->andFilterWhere([
+                "c.token" => $token
+            ])
+            ->asArray()
+            ->all();
+        if(!empty($query) && $isMap){
+            return ArrayHelper::map($query, 'id', 'name');
+        }
+        return  $query;
     }
 }

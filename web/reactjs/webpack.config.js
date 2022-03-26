@@ -56,6 +56,7 @@ let all = {
     entry: {
         document: `${SRC_DIR}/app/modules/plm/Document/Document.js`,
         plmDocumentReport: `${SRC_DIR}/app/modules/plm/Report/PlmDocumentReport.js`,
+        plmStopReport: `${SRC_DIR}/app/modules/plm/Report/PlmStopReport.js`,
         product: `${SRC_DIR}/app/modules/references/equipment_group/EquipmentGroup.js`,
     },
     output: {
@@ -81,6 +82,14 @@ let plm_document_report = {
     entry: `./src/app/modules/plm/Report/PlmDocumentReport.js`,
     mode: 'development',
 };
+let plm_stop_report = {
+    output: {
+        filename: './app/modules/plm/report/plmStopReport.bundle.js',
+    },
+    name: 'plm_stop_report',
+    entry: `./src/app/modules/plm/Report/PlmStopReport.js`,
+    mode: 'development',
+};
 let equipment_group = {
     output: {
         filename: './app/EquipmentGroup.bundle.js',
@@ -95,6 +104,7 @@ config = [
     {...all, ...other},
     {...document, ...other},
     {...plm_document_report, ...other},
+    {...plm_stop_report, ...other},
     {...equipment_group, ...other},
 ];
 

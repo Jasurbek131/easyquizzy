@@ -100,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
                    }
                ],
                [
-                    'attribute' => 'categoies',
+                    'attribute' => 'categories',
                     'label' => Yii::t("app","Production Type"),
                     'value' => function($model){
                        switch ($model['token']){

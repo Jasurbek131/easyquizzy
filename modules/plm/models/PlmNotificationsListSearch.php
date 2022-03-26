@@ -45,7 +45,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
      * @var
      * Tasdiqlash turini olish uchun
      */
-    public $categoies;
+    public $categories;
 
     /**
      * {@inheritdoc}
@@ -54,7 +54,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
     {
         return [
             [['id', 'plm_doc_item_id', 'defect_type_id', 'defect_count', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'category_id'], 'integer'],
-            [['begin_time', 'end_time', 'add_info', 'department', 'doc_number', 'reg_date', 'shift', 'equipment', 'categoies'], 'safe'],
+            [['begin_time', 'end_time', 'add_info', 'department', 'doc_number', 'reg_date', 'shift', 'equipment', 'categories'], 'safe'],
         ];
     }
 
@@ -96,6 +96,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                 'pd.doc_number',
             ])
             ->leftJoin(['pnl' => 'plm_notifications_list'], 'pnl.category_id = psrd.category_id')
+            ->leftJoin(['ps' => 'plm_stops'], 'pnl.stop_id = ps.id')
             ->leftJoin(['pdi' => 'plm_document_items'], 'pnl.plm_doc_item_id = pdi.id')
             ->leftJoin(['pd' => 'plm_documents'], 'pdi.document_id = pd.id')
             ->leftJoin(['sh' => 'shifts'], 'pd.shift_id = sh.id')
@@ -131,7 +132,6 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                 ->andFilterWhere(['ilike', 'e.name', $this->equipment])
                 ->groupBy(['pdi.id'])
             ], 'equipment.pdi_id = pdi.id');
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

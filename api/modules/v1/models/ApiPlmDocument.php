@@ -726,6 +726,18 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
         ];
         try {
             if (!empty($post)) {
+                $plmNotification = PlmNotificationsList::findOne(['stop_id' => $post["id"]]);
+                if (!empty($plmNotification)) {
+                    $plmNotification->status_id = BaseModel::STATUS_INACTIVE;
+                    if (!$plmNotification->save()) {
+                        $response = [
+                            'status' => false,
+                            'errors' => $plmNotification->getErrors(),
+                            'message' => Yii::t('app', 'Notification not deleted'),
+                        ];
+                    }
+                }
+
                 $stop = PlmStops::findOne(["id" => $post["id"]]);
                 if (!empty($stop)) {
                     $stop->status_id = BaseModel::STATUS_INACTIVE;
