@@ -234,8 +234,6 @@ class AuthItem extends \yii\db\ActiveRecord
                     $models[$key] =  ArrayHelper::map($model, 'name', 'name_for_user');
                 }
             }
-            \yii\helpers\VarDumper::dump($models, 10, true);
-
             return $models;
         }
         return [];
