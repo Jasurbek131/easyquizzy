@@ -82,7 +82,6 @@ class UsersController extends Controller
 
         $roles = AuthItem::getRoles(true);
         $role_types = AuthItem::getRoleType();
-\yii\helpers\VarDumper::dump($roles, 10, true);
         if ($request->isAjax)
             return $this->renderAjax('create', [
                 'model' => $model,
