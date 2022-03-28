@@ -83,16 +83,15 @@ use yii\widgets\ActiveForm;
         <div class="container">
             <div class="row checkbox_container">
                 <?php
-                \yii\helpers\VarDumper::dump($role_types, 10, true);
                     foreach ($role_types as $role_key =>  $role_type):
                     ?>
                     <div class="col-lg-3">
                         <div class="col-lg-12">
                             <?php echo $role_type; ?>
                         </div>
-                        <?php 
-                        \yii\helpers\VarDumper::dump($roles, 10, true);die;
-                        foreach ($roles[$role_key] as $key => $role) :
+                        <?php
+                        if (isset($roles[$role_key])){
+                            foreach ($roles[$role_key] as $key => $role) :
                             ?>
                             <div class="col-lg-12">
                                 <div class="form-group small">
@@ -106,7 +105,9 @@ use yii\widgets\ActiveForm;
                                     </label>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
+                        <?php endforeach;
+                            }
+                        ?>
                     </div>
                 <?php
                     endforeach;
