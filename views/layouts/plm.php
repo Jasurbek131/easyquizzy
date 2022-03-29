@@ -528,6 +528,9 @@ AppAsset::register($this);
     window.onload = function () {
         document.getElementById("loading").style.display = "none";
     }
+    if($.fn.modal){
+        $.fn.modal.Constructor.prototype._enforceFocus = function() {};
+    }
 </script>
 <?php
 $css = <<<CSS
