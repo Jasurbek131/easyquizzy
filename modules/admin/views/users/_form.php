@@ -89,8 +89,9 @@ use yii\widgets\ActiveForm;
                         <div class="col-lg-12">
                             <?php echo $role_type; ?>
                         </div>
-                        <?php 
-                        foreach ($roles[$role_key] as $key => $role) :
+                        <?php
+                        if (isset($roles[$role_key])){
+                            foreach ($roles[$role_key] as $key => $role) :
                             ?>
                             <div class="col-lg-12">
                                 <div class="form-group small">
@@ -104,7 +105,9 @@ use yii\widgets\ActiveForm;
                                     </label>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
+                        <?php endforeach;
+                            }
+                        ?>
                     </div>
                 <?php
                     endforeach;
