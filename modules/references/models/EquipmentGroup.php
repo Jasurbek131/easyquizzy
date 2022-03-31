@@ -144,8 +144,8 @@ class EquipmentGroup extends BaseModel
                         'e.id as value'
                     ])->leftJoin('equipments e', 'egr.equipment_id = e.id')
                       ->leftJoin(['hre'=>'hr_department_rel_equipment'], 'e.id = hre.equipment_id')
-                      ->where(['IN','hre.hr_department_id', $department_id])
-                      ->andWhere(['hre.status_id' => BaseModel::STATUS_ACTIVE]);
+                      ->where(['hre.status_id' => BaseModel::STATUS_ACTIVE])
+                      ->andFilterWhere(['IN','hre.hr_department_id', $department_id]);
                 },
                 'cycles' => function ($pl) {
                     $pl->from(['pl' => 'product_lifecycle'])
