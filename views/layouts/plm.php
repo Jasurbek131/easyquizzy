@@ -530,6 +530,12 @@ AppAsset::register($this);
     }
 </script>
 <?php
+$js = <<<JS
+    if($.fn.modal){
+        $.fn.modal.Constructor.prototype._enforceFocus = function() {};
+    }
+JS;
+$this->registerJs($js, \yii\web\View::POS_READY);
 $css = <<<CSS
 #loading{
     z-index: 999999;
