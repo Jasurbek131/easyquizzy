@@ -143,7 +143,7 @@ class EquipmentGroup extends BaseModel
                         'e.name as label',
                         'e.id as value'
                     ])->leftJoin('equipments e', 'egr.equipment_id = e.id')
-                      ->leftJOin(['hre'=>'hr_department_rel_equipment'], 'e.id = hre.equipment_id')
+                      ->leftJoin(['hre'=>'hr_department_rel_equipment'], 'e.id = hre.equipment_id')
                       ->where(['IN','hre.hr_department_id', $department_id])
                       ->andWhere(['hre.status_id' => BaseModel::STATUS_ACTIVE]);
                 },

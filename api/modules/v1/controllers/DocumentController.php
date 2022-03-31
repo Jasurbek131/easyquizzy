@@ -143,7 +143,7 @@ class DocumentController extends ActiveController
         switch ($type) {
             case "CREATE_DOCUMENT":
                 $department = HrDepartments::getDepartmentListWithSmenaByUser();
-                $department_id = ArrayHelper::map($department, 'id','id');
+                $department_id = $department ? ArrayHelper::map($department, 'id','id') : [];
                 $response = [
                     'status' => true,
                     'departmentList' => $department,
