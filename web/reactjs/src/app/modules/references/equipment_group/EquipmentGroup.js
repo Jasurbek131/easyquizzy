@@ -360,7 +360,7 @@ class EquipmentGroup extends Component {
                                                         </div>
                                                         <div className={"col-lg-1"}>
                                                             {
-                                                                +item.equipment_type_id === 1 ? (<div>
+                                                                +item.equipment_type_id !== 1 ? (<div>
                                                                     {subIndex != 0 ?
                                                                         <button  className={"btn btn-xs btn-outline-danger"}  onClick={this.removeData.bind(this, "cycles", index, subIndex)}><i className={"fa fa-times"}></i></button>
                                                                         :
