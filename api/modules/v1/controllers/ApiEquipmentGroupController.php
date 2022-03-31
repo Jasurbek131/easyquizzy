@@ -8,6 +8,7 @@ use app\api\modules\v1\components\CorsCustom;
 use app\api\modules\v1\models\ApiEquipmentGroup;
 use app\models\BaseModel;
 use app\modules\references\models\Equipments;
+use app\modules\references\models\EquipmentTypes;
 use app\modules\references\models\Products;
 use Yii;
 use yii\filters\ContentNegotiator;
@@ -113,7 +114,7 @@ class ApiEquipmentGroupController extends ActiveController
                 $response["equipments_list"] = Equipments::getListForSelect();
                 $response["status_list"] = BaseModel::getStatusList(null, true);
                 $response["products_list"] = Products::getList(null, true);
-                $response["equipments_group_type_list"] = BaseModel::getEquipmentGroupTypeList();
+                $response["equipments_type_list"] = EquipmentTypes::getList(null, true);
                 $response['messages'] = [
                     'equipments' => Yii::t('app', 'Equipments'),
                     'group_type' => Yii::t('app', 'Equipments type'),
