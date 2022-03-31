@@ -30,7 +30,7 @@ class EquipmentGroup extends Component {
             equipments_list: [],
             status_list: [],
             products_list: [],
-            equipments_group_type_list: [],
+            equipments_type_list: [],
             forms: {
                 modal: {
                     id: null,
@@ -68,7 +68,7 @@ class EquipmentGroup extends Component {
                 equipments_list: response.data.equipments_list,
                 status_list: response.data.status_list,
                 products_list: response.data.products_list,
-                equipments_group_type_list: response.data.equipments_group_type_list,
+                equipments_type_list: response.data.equipments_type_list,
                 messages: response.data.messages,
             });
         }
@@ -241,7 +241,7 @@ class EquipmentGroup extends Component {
         let {
             forms,
             equipments_list,
-            equipments_group_type_list,
+            equipments_type_list,
             status_list,
             display,
             messages,
@@ -251,6 +251,7 @@ class EquipmentGroup extends Component {
 
         if(forms.groups.length > 0){
             productLifecycleBody = forms.groups.map((item, index) => {
+                console.log("item.equipment_type_id", item.equipment_type_id);
                 return (
                     <div className={"driver col-lg-12"} key={index}>
                         {index != 0 ? (
@@ -280,10 +281,10 @@ class EquipmentGroup extends Component {
                                    styles={style}
                                    id={"equipment_type_id_"+index}
                                    onChange={this.onHandleChange.bind(this, 'select', 'equipment_type_id','groups',index, '')}
-                                   value={equipments_group_type_list.filter(({value}) => +value === +item.equipment_type_id)}
+                                   value={equipments_type_list.filter(({value}) => +value === +item.equipment_type_id)}
                                    placeholder={"Выбрать"}
                                    isClearable={true}
-                                   options={equipments_group_type_list}
+                                   options={equipments_type_list}
                                />
                            </div>
                            <div className={"col-lg-3"}>
@@ -359,7 +360,7 @@ class EquipmentGroup extends Component {
                                                         </div>
                                                         <div className={"col-lg-1"}>
                                                             {
-                                                                +item.equipment_type_id === 1 ? (<div>
+                                                                +item.equipment_type_id !== 1 ? (<div>
                                                                     {subIndex != 0 ?
                                                                         <button  className={"btn btn-xs btn-outline-danger"}  onClick={this.removeData.bind(this, "cycles", index, subIndex)}><i className={"fa fa-times"}></i></button>
                                                                         :
