@@ -1,6 +1,7 @@
 <?php
 
 use app\assets\SweetAlertAsset;
+use app\modules\references\models\Defects;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
 use yii\widgets\Pjax;
@@ -313,6 +314,7 @@ $this->registerJsVar('urlDefectsDelete', $urlDefectDelete);
 $this->registerJsVar('tempSelectMenuMessage', Yii::t('app', "Avval bo'lim tanlang"));
 $this->registerJsVar('urlUserGroup', Url::to(['/admin/users-group']));
 $this->registerJsVar('lang', $lang);
+$this->registerJsVar('defectType', Defects::getDefectTypeList());
 ?>
 <?php
 $css = <<<CSS
@@ -612,6 +614,9 @@ function ajaxSubmit(id){
                             item['status'] = 'Active';
                         } else {
                             item['status'] = 'Inactive';
+                        }
+                        if(defectType[item['defect_type']] != undefined){
+                            item['defect_type'] = defectType[item['defect_type']];
                         }
                         let td_defects = '<tr>' +
                              '<td>'+ (index*1+1) +'</td>' +
