@@ -4,6 +4,7 @@ namespace app\modules\hr\models;
 
 use app\modules\references\models\Equipments;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "hr_department_rel_equipment".
@@ -61,7 +62,7 @@ class HrDepartmentRelEquipment extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getEquipments()
     {
@@ -69,7 +70,7 @@ class HrDepartmentRelEquipment extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrDepartments()
     {

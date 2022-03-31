@@ -3,31 +3,25 @@
 namespace app\modules\hr\models;
 
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
- * This is the model class for table "hr_employee".
  *
- * @property int $id
- * @property string $firstname
- * @property string $lastname
- * @property string $fathername
- * @property string $phone_number
- * @property string $email
- * @property int $status_id
- * @property int $hr_department_id
- * @property int $hr_organisation_id
- * @property int $hr_position_id
- * @property string $begin_date
- * @property int $created_by
- * @property int $created_at
- * @property int $updated_by
- * @property int $updated_at
- *
- * @property HrDepartments $hrDepartments
- * @property HrEmployeeRelPosition $hrEmployeeActivePosition
- * @property HrEmployeeRelPosition[] $hrEmployeeRelPosition
- * @property HrPositions $hrPositions
+ * @property string $id [integer]
+ * @property string $firstname [varchar(255)]
+ * @property string $lastname [varchar(255)]
+ * @property string $fathername [varchar(255)]
+ * @property string $phone_number [varchar(30)]
+ * @property string $email [varchar(255)]
+ * @property string $status_id [integer]
+ * @property string $created_by [integer]
+ * @property string $created_at [integer]
+ * @property string $updated_by [integer]
+ * @property-read ActiveQuery $hrEmployeeActivePosition
+ * @property-read ActiveQuery $hrEmployeeRelPosition
+ * @property string $updated_at [integer]
  */
 class HrEmployee extends BaseModel
 {
@@ -108,7 +102,7 @@ class HrEmployee extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrEmployeeRelPosition()
     {
@@ -116,7 +110,7 @@ class HrEmployee extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrEmployeeActivePosition()
     {
@@ -127,7 +121,7 @@ class HrEmployee extends BaseModel
      * @param bool $isMap
      * @return array
      */
-    public static function getList($isMap = true):array
+    public static function getList(bool $isMap = true):array
     {
         $list = self::find()
             ->where([
@@ -145,7 +139,7 @@ class HrEmployee extends BaseModel
 
     /**
      * @param $id
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array|ActiveRecord[]
      */
     public static function getEmployeeData($id): array
     {

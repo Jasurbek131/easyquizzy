@@ -10,6 +10,7 @@ use app\modules\references\models\Defects;
 use app\modules\references\models\Reasons;
 use app\modules\references\models\EquipmentGroup;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\rest\ActiveController;
@@ -141,10 +142,12 @@ class DocumentController extends ActiveController
         $response['message'] = Yii::t('app', "Ma'lumotlar yetarli emas!");
         switch ($type) {
             case "CREATE_DOCUMENT":
+                $department = HrDepartments::getDepartmentListWithSmenaByUser();
+                $department_id = ArrayHelper::map($department, 'id','id');
                 $response = [
                     'status' => true,
-                    'departmentList' => HrDepartments::getDepartmentListWithSmenaByUser(),
-                    'equipmentGroupList' => EquipmentGroup::getEquipmentGroupList(),
+                    'departmentList' => $department,
+                    'equipmentGroupList' => EquipmentGroup::getEquipmentGroupList($department_id),
                     'user_id' => Yii::$app->user->id,
                     'language' => $language,
                     'today' => date('D M j G:i:s T Y'),
@@ -152,8 +155,8 @@ class DocumentController extends ActiveController
                     'tomorrow' => date('D M j G:i:s T Y', strtotime("+1 day")),
                     'categoriesPlannedList' => Categories::getList(false, ['type' => Categories::PLANNED_TYPE]),
                     'categoriesUnPlannedList' => Categories::getList(false,['type' => Categories::UNPLANNED_TYPE]),
-                    'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED),
-                    'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED),
+                    'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED,$department_id),
+                    'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED,$department_id),
                 ];
                 if (!is_null($id)) {
                     $plm_document = ApiPlmDocument::getDocumentElements($id);

@@ -18,8 +18,9 @@ use yii\helpers\ArrayHelper;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
- *
- * @property Reasons[] $reasonss
+ * @property-read \yii\db\ActiveQuery $hrDepartment
+ * @property-read \yii\db\ActiveQuery $reasons
+ * @property string $hr_department_id [integer]
  */
 class Categories extends BaseModel
 {

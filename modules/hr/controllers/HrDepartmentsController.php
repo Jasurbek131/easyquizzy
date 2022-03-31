@@ -161,7 +161,7 @@ class HrDepartmentsController extends NodeController
     public function actionCreate()
     {
         $data = Yii::$app->request->get();
-        if(!Yii::$app->request->isAjax){
+        if (!Yii::$app->request->isAjax) {
             return $this->redirect('index');
         }
         $model = new HrDepartments();
@@ -211,14 +211,14 @@ class HrDepartmentsController extends NodeController
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    if($model->save()){
+                    if ($model->save()) {
                         $saved = true;
-                    }else{
+                    } else {
                         $saved = false;
                     }
-                    if($saved) {
+                    if ($saved) {
                         $transaction->commit();
-                    }else{
+                    } else {
                         $transaction->rollBack();
                     }
                 } catch (Exception $e) {
@@ -265,16 +265,16 @@ class HrDepartmentsController extends NodeController
         Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->post('id');
         $response = [];
-        if (!empty($id)){
+        if (!empty($id)) {
             $child = HrDepartments::find()
                 ->where(['parent_id' => $id])
                 ->andWhere(['status_id' => BaseModel::STATUS_ACTIVE])
                 ->one();
             if (empty($child)) {
                 $hrDepartment = HrDepartments::findOne(['id' => $id]);
-                if(!empty($hrDepartment)){
+                if (!empty($hrDepartment)) {
                     $hrDepartment->status_id = BaseModel::STATUS_INACTIVE;
-                    if($hrDepartment->save()){
+                    if ($hrDepartment->save()) {
                         $response['delete'] = true;
                         $response['message'] = "Delete successfully";
                     }
@@ -307,7 +307,7 @@ class HrDepartmentsController extends NodeController
     public function actionIndex($dep = null): string
     {
         $tree = HrDepartments::getTreeViewHtmlForm(null, $dep, UsersRelationHrDepartments::getDepartmentByUser());
-        return $this->render('dep-index',[
+        return $this->render('dep-index', [
             'tree' => $tree,
             'dep' => $dep,
         ]);
@@ -321,7 +321,7 @@ class HrDepartmentsController extends NodeController
         Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->get('id');
         $response = [];
-        if (!empty($id)){
+        if (!empty($id)) {
             $child = HrDepartments::find()
                 ->where(['parent_id' => $id])
                 ->andWhere(['status_id' => BaseModel::STATUS_ACTIVE])
@@ -334,8 +334,8 @@ class HrDepartmentsController extends NodeController
             if (!empty($child)) {
                 $response['delete'] = true;
             }
-            return $response;
         }
+        return $response;
     }
 
     /**
@@ -346,17 +346,17 @@ class HrDepartmentsController extends NodeController
     {
         $request = Yii::$app->request;
 
-        if ($request->isAjax){
+        if ($request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
 
             $response = ['status' => false];
-            if ($departments = HrDepartments::getList(true, $parent_id)){
+            if ($departments = HrDepartments::getList(true, $parent_id)) {
                 $response = [
                     'status' => true,
                     'departments' => $departments
                 ];
             }
-            return  $response;
+            return $response;
         }
     }
 }
