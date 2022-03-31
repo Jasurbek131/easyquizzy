@@ -113,6 +113,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                ],
                [
+                   'attribute' => 'category_name',
+                   'label' => Yii::t('app', 'Categories'),
+                   'value' => function($model){
+                        return $model->category_name ?? "";
+                   },
+               ],
+               [
                    'attribute' => 'status_id',
                    'format' => 'raw',
                    'value' => function($model) {

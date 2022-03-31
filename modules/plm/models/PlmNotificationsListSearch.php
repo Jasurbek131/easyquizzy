@@ -48,13 +48,19 @@ class PlmNotificationsListSearch extends PlmNotificationsList
     public $categories;
 
     /**
+     * @var
+     * To'xtalish sababini olish uchun
+     */
+    public $category_name;
+
+    /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['id', 'plm_doc_item_id', 'defect_type_id', 'defect_count', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'category_id'], 'integer'],
-            [['begin_time', 'end_time', 'add_info', 'department', 'doc_number', 'reg_date', 'shift', 'equipment', 'categories'], 'safe'],
+            [['begin_time', 'end_time', 'add_info', 'department', 'doc_number', 'reg_date', 'shift', 'equipment', 'categories', 'category_name'], 'safe'],
         ];
     }
 
@@ -93,6 +99,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                 'defect.count AS defect_count',
                 'pnl.status_id',
                 'c.token',
+                'c.name_uz as category_name',
                 'pd.doc_number',
             ])
             ->leftJoin(['pnl' => 'plm_notifications_list'], 'pnl.category_id = psrd.category_id')
@@ -150,6 +157,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         $query->andFilterWhere(['ilike', 'hd.name', $this->department]);
         $query->andFilterWhere(['ilike', 'pd.doc_number', $this->doc_number]);
         $query->andFilterWhere(['ilike', 'sh.name', $this->shift]);
+        $query->andFilterWhere(['ilike', 'c.name_uz', $this->category_name]);
         $query->andFilterWhere(['!=', 'pnl.status_id', BaseModel::STATUS_INACTIVE]);
         $query->orderBy(['pnl.status_id' => SORT_ASC]);
         return $dataProvider;

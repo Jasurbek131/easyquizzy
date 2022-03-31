@@ -181,7 +181,9 @@ class PlmNotificationsListController extends Controller
         return $response;
     }
 
-
+    /**
+     * @return array
+     */
     public function actionAjaxRejected(){
         Yii::$app->response->format = Response::FORMAT_JSON;
         $response = [];
