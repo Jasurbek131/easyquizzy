@@ -23,4 +23,8 @@ class PlmReportController extends Controller
     {
         return  $this->render("stop");
     }
+
+    public function actionPieChart(){
+        return $this->render("pie_chart");
+    }
 }

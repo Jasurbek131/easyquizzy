@@ -4,6 +4,7 @@ import axios from "axios";
 import {tr} from "react-date-range/dist/locale";
 import {SearchDocument} from "./search/SearchDocument";
 import ReactPaginate from "react-paginate";
+import {PieChart, Pie, Sector, Cell, ResponsiveContainer} from 'recharts';
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/plm-document-reports/";
 const initialSearch = {
@@ -17,12 +18,49 @@ const initialSearch = {
     page: 0,
     is_search: false,
 };
+const data = [
+    {name: 'Group A', value: 400},
+    {name: 'Group B', value: 300},
+];
+
+const COLORS = ['rgb(0, 136, 254)', 'rgb(255, 128, 66)'];
+
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({cx, cy, midAngle, innerRadius, outerRadius, percent, index}) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+        <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+            {`${(percent * 100).toFixed(0)}%`}
+        </text>
+    );
+};
 
 class PlmDocumentReport extends Component {
     constructor(props) {
         super(props);
         this.state = {
             items: [],
+            pie_data: {
+                a_data: [
+                    {name: 'Group A', value: 400},
+                    {name: 'Group B', value: 300},
+                ],
+                p_data: [
+                    {name: 'Group A', value: 400},
+                    {name: 'Group B', value: 300},
+                ],
+                q_data: [
+                    {name: 'Group A', value: 400},
+                    {name: 'Group B', value: 300},
+                ],
+                oee_data: [
+                    {name: 'Group A', value: 400},
+                    {name: 'Group B', value: 300},
+                ],
+            },
             hr_department_list: [],
             shift_list: [],
             equipment_list: [],
@@ -58,7 +96,7 @@ class PlmDocumentReport extends Component {
     };
 
     onHandleSearch = () => {
-        let { searchParams } = this.state;
+        let {searchParams} = this.state;
         searchParams["is_search"] = true;
         this.getReportData(searchParams).then(r => {
 
@@ -71,7 +109,7 @@ class PlmDocumentReport extends Component {
         this.getReportData(searchParams).then(r => {
 
         });
-        this.setState({ searchParams });
+        this.setState({searchParams});
     };
 
     onPageChange = (e) => {
@@ -91,7 +129,7 @@ class PlmDocumentReport extends Component {
     async getReportData(searchParams) {
         let response = await axios.post(API_URL + 'index?type=PLM_DOCUMENT_DATA', searchParams);
         if (response.data.status) {
-            if (searchParams.is_search === false){
+            if (searchParams.is_search === false) {
                 this.setState({
                     hr_department_list: response.data.hr_department_list,
                     shift_list: response.data.shift_list,
@@ -108,8 +146,8 @@ class PlmDocumentReport extends Component {
 
     sumValue = (items, value) => {
         let summ = 0;
-        if (items && items.length > 0){
-            items.forEach(function (item, index){
+        if (items && items.length > 0) {
+            items.forEach(function (item, index) {
                 summ += item[value];
             });
         }
@@ -127,6 +165,7 @@ class PlmDocumentReport extends Component {
             equipment_list,
             product_list,
             pagination,
+            pie_data,
         } = this.state;
         let pageCount = Math.ceil(pagination.totalCount / pagination.defaultPageSize);
         let dataBody = "";
@@ -145,26 +184,34 @@ class PlmDocumentReport extends Component {
             language={language}
         />;
 
-         dataBody = items?.map((item, index) => {
+        let sumPercentA = 0;
+        let sumPercentP = 0;
+        let sumPercentQ = 0;
+        let sumPercentOee = 0;
+        dataBody = items?.map((item, index) => {
 
             itemProductLength = item?.products?.length ?? 0;
             let returnDocItemProductData;
 
-            if (itemProductLength > 0){
+            if (itemProductLength > 0) {
                 returnDocItemProductData = item?.products.map((productItem, productIndex) => {
-                    if(+productIndex === 0){
+                    if (+productIndex === 0) {
 
-                        let finalPlanDate =  +item.plan_date - (+item.plan_stop_date) - (+item.unplan_stop_date);
+                        let finalPlanDate = +item.plan_date - (+item.plan_stop_date) - (+item.unplan_stop_date);
 
                         let sumFactQty = this.sumValue(item?.products, 'fact_qty');
                         let sumQty = this.sumValue(item?.products, 'qty');
                         let sumRepaired = this.sumValue(item?.products, 'repaired_count');
                         let sumScrapped = this.sumValue(item?.products, 'scrapped_count');
 
-                        let percentA = ( finalPlanDate / item.plan_date * 100).toFixed(2);
-                        let percentP = (( sumFactQty + sumQty) / (+item.target_qty) * 100).toFixed(2);
-                        let percentQ = ((sumFactQty + sumQty - sumRepaired - sumScrapped) /  (sumFactQty +  sumQty) * 100).toFixed(2);
-
+                        let percentA = (finalPlanDate / item.plan_date * 100).toFixed(2);
+                        let percentP = ((sumFactQty + sumQty) / (+item.target_qty) * 100).toFixed(2);
+                        let percentQ = ((sumFactQty + sumQty - sumRepaired - sumScrapped) / (sumFactQty + sumQty) * 100).toFixed(2);
+                        sumPercentA += 1 / (percentA / 100);
+                        sumPercentP += 1 / (percentP / 100);
+                        sumPercentQ += 1 / (percentQ / 100);
+                        sumPercentOee += 1 / (percentA * percentP * percentQ / 1000000);
+                        console.log(sumPercentA, sumPercentP, sumPercentQ, sumPercentOee);
                         return (
                             <tr key={index + "_" + productIndex}>
                                 <td rowSpan={itemProductLength}>{++iterator}</td>
@@ -179,19 +226,20 @@ class PlmDocumentReport extends Component {
                                 <td rowSpan={itemProductLength}>{item.lifecycle}</td>
                                 <td rowSpan={itemProductLength}>{item.bypass}</td>
                                 <td rowSpan={itemProductLength} className={"a"}>{item.plan_date}</td>
-                                <td rowSpan={itemProductLength} className={"a"}>{ finalPlanDate }</td>
-                                <td rowSpan={itemProductLength} className={"a"}>{ percentA }</td>
+                                <td rowSpan={itemProductLength} className={"a"}>{finalPlanDate}</td>
+                                <td rowSpan={itemProductLength} className={"a"}>{percentA}</td>
                                 <td rowSpan={itemProductLength} className={"p"}>{+item.target_qty}</td>
                                 <td className={"p"}>{+productItem.fact_qty + (+productItem.qty)}</td>
-                                <td rowSpan={itemProductLength} className={"p"}>{ percentP }</td>
+                                <td rowSpan={itemProductLength} className={"p"}>{percentP}</td>
                                 <td className={"q"}>{+productItem.fact_qty + (+productItem.qty) - (+productItem.repaired_count) - (+productItem.scrapped_count)}</td>
                                 <td className={"q"}>{(+productItem.repaired_count)}</td>
                                 <td className={"q"}>{(+productItem.scrapped_count)}</td>
-                                <td className={"q"} rowSpan={itemProductLength}>{ percentQ }</td>
-                                <td className={"oee"} rowSpan={itemProductLength}>{ (percentA * percentP * percentQ / 10000).toFixed(2)}</td>
+                                <td className={"q"} rowSpan={itemProductLength}>{percentQ}</td>
+                                <td className={"oee"}
+                                    rowSpan={itemProductLength}>{(percentA * percentP * percentQ / 10000).toFixed(2)}</td>
                             </tr>
                         );
-                    }else{
+                    } else {
                         return (
                             <tr key={index + "_" + productIndex}>
                                 <td>{productItem.product_name ?? ""}</td>
@@ -206,7 +254,26 @@ class PlmDocumentReport extends Component {
             }
             return (returnDocItemProductData);
         });
-
+        sumPercentA = 1 / sumPercentA;
+        sumPercentP = 1 / sumPercentP;
+        sumPercentQ = 1 / sumPercentQ;
+        sumPercentOee = 1 / sumPercentOee;
+        pie_data.a_data = [
+            {name: 'Benefit percent', value: sumPercentA},
+            {name: 'Loss percent', value: 1 - sumPercentA}
+        ];
+        pie_data.p_data = [
+            {name: 'Benefit percent', value: sumPercentP},
+            {name: 'Loss percent', value: 1 - sumPercentP}
+        ];
+        pie_data.q_data = [
+            {name: 'Benefit percent', value: sumPercentQ},
+            {name: 'Loss percent', value: 1 - sumPercentQ}
+        ];
+        pie_data.oee_data = [
+            {name: 'Benefit percent', value: sumPercentOee},
+            {name: 'Loss percent', value: 1 - sumPercentOee}
+        ];
         return (<div>
             {search}
             <div className={"card"}>
@@ -271,7 +338,107 @@ class PlmDocumentReport extends Component {
                             /> : ""
                     }
                 </div>
+                <div className="card card-success">
+                    <div className="card-header">
+                        <h3 className="card-title">
+                            <i className="fas fa-chart-pie"/>
+                        </h3>
+                        <div className="card-tools">
+                            <button type="button" className="btn btn-tool" data-card-widget="maximize">
+                                <i className="fas fa-expand"/>
+                            </button>
+                            <button type="button" className="btn btn-tool" data-card-widget="collapse">
+                                <i className="fas fa-minus"/>
+                            </button>
+                            <button type="button" className="btn btn-tool" data-card-widget="remove">
+                                <i className="fas fa-times"/>
+                            </button>
+                        </div>
 
+                    </div>
+
+                    <div className="card-body">
+                        <div className="row">
+                            <div className="col-md-3">
+                                <h3>A</h3>
+                                <PieChart width={250} height={250}>
+                                    <Pie
+                                        data={pie_data.a_data}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        label={renderCustomizedLabel}
+                                        outerRadius={100}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                    >
+                                        {data.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </div>
+                            <div className="col-md-3">
+                                <h3>P</h3>
+                                <PieChart width={250} height={250}>
+                                    <Pie
+                                        data={pie_data.p_data}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        label={renderCustomizedLabel}
+                                        outerRadius={100}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                    >
+                                        {data.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </div>
+                            <div className="col-md-3">
+                                <h3>Q</h3>
+                                <PieChart width={250} height={250}>
+                                    <Pie
+                                        data={pie_data.q_data}
+                                        cx="60%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        label={renderCustomizedLabel}
+                                        outerRadius={100}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                    >
+                                        {data.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </div>
+                            <div className="col-md-3">
+                                <h3>OEE</h3>
+                                <PieChart width={250} height={250}>
+                                    <Pie
+                                        data={pie_data.oee_data}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        label={renderCustomizedLabel}
+                                        outerRadius={100}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                    >
+                                        {data.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>);
     }
