@@ -14,7 +14,7 @@ use yii\web\YiiAsset;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Plm Notifications Lists'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
-$no_defect = ($model['token'] != 'REPAIRED') && ($model['token'] != 'SCRAPPED');
+$no_defect = ( ($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED') );
 ?>
     <div class="card">
         <div class="card-body">

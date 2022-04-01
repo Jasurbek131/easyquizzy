@@ -297,7 +297,6 @@ function deleteMusteriAddress(id,parentId){
             function(r){
                 call_pnotify(r, "");
                 $.pjax.reload({container: "#" + grid_ajax});
-                console.log(parent);
                 getMusteriAddress(parentId);
             }
         );

@@ -1,10 +1,8 @@
 <?php
 
-use app\modules\plm\models\PlmSectorList;
 use app\modules\plm\models\PlmSectorRelHrDepartment;
 use yii\helpers\Html;
 use yii\grid\GridView;
-use yii\helpers\Url;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -23,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'plm-setting-accepted-sector-rel-hr-department_pjax']); ?>
-        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
         <?= GridView::widget([
             'dataProvider' => $dataProvider,

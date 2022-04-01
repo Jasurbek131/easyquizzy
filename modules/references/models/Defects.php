@@ -9,6 +9,8 @@ use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocumentItems;
 use app\widgets\Language;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -26,11 +28,15 @@ use yii\helpers\ArrayHelper;
  *
  * @property HrDepartmentRelDefects[] $hrDepartmentRelDefects
  * @property PlmDocItemDefects[] $plmDocItemDefects
+ * @property-read ActiveQuery $plmDocumentItems
+ * @property-read mixed $hrDepartment
+ * @property string $hr_department_id [integer]
  */
 class Defects extends BaseModel
 {
-    const REPAIRED_TYPE  = 1; // ta'mirlangan ishlar uchun tur
-    const INVALID_TYPE  = 2;   // yaroqsiz ishlar uchun tur
+    const REPAIRED_TYPE = 1; // ta'mirlangan ishlar uchun tur
+    const INVALID_TYPE = 2;   // yaroqsiz ishlar uchun tur
+
     /**
      * {@inheritdoc}
      */
@@ -70,7 +76,7 @@ class Defects extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrDepartmentRelDefects()
     {
@@ -78,19 +84,21 @@ class Defects extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPlmDocItemDefects()
     {
         return $this->hasMany(PlmDocItemDefects::className(), ['defect_id' => 'id']);
     }
+
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPlmDocumentItems()
     {
         return $this->hasMany(PlmDocumentItems::className(), ['defect_id' => 'id']);
     }
+
     public function getHrDepartment()
     {
         return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
@@ -100,12 +108,13 @@ class Defects extends BaseModel
      * @param null $key
      * @return array|mixed
      */
-    public static function getDefectTypeList($key = null){
+    public static function getDefectTypeList($key = null)
+    {
         $result = [
-            self::REPAIRED_TYPE => Yii::t('app','Repaired Type'),
-            self::INVALID_TYPE => Yii::t('app','Invalid Type'),
+            self::REPAIRED_TYPE => Yii::t('app', 'Repaired Type'),
+            self::INVALID_TYPE => Yii::t('app', 'Invalid Type'),
         ];
-        if(!empty($key)){
+        if (!empty($key)) {
             return $result[$key];
         }
         return $result;
@@ -114,10 +123,11 @@ class Defects extends BaseModel
     /**
      * @param null $key
      * @param bool $isArray
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array|ActiveRecord[]
      * @throws \Exception
      */
-    public static function getList($key = null, $isArray = false) {
+    public static function getList($key = null, $isArray = false)
+    {
         $language = Language::widget();
         $list = self::find()->asArray()->select(['id as id', "{$language} as name"])->all();
         if ($isArray) {
@@ -128,20 +138,28 @@ class Defects extends BaseModel
 
     /**
      * @param $type
-     * @return array|\yii\db\ActiveRecord[]
+     * @param $department_id
+     * @return Defects[]|array|ActiveRecord[]
      */
-    public static function getListByType($type)
+    public static function getListByType($type, $department_id)
     {
         $language = Yii::$app->language;
 
         return Defects::find()
+            ->alias('defects')
             ->select([
-                'id as value',
-                "name_{$language} as label",
+                'defects.id as value',
+                "defects.name_{$language} as label",
                 "SUM(0) as count"
-            ])->where(['status_id' => BaseModel::STATUS_ACTIVE])
-            ->andWhere(['type' => $type])
-            ->groupBy('id')
+            ])
+            ->leftJoin(['defect_rel' => HrDepartmentRelDefects::tableName()], 'defect_rel.defect_id = defects.id')
+            ->where([
+                'defects.type' => $type,
+                'defects.status_id' => BaseModel::STATUS_ACTIVE,
+                'defect_rel.status_id' => BaseModel::STATUS_ACTIVE,
+            ])
+            ->andFilterWhere(['IN', 'defect_rel.hr_department_id', $department_id])
+            ->groupBy('defects.id')
             ->asArray()
             ->all();
     }

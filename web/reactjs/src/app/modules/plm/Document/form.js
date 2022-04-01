@@ -220,7 +220,7 @@ class Form extends React.Component {
                 plm_document_items[key][name] = v;
                 plm_document_items[key]['is_change'] = true;
                 if (name === 'equipment_group_id') {
-                    if (+e.equipment_type_id === 2 && e.product_list.length > 0) {
+                    if (+e.equipment_type_id === 1 && e.product_list.length > 0) {
                         plm_document_items[key]["lifecycle"] = e.product_list[0]["lifecycle"] ?? 0;
                         plm_document_items[key]["bypass"] = e.product_list[0]["bypass"] ?? 0;
                     } else {
@@ -1002,7 +1002,7 @@ class Form extends React.Component {
                                                                                 <i className={"fa fa-times"}/>
                                                                             </button>
                                                                         ) : (
-                                                                            equipmentGroupValue[0]?.equipment_type_id !== 1 ? (
+                                                                            equipmentGroupValue[0]?.equipment_type_id === 1 ? (
                                                                                 <button
                                                                                     onClick={this.onPush.bind(this, 'product-plus', 'plm_document_items', key, '')}
                                                                                     className={"btn btn-xs btn-primary wh-28"}>

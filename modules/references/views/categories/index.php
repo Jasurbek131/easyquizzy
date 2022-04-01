@@ -43,7 +43,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function(Categories $model){
                     return $model::getStatusList($model->status_id);
                 },
-                'format' => 'html'
+                'format' => 'html',
+                'filter' => $searchModel->getStatusList()
             ],
                 [
                     'class' => 'yii\grid\ActionColumn',

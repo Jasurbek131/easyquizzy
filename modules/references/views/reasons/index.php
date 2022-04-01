@@ -1,6 +1,7 @@
 <?php
 
 use app\models\BaseModel;
+use app\modules\references\models\Categories;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -35,7 +36,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'category_id',
                     'value' => function ($model) {
                         return $model->categories->name_uz ?? "";
-                    }
+                    },
+                    'filter' => Categories::getList(true),
                 ],
                 [
                     'attribute' => 'status_id',

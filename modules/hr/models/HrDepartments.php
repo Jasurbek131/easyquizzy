@@ -6,6 +6,8 @@ use app\models\BaseModel;
 use app\modules\references\models\Shifts;
 use kartik\tree\models\Tree;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use function Faker\Provider\pt_BR\check_digit;
@@ -25,6 +27,28 @@ use function Faker\Provider\pt_BR\check_digit;
  * @property int $updated_at
  * @property float $value
  * @property HrEmployee[] $hrEmployees
+ * @property string $root [integer]
+ * @property string $lft [integer]
+ * @property string $rgt [integer]
+ * @property int $lvl [smallint]
+ * @property string $icon [varchar(255)]
+ * @property int $icon_type [smallint]
+ * @property bool $active [boolean]
+ * @property bool $selected [boolean]
+ * @property bool $disabled [boolean]
+ * @property bool $readonly [boolean]
+ * @property bool $visible [boolean]
+ * @property bool $collapsed [boolean]
+ * @property bool $movable_u [boolean]
+ * @property bool $movable_d [boolean]
+ * @property bool $movable_l [boolean]
+ * @property bool $movable_r [boolean]
+ * @property bool $removable [boolean]
+ * @property bool $removable_all [boolean]
+ * @property bool $child_allowed [boolean]
+ * @property-read ActiveQuery $departments
+ * @property-read ActiveQuery $shifts
+ * @property int $type [smallint]
  */
 class HrDepartments extends BaseModel
 {
@@ -47,7 +71,7 @@ class HrDepartments extends BaseModel
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at','parent_id', 'value'], 'default', 'value' => null],
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [["value"], "number"],
-            [['status_id'],'default','value' => \app\models\BaseModel::STATUS_ACTIVE],
+            [['status_id'],'default','value' => BaseModel::STATUS_ACTIVE],
             [['name', 'name_ru', 'token'], 'string', 'max' => 255],
         ];
     }
@@ -74,35 +98,36 @@ class HrDepartments extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getDepartments()
     {
-        return $this->hasMany(HrDepartments::className(), ['parent_id' => 'id']);
+        return $this->hasMany(HrDepartments::class, ['parent_id' => 'id']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getShifts() {
-        return $this->hasMany(HrDepartmentRelShifts::className(), ['hr_department_id' => 'id']);
+        return $this->hasMany(HrDepartmentRelShifts::class, ['hr_department_id' => 'id']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrEmployees()
     {
-        return $this->hasMany(HrEmployee::className(), ['hr_department_id' => 'id']);
+        return $this->hasMany(HrEmployee::class, ['hr_department_id' => 'id']);
     }
 
     /**
-     * @param bool $isArray
-     * @param int $parent_id
-     * @return array|\yii\db\ActiveRecord[]
+     * @param $isArray
+     * @param $parent_id
+     * @return HrDepartments[]|array|ActiveRecord[]
      */
     public static function getList( $isArray = false, $parent_id = null) {
         $list = self::find()->select(['id as value', 'name as label'])
+            ->where(['status_id' => BaseModel::STATUS_ACTIVE])
             ->andFilterWhere([
                 "parent_id" => $parent_id
             ])
@@ -116,7 +141,7 @@ class HrDepartments extends BaseModel
 
     /**
      * @param bool $isArray
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array|ActiveRecord[]
      * Tashkilotlar ro'yxatini qaytaradi [parent = null]
      */
     public static function getOrganisationList( $isArray = false) {
@@ -132,11 +157,10 @@ class HrDepartments extends BaseModel
     }
 
     /**
-     * @param null $parent_id
-     * @param null $dep
-     * @param bool $isJson
-     * @param array $user_departments
-     * @return array|string
+     * @param $parent_id
+     * @param $dep
+     * @param $user_departments
+     * @return string
      */
     public static function getTreeViewHtmlForm($parent_id = null, $dep = null, $user_departments = []) //TODO optimallashtirish kerak
     {
@@ -182,7 +206,7 @@ class HrDepartments extends BaseModel
     }
 
     /**
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array|ActiveRecord[]
      * Tashkilot ro'yxati va tashkilotga tegishli smenalar ro'yxati smenasi bilan
      */
     public static function getOrganisationListWithSmenaByUser():array
@@ -234,7 +258,6 @@ class HrDepartments extends BaseModel
             ->select([
                 'hd.id',
                 'hd.id as value',
-
                 'hd.name as label',
             ])
             ->with([

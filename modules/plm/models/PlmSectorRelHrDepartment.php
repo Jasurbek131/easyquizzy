@@ -45,7 +45,15 @@ class PlmSectorRelHrDepartment extends BaseModel
      */
     public $isUpdate = false;
 
+    /**
+     * @var
+     * To'xtalish sababini olish uchun
+     */
+    public $category_name;
 
+    /**
+     * @var
+     */
     const SCENARIO_CREATE = "scenario_create";
 
     /**

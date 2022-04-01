@@ -1,6 +1,7 @@
 <?php
 
 use app\assets\SweetAlertAsset;
+use app\modules\references\models\Defects;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
 use yii\widgets\Pjax;
@@ -122,11 +123,11 @@ $create = Yii::t('app', 'Create');
                                aria-controls="equipments"
                                aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"
-                               aria-controls="products"
-                               aria-selected="false"><?php echo Yii::t('app', 'Products') ?></a>
-                        </li>
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"-->
+<!--                               aria-controls="products"-->
+<!--                               aria-selected="false">--><?php //echo Yii::t('app', 'Products') ?><!--</a>-->
+<!--                        </li>-->
                         <li class="nav-item">
                             <a class="nav-link" id="defects-tab" data-toggle="tab" href="#defect" role="tab"
                                aria-controls="defects" aria-selected="false"><?php echo Yii::t('app', 'Defects') ?></a>
@@ -298,21 +299,22 @@ $urlShiftUpdate = Url::to(['hr-department-rel-shifts/update']);
 $urlShiftDelete = Url::to(['hr-department-rel-shifts/delete']);
 $urlEquipmentUpdate = Url::to(['hr-department-rel-equipment/update']);
 $urlEquipmentDelete = Url::to(['hr-department-rel-equipment/delete']);
-$urlProductUpdate = Url::to(['hr-department-rel-product/update']);
-$urlProductDelete = Url::to(['hr-department-rel-product/delete']);
+//$urlProductUpdate = Url::to(['hr-department-rel-product/update']);
+//$urlProductDelete = Url::to(['hr-department-rel-product/delete']);
 $urlDefectUpdate = Url::to(['hr-department-rel-defects/update']);
 $urlDefectDelete = Url::to(['hr-department-rel-defects/delete']);
 $this->registerJsVar('urlShiftUpdate', $urlShiftUpdate);
 $this->registerJsVar('urlShiftDelete', $urlShiftDelete);
 $this->registerJsVar('urlEquipmentUpdate', $urlEquipmentUpdate);
 $this->registerJsVar('urlEquipmentDelete', $urlEquipmentDelete);
-$this->registerJsVar('urlProductUpdate', $urlProductUpdate);
-$this->registerJsVar('urlProductDelete', $urlProductDelete);
+//$this->registerJsVar('urlProductUpdate', $urlProductUpdate);
+//$this->registerJsVar('urlProductDelete', $urlProductDelete);
 $this->registerJsVar('urlDefectsUpdate', $urlDefectUpdate);
 $this->registerJsVar('urlDefectsDelete', $urlDefectDelete);
 $this->registerJsVar('tempSelectMenuMessage', Yii::t('app', "Avval bo'lim tanlang"));
 $this->registerJsVar('urlUserGroup', Url::to(['/admin/users-group']));
 $this->registerJsVar('lang', $lang);
+$this->registerJsVar('defectType', Defects::getDefectTypeList());
 ?>
 <?php
 $css = <<<CSS
@@ -534,7 +536,7 @@ function ajaxSubmit(id){
                     let delete_tree = response['delete'];
                     let shifts = response['shifts'];
                     let equipments = response['equipments'];
-                    let products = response['products'];
+                    // let products = response['products'];
                     let defects = response['defects'];
                     let tr_class = "";
                     if ( delete_tree ) {
@@ -586,32 +588,35 @@ function ajaxSubmit(id){
                         '</tr>'; 
                          $('#table-equipments').find('tbody').append(td_equipments);
                     });
-                    products.map(function(item,index) {
-                        if (item['status'] == 1) {
-                            item['status'] = 'Active';
-                        } else {
-                            item['status'] = 'Inactive';
-                        }
-                        let td_products = '<tr>' +
-                             '<td>'+ (index*1+1) +'</td>' +
-                             '<td>'+ item['dep_name'] +'</td>' +
-                             '<td>'+ item['product_name'] +'</td>' +
-                             '<td>'+ item['part_number'] +'</td>' +
-                             '<td>'+ item['status_name'] +'</td>' +
-                             '<td>';
-                        if (item['status'] == 'Active') {
-                            td_products += '<a href="' + urlProductUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success products-update" ><i class="fa fa-pencil-alt"></i></a>';
-                        }    
-                        td_products += '<a href="' + urlProductDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info products-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>' +
-                             '</td>' +
-                         '</tr>'; 
-                         $('#table-products').find('tbody').append(td_products);
-                    });
+//                    products.map(function(item,index) {
+//                        if (item['status'] == 1) {
+//                            item['status'] = 'Active';
+//                        } else {
+//                            item['status'] = 'Inactive';
+//                        }
+//                        let td_products = '<tr>' +
+//                             '<td>'+ (index*1+1) +'</td>' +
+//                             '<td>'+ item['dep_name'] +'</td>' +
+//                             '<td>'+ item['product_name'] +'</td>' +
+//                             '<td>'+ item['part_number'] +'</td>' +
+//                             '<td>'+ item['status_name'] +'</td>' +
+//                             '<td>';
+//                        if (item['status'] == 'Active') {
+//                            td_products += '<a href="' + urlProductUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success products-update" ><i class="fa fa-pencil-alt"></i></a>';
+//                        }    
+//                        td_products += '<a href="' + urlProductDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info products-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>' +
+//                             '</td>' +
+//                         '</tr>'; 
+//                         $('#table-products').find('tbody').append(td_products);
+//                    });
                     defects.map(function(item,index) {
                         if (item['status'] == 1) {
                             item['status'] = 'Active';
                         } else {
                             item['status'] = 'Inactive';
+                        }
+                        if(defectType[item['defect_type']] != undefined){
+                            item['defect_type'] = defectType[item['defect_type']];
                         }
                         let td_defects = '<tr>' +
                              '<td>'+ (index*1+1) +'</td>' +

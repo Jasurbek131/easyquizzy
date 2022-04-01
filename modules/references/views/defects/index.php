@@ -34,7 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'type',
                 'value' => function(\app\modules\references\models\Defects $model){
                     return $model::getDefectTypeList($model->type);
-                }
+                },
+                'filter' => $searchModel::getDefectTypeList(),
             ],
             [
                 'attribute' => 'status_id',

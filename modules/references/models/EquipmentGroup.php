@@ -3,25 +3,25 @@
 namespace app\modules\references\models;
 
 use app\models\BaseModel;
+use app\modules\hr\models\HrDepartmentRelEquipment;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "equipment_group".
- *
- * @property int $id
- * @property string $name
- * @property int $status_id
- * @property int $created_at
- * @property int $equipment_type_id
- * @property float $value
- * @property int $created_by
- * @property int $updated_at
- * @property int $updated_by
- *
- * @property EquipmentGroupRelationEquipment[] $equipmentGroupRelationEquipments
- * @property ProductLifecycle[] $productLifecycles
+ * @property-read ActiveQuery $cycles
+ * @property-read ActiveQuery $equipmentType
+ * @property string $id [integer]
+ * @property string $name [varchar(255)]
+ * @property string $status_id [integer]
+ * @property string $created_at [integer]
+ * @property string $created_by [integer]
+ * @property string $updated_at [integer]
+ * @property string $updated_by [integer]
+ * @property int $value [numeric(20,3)]
+ * @property string $equipments_group_type_id [integer]
+ * @property string $equipment_type_id [integer]
  */
 class EquipmentGroup extends BaseModel
 {
@@ -123,9 +123,9 @@ class EquipmentGroup extends BaseModel
     }
 
     /**
-     * @return array|yii\db\ActiveRecord|yii\db\ActiveRecord[]|null
+     * @return array|yii\db\ActiveRecord[]
      */
-    public static function getEquipmentGroupList()
+    public static function getEquipmentGroupList($department_id)
     {
         $lists = EquipmentGroup::find()
             ->alias('eg')
@@ -135,13 +135,17 @@ class EquipmentGroup extends BaseModel
                 'eg.id',
                 'eg.equipment_type_id',
             ])->with([
-                'equipments' => function ($e) {
-                    $e->from(['egr' => 'equipment_group_relation_equipment'])->select([
+                'equipments' => function ($e) use ($department_id) {
+                    $e->from(['egr' => 'equipment_group_relation_equipment'])
+                    ->select([
                         'egr.equipment_id',
                         'egr.equipment_group_id',
                         'e.name as label',
                         'e.id as value'
-                    ])->leftJoin('equipments e', 'egr.equipment_id = e.id');
+                    ])->leftJoin('equipments e', 'egr.equipment_id = e.id')
+                      ->leftJoin(['hre'=>'hr_department_rel_equipment'], 'e.id = hre.equipment_id')
+                      ->where(['hre.status_id' => BaseModel::STATUS_ACTIVE])
+                      ->andFilterWhere(['IN','hre.hr_department_id', $department_id]);
                 },
                 'cycles' => function ($pl) {
                     $pl->from(['pl' => 'product_lifecycle'])

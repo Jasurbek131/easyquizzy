@@ -4,6 +4,7 @@ namespace app\modules\hr\models;
 
 use app\modules\references\models\Defects;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "hr_department_rel_defects".
@@ -61,7 +62,7 @@ class HrDepartmentRelDefects extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getDefects()
     {
@@ -69,15 +70,16 @@ class HrDepartmentRelDefects extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrDepartments()
     {
         return $this->hasOne(HrDepartments::className(), ['id' => 'hr_department_id']);
     }
 
-    public static function getHrRelDefect($department_id = null){
-        if(!empty($department_id)){
+    public static function getHrRelDefect($department_id = null)
+    {
+        if (!empty($department_id)) {
             $data = self::find()
                 ->alias('herd')
                 ->select([
@@ -88,12 +90,12 @@ class HrDepartmentRelDefects extends BaseModel
                     "sl.name_uz as status_name",
                     "sl.id as status"
                 ])
-                ->leftJoin(['d' => 'defects'],'herd.defect_id = d.id')
-                ->leftJoin(['hrd' => 'hr_departments'],'herd.hr_department_id = hrd.id')
-                ->leftJoin(['sl' => 'status_list'],'herd.status_id = sl.id')
+                ->leftJoin(['d' => 'defects'], 'herd.defect_id = d.id')
+                ->leftJoin(['hrd' => 'hr_departments'], 'herd.hr_department_id = hrd.id')
+                ->leftJoin(['sl' => 'status_list'], 'herd.status_id = sl.id')
                 ->where(['herd.hr_department_id' => $department_id])
+                ->orderBy(['herd.id' => SORT_DESC, 'herd.status_id' => SORT_ASC])
                 ->asArray()
-                ->orderBy(['herd.id' => SORT_DESC,'herd.status_id' => SORT_ASC])
                 ->all();
             return $data ?? [];
         }
