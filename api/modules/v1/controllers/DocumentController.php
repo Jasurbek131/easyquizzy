@@ -98,7 +98,8 @@ class DocumentController extends ActiveController
     /**
      * @return array
      */
-    public function actionIndex(){
+    public function actionIndex()
+    {
         $response['status'] = 'true';
         $post = Yii::$app->request->post();
         $response['post'] = $post;
@@ -126,6 +127,9 @@ class DocumentController extends ActiveController
             case "DELETE_STOPS":
                 $response = ApiPlmDocument::deleteStops($post);
                 break;
+            case 'SAVE_AND_FINISH':
+                $response = ApiPlmDocument::saveAndFinish($post);
+                break;
         }
         return $response;
     }
@@ -143,7 +147,7 @@ class DocumentController extends ActiveController
         switch ($type) {
             case "CREATE_DOCUMENT":
                 $department = HrDepartments::getDepartmentListWithSmenaByUser();
-                $department_id = $department ? ArrayHelper::map($department, 'id','id') : [];
+                $department_id = $department ? ArrayHelper::map($department, 'id', 'id') : [];
                 $response = [
                     'status' => true,
                     'departmentList' => $department,
@@ -154,9 +158,9 @@ class DocumentController extends ActiveController
                     'yesterday' => date('D M j G:i:s T Y', strtotime("-1 days")),
                     'tomorrow' => date('D M j G:i:s T Y', strtotime("+1 day")),
                     'categoriesPlannedList' => Categories::getList(false, ['type' => Categories::PLANNED_TYPE]),
-                    'categoriesUnPlannedList' => Categories::getList(false,['type' => Categories::UNPLANNED_TYPE]),
-                    'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED,$department_id),
-                    'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED,$department_id),
+                    'categoriesUnPlannedList' => Categories::getList(false, ['type' => Categories::UNPLANNED_TYPE]),
+                    'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED, $department_id),
+                    'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED, $department_id),
                 ];
                 if (!is_null($id)) {
                     $plm_document = ApiPlmDocument::getDocumentElements($id);

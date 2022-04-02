@@ -17,6 +17,25 @@ import {
     TOKEN_UNPLANNED,
 } from "../../../actions/consts";
 
+function dateFormatChange(date) {
+    if (!date) {
+        return "";
+    }
+    date = new Date(date);
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+    return (day < 10 ? "0" + day : day) + "." +
+        (month < 10 ? "0" + month : month) + "." +
+        (year) + " " +
+        (hour < 10 ? "0" + hour : hour) + ":" +
+        (minute < 10 ? "0" + minute : minute) + ":" +
+        (second < 10 ? "0" + second : second);
+}
+
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
 
 const planned_stops = {
@@ -44,6 +63,7 @@ class Form extends React.Component {
         super(props, context);
         this.state = {
             isLoading: true,
+            isStatus: true,
             appearance: {
                 title: "",
                 display: "none",
@@ -69,16 +89,17 @@ class Form extends React.Component {
                 organisation_id: "",
                 add_info: ""
             },
-            plm_document_items: [JSON.parse(JSON.stringify(items))],
-            departmentList: [],
-            categoriesPlannedList: [],
-            categoriesUnPlannedList: [],
+            language: 'uz',
+            shiftList: [],
+            validateDate: [], //buni korinishi [{begin_date: "", end_date: "", reason_between_dates:{ begin_date: "", end_date: ""}}]
+            timeTypeList: [],
             repairedList: [],
             scrappedList: [],
+            departmentList: [],
             equipmentGroupList: [],
-            shiftList: [],
-            timeTypeList: [],
-            language: 'uz'
+            categoriesPlannedList: [],
+            categoriesUnPlannedList: [],
+            plm_document_items: [JSON.parse(JSON.stringify(items))],
         };
     };
 
@@ -99,9 +120,10 @@ class Form extends React.Component {
                 let departments = response.data.departmentList.filter(({value}) => +value === +response.data?.plm_document?.hr_department_id) ?? [];
                 let shiftList = departments ? (departments[0]?.shifts ?? []) : [];
                 this.setState({
+                    shiftList: shiftList,
                     plm_document: response.data?.plm_document,
                     plm_document_items: response.data?.plm_document_items,
-                    shiftList: shiftList,
+                    isStatus: response.data ? response.data.plm_document.status_id ? parseInt(response.data.plm_document.status_id) === 1 : false : true,
                 });
             }
 
@@ -217,6 +239,7 @@ class Form extends React.Component {
                 this.setState({plm_document: plm_document});
                 break;
             case "plm_document_items":
+                let {validateDate} = this.state;
                 plm_document_items[key][name] = v;
                 plm_document_items[key]['is_change'] = true;
                 if (name === 'equipment_group_id') {
@@ -242,12 +265,37 @@ class Form extends React.Component {
                     }];
                 }
                 if (name === "start_work") {
+                    // let date = dateFormatChange(plm_document_items[key]['start_work']);
+                    // console.log(key);
+                    // if(validateDate.length > 0){
+                    //     let hasElement = false;
+                    //     hasElement = validateDate.map((item, index) => {
+                    //         if(index !== key && (item.start_work >= date && item.end_work <= date)){
+                    //             return true;
+                    //         }
+                    //     });
+                    //     console.log(hasElement)
+                    //     if(hasElement){
+                    //         toast.error("«Boshlanish» vaqtini boshqa kiriting!");
+                    //     }else {
+                    //         validateDate[key] = {...validateDate[key], start_work: date};
+                    //     }
+                    // }else{
+                    //     validateDate[key] = {...validateDate[key], start_work: date};
+                    // }
                     plm_document_items[key]['end_work'] = "";
                 }
                 if (name === "end_work") {
                     plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
+                    // validateDate[key] = {
+                    //     ...validateDate[key],
+                    //     end_work: dateFormatChange(plm_document_items[key]['end_work'])
+                    // };
                 }
-                this.setState({plm_document_items: plm_document_items});
+                this.setState({
+                    plm_document_items: plm_document_items,
+                    // validateDate: validateDate
+                });
                 break;
             case "temporarily":
                 temporarily.store[name] = v;
@@ -581,6 +629,20 @@ class Form extends React.Component {
             }
         }
     };
+    saveAndFinish = async () => {
+        let {plm_document} = this.state;
+        let params = {
+            document: plm_document,
+        };
+        if (this.onRequiredDoc(plm_document)) {
+            const response = await axios.post(API_URL + 'save-properties?type=SAVE_AND_FINISH', params);
+            if (response.data.status) {
+                toast.success(response.data.message);
+            } else {
+                toast.error(response.data.message);
+            }
+        }
+    }
 
     onSumma = (items) => {
         let summa = 0;
@@ -634,8 +696,9 @@ class Form extends React.Component {
                     className = "fa fa-times-circle status";
                 }
             }
-            if (item?.notifications_status[token]["messages"] && item?.notifications_status[token]["messages"].length > 0){
-                return className ? (<i className={className} data-toggle="tooltip" title={item?.notifications_status[token]["messages"][0].message}/>) : "";
+            if (item?.notifications_status[token]["messages"] && item?.notifications_status[token]["messages"].length > 0) {
+                return className ? (<i className={className} data-toggle="tooltip"
+                                       title={item?.notifications_status[token]["messages"][0].message}/>) : "";
             }
         }
         return className ? (<i className={className}/>) : "";
@@ -656,6 +719,7 @@ class Form extends React.Component {
     render() {
         const {
             language,
+            isStatus,
             isLoading,
             temporarily,
             plm_document,
@@ -693,6 +757,9 @@ class Form extends React.Component {
                         <div className={'row'}>
                             <div className={"col-lg-12"}>
                                 <div className={'pull-right'}>
+                                    <button onClick={this.saveAndFinish} className={'btn btn-success btn-sm mr-2'}>Kunni
+                                        yopish
+                                    </button>
                                     <Link to={'/index'} className={"btn btn-sm btn-warning"}>Orqaga</Link>
                                 </div>
                             </div>
@@ -773,8 +840,9 @@ class Form extends React.Component {
                                 }];
 
                                 return (
-                                    <div className={item.is_change ? "border-block" : "border-block success-block"}
-                                         key={key}>
+                                    <div
+                                        className={item.is_change && isStatus ? "border-block" : "border-block success-block"}
+                                        key={key}>
                                         <div className={'pull-right'}>
                                             {
                                                 key === 0 ?
@@ -793,9 +861,11 @@ class Form extends React.Component {
                                             }
                                             <br/>
                                             <br/>
-                                            {item.is_change ? (
-                                                <button onClick={this.onSave.bind(this, key)}
-                                                        className={"btn btn-xs btn-success"}>
+                                            {item.is_change && isStatus ? (
+                                                <button
+                                                    onClick={this.onSave.bind(this, key)}
+                                                    className={"btn btn-xs btn-success"}
+                                                >
                                                     <i className={"fab fa-telegram"}/>
                                                 </button>
                                             ) : (<span></span>)}
@@ -1203,31 +1273,31 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             : temporarily?.type === "repaired" || temporarily?.type === "scrapped" ?
-                                            <div className={'row'}>
-                                                {
-                                                    temporarily?.store?.length > 0 && temporarily.store.map((item, itemKey) => {
-                                                        let statusRepairedOrScrapped = false;
-                                                        if (temporarily?.type === "repaired")
-                                                            statusRepairedOrScrapped = this.statusGenerator(temporarily.item, TOKEN_REPAIRED);
+                                                <div className={'row'}>
+                                                    {
+                                                        temporarily?.store?.length > 0 && temporarily.store.map((item, itemKey) => {
+                                                            let statusRepairedOrScrapped = false;
+                                                            if (temporarily?.type === "repaired")
+                                                                statusRepairedOrScrapped = this.statusGenerator(temporarily.item, TOKEN_REPAIRED);
 
-                                                        if (temporarily?.type === "scrapped")
-                                                            statusRepairedOrScrapped = this.statusGenerator(temporarily.item, TOKEN_SCRAPPED);
+                                                            if (temporarily?.type === "scrapped")
+                                                                statusRepairedOrScrapped = this.statusGenerator(temporarily.item, TOKEN_SCRAPPED);
 
-                                                        return (
-                                                            <div className={"col-lg-6"} key={itemKey}>
-                                                                <div className={"form-group"}>
-                                                                    <label>{item?.label}</label>
-                                                                    <input
-                                                                        readOnly={statusRepairedOrScrapped}
-                                                                        onChange={this.onHandleChange.bind(this, 'input', temporarily?.type, 'count', temporarily?.key, itemKey, '')}
-                                                                        type={"number"} className={"form-control"}
-                                                                        value={item?.count ?? 0}/>
+                                                            return (
+                                                                <div className={"col-lg-6"} key={itemKey}>
+                                                                    <div className={"form-group"}>
+                                                                        <label>{item?.label}</label>
+                                                                        <input
+                                                                            readOnly={statusRepairedOrScrapped}
+                                                                            onChange={this.onHandleChange.bind(this, 'input', temporarily?.type, 'count', temporarily?.key, itemKey, '')}
+                                                                            type={"number"} className={"form-control"}
+                                                                            value={item?.count ?? 0}/>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
-                                            </div> : ""
+                                                            )
+                                                        })
+                                                    }
+                                                </div> : ""
                                     }
                                 </div>
                                 <div className="row">
