@@ -10,16 +10,17 @@ use yii\helpers\Html;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
+$app = Yii::$app;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>">
+<html lang="<?= $app == null ? 'en' : $app->language ?>">
 <head>
-    <meta charset="<?= Yii::$app->charset ?>">
+    <meta charset="<?= $app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php $this->registerCsrfMetaTags() ?>
-    <link rel="shortcut icon" href="<?php echo Yii::$app->request->baseUrl; ?>/favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="<?php echo $app->request->baseUrl; ?>/favicon.ico" type="image/x-icon"/>
     <title>Dataprizma-Plm <?= Html::encode($this->title) ?></title>
     <noembed><?= Html::encode($this->title) ?></noembed>
     <?php $this->head() ?>
@@ -31,7 +32,7 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 <!-- Site wrapper -->
 <div class="wrapper">
-    <div id="loading" <?= Yii::$app->request->isAjax ? 'style="display:none"' : '' ?>>
+    <div id="loading" <?= $app->request->isAjax ? 'style="display:none"' : '' ?>>
         <!-- begin overlay tags -->
         <div class="overlay-body show"></div>
         <div class="spanner-body show">
@@ -167,14 +168,14 @@ AppAsset::register($this);
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="far fa-user"></i>
-                    <span><?php echo Yii::$app->user->identity->username; ?></span>
+                    <span><?php echo $app->user->identity->username; ?></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <a href="#">
                         <?php
                         echo Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
                             . Html::submitButton(
-                                'Chiqish (' . Yii::$app->user->identity->username . ')',
+                                'Chiqish (' . $app->user->identity->username . ')',
                                 ['class' => 'btn btn-link logout',]
                             )
                             . Html::endForm()
@@ -214,10 +215,10 @@ AppAsset::register($this);
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <?php
-                $module = Yii::$app->controller->module->id;
-                $controller = Yii::$app->controller->id;
-                $action = Yii::$app->controller->action->id;
-                $slug = Yii::$app->request->get('slug');
+                $module = $app->controller->module->id;
+                $controller = $app->controller->id;
+                $action = $app->controller->action->id;
+                $slug = $app->request->get('slug');
 
                 echo CustomMenu::widget([
                     'options' => [
@@ -537,6 +538,28 @@ $js = <<<JS
 JS;
 $this->registerJs($js, \yii\web\View::POS_READY);
 $css = <<<CSS
+[class*=sidebar-dark-] .nav-sidebar>.nav-item>.nav-treeview {
+    background: #303437;!important;
+    border-radius: 4px;
+}
+.nav-treeview >li.nav-item > a.nav-link,.nav-treeview >li.nav-item > a.nav-link > .nav-treeview >li.nav-item > a.nav-link  {
+    position: relative;
+    left: 10px;!important;
+    width: 224px;!important;
+}
+.sidebar-collapse.sidebar-mini .main-sidebar .nav-sidebar .nav-link{
+    position: relative; 
+    margin-left: -4px;
+}
+ .nav-treeview>.nav-item>.nav-link.active:hover {
+    background-color: rgba(255,255,255,.9);
+    color: #343a40;
+    position: relative;!important;
+    left: auto;!important;
+}
+.modal-dialog{
+    margin-top: 0;!important;
+}
 #loading{
     z-index: 999999;
 }

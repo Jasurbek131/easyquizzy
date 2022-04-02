@@ -22,6 +22,7 @@ use app\modules\references\models\EquipmentGroup;
 use app\widgets\Language;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
 
 class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
@@ -479,7 +480,14 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
         $language = Yii::$app->language;
         $data = PlmDocuments::find()
             ->select([
-                'id', 'doc_number', 'reg_date', 'hr_department_id', 'add_info', 'shift_id', 'organisation_id'
+                'id',
+                'reg_date',
+                'add_info',
+                'shift_id',
+                'status_id',
+                'doc_number',
+                'hr_department_id',
+                'organisation_id'
             ])->with([
                 'plm_document_items' => function ($q) use ($language) {
                     $q->from(['pdi' => 'plm_document_items'])
@@ -772,6 +780,79 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                 'message' => $e->getMessage(),
             ];
         }
+        return $response;
+    }
+
+    public static function saveAndFinish($post)
+    {
+        $document = $post['document'];
+
+        $transaction = Yii::$app->db->beginTransaction();
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app', 'Success'),
+        ];
+        try {
+            if(!empty($document['id'])) {
+                $document = PlmDocuments::findOne(['id' => $document['id']]);
+                if (!empty($document)) {
+                    if($document->status_id == BaseModel::STATUS_ACTIVE){
+                        $documentItems = PlmDocumentItems::find()->where(['document_id' => $document->id])->asArray()->all();
+                        $documentItemsId = ArrayHelper::map($documentItems, 'id', 'id');
+                        $notifications = PlmNotificationsList::find()
+                            ->where([
+                                'plm_doc_item_id' => $documentItemsId,
+                                'status_id' => BaseModel::STATUS_ACTIVE
+                            ])
+                            ->asArray()
+                            ->all();
+                        if(!empty($notifications)){
+                            $response = [
+                                'status' => false,
+                                'message' => Yii::t('app', 'Document has active notifications'),
+                            ];
+                        } else {
+                            $document->status_id = BaseModel::STATUS_SAVED;
+                            if (!$document->save()) {
+                                $response = [
+                                    'status' => false,
+                                    'errors' => $document->getErrors(),
+                                    'message' => Yii::t('app', 'Document not saved'),
+                                ];
+                            }
+                        }
+                    }else{
+                        $response = [
+                            'status' => false,
+                            'message' => Yii::t('app', 'Document not active'),
+                        ];
+                    }
+                } else {
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app', 'Document not found'),
+                    ];
+                }
+            } else {
+                $response = [
+                    'status' => false,
+                    'message' => Yii::t('app', 'Document not found'),
+                ];
+            }
+            if($response['status']){
+                $transaction->commit();
+            } else {
+                $transaction->rollBack();
+            }
+        }catch (\Exception $e) {
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+
+
         return $response;
     }
 }

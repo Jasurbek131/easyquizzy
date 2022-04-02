@@ -17,5 +17,5 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Page not found.' => '',
+    'Page not found.' => 'Sahifa topilmadi.',
 ];

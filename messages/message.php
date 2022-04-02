@@ -26,7 +26,7 @@ return [
     ],
     'sort' => true,
     'overwrite' => true,
-    'removeUnused' => false,
+    'removeUnused' => true,
     'markUnused' => true,
     'except' => [
         '.*',

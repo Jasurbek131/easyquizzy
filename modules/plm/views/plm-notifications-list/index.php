@@ -41,11 +41,11 @@ $this->params['breadcrumbs'][] = $this->title;
          <div class="grid">
              <div class="grid-item">
                  <div class="success grid-block"></div>
-                 <p>Tasdiqlangan</p>
+                 <p><?php echo Yii::t('app','Tasdiqlangan')?></p>
              </div>
              <div class="grid-item">
                  <div class="danger grid-block"></div>
-                 <p>Rad etilgan</p>
+                 <p><?php echo Yii::t('app','Rad etilgan')?></p>
              </div>
          </div>
      </div>
