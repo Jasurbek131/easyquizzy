@@ -557,6 +557,9 @@ $css = <<<CSS
     position: relative;!important;
     left: auto;!important;
 }
+.modal-dialog{
+    margin-top: 0;!important;
+}
 #loading{
     z-index: 999999;
 }
