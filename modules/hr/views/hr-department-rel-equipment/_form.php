@@ -1,6 +1,7 @@
 <?php
 
 use app\modules\hr\models\HrDepartments;
+use app\modules\references\models\EquipmentGroup;
 use app\modules\references\models\Equipments;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -30,15 +31,15 @@ use yii\widgets\ActiveForm;
     }
     ?>
 
-    <?= $form->field($model, 'equipment_id')->widget(Select2::class, [
-        'data' => Equipments::getList(),
+    <?= $form->field($model, 'equipment_group_id')->widget(Select2::class, [
+        'data' => EquipmentGroup::getList(),
         'options' => [
             'placeholder' => Yii::t("app","Select ..."),
         ],
         'pluginOptions' => [
             'allowClear' => true,
         ]
-    ])->label(Yii::t("app","Equipments")) ?>
+    ])->label(Yii::t("app","Equipment Group ID")) ?>
 
     <?= $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
 

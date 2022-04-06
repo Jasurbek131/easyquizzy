@@ -262,7 +262,17 @@ class Form extends React.Component {
                     plm_document_items[key][name] = v;
                     plm_document_items[key]['start_work'] = "";
                     plm_document_items[key]['end_work'] = "";
-                    validateDate[key] = {...validateDate[key],start_work: '', end_work: '', equipment: equipmentList(plm_document_items[key][name])}
+                    if(validateDate === undefined){
+                        validateDate = [];
+                        validateDate.push({
+                            start_work: '',
+                            end_work: '',
+                            equipment: equipmentList(plm_document_items[key][name])
+                        });
+                    }else{
+                        validateDate[key] = {...validateDate[key],start_work: '', end_work: '', equipment: equipmentList(plm_document_items[key][name])}
+                    }
+
                 }
                 if (name === "start_work") {
                     let date = Date.parse(plm_document_items[key]['start_work']) / 1000

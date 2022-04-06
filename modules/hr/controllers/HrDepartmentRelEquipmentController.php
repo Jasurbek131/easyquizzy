@@ -77,23 +77,23 @@ class HrDepartmentRelEquipmentController extends Controller
         $post = Yii::$app->request->post();
 
         if (Yii::$app->request->isPost) {
-            $exists = HrDepartmentRelEquipment::findOne([
-                "hr_department_id" => $data['department_id'],
-                "equipment_id" => $post["HrDepartmentRelEquipment"]["equipment_id"],
-            ]);
-            if ($exists){
-                $model = clone $exists;
-                $model->status_id = BaseModel::STATUS_ACTIVE;
-            }
             if ($model->load($post)) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    $model->hr_department_id = ($data['department_id']) ? ($data['department_id']) : null;
-                    if($model->save()){
-                        $saved = true;
-                    }else{
-                        $saved = false;
+                    if(!empty($post["HrDepartmentRelEquipment"]["equipment_group_id"])){
+                        $exists = HrDepartmentRelEquipment::findOne([
+                            "hr_department_id" => $data['department_id'],
+                            "equipment_group_id" => $post["HrDepartmentRelEquipment"]["equipment_group_id"],
+                        ]);
+                        if ($exists){
+                            $model = clone $exists;
+                            $model->status_id = BaseModel::STATUS_ACTIVE;
+                        }
+                        $model->hr_department_id = ($data['department_id']) ? ($data['department_id']) : null;
+                        if($model->save()){
+                            $saved = true;
+                        }
                     }
                     if($saved) {
                         $transaction->commit();
@@ -147,22 +147,22 @@ class HrDepartmentRelEquipmentController extends Controller
         $data = Yii::$app->request->get();
 
         if (Yii::$app->request->isPost) {
-            $exists = HrDepartmentRelEquipment::findOne([
-                "hr_department_id" => $data['department_id'],
-                "equipment_id" => $post["HrDepartmentRelEquipment"]["equipment_id"],
-            ]);
-            if ($exists){
-                $model = clone $exists;
-                $model->status_id = BaseModel::STATUS_ACTIVE;
-            }
             if ($model->load(Yii::$app->request->post())) {
                 $transaction = Yii::$app->db->beginTransaction();
                 $saved = false;
                 try {
-                    if($model->save()){
-                        $saved = true;
-                    }else{
-                        $saved = false;
+                    if(!empty($post["HrDepartmentRelEquipment"]["equipment_group_id"])){
+                        $exists = HrDepartmentRelEquipment::findOne([
+                            "hr_department_id" => $data['department_id'],
+                            "equipment_id" => $post["HrDepartmentRelEquipment"]["equipment_id"],
+                        ]);
+                        if ($exists){
+                            $model = clone $exists;
+                            $model->status_id = BaseModel::STATUS_ACTIVE;
+                        }
+                        if($model->save()){
+                            $saved = true;
+                        }
                     }
                     if($saved) {
                         $transaction->commit();
