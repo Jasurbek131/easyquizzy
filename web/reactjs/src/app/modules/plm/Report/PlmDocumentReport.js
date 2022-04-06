@@ -184,10 +184,10 @@ class PlmDocumentReport extends Component {
             language={language}
         />;
 
-        let sumPercentA = 0;
-        let sumPercentP = 0;
-        let sumPercentQ = 0;
-        let sumPercentOee = 0;
+        let sumPercentA = 1;
+        let sumPercentP = 1;
+        let sumPercentQ = 1;
+        let sumPercentOee = 1;
         dataBody = items?.map((item, index) => {
 
             itemProductLength = item?.products?.length ?? 0;
@@ -207,10 +207,10 @@ class PlmDocumentReport extends Component {
                         let percentA = (finalPlanDate / item.plan_date * 100).toFixed(2);
                         let percentP = ((sumFactQty + sumQty) / (+item.target_qty) * 100).toFixed(2);
                         let percentQ = ((sumFactQty + sumQty - sumRepaired - sumScrapped) / (sumFactQty + sumQty) * 100).toFixed(2);
-                        sumPercentA += 1 / (percentA / 100);
-                        sumPercentP += 1 / (percentP / 100);
-                        sumPercentQ += 1 / (percentQ / 100);
-                        sumPercentOee += 1 / (percentA * percentP * percentQ / 1000000);
+                        sumPercentA *= (percentA / 100);
+                        sumPercentP *= (percentP / 100);
+                        sumPercentQ *= (percentQ / 100);
+                        sumPercentOee *= (percentA * percentP * percentQ / 1000000);
                         console.log(sumPercentA, sumPercentP, sumPercentQ, sumPercentOee);
                         return (
                             <tr key={index + "_" + productIndex}>
@@ -225,7 +225,7 @@ class PlmDocumentReport extends Component {
                                 <td>{productItem.product_name ?? ""}</td>
                                 <td rowSpan={itemProductLength}>{item.lifecycle}</td>
                                 <td rowSpan={itemProductLength}>{item.bypass}</td>
-                                <td rowSpan={itemProductLength} className={"a"}>{item.plan_date}</td>
+                                <td rowSpan={itemProductLength} className={"a"}>{(+item.plan_date).toFixed(2)}</td>
                                 <td rowSpan={itemProductLength} className={"a"}>{finalPlanDate}</td>
                                 <td rowSpan={itemProductLength} className={"a"}>{percentA}</td>
                                 <td rowSpan={itemProductLength} className={"p"}>{+item.target_qty}</td>
@@ -254,25 +254,25 @@ class PlmDocumentReport extends Component {
             }
             return (returnDocItemProductData);
         });
-        sumPercentA = 1 / sumPercentA;
-        sumPercentP = 1 / sumPercentP;
-        sumPercentQ = 1 / sumPercentQ;
-        sumPercentOee = 1 / sumPercentOee;
+        sumPercentA = sumPercentA*100;
+        sumPercentP = sumPercentP*100;
+        sumPercentQ = sumPercentQ*100;
+        sumPercentOee = sumPercentOee*100;
         pie_data.a_data = [
             {name: 'Benefit percent', value: sumPercentA},
-            {name: 'Loss percent', value: 1 - sumPercentA}
+            {name: 'Loss percent', value: 100 - sumPercentA}
         ];
         pie_data.p_data = [
             {name: 'Benefit percent', value: sumPercentP},
-            {name: 'Loss percent', value: 1 - sumPercentP}
+            {name: 'Loss percent', value: 100 - sumPercentP}
         ];
         pie_data.q_data = [
             {name: 'Benefit percent', value: sumPercentQ},
-            {name: 'Loss percent', value: 1 - sumPercentQ}
+            {name: 'Loss percent', value: 100 - sumPercentQ}
         ];
         pie_data.oee_data = [
             {name: 'Benefit percent', value: sumPercentOee},
-            {name: 'Loss percent', value: 1 - sumPercentOee}
+            {name: 'Loss percent', value: 100 - sumPercentOee}
         ];
         return (<div>
             {search}
@@ -338,8 +338,8 @@ class PlmDocumentReport extends Component {
                             /> : ""
                     }
                 </div>
-                <div className="card card-success">
-                    <div className="card-header">
+                <div className="card card-info" >
+                    <div className="card-header" style={{backgroundColor:'#05d0ebad'}}>
                         <h3 className="card-title">
                             <i className="fas fa-chart-pie"/>
                         </h3>
