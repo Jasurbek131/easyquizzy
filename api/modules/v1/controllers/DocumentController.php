@@ -164,10 +164,20 @@ class DocumentController extends ActiveController
                 ];
                 if (!is_null($id)) {
                     $plm_document = ApiPlmDocument::getDocumentElements($id);
+                    $plm_document_items = $plm_document["plm_document_items"];
+                    if (!empty($plm_document_items)) {
+                        $validateDate = [];
+                        foreach ($plm_document_items as $index => $item) {
+                            $validateDate[$index]['start_work'] = strtotime($item['start_work']);
+                            $validateDate[$index]['end_work'] = strtotime($item['end_work']);
+                            $validateDate[$index]['equipment'] = array_keys(ArrayHelper::index($item['equipments'], 'value'));
+                        }
+                    }
                     if (!empty($plm_document)) {
-                        $response['plm_document_items'] = $plm_document["plm_document_items"];
+                        $response['plm_document_items'] = $plm_document_items;
                         unset($plm_document["plm_document_items"]);
                         $response['plm_document'] = $plm_document;
+                        $response['validateDate'] = $validateDate ?? [];
                     } else {
                         $response['status'] = false;
                         $response['message'] = Yii::t('app', 'Hujjat mavjud emas!');

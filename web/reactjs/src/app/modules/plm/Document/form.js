@@ -17,24 +17,6 @@ import {
     TOKEN_UNPLANNED,
 } from "../../../actions/consts";
 
-function dateFormatChange(date) {
-    if (!date) {
-        return "";
-    }
-    date = new Date(date);
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    let second = date.getSeconds();
-    return (day < 10 ? "0" + day : day) + "." +
-        (month < 10 ? "0" + month : month) + "." +
-        (year) + " " +
-        (hour < 10 ? "0" + hour : hour) + ":" +
-        (minute < 10 ? "0" + minute : minute) + ":" +
-        (second < 10 ? "0" + second : second);
-}
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
 
@@ -46,6 +28,16 @@ const planned_stops = {
     category_id: "",
     category_name: "",
 };
+
+function equipmentList(data) {
+    let keys = [];
+    if (Array.isArray(data)) {
+        for (const datum of data) {
+            keys.push(datum.equipment_id);
+        }
+    }
+    return keys;
+}
 
 const unplanned_stops = {
     id: "",
@@ -145,6 +137,7 @@ class Form extends React.Component {
                 repairedList: response.data.repaired,
                 scrappedList: response.data.scrapped,
                 plm_document: plm_document,
+                validateDate: response.data.validateDate,
                 departmentList: response.data.departmentList,
                 shiftList: shiftList,
                 language: response.data.language,
@@ -242,6 +235,7 @@ class Form extends React.Component {
                 let {validateDate} = this.state;
                 plm_document_items[key][name] = v;
                 plm_document_items[key]['is_change'] = true;
+
                 if (name === 'equipment_group_id') {
                     if (+e.equipment_type_id === 1 && e.product_list.length > 0) {
                         plm_document_items[key]["lifecycle"] = e.product_list[0]["lifecycle"] ?? 0;
@@ -264,37 +258,107 @@ class Form extends React.Component {
                         scrapped: [],
                     }];
                 }
+                if (name === 'equipments') {
+                    plm_document_items[key][name] = v;
+                    plm_document_items[key]['start_work'] = "";
+                    plm_document_items[key]['end_work'] = "";
+                    validateDate[key] = {...validateDate[key],start_work: '', end_work: '', equipment: equipmentList(plm_document_items[key][name])}
+                }
                 if (name === "start_work") {
-                    // let date = dateFormatChange(plm_document_items[key]['start_work']);
-                    // console.log(key);
-                    // if(validateDate.length > 0){
-                    //     let hasElement = false;
-                    //     hasElement = validateDate.map((item, index) => {
-                    //         if(index !== key && (item.start_work >= date && item.end_work <= date)){
-                    //             return true;
-                    //         }
-                    //     });
-                    //     console.log(hasElement)
-                    //     if(hasElement){
-                    //         toast.error("«Boshlanish» vaqtini boshqa kiriting!");
-                    //     }else {
-                    //         validateDate[key] = {...validateDate[key], start_work: date};
-                    //     }
-                    // }else{
-                    //     validateDate[key] = {...validateDate[key], start_work: date};
-                    // }
+                    let date = Date.parse(plm_document_items[key]['start_work']) / 1000
+                    if (validateDate.length > 0) {
+                        let hasElement = false;
+                        let hasElementEquipment = false;
+                        let currentEquipment = plm_document_items[key]['equipments'];
+                        //uskuna ga ekshirish
+                        if (currentEquipment.length > 0) {
+                            for (const index in validateDate) {
+                                for (const equipment of currentEquipment) {
+                                    if (index !== key && validateDate[index].equipment.includes(equipment.equipment_id)) {
+                                        hasElementEquipment = true;
+                                        console.log('salom')
+                                        break;
+                                    }
+                                }
+                                if (hasElementEquipment) {
+                                    if (index !== key && (validateDate[index]['start_work'] <= date && date <= validateDate[index]['end_work'])) {
+                                        hasElement = true;
+                                        break;
+                                    }
+                                } else {
+                                    hasElement = false;
+                                }
+                            }
+                        } else {
+                            toast.error("Avval uskuna tanlanish kerak");
+                            plm_document_items[key]['start_work'] = "";
+                            plm_document_items[key]['end_work'] = "";
+                        }
+                        if (hasElement) {
+                            toast.error("«Boshlanish» vaqtini boshqa kiriting!");
+                            plm_document_items[key]['start_work'] = "";
+                            validateDate[key] = {...validateDate[key], start_work: '', end_work: ''};
+                        } else {
+                            validateDate[key] = {...validateDate[key], start_work: date, end_work: ''};
+                        }
+                    } else {
+                        validateDate[key] = {...validateDate[key], start_work: date, end_work: ''};
+                    }
                     plm_document_items[key]['end_work'] = "";
                 }
                 if (name === "end_work") {
                     plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
-                    // validateDate[key] = {
-                    //     ...validateDate[key],
-                    //     end_work: dateFormatChange(plm_document_items[key]['end_work'])
-                    // };
+                    let date = Date.parse(plm_document_items[key]['end_work']) / 1000;
+                    let currentEquipment = plm_document_items[key]['equipments'];
+                    let hasElement = false;
+                    let hasElementEquipment = false;
+                    if (validateDate.length > 0) {
+                        if (validateDate[key]['start_work'] < date) {
+                            if (currentEquipment.length > 0) {
+                                for (const index in validateDate) {
+                                    for (const equipment of currentEquipment) {
+                                        if (index !== key && validateDate[index].equipment.includes(equipment.equipment_id)) {
+                                            hasElementEquipment = true;
+                                            break;
+                                        }
+                                    }
+                                    if (hasElementEquipment) {
+                                        if (index != key && (validateDate[index]['start_work'] <= date && date <= validateDate[index]['end_work'])) {
+                                            hasElement = true;
+                                            break;
+                                        }
+                                        if (index != key && (validateDate[key]['start_work'] <= validateDate[index]['start_work'] && validateDate[index]['end_work'] <= date
+                                        )) {
+                                            console.log('salom')
+                                            hasElement = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else {
+                                toast.error("Avval uskuna tanlanish kerak");
+                                plm_document_items[key]['end_work'] = "";
+                                plm_document_items[key]['start_work'] = "";
+                            }
+                            if (hasElement) {
+                                toast.error("«Tugash» vaqtini boshqa kiriting!");
+                                plm_document_items[key]['end_work'] = "";
+                                validateDate[key] = {...validateDate[key], end_work: ''};
+                            } else {
+                                validateDate[key] = {...validateDate[key], end_work: date};
+                            }
+                        } else {
+                            toast.error("«Tugash» vaqti «Boshlanish» vaqtidan kata bo'lishi kerak!");
+                            // plm_document_items[key]['end_work']   = "";
+                            validateDate[key] = {...validateDate[key], end_work: ''};
+                        }
+                    } else {
+                        validateDate[key] = {...validateDate[key], end_work: date};
+                    }
                 }
                 this.setState({
-                    plm_document_items: plm_document_items,
-                    // validateDate: validateDate
+                    plm_document_items,
+                    validateDate
                 });
                 break;
             case "temporarily":
@@ -483,6 +547,7 @@ class Form extends React.Component {
                 plm_document_items.push(JSON.parse(JSON.stringify(newItems)));
                 break;
             case "remove":
+                let {validateDate} = this.state;
                 if (plm_document_items[key]["id"]) {
                     if (confirm("Rostdan ham o'chirmoqchimisiz?")) {
                         let response = await axios.post(API_URL + 'save-properties?type=DELETE_DOCUMENT_ITEM', {
@@ -490,13 +555,17 @@ class Form extends React.Component {
                         });
                         if (response.data.status) {
                             plm_document_items = removeElement(plm_document_items, key);
+                            validateDate = removeElement(validateDate, key);
+                            this.setState({validateDate: validateDate});
                             toast.success(response.data.message);
                         } else {
                             toast.error(response.data.message);
                         }
                     }
                 } else {
+                    validateDate = removeElement(validateDate, key);
                     plm_document_items = removeElement(plm_document_items, key);
+                    this.setState({validateDate: validateDate});
                 }
                 break;
             case "product-plus":
@@ -630,16 +699,18 @@ class Form extends React.Component {
         }
     };
     saveAndFinish = async () => {
-        let {plm_document} = this.state;
-        let params = {
-            document: plm_document,
-        };
-        if (this.onRequiredDoc(plm_document)) {
-            const response = await axios.post(API_URL + 'save-properties?type=SAVE_AND_FINISH', params);
-            if (response.data.status) {
-                toast.success(response.data.message);
-            } else {
-                toast.error(response.data.message);
+        if(confirm('Ishonchingiz komilmi?')) {
+            let {plm_document} = this.state;
+            let params = {
+                document: plm_document,
+            };
+            if (this.onRequiredDoc(plm_document)) {
+                const response = await axios.post(API_URL + 'save-properties?type=SAVE_AND_FINISH', params);
+                if (response.data.status) {
+                    toast.success(response.data.message);
+                } else {
+                    toast.error(response.data.message);
+                }
             }
         }
     }
@@ -757,7 +828,7 @@ class Form extends React.Component {
                         <div className={'row'}>
                             <div className={"col-lg-12"}>
                                 <div className={'pull-right'}>
-                                    <button onClick={this.saveAndFinish} className={'btn btn-success btn-sm mr-2'}>Kunni
+                                    <button onClick={this.saveAndFinish} className={'btn btn-success btn-sm mr-2'}>Kun
                                         yopish
                                     </button>
                                     <Link to={'/index'} className={"btn btn-sm btn-warning"}>Orqaga</Link>
@@ -920,7 +991,7 @@ class Form extends React.Component {
                                                                         onChange={(e) => {
                                                                             this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
                                                                         }}
-                                                                        readOnly={this.statusGenerator(item, TOKEN_WORKING_TIME)}
+                                                                        readOnly={item.equipments.length == 0 || this.statusGenerator(item, TOKEN_WORKING_TIME)}
                                                                         className={"form-control text-center aria-required"}
                                                                         selected={item?.start_work ? new Date(item.start_work) : ""}
                                                                         autoComplete={'off'}
@@ -946,7 +1017,7 @@ class Form extends React.Component {
                                                                         filterTime={(e) => {
                                                                             return new Date(item?.start_work) < new Date(e);
                                                                         }}
-                                                                        readOnly={this.statusGenerator(item, TOKEN_WORKING_TIME)}
+                                                                        readOnly={item.start_work == false || this.statusGenerator(item, TOKEN_WORKING_TIME)}
                                                                         autoComplete={'off'}
                                                                         showTimeSelect
                                                                         minDate={item.start_work}
