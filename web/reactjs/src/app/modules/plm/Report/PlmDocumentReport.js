@@ -225,7 +225,7 @@ class PlmDocumentReport extends Component {
                                 <td>{productItem.product_name ?? ""}</td>
                                 <td rowSpan={itemProductLength}>{item.lifecycle}</td>
                                 <td rowSpan={itemProductLength}>{item.bypass}</td>
-                                <td rowSpan={itemProductLength} className={"a"}>{item.plan_date}</td>
+                                <td rowSpan={itemProductLength} className={"a"}>{(+item.plan_date).toFixed(2)}</td>
                                 <td rowSpan={itemProductLength} className={"a"}>{finalPlanDate}</td>
                                 <td rowSpan={itemProductLength} className={"a"}>{percentA}</td>
                                 <td rowSpan={itemProductLength} className={"p"}>{+item.target_qty}</td>
@@ -338,8 +338,8 @@ class PlmDocumentReport extends Component {
                             /> : ""
                     }
                 </div>
-                <div className="card card-success">
-                    <div className="card-header">
+                <div className="card card-info" >
+                    <div className="card-header" style={{backgroundColor:'#05d0ebad'}}>
                         <h3 className="card-title">
                             <i className="fas fa-chart-pie"/>
                         </h3>
