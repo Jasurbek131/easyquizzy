@@ -121,7 +121,7 @@ $create = Yii::t('app', 'Create');
                         <li class="nav-item">
                             <a class="nav-link" id="equipments-tab" data-toggle="tab" href="#equipment" role="tab"
                                aria-controls="equipments"
-                               aria-selected="false"><?php echo Yii::t('app', 'Equipments') ?></a>
+                               aria-selected="false"><?php echo Yii::t('app', 'Equipment Group') ?></a>
                         </li>
 <!--                        <li class="nav-item">-->
 <!--                            <a class="nav-link" id="products-tab" data-toggle="tab" href="#product" role="tab"-->
