@@ -122,7 +122,10 @@ class PlmDocumentReport implements PlmDocumentReportInterface
                 "pdie.equipment",
             ])
             ->where(['!=', 'pd.status_id', BaseModel::STATUS_INACTIVE])
-            ->andWhere(["pdi.status_id" => BaseModel::STATUS_ACTIVE])
+            ->andWhere([
+                "pdi.status_id" => BaseModel::STATUS_ACTIVE,
+                'pd.status_id' => BaseModel::STATUS_SAVED,
+            ])
             ->andFilterWhere([
                 "OR",
                 ["between", "ppt.begin_date", $params["begin_date"], $params["end_date"]],

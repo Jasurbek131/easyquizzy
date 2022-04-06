@@ -135,17 +135,14 @@ class EquipmentGroup extends BaseModel
                 'eg.id',
                 'eg.equipment_type_id',
             ])->with([
-                'equipments' => function ($e) use ($department_id) {
+                'equipments' => function ($e) {
                     $e->from(['egr' => 'equipment_group_relation_equipment'])
                     ->select([
                         'egr.equipment_id',
                         'egr.equipment_group_id',
                         'e.name as label',
                         'e.id as value'
-                    ])->leftJoin('equipments e', 'egr.equipment_id = e.id')
-                      ->leftJoin(['hre'=>'hr_department_rel_equipment'], 'e.id = hre.equipment_id')
-                      ->where(['hre.status_id' => BaseModel::STATUS_ACTIVE])
-                      ->andFilterWhere(['IN','hre.hr_department_id', $department_id]);
+                    ])->leftJoin('equipments e', 'egr.equipment_id = e.id');
                 },
                 'cycles' => function ($pl) {
                     $pl->from(['pl' => 'product_lifecycle'])
@@ -168,6 +165,9 @@ class EquipmentGroup extends BaseModel
                         }]);
                 }
             ])->where(['eg.status_id' => BaseModel::STATUS_ACTIVE])
+            ->leftJoin(['hdr' => 'hr_department_rel_equipment'], 'hdr.equipment_group_id = eg.id')
+            ->where(['in','hdr.hr_department_id', $department_id])
+            ->andWhere(['hdr.status_id' => BaseModel::STATUS_ACTIVE])
             ->asArray()
             ->all();
 

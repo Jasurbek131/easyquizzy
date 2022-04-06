@@ -184,8 +184,7 @@ $create = Yii::t('app', 'Create');
                                         <tr>
                                             <th class=""><?php echo Yii::t('app', "№") ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
-                                            <th class=""><?php echo Yii::t('app', 'Equipment Name') ?></th>
-                                            <th class=""><?php echo Yii::t('app', 'Equipment Type') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Equipment Group') ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Status') ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
                                         </tr>
@@ -245,7 +244,6 @@ $create = Yii::t('app', 'Create');
                                             <th class=""><?php echo Yii::t('app', "№") ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Defect Name') ?></th>
-                                            <th class=""><?php echo Yii::t('app', 'Defect Type') ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Status') ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
                                         </tr>
@@ -314,7 +312,6 @@ $this->registerJsVar('urlDefectsDelete', $urlDefectDelete);
 $this->registerJsVar('tempSelectMenuMessage', Yii::t('app', "Avval bo'lim tanlang"));
 $this->registerJsVar('urlUserGroup', Url::to(['/admin/users-group']));
 $this->registerJsVar('lang', $lang);
-$this->registerJsVar('defectType', Defects::getDefectTypeList());
 ?>
 <?php
 $css = <<<CSS
@@ -576,8 +573,7 @@ function ajaxSubmit(id){
                         let td_equipments = '<tr>' +
                              '<td>'+ (index*1+1) +'</td>' +
                              '<td>'+ item['dep_name'] +'</td>' +
-                             '<td>'+ item['equipment_name'] +'</td>' +
-                             '<td>'+ item['equipment_type_time'] +'</td>' +
+                             '<td>'+ item['equipment_name'] +'</td>' + 
                              '<td>'+ item['status_name'] +'</td>' +
                              '<td>';
                         if (item['status'] == 'Active') {
@@ -615,14 +611,10 @@ function ajaxSubmit(id){
                         } else {
                             item['status'] = 'Inactive';
                         }
-                        if(defectType[item['defect_type']] != undefined){
-                            item['defect_type'] = defectType[item['defect_type']];
-                        }
                         let td_defects = '<tr>' +
                              '<td>'+ (index*1+1) +'</td>' +
                              '<td>'+ item['dep_name'] +'</td>' +
                              '<td>'+ item['defect_name'] +'</td>' +
-                             '<td>'+ item['defect_type'] +'</td>' +
                              '<td>'+ item['status_name'] +'</td>' +
                              '<td>';
                         if (item['status'] == 'Active') {
