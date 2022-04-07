@@ -669,7 +669,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
     public static function getPlmDocuments($params = [])
     {
         $pageSize = $params['page_size'] ?? 20;
-        $departmentIds = UsersRelationHrDepartments::getDepartmentByUser();
+        $departmentIds = UsersRelationHrDepartments::getDepartmentByUser(UsersRelationHrDepartments::NOT_ROOT);
         $language = Yii::$app->language;
         $plm_document = PlmDocuments::find()
             ->alias('pd')
