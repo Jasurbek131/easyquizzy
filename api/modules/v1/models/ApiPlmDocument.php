@@ -425,7 +425,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             if ($response['status']) {
                 $response["doc_item_id"] = $docItem->id ?? "";
                 $response["doc_id"] = $doc->id ?? "";
-                $response["additional"] = PlmDocumentItems::getStops($docItem->id);
+                $response["additional"] = PlmDocumentItems::getAdditionalData($docItem->id);
                 $transaction->commit();
             } else {
                 $transaction->rollBack();

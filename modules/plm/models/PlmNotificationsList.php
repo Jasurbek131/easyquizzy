@@ -2,6 +2,7 @@
 
 namespace app\modules\plm\models;
 
+use app\models\BaseModel;
 use app\modules\hr\models\HrEmployeeRelPosition;
 use app\modules\references\models\Categories;
 use app\modules\references\models\Reasons;
