@@ -19,6 +19,7 @@
 return [
     '(new)' => '(yangi)',
     'Accepted' => 'Tasdiqlash',
+    'Sign in' => 'Tizimga kirish',
     'Active' => 'Faol',
     'Add Info' => 'Izoh',
     'Administrator' => 'Administrator',
@@ -339,7 +340,7 @@ return [
     'User not saved' => '',
     'User rel department not saved' => '',
     'User rel organisations not saved' => '',
-    'Username' => 'Login',
+    'Username' => 'Foydalanuvchi nomi',
     'Users' => 'Foydalanuvchilar',
     'Value' => 'Koeffitsienti',
     'View' => 'Ko\'rish',
@@ -353,4 +354,5 @@ return [
     'welcome' => 'Xush kelibsiz!',
     '{node} # {id} - \'{name}\': {error}' => '',
     '№' => '',
+    'Incorrect username or password.' => 'Foydalanuvchi nomi yoki parol xato',
 ];
