@@ -41,8 +41,8 @@ class HrEmployeeSearch extends HrEmployee
         $query = HrEmployee::find()
             ->alias('he')
             ->orderBy(['he.id' => SORT_DESC])
-            ->with(["hrEmployeeActivePosition.hrDepartments as hd"])
-            ->with(["hrEmployeeActivePosition.hrPositions as hp"]);
+            ->joinWith(["hrEmployeeActivePosition.hrDepartments as hd"])
+            ->joinWith(["hrEmployeeActivePosition.hrPositions as hp"]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
