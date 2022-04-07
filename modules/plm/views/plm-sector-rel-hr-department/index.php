@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\plm\models\BaseModel;
 use app\modules\plm\models\PlmSectorRelHrDepartment;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -48,7 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function (PlmSectorRelHrDepartment $model) {
                         return  $model::getStatusList($model->status_id);
                     },
-                    'format' => 'html'
+                    'format' => 'html',
+                    'filter' => BaseModel::getStatusList()
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
