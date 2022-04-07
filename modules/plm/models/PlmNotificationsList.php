@@ -121,16 +121,18 @@ class PlmNotificationsList extends BaseModel
                 ->alias('pnl')
                 ->select([
                     'pnl.*',
+                    'c.token',
                     "pd.reg_date",
-                    'hd.name AS department',
+                    "pd.doc_number",
+                    'pnl.add_info',
+                    'defect.defect',
                     'sh.name shift',
                     'product.product',
                     'equipment.equipment',
-                    'defect.defect',
-                    'defect.count AS defect_count',
                     'c.id AS category_id',
-                    'c.token',
-                    'pnl.add_info'
+                    'hd.name AS department',
+                    'defect.count AS defect_count',
+                    'fact_qty' =>'product.fact_qty',
                 ])
                 ->leftJoin(['psrd' => 'plm_sector_rel_hr_department'],'pnl.category_id = psrd.category_id')
                 ->leftJoin(['pdi' => 'plm_document_items'],'pnl.plm_doc_item_id = pdi.id')
@@ -152,6 +154,7 @@ class PlmNotificationsList extends BaseModel
                     ->alias('pdip')
                     ->select([
                         "pdip.document_item_id",
+                        "SUM(pdip.fact_qty) AS fact_qty",
                         "STRING_AGG(DISTINCT p.name,', ') AS product",
                     ])
                     ->leftJoin(['p' => 'products'],'pdip.product_id = p.id')

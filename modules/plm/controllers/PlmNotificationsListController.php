@@ -2,6 +2,7 @@
 
 namespace app\modules\plm\controllers;
 
+use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\plm\models\BaseModel;
 use app\modules\plm\models\PlmNotificationMessage;
 use app\modules\plm\models\PlmNotificationRelDefect;

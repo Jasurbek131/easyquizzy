@@ -3,6 +3,7 @@
 namespace app\modules\plm\models;
 
 use app\modules\hr\models\HrEmployeeRelPosition;
+use app\modules\hr\models\UsersRelationHrDepartments;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -154,6 +155,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
             'category_id' => $this->category_id,
         ]);
 
+        $query->andFilterWhere(['IN', 'hd.id', UsersRelationHrDepartments::getDepartmentByUser()]);
         $query->andFilterWhere(['ilike', 'hd.name', $this->department]);
         $query->andFilterWhere(['ilike', 'pd.doc_number', $this->doc_number]);
         $query->andFilterWhere(['ilike', 'sh.name', $this->shift]);

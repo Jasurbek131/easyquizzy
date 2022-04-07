@@ -4,6 +4,7 @@ namespace app\modules\hr\models;
 
 use app\models\Users;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -17,7 +18,7 @@ use yii\helpers\ArrayHelper;
  * @property HrDepartments $hrDepartments
  * @property Users $users
  */
-class UsersRelationHrDepartments extends \yii\db\ActiveRecord
+class UsersRelationHrDepartments extends ActiveRecord
 {
     /**
      * Agar bo'lim tashkilot bo'lsa root = 1
@@ -81,7 +82,7 @@ class UsersRelationHrDepartments extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array|ActiveRecord[]
      * Foydalanuvchiga tegishli tashkilot id larini qaytaradi
      */
     public static function getRootByUser(): array

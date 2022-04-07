@@ -6,6 +6,7 @@ namespace app\api\modules\v1\models;
 
 use app\api\modules\v1\models\ApiPlmDocumentInterface;
 use app\models\BaseModel;
+use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\plm\models\PlmDocItemDefects;
 use app\modules\plm\models\PlmDocItemEquipments;
 use app\modules\plm\models\PlmDocItemProducts;
@@ -289,6 +290,8 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                             "plm_doc_item_id" => $docItem->id,
                                             'status_id' => BaseModel::STATUS_ACTIVE,
                                             "category_id" => Categories::getIdByToken(Categories::TOKEN_REPAIRED),
+                                            'begin_time' => date("Y-m-d H:i", strtotime($item['start_work'])),
+                                            'end_time' => date("Y-m-d H:i", strtotime($item['end_work'])),
                                         ]);
                                         if (!$notificationRepaired->save()) {
                                             $response = [
@@ -347,6 +350,8 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                             "plm_doc_item_id" => $docItem->id,
                                             'status_id' => BaseModel::STATUS_ACTIVE,
                                             "category_id" => Categories::getIdByToken(Categories::TOKEN_SCRAPPED),
+                                            'begin_time' => date("Y-m-d H:i", strtotime($item['start_work'])),
+                                            'end_time' => date("Y-m-d H:i", strtotime($item['end_work'])),
                                         ]);
                                         if (!$notificationScrapped->save()) {
                                             $response = [
@@ -664,14 +669,15 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
     public static function getPlmDocuments($params = [])
     {
         $pageSize = $params['page_size'] ?? 20;
+        $departmentIds = UsersRelationHrDepartments::getDepartmentByUser();
         $language = Yii::$app->language;
         $plm_document = PlmDocuments::find()
             ->alias('pd')
             ->select([
                 "pd.*",
-                "to_char(pd.reg_date, 'DD.MM.YYYY HH24:MI:SS') as format_reg_date",
                 "sh.name as shift",
-                'hd.name as department'
+                'hd.name as department',
+                "to_char(pd.reg_date, 'DD.MM.YYYY HH24:MI:SS') as format_reg_date",
             ])->with([
                 'plm_document_items' => function ($q) use ($language) {
                     $q->from(['pdi' => 'plm_document_items'])
@@ -717,6 +723,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             ])->leftJoin('hr_departments hd', 'pd.hr_department_id = hd.id')
             ->leftJoin('shifts sh', 'pd.shift_id = sh.id')
             ->where(['!=', 'pd.status_id', \app\models\BaseModel::STATUS_INACTIVE])
+            ->andWhere(['IN','hd.id', $departmentIds])
             ->orderBy(["pd.id" => SORT_DESC])
             ->asArray();
 
