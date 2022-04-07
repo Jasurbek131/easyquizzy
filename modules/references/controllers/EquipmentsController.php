@@ -240,16 +240,15 @@ class EquipmentsController extends Controller
             'autoSize' => true,
         ]);
     }
+
     /**
-     * Finds the Equipments model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Equipments the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Equipments|null
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {
-        if (($model = Equipments::findOne($id)) !== null) {
+        if (($model = Equipments::findOne((integer)$id)) !== null) {
             return $model;
         }
 

@@ -32,10 +32,7 @@ class EquipmentsSearch extends Equipments
     }
 
     /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
+     * @param $params
      * @return ActiveDataProvider
      */
     public function search($params)
@@ -55,7 +52,7 @@ class EquipmentsSearch extends Equipments
         $query->andFilterWhere([
             'id' => $this->id,
             'equipment_type_id' => $this->equipment_type_id,
-            'status_id' => $this->status_id,
+            'status_id' => BaseModel::STATUS_ACTIVE,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
             'updated_at' => $this->updated_at,

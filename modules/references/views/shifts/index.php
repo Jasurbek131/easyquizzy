@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use app\modules\references\models\BaseModel;
-
+use app\components\PermissionHelper as P;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\references\models\ShiftsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,7 +13,7 @@ $this->title = Yii::t('app', 'Shifts');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card shifts-index">
-    <?php if (!Yii::$app->user->can('shifts/create')): ?>
+    <?php if (P::can('shifts/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'], ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
@@ -50,27 +50,27 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->value ?? "";
                     },
                 ],
-                [
-                     'attribute' => 'status_id',
-                     'format' => 'raw',
-                     'value' => function($model) {
-                         return $model->status_id ? BaseModel::getStatusList($model->status_id): "";
-                     },
-                     'filter' => BaseModel::getStatusList()
-                ],
+//                [
+//                     'attribute' => 'status_id',
+//                     'format' => 'raw',
+//                     'value' => function($model) {
+//                         return $model->status_id ? BaseModel::getStatusList($model->status_id): "";
+//                     },
+//                     'filter' => BaseModel::getStatusList()
+//                ],
 
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
-//                        'view' => Yii::$app->user->can('shifts/view'),
-//                        'update' => function($model) {
-//                            return Yii::$app->user->can('shifts/update'); // && $model->status < $model::STATUS_SAVED;
-//                        },
-//                        'delete' => function($model) {
-//                            return Yii::$app->user->can('shifts/delete'); // && $model->status < $model::STATUS_SAVED;
-//                        }
+                        'view' => P::can('shifts/view'),
+                        'update' => function($model) {
+                            return P::can('shifts/update'); // && $model->status < $model::STATUS_SAVED;
+                        },
+                        'delete' => function($model) {
+                            return P::can('shifts/delete'); // && $model->status < $model::STATUS_SAVED;
+                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {

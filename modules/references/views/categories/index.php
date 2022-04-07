@@ -4,6 +4,7 @@ use app\modules\references\models\Categories;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\components\PermissionHelper as P;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\references\models\CategoriesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -12,7 +13,7 @@ $this->title = Yii::t('app', 'Categories');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card categories-index">
-    <?php if (Yii::$app->user->can('categories/create')): ?>
+    <?php if (P::can('categories/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
@@ -38,25 +39,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => Categories::getCategoryTypeList()
             ],
-            [
-                'attribute' => 'status_id',
-                'value' => function(Categories $model){
-                    return $model::getStatusList($model->status_id);
-                },
-                'format' => 'html',
-                'filter' => $searchModel->getStatusList()
-            ],
+//            [
+//                'attribute' => 'status_id',
+//                'value' => function(Categories $model){
+//                    return $model::getStatusList($model->status_id);
+//                },
+//                'format' => 'html',
+//                'filter' => $searchModel->getStatusList()
+//            ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
-                        'view' => Yii::$app->user->can('categories/view'),
+                        'view' => P::can('categories/view'),
                         'update' => function($model) {
-                            return Yii::$app->user->can('categories/update'); // && $model->status < $model::STATUS_SAVED;
+                            return P::can('categories/update'); // && $model->status < $model::STATUS_SAVED;
                         },
                         'delete' => function($model) {
-                            return Yii::$app->user->can('categories/delete'); // && $model->status < $model::STATUS_SAVED;
+                            return P::can('categories/delete'); // && $model->status < $model::STATUS_SAVED;
                         }
                     ],
                     'buttons' => [

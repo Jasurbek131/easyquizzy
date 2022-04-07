@@ -7,7 +7,7 @@ import customStyles from "../../../actions/style/customStyle.js";
 import ru from "date-fns/locale/ru/index.js";
 import uz from "date-fns/locale/uz/index.js";
 import {items} from "../../../actions/elements";
-import {loadingContent, removeElement} from "../../../actions/functions";
+import {loadingContent, removeElement, dateFormat} from "../../../actions/functions";
 import {Link} from "react-router-dom";
 import {
     TOKEN_WORKING_TIME,
@@ -262,15 +262,20 @@ class Form extends React.Component {
                     plm_document_items[key][name] = v;
                     plm_document_items[key]['start_work'] = "";
                     plm_document_items[key]['end_work'] = "";
-                    if(validateDate === undefined){
+                    if (validateDate === undefined) {
                         validateDate = [];
                         validateDate.push({
                             start_work: '',
                             end_work: '',
                             equipment: equipmentList(plm_document_items[key][name])
                         });
-                    }else{
-                        validateDate[key] = {...validateDate[key],start_work: '', end_work: '', equipment: equipmentList(plm_document_items[key][name])}
+                    } else {
+                        validateDate[key] = {
+                            ...validateDate[key],
+                            start_work: '',
+                            end_work: '',
+                            equipment: equipmentList(plm_document_items[key][name])
+                        }
                     }
 
                 }
@@ -338,7 +343,6 @@ class Form extends React.Component {
                                         }
                                         if (index != key && (validateDate[key]['start_work'] <= validateDate[index]['start_work'] && validateDate[index]['end_work'] <= date
                                         )) {
-                                            console.log('salom')
                                             hasElement = true;
                                             break;
                                         }
@@ -611,6 +615,7 @@ class Form extends React.Component {
                     }
                 } else {
                     plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
+                    plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
                     this.setState({plm_document_items});
                 }
                 this.setByPassQtyNull();
@@ -700,6 +705,7 @@ class Form extends React.Component {
                 plm_document_items[key]["processing_time_id"] = response?.data?.additional?.processing_time_id;
                 plm_document_items[key]["planned_stops"] = response?.data?.additional?.planned_stops;
                 plm_document_items[key]["unplanned_stops"] = response?.data?.additional?.unplanned_stops;
+                plm_document_items[key]["notifications_status"] = response?.data?.additional?.notifications_status;
                 plm_document_items[key]["is_change"] = false;
                 this.setState({plm_document_items, plm_document});
             } else {
@@ -707,9 +713,10 @@ class Form extends React.Component {
             }
         }
     };
+
     saveAndFinish = async () => {
-        if(confirm('Ishonchingiz komilmi?')) {
-            let {plm_document,isStatus} = this.state;
+        if (confirm('Ishonchingiz komilmi?')) {
+            let {plm_document, isStatus} = this.state;
             let params = {
                 document: plm_document,
             };
@@ -724,7 +731,7 @@ class Form extends React.Component {
                 }
             }
         }
-    }
+    };
 
     onSumma = (items) => {
         let summa = 0;
@@ -840,9 +847,10 @@ class Form extends React.Component {
                             <div className={"col-lg-12"}>
                                 <div className={'pull-right'}>
                                     {
-                                        isStatus ?(
-                                        <button onClick={this.saveAndFinish} className={'btn btn-success btn-sm mr-2'}>Kun yopish</button>
-                                        ):''
+                                        isStatus ? (
+                                            <button onClick={this.saveAndFinish}
+                                                    className={'btn btn-success btn-sm mr-2'}>Kun yopish</button>
+                                        ) : ''
                                     }
                                     <Link to={'/index'} className={"btn btn-sm btn-warning"}>Orqaga</Link>
                                 </div>
@@ -940,7 +948,7 @@ class Form extends React.Component {
                                                         onClick={this.onPush.bind(this, 'remove', 'plm_document_items', key, '')}
                                                         className={"btn btn-xs btn-danger"}>
                                                         <i className={"fa fa-times"}/>
-                                                    </button>):''
+                                                    </button>) : ''
 
                                             }
                                             <br/>
@@ -1282,6 +1290,12 @@ class Form extends React.Component {
                                                         />
                                                     </div>
                                                 </div>
+                                                <div className={"col-lg-12 text-center"}>
+                                                    <h6 style={{
+                                                        color: 'red',
+                                                        fontWeight: 'bold'
+                                                    }}>{dateFormat(temporarily?.item?.start_work)} - {dateFormat(temporarily?.item?.end_work)}</h6>
+                                                </div>
                                                 <div className={'col-lg-6'}>
                                                     <div className={"form-group"}>
                                                         <label className={"control-label"}>Boshlandi</label>
@@ -1415,8 +1429,8 @@ class Form extends React.Component {
                                                                 <tr key={index}>
                                                                     <td>{+index + 1}</td>
                                                                     <td>{item.category_name}</td>
-                                                                    <td>{item.begin_date}</td>
-                                                                    <td>{item.end_time}</td>
+                                                                    <td>{dateFormat(item.begin_date)}</td>
+                                                                    <td>{dateFormat(item.end_time)}</td>
                                                                     {temporarily?.type === 'unplanned_stops' ? (
                                                                         <td>{item.bypass}</td>
                                                                     ) : ("")}

@@ -238,16 +238,15 @@ class ReasonsController extends Controller
             'autoSize' => true,
         ]);
     }
+
     /**
-     * Finds the Reasons model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Reasons the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Reasons|null
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {
-        if (($model = Reasons::findOne($id)) !== null) {
+        if (($model = Reasons::findOne((integer)$id)) !== null) {
             return $model;
         }
 

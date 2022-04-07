@@ -2,6 +2,7 @@
 
 namespace app\modules\references\controllers;
 
+use app\modules\references\models\BaseModel;
 use Yii;
 use app\modules\references\models\Defects;
 use app\modules\references\models\DefectsSearch;
@@ -46,10 +47,9 @@ class DefectsController extends Controller
     }
 
     /**
-     * Displays a single Defects model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -64,9 +64,7 @@ class DefectsController extends Controller
     }
 
     /**
-     * Creates a new Defects model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return array|string|Response
      */
     public function actionCreate()
     {
@@ -119,11 +117,9 @@ class DefectsController extends Controller
     }
 
     /**
-     * Updates an existing Defects model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string|Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -177,11 +173,9 @@ class DefectsController extends Controller
     }
 
     /**
-     * Deletes an existing Defects model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|Response
+     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {
@@ -189,7 +183,8 @@ class DefectsController extends Controller
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->delete()){
+            $model->status_id = BaseModel::STATUS_DELETE;
+            if($model->save()){
                 $isDeleted = true;
             }
             if($isDeleted){
@@ -238,16 +233,15 @@ class DefectsController extends Controller
             'autoSize' => true,
         ]);
     }
+
     /**
-     * Finds the Defects model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Defects the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Defects|null
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {
-        if (($model = Defects::findOne($id)) !== null) {
+        if (($model = Defects::findOne((integer)$id)) !== null) {
             return $model;
         }
 

@@ -129,5 +129,5 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     'delete_button' => 'delete-dialog',
     'modal_size' => 'modal-md',
     'grid_ajax' => '<?= Inflector::camel2id(StringHelper::basename($generator->viewPath)) ?>_pjax',
-    'confirm_message' => Yii::t('app', 'Haqiqatdan ham o\'chirmoqchimisiz?')
+    'confirm_message' => Yii::t('app', 'Haqiqatdan ham o‘chirmoqchimisiz?')
 ]); ?>

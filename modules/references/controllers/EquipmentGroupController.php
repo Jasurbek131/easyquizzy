@@ -146,11 +146,9 @@ class EquipmentGroupController extends Controller
     }
 
     /**
-     * Updates an existing EquipmentGroup model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string|Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -232,11 +230,9 @@ class EquipmentGroupController extends Controller
     }
 
     /**
-     * Deletes an existing EquipmentGroup model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|Response
+     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {
@@ -277,15 +273,13 @@ class EquipmentGroupController extends Controller
     }
 
     /**
-     * Finds the EquipmentGroup model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return EquipmentGroup the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return EquipmentGroup|null
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {
-        if (($model = EquipmentGroup::findOne($id)) !== null) {
+        if (($model = EquipmentGroup::findOne((integer)$id)) !== null) {
             return $model;
         }
 

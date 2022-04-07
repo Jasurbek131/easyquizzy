@@ -58,7 +58,7 @@ class ProductLifecycleSearch extends ProductLifecycle
             'lifecycle' => $this->lifecycle,
             'bypass' => $this->bypass,
             'time_type_id' => $this->time_type_id,
-            'status_id' => $this->status_id,
+            'status_id' => BaseModel::STATUS_ACTIVE,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
             'updated_at' => $this->updated_at,

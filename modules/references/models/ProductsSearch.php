@@ -32,10 +32,7 @@ class ProductsSearch extends Products
     }
 
     /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
+     * @param $params
      * @return ActiveDataProvider
      */
     public function search($params)
@@ -53,7 +50,7 @@ class ProductsSearch extends Products
             return $dataProvider;
 
         $query->andFilterWhere([
-            'status_id' => $this->status_id,
+            'status_id' => BaseModel::STATUS_ACTIVE,
         ]);
 
         $query->andFilterWhere(['ilike', 'name', $this->name])

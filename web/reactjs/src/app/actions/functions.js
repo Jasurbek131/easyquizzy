@@ -14,12 +14,31 @@ export const removeElement = (arr, key) => {
     }
     return newArr;
 };
-
+export const dateFormat = (date) => {
+    //ozingizga moslab olasiz defaoult 11.02.2020 10:00:00
+    if (!date) {
+        return "";
+    }
+    date = new Date(date);
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+    return (day < 10 ? "0" + day : day) + "." +
+        (month < 10 ? "0" + month : month) + "." +
+        (year) + " " +
+        (hour < 10 ? "0" + hour : hour) + ":" +
+        (minute < 10 ? "0" + minute : minute) + ":" +
+        (second < 10 ? "0" + second : second);
+}
 export const loadingContent = () => {
     return (
         <div>
             <div className="no-print">
-                <ToastContainer autoClose={6000} position={'top-center'} transition={Flip} draggablePercent={60} closeOnClick={true} pauseOnHover closeButton={true}/>
+                <ToastContainer autoClose={6000} position={'top-center'} transition={Flip} draggablePercent={60}
+                                closeOnClick={true} pauseOnHover closeButton={true}/>
             </div>
             <div id="contentDiv" className="timeline-wrapper">
                 <div className="timeline-item">

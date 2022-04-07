@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\components\PermissionHelper as P;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\references\models\EquipmentTypes */
@@ -14,13 +15,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="equipment-types-view">
     <?php if(!Yii::$app->request->isAjax){?>
     <div class="pull-right" style="margin-bottom: 15px;">
-        <?php if (Yii::$app->user->can('equipment-types/update')): ?>
-            <?php  if ($model->status < $model::STATUS_SAVED): ?>
+        <?php if (P::can('equipment-types/update')): ?>
+            <?php  if ($model->status_id < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             <?php endif; ?>
         <?php endif; ?>
-        <?php if (Yii::$app->user->can('equipment-types/delete')): ?>
-            <?php  if ($model->status < $model::STATUS_SAVED): ?>
+        <?php if (P::can('equipment-types/delete')): ?>
+            <?php  if ($model->status_id < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
                     'class' => 'btn btn-danger',
                     'data' => [

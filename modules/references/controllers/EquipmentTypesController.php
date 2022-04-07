@@ -47,10 +47,9 @@ class EquipmentTypesController extends Controller
     }
 
     /**
-     * Displays a single EquipmentTypes model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {

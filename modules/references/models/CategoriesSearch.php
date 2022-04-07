@@ -60,7 +60,7 @@ class CategoriesSearch extends Categories
         $query->andFilterWhere([
             'id' => $this->id,
             'type' => $this->type,
-            'status_id' => $this->status_id,
+            'status_id' => BaseModel::STATUS_ACTIVE,
             'created_by' => $this->created_by,
             'created_at' => $this->created_at,
             'updated_by' => $this->updated_by,
