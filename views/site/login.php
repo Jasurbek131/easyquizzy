@@ -13,14 +13,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="site-login container" style="min-height: 70vh; display: flex; justify-content: center; align-items: center; transform: translateY(-30%)">
     <div>
 
-
+        <h2 class="text-center" style="color: white!important;"><?php echo Yii::t('app','Sign in')?></h2>
         <div class="login-box">
             <div class="login-box-body">
                 <?php $form = ActiveForm::begin([
                     'id' => 'login-form',
                 ]); ?>
-
-                <h3 class="text-center"><?php echo Yii::t('app','Sign in')?></h3>
 
                 <?php echo $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
