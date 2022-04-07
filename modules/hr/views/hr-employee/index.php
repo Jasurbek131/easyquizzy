@@ -16,12 +16,12 @@ $this->title = Yii::t('app', "Hr Employee");
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card hr-employee-index">
-    <!--    --><?php //if (Yii::$app->user->can('hr-employee/create')): ?>
+    <?php if (Yii::$app->user->can('hr-employee/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
             ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
-    <!--    --><?php //endif; ?>
+    <?php endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'hr-employee_pjax']); ?>
 
@@ -31,7 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'filterModel' => $searchModel,
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-
                 'firstname',
                 'lastname',
                 'fathername',
@@ -41,29 +40,28 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'hr_department_id',
                     'label' => Yii::t("app", "Hr Department"),
                     'value' => function (HrEmployee $model) {
-                        return $model->hrEmployeeActivePosition ? ($model->hrEmployeeActivePosition->hrDepartments->name ?? "") : "";
+                        return $model->hrEmployeeActivePosition ? ($model->hrEmployeeActivePosition->hrDepartments ? ($model->hrEmployeeActivePosition->hrDepartments->name ?? "") : "") : "";
                     }
                 ],
                 [
                     'attribute' => 'hr_position_id',
                     'label' => Yii::t("app", "Hr Position"),
                     'value' => function (HrEmployee $model) {
-                        return $model->hrEmployeeActivePosition ? ($model->hrEmployeeActivePosition->hrPositions[Language::widget()] ?? "") : "";
+                        return $model->hrEmployeeActivePosition ? ($model->hrEmployeeActivePosition->hrPositions ? ($model->hrEmployeeActivePosition->hrPositions[Language::widget()] ?? "") : "") : "";
                     }
                 ],
-
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print text-center', 'style' => 'width:100px;'],
                     'visibleButtons' => [
-//                        'view' => Yii::$app->user->can('hr-employee/view'),
-//                        'update' => function($model) {
-//                            return Yii::$app->user->can('hr-employee/update'); // && $model->status < $model::STATUS_SAVED;
-//                        },
-//                        'delete' => function($model) {
-//                            return Yii::$app->user->can('hr-employee/delete'); // && $model->status < $model::STATUS_SAVED;
-//                        }
+                        'view' => Yii::$app->user->can('hr-employee/view'),
+                        'update' => function($model) {
+                            return Yii::$app->user->can('hr-employee/update'); // && $model->status < $model::STATUS_SAVED;
+                        },
+                        'delete' => function($model) {
+                            return Yii::$app->user->can('hr-employee/delete'); // && $model->status < $model::STATUS_SAVED;
+                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {
