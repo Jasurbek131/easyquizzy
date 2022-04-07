@@ -286,7 +286,6 @@ class Form extends React.Component {
                                 for (const equipment of currentEquipment) {
                                     if (index !== key && validateDate[index].equipment.includes(equipment.equipment_id)) {
                                         hasElementEquipment = true;
-                                        console.log('salom')
                                         break;
                                     }
                                 }
@@ -710,7 +709,7 @@ class Form extends React.Component {
     };
     saveAndFinish = async () => {
         if(confirm('Ishonchingiz komilmi?')) {
-            let {plm_document} = this.state;
+            let {plm_document,isStatus} = this.state;
             let params = {
                 document: plm_document,
             };
@@ -718,6 +717,8 @@ class Form extends React.Component {
                 const response = await axios.post(API_URL + 'save-properties?type=SAVE_AND_FINISH', params);
                 if (response.data.status) {
                     toast.success(response.data.message);
+                    isStatus = false;
+                    this.setState({isStatus: isStatus});
                 } else {
                     toast.error(response.data.message);
                 }
@@ -838,9 +839,11 @@ class Form extends React.Component {
                         <div className={'row'}>
                             <div className={"col-lg-12"}>
                                 <div className={'pull-right'}>
-                                    <button onClick={this.saveAndFinish} className={'btn btn-success btn-sm mr-2'}>Kun
-                                        yopish
-                                    </button>
+                                    {
+                                        isStatus ?(
+                                        <button onClick={this.saveAndFinish} className={'btn btn-success btn-sm mr-2'}>Kun yopish</button>
+                                        ):''
+                                    }
                                     <Link to={'/index'} className={"btn btn-sm btn-warning"}>Orqaga</Link>
                                 </div>
                             </div>
@@ -926,7 +929,7 @@ class Form extends React.Component {
                                         key={key}>
                                         <div className={'pull-right'}>
                                             {
-                                                key === 0 ?
+                                                isStatus ? (key === 0 ?
                                                     <button
                                                         onClick={this.onPush.bind(this, 'add', 'plm_document_items', '', '')}
                                                         className={"btn btn-xs btn-primary"}>
@@ -937,7 +940,7 @@ class Form extends React.Component {
                                                         onClick={this.onPush.bind(this, 'remove', 'plm_document_items', key, '')}
                                                         className={"btn btn-xs btn-danger"}>
                                                         <i className={"fa fa-times"}/>
-                                                    </button>
+                                                    </button>):''
 
                                             }
                                             <br/>
@@ -1092,6 +1095,7 @@ class Form extends React.Component {
                                                                                 className={'form-control aria-required'}
                                                                                 id={"fact_qty_" + key + "_" + prKey}
                                                                                 min={0}
+                                                                                readOnly={!isStatus}
                                                                                 value={product?.fact_qty ?? ""}/>
                                                                         </div>
                                                                         <div className={'col-lg-3'}>

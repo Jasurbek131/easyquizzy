@@ -40,21 +40,31 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
             'status' => true,
-            'message' => Yii::t('app', 'Success'),
+            'message' => Yii::t('app', 'Saved Successfully'),
         ];
         try {
 
             $doc = new PlmDocuments();
-            if (isset($document["id"]) && !empty($document['id']))
+            if (isset($document["id"]) && !empty($document['id'])){
                 $doc = PlmDocuments::findOne($document['id']);
-            $doc->setAttributes([
-                'reg_date' => date("Y-m-d H:i:s", strtotime($document['reg_date'])),
-                'hr_department_id' => $document['hr_department_id'],
-                'organisation_id' => $document['organisation_id'],
-                'shift_id' => $document['shift_id'],
-                'add_info' => $document['add_info'],
-                'status_id' => BaseModel::STATUS_ACTIVE
-            ]);
+                if($doc->status_id != self::STATUS_ACTIVE){
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app', 'Document not active'),
+                        'errors' => [],
+                        'line' => __LINE__
+                    ];
+                }
+            }else{
+                $doc->setAttributes([
+                    'reg_date' => date("Y-m-d H:i:s", strtotime($document['reg_date'])),
+                    'hr_department_id' => $document['hr_department_id'],
+                    'organisation_id' => $document['organisation_id'],
+                    'shift_id' => $document['shift_id'],
+                    'add_info' => $document['add_info'],
+                    'status_id' => BaseModel::STATUS_ACTIVE
+                ]);
+            }
             if (!$doc->save())
                 $response = [
                     'status' => false,
@@ -790,7 +800,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
             'status' => true,
-            'message' => Yii::t('app', 'Success'),
+            'message' => Yii::t('app', 'Saved Successfully'),
         ];
         try {
             if(!empty($document['id'])) {

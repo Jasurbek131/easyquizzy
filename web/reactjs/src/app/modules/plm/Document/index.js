@@ -89,7 +89,7 @@ class Index extends React.Component {
                             {
                                 documents?.length > 0 && documents.map((item, key) => {
                                     return (
-                                        <tr key={key}>
+                                        <tr key={key} className={item.status_id == 1 ? "danger" : ""}>
                                             <td>{key + 1}</td>
                                             <td>{item.doc_number ?? ""}</td>
                                             <td>{item.department ?? ""}</td>

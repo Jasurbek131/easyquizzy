@@ -109,7 +109,6 @@ class DocumentController extends ActiveController
     /**
      * @param $type
      * @return array
-     * @throws yii\db\Exception
      */
     public function actionSaveProperties($type): array
     {
