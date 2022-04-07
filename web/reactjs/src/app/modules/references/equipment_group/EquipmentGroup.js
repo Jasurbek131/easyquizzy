@@ -16,6 +16,7 @@ const initialItem = {
 
 const  initialLifeCycle = {
     name : '',
+    value : 1,
     equipments : '',
     equipment_type_id : 1,
     cycles: [JSON.parse(JSON.stringify(initialItem))]
@@ -251,7 +252,6 @@ class EquipmentGroup extends Component {
 
         if(forms.groups.length > 0){
             productLifecycleBody = forms.groups.map((item, index) => {
-                console.log("item.equipment_type_id", item.equipment_type_id);
                 return (
                     <div className={"driver col-lg-12"} key={index}>
                         {index != 0 ? (
@@ -275,6 +275,17 @@ class EquipmentGroup extends Component {
                                    onChange={this.onHandleChange.bind(this, 'input', 'name', 'groups', index, '')}
                                />
                            </div>
+                           <div className="col-lg-1">
+                               <label htmlFor={"value_"+index}><span className={"required"}>*</span> {messages.value}</label>
+                               <input
+                                   className={"form-control"}
+                                   id={"value_"+index}
+                                   name="value"
+                                   autoComplete={'off'}
+                                   value={item.value}
+                                   onChange={this.onHandleChange.bind(this, 'input', 'value', 'groups', index, '')}
+                               />
+                           </div>
                            <div className={"col-lg-2"}>
                                <label htmlFor={"equipment_type_id_"+index}><span className={"required"}>*</span> {messages.group_type}</label>
                                <Select
@@ -287,7 +298,7 @@ class EquipmentGroup extends Component {
                                    options={equipments_type_list}
                                />
                            </div>
-                           <div className={"col-lg-3"}>
+                           <div className={"col-lg-2"}>
                                <label htmlFor={"equipments_"+index}><span className={"required"}>*</span> {messages.equipments}</label>
                                <Select
                                    styles={style}

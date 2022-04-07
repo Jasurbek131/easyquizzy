@@ -14,12 +14,12 @@ $this->title = Yii::t('app', 'Plm Sector Rel Hr Departments');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card plm-setting-accepted-sector-rel-hr-department-index">
-    <?php if (Yii::$app->user->can('plm-sector-rel-hr-department/create')): ?>
+<!--    --><?php //if (Yii::$app->user->can('plm-sector-rel-hr-department/create')): ?>
         <div class="card-header pull-right no-print">
             <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
                 ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
         </div>
-    <?php endif; ?>
+<!--    --><?php //endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'plm-setting-accepted-sector-rel-hr-department_pjax']); ?>
 

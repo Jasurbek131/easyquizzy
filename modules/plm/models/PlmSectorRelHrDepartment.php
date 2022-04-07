@@ -88,7 +88,8 @@ class PlmSectorRelHrDepartment extends BaseModel
         return [
             'id' => Yii::t('app', 'ID'),
             'hr_department_id' => Yii::t('app', 'Hr Department ID'),
-            'category_id' => Yii::t('app', 'Categoris'),
+            'category_id' => Yii::t('app', 'Categories'),
+            'categories' => Yii::t('app', 'Categories'),
             'status_id' => Yii::t('app', 'Status ID'),
             'created_by' => Yii::t('app', 'Created By'),
             'created_at' => Yii::t('app', 'Created At'),
