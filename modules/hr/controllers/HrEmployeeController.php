@@ -120,10 +120,12 @@ class HrEmployeeController extends Controller
     {
         $model = $this->findModel($id);
         $position = $model->hrEmployeeActivePosition;
-        $model->hr_department_id = $position->hr_department_id ?? "";
-        $model->hr_position_id = $position->hr_position_id ?? "";
-        $model->hr_organisation_id = $position->hr_organisation_id ?? "";
-        $model->begin_date = $position->begin_date ? date('d.m.Y', strtotime($position->begin_date)) : "";
+        if($position){
+            $model->hr_department_id = $position->hr_department_id ?? "";
+            $model->hr_position_id = $position->hr_position_id ?? "";
+            $model->hr_organisation_id = $position->hr_organisation_id ?? "";
+            $model->begin_date = $position->begin_date ? date('d.m.Y', strtotime($position->begin_date)) : "";
+        }
 
         $request = Yii::$app->request;
         if ($request->isPost) {
