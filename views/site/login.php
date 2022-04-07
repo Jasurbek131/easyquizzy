@@ -15,19 +15,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
         <div class="login-box">
-<!--            <div class="login-logo">-->
-<!--                --><?php //echo Html::img('/img/samo_logo.png', ['style' => 'max-width:200px']) ?>
-<!--            </div>-->
-
-            <!-- /.login-logo -->
             <div class="login-box-body">
                 <?php $form = ActiveForm::begin([
                     'id' => 'login-form',
                 ]); ?>
 
-                <?php echo $form->field($model, 'username')->textInput(['autofocus' => true])->label(Yii::t("app","Login")) ?>
+                <h3 class="text-center"><?php echo Yii::t('app','Sign in')?></h3>
 
-                <?php echo $form->field($model, 'password')->passwordInput()->label(Yii::t("app","Password")) ?>
+                <?php echo $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+
+                <?php echo $form->field($model, 'password')->passwordInput() ?>
 
                 <div class="form-group">
                     <div class="col-lg-12">
