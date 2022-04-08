@@ -8,6 +8,7 @@ use app\modules\hr\models\HrDepartmentRelEquipment;
 use app\modules\hr\models\HrDepartmentRelProduct;
 use app\modules\hr\models\HrDepartmentRelShifts;
 use app\modules\hr\models\UsersRelationHrDepartments;
+use app\modules\plm\models\PlmSectorRelHrDepartment;
 use Exception;
 use kartik\tree\controllers\NodeController;
 use kartik\tree\TreeSecurity;
@@ -330,6 +331,7 @@ class HrDepartmentsController extends NodeController
             $response['equipments'] = HrDepartmentRelEquipment::getHrRelEquipment($id);
 //            $response['products'] = HrDepartmentRelProduct::getHrRelProduct($id);
             $response['defects'] = HrDepartmentRelDefects::getHrRelDefect($id);
+            $response['deparea'] = PlmSectorRelHrDepartment::getHrRelDeparea($id);
             $response['delete'] = false;
             if (!empty($child)) {
                 $response['delete'] = true;

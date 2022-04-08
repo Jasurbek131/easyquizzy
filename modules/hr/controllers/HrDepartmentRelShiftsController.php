@@ -138,13 +138,14 @@ class HrDepartmentRelShiftsController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id,$department_id)
     {
         $model = $this->findModel($id);
         $post = Yii::$app->request->post();
+        $data = Yii::$app->request->get();
         if (Yii::$app->request->isPost) {
             $exists = HrDepartmentRelShifts::findOne([
-                "hr_department_id" => $post["HrDepartmentRelShifts"]['department_id'],
+                "hr_department_id" => $data['department_id'],
                 "shift_id" => $post["HrDepartmentRelShifts"]["shift_id"],
             ]);
             if ($exists){

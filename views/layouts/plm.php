@@ -415,23 +415,23 @@ $app = Yii::$app;
                             'active' => $controller == 'plm-notifications-list' && $action == 'index',
                             'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-check-circle nav-icon"></i><p>{label}</p></a>',
                         ],
-                        [
-                            'label' => Yii::t('app', 'Settings'),
-                            'url' => ['#'],
-                            'options' => ['class' => 'nav-item'],
-                            'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fa fa-cog"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-                            'visible' => P::can("plm-sector-rel-hr-department/index"),
-                            'items' => [
-                                [
-                                    'label' => Yii::t('app', 'PlmSectorRelHrDepartment'),
-                                    'url' => '/plm/plm-sector-rel-hr-department/index',
-                                    'options' => ['class' => 'nav-item'],
-                                    'visible' => P::can("plm-sector-rel-hr-department/index"),
-                                    'active' => $controller == 'plm-sector-rel-hr-department' && $action == 'index',
-                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-paperclip nav-icon"></i><p>{label}</p></a>',
-                                ],
-                            ],
-                        ],
+//                        [
+//                            'label' => Yii::t('app', 'Settings'),
+//                            'url' => ['#'],
+//                            'options' => ['class' => 'nav-item'],
+//                            'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fa fa-cog"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
+//                            'visible' => P::can("plm-sector-rel-hr-department/index"),
+//                            'items' => [
+//                                [
+//                                    'label' => Yii::t('app', 'PlmSectorRelHrDepartment'),
+//                                    'url' => '/plm/plm-sector-rel-hr-department/index',
+//                                    'options' => ['class' => 'nav-item'],
+//                                    'visible' => P::can("plm-sector-rel-hr-department/index"),
+//                                    'active' => $controller == 'plm-sector-rel-hr-department' && $action == 'index',
+//                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-paperclip nav-icon"></i><p>{label}</p></a>',
+//                                ],
+//                            ],
+//                        ],
                         [
                             'label' => Yii::t('app', 'Reports'),
                             'url' => ['#'],
