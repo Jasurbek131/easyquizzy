@@ -6247,5 +6247,9 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
+<<<<<<< HEAD
+    "plugin-api-version": "2.1.0"
+=======
     "plugin-api-version": "2.0.0"
+>>>>>>> 133086b88691fa61a48569db2c18790983ae8b73
 }
