@@ -37,9 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'attribute' => 'id',
-            ],
-            [
                 'attribute' => 'name',
             ],
             [
@@ -50,9 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'code',
-            ],
-            [
-                'attribute' => 'status_id',
             ],
             [
                 'attribute' => 'created_at',

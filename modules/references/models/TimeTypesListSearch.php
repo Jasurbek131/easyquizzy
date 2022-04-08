@@ -32,10 +32,7 @@ class TimeTypesListSearch extends TimeTypesList
     }
 
     /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
+     * @param $params
      * @return ActiveDataProvider
      */
     public function search($params)
@@ -60,7 +57,7 @@ class TimeTypesListSearch extends TimeTypesList
         $query->andFilterWhere([
             'id' => $this->id,
             'code' => $this->code,
-            'status_id' => $this->status_id,
+            'status_id' => BaseModel::STATUS_ACTIVE,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
             'updated_at' => $this->updated_at,

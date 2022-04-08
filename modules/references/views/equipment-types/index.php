@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\components\PermissionHelper as P;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\references\models\EquipmentTypesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -11,12 +12,12 @@ $this->title = Yii::t('app', 'Equipment Types');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card equipment-types-index">
-<!--    --><?php //if (Yii::$app->user->can('equipment-types/create')): ?>
+    <?php if (P::can('equipment-types/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
-<!--    --><?php //endif; ?>
+    <?php endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'equipment-types_pjax']); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -29,26 +30,26 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'name',
-            [
-                'attribute' => 'status_id',
-                'format' => 'raw',
-                'value' => function($model) {
-                    return \app\models\BaseModel::getStatusList($model->status_id);
-                },
-                'filter' => \app\models\BaseModel::getStatusList()
-            ],
+//            [
+//                'attribute' => 'status_id',
+//                'format' => 'raw',
+//                'value' => function($model) {
+//                    return \app\models\BaseModel::getStatusList($model->status_id);
+//                },
+//                'filter' => \app\models\BaseModel::getStatusList()
+//            ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print','style' => 'width:100px;'],
                     'visibleButtons' => [
-//                        'view' => Yii::$app->user->can('equipment-types/view'),
-//                        'update' => function($model) {
-//                            return Yii::$app->user->can('equipment-types/update'); // && $model->status < $model::STATUS_SAVED;
-//                        },
-//                        'delete' => function($model) {
-//                            return Yii::$app->user->can('equipment-types/delete'); // && $model->status < $model::STATUS_SAVED;
-//                        }
+                        'view' => P::can('equipment-types/view'),
+                        'update' => function($model) {
+                            return P::can('equipment-types/update'); // && $model->status < $model::STATUS_SAVED;
+                        },
+                        'delete' => function($model) {
+                            return P::can('equipment-types/delete'); // && $model->status < $model::STATUS_SAVED;
+                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {

@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\plm\models\BaseModel;
 use app\modules\plm\models\PlmSectorRelHrDepartment;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -13,12 +14,12 @@ $this->title = Yii::t('app', 'Plm Sector Rel Hr Departments');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card plm-setting-accepted-sector-rel-hr-department-index">
-    <?php if (Yii::$app->user->can('plm-sector-rel-hr-department/create')): ?>
+<!--    --><?php //if (Yii::$app->user->can('plm-sector-rel-hr-department/create')): ?>
         <div class="card-header pull-right no-print">
             <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
                 ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
         </div>
-    <?php endif; ?>
+<!--    --><?php //endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'plm-setting-accepted-sector-rel-hr-department_pjax']); ?>
 
@@ -48,7 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function (PlmSectorRelHrDepartment $model) {
                         return  $model::getStatusList($model->status_id);
                     },
-                    'format' => 'html'
+                    'format' => 'html',
+                    'filter' => BaseModel::getStatusList()
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',

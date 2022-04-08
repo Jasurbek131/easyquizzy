@@ -135,7 +135,7 @@ $this->params['breadcrumbs'][] = $this->title;
                    'template' => '{view}',
                    'contentOptions' => ['class' => 'no-print','style' => 'width:50px;'],
                    'visibleButtons' => [
-                       'view' => Yii::$app->user->can('plm-notifications-list/view'),
+                       'view' => P::can('plm-notifications-list/view'),
                    ],
                    'buttons' => [
                        'view' => function ($url, $model) {

@@ -227,15 +227,13 @@ class ShiftsController extends Controller
     }
 
     /**
-     * Finds the Shifts model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Shifts the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Shifts|null
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {
-        if (($model = Shifts::findOne($id)) !== null) {
+        if (($model = Shifts::findOne((integer)$id)) !== null) {
             return $model;
         }
 

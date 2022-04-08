@@ -33,6 +33,10 @@ class PermissionHelper
         return self::$permissionsAndRoles;
     }
 
+    /**
+     * @param $permissionName
+     * @return bool
+     */
     public static function can($permissionName)
     {
         $userId = Yii::$app->user->isGuest;
@@ -49,6 +53,10 @@ class PermissionHelper
         return isset($arr[$permissionName]);
     }
 
+    /**
+     * @param $permissionNames
+     * @return bool
+     */
     public static function orCan($permissionNames = [])
     {
         $userId = Yii::$app->user->isGuest;

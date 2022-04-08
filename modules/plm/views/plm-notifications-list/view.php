@@ -14,7 +14,7 @@ use yii\web\YiiAsset;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Plm Notifications Lists'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
-$no_defect = ( ($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED') );
+$no_defect = (($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED'));
 ?>
     <div class="card">
         <div class="card-body">
@@ -40,31 +40,35 @@ $no_defect = ( ($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED'
                     <div class="col-md-12">
                         <table class="table table-bordered">
                             <thead class="text-bold">
-                            <tr>
+                            <tr class="text-center">
                                 <th>№</th>
                                 <th><?php echo Yii::t("app", "Hr Department"); ?></th>
                                 <th><?php echo Yii::t("app", "Document Date"); ?></th>
                                 <th><?php echo Yii::t("app", "Shifts"); ?></th>
                                 <th><?php echo Yii::t("app", "Equipments"); ?></th>
-                                <?php if ($no_defect): ?>
-                                    <th><?php echo Yii::t("app", "Begin Time"); ?></th>
-                                    <th><?php echo Yii::t("app", "End Time"); ?></th>
-                                <?php endif; ?>
+                                <!--                                --><?php //if ($no_defect): ?>
+                                <th><?php echo Yii::t("app", "Begin Time"); ?></th>
+                                <th><?php echo Yii::t("app", "End Time"); ?></th>
+                                <!--                                --><?php //endif; ?>
+                                <th><?php echo Yii::t("app", "Mahsulot"); ?></th>
+                                <th><?php echo Yii::t("app", "Ish/chiq"); ?></th>
                                 <th><?php echo Yii::t("app", "Izoh"); ?></th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
+                            <tr class="text-center">
                                 <td><?php $count = 1;
                                     echo $count; ?></td>
                                 <td><?php echo $model['department']; ?></td>
-                                <td><?php echo date('d.m.Y', strtotime($model['reg_date'])); ?></td>
+                                <td><?php echo date('d.m.Y', strtotime($model['reg_date']))."<br>".$model['doc_number']; ?></td>
                                 <td><?php echo $model['shift']; ?></td>
                                 <td><?php echo $model['equipment']; ?></td>
-                                <?php if ($no_defect): ?>
-                                    <td><?php echo date('d.m.Y H:i', strtotime($model['begin_time'])); ?></td>
-                                    <td><?php echo date('d.m.Y H:i', strtotime($model['end_time'])); ?></td>
-                                <?php endif; ?>
+<!--                                --><?php //if ($no_defect): ?>
+                                    <td><?php echo $model['begin_time'] ? date('d.m.Y H:i', strtotime($model['begin_time'])) : ''; ?></td>
+                                    <td><?php echo $model['end_time'] ? date('d.m.Y H:i', strtotime($model['end_time'])) : ''; ?></td>
+<!--                                --><?php //endif; ?>
+                                <td><?php echo $model['product']; ?></td>
+                                <td><?php echo $model['fact_qty']; ?></td>
                                 <td><?php echo $model['add_info']; ?></td>
                             </tr>
                             </tbody>
@@ -155,7 +159,8 @@ $no_defect = ( ($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED'
                                     <div class="col-md-12">
                                         <input type="hidden" id="plm_notification_list_id"
                                                value="<?php echo $model['id']; ?>">
-                                        <textarea name="PlmNotificationList" id="message" rows="3" class="form-control"></textarea>
+                                        <textarea name="PlmNotificationList" id="message" rows="3"
+                                                  class="form-control"></textarea>
                                     </div>
                                     <br>
                                     <div class="col-md-12">
@@ -172,55 +177,56 @@ $no_defect = ( ($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED'
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <?php if ($no_defect):?>
+                                <?php if ($no_defect): ?>
                                     <legend style="text-align: center"><?php echo Yii::t("app", "List of approved stops"); ?></legend>
-                                <?php endif;?>
+                                <?php endif; ?>
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
                                 </button>
                             </div>
                             <div class="modal-body">
 
                                 <?php
-                                    if ($no_defect):
-                                        $reasons = Reasons::getCategoryList($model['category_id']);
-                                        ?>
-                                        <form action="" id="reasons-form" name="Reasons" method="POST">
-                                            <input type="hidden" id="plm_notification_list_id"
-                                                   value="<?php echo $model['id']; ?>">
-                                            <fieldset>
-                                                <div class="container">
-                                                    <div class="row checkbox_container">
-                                                        <?php if (!empty($reasons)): ?>
-                                                            <?php foreach ($reasons as $key => $reason) : ?>
-                                                                <div class="col-lg-6">
-                                                                    <div class="form-group small">
-                                                                        <label class="checkbox-transform">
-                                                                            <input type="checkbox"
-                                                                                   value="<?php echo $reason['id'] ?>"
-                                                                                   name="Reasons[<?php echo $key ?>]"
-                                                                                <?php echo $reason["name"][$key] !== null ? "checked" : "" ?>
-                                                                                   class="checkbox">
-                                                                            <span class="checkmark"></span>
-                                                                            <span class="p-10"><?php echo $reason['name'] ?></span>
-                                                                        </label>
-                                                                    </div>
+                                if ($no_defect):
+                                    $reasons = Reasons::getCategoryList($model['category_id']);
+                                    ?>
+                                    <form action="" id="reasons-form" name="Reasons" method="POST">
+                                        <input type="hidden" id="plm_notification_list_id"
+                                               value="<?php echo $model['id']; ?>">
+                                        <fieldset>
+                                            <div class="container">
+                                                <div class="row checkbox_container">
+                                                    <?php if (!empty($reasons)): ?>
+                                                        <?php foreach ($reasons as $key => $reason) : ?>
+                                                            <div class="col-lg-6">
+                                                                <div class="form-group small">
+                                                                    <label class="checkbox-transform">
+                                                                        <input type="checkbox"
+                                                                               value="<?php echo $reason['id'] ?>"
+                                                                               name="Reasons[<?php echo $key ?>]"
+                                                                            <?php echo $reason["name"][$key] !== null ? "checked" : "" ?>
+                                                                               class="checkbox">
+                                                                        <span class="checkmark"></span>
+                                                                        <span class="p-10"><?php echo $reason['name'] ?></span>
+                                                                    </label>
                                                                 </div>
-                                                            <?php endforeach; ?>
-                                                        <?php else: ?>
-                                                            <input type="hidden" id="empty_reason" value="0">
-                                                                <p class="form-group text-center" style="color: #0841cb"><?php echo Yii::t("app", "Tasdiqlash uchun to'xtalishlar ro'yhati mavjud emas, Tasdiqlaysizmi ?"); ?></p>
-                                                        <?php endif; ?>
-                                                    </div>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <input type="hidden" id="empty_reason" value="0">
+                                                        <p class="form-group text-center"
+                                                           style="color: #0841cb"><?php echo Yii::t("app", "Tasdiqlash uchun to'xtalishlar ro'yhati mavjud emas, Tasdiqlaysizmi ?"); ?></p>
+                                                    <?php endif; ?>
                                                 </div>
-                                            </fieldset>
-                                        </form>
-                                        <br>
-                                    <?php else:?>
-                                        <h3>Ishonchingiz komilmi?</h3>
-                                    <?php endif;?>
-                                    <div class="col-md-12">
-                                        <?php echo Html::submitButton(Yii::t('app', 'Accepted'), ['class' => 'btn btn-sm btn-success save_accepted']) ?>
-                                    </div>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                    <br>
+                                <?php else: ?>
+                                    <h3>Ishonchingiz komilmi?</h3>
+                                <?php endif; ?>
+                                <div class="col-md-12">
+                                    <?php echo Html::submitButton(Yii::t('app', 'Accepted'), ['class' => 'btn btn-sm btn-success save_accepted']) ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -233,11 +239,13 @@ $no_defect = ( ($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED'
         fieldset .form-group {
             margin-bottom: 0.2rem !important;
         }
+
         fieldset {
             margin: 0 0 30px 0;
             border: 2px solid #ccc;
             border-radius: 2px;
         }
+
         legend {
             background: #eee;
             padding: 4px 10px;
@@ -246,6 +254,7 @@ $no_defect = ( ($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED'
             margin: 0 auto;
             display: inline;
         }
+
         .p-10 {
             padding-left: 15px !important;
         }
@@ -284,8 +293,8 @@ $js = <<< JS
             },
             success:function(response) {
                 if(response.status){
-                    call_pnotify('success',response.message);                     
-                    window.location.reload();
+                    call_pnotify('success',response.message);
+                    window.open('/plm/plm-notifications-list/index','_self');
                 }else{
                     call_pnotify('fail',response.message);
                 }
@@ -306,7 +315,7 @@ $js = <<< JS
             success:function(response) {
                 if(response.status){
                     call_pnotify('success',response.message);                     
-                    window.location.reload();
+                     window.open('/plm/plm-notifications-list/index','_self');
                 }else{
                     call_pnotify('fail',response.message);
                 }

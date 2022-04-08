@@ -121,6 +121,7 @@ class ApiEquipmentGroupController extends ActiveController
                     'lifecycle' => Yii::t('app', 'Cycle time (s)'),
                     'bypass' => Yii::t('app', 'Bypass (s)'),
                     'group_name' => Yii::t('app', 'Group Name'),
+                    'value' => Yii::t('app', 'Value'),
                     'header' => Yii::t('app', 'Product data & Group equipment'),
                     'back' => Yii::t('app', 'Back'),
                     'products' => Yii::t('app', 'Products'),

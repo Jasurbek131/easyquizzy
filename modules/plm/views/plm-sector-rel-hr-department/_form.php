@@ -28,10 +28,12 @@ use yii\widgets\ActiveForm;
         'data' => Categories::getList(true, [
             'token' => [Categories::TOKEN_WORKING_TIME, Categories::TOKEN_UNPLANNED, Categories::TOKEN_REPAIRED, Categories::TOKEN_SCRAPPED]
         ]),
-        'options' => ['placeholder' => Yii::t("app","Select ...")],
+        'options' => [
+            'placeholder' => Yii::t("app","Select ..."),
+            'multiple' => true,
+        ],
         'pluginOptions' => [
             'allowClear' => true,
-            'multiple' => true,
         ]
     ]) ?>
 
@@ -44,3 +46,11 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+<?php
+    $this->registerCss("
+        .select2-container .select2-selection--multiple .select2-selection__rendered
+        {
+            white-space: normal;
+        }
+    ");
+?>

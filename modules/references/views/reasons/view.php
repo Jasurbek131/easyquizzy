@@ -15,12 +15,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if(!Yii::$app->request->isAjax){?>
     <div class="pull-right" style="margin-bottom: 15px;">
         <?php if (Yii::$app->user->can('reasons/update')): ?>
-            <?php  if ($model->status < $model::STATUS_SAVED): ?>
+            <?php  if ($model->status_id < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             <?php endif; ?>
         <?php endif; ?>
         <?php if (Yii::$app->user->can('reasons/delete')): ?>
-            <?php  if ($model->status < $model::STATUS_SAVED): ?>
+            <?php  if ($model->status_id < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
                     'class' => 'btn btn-danger',
                     'data' => [
@@ -36,9 +36,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-//            [
-//                'attribute' => 'id',
-//            ],
             [
                 'attribute' => 'name_uz',
             ],
@@ -51,14 +48,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     $info = $model->categories->name_uz;
                     return $info;
                 }
-            ],
-            [
-                'attribute' => 'status_id',
-                'value' => function($model){
-                    $info = $model::getStatusList($model->status_id);
-                    return $info;
-                },
-                'format' => 'html'
             ],
             [
                 'attribute' => 'created_by',

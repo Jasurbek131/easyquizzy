@@ -48,10 +48,9 @@ class ProductsController extends Controller
     }
 
     /**
-     * Displays a single Products model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -66,9 +65,7 @@ class ProductsController extends Controller
     }
 
     /**
-     * Creates a new Products model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return array|string|Response
      */
     public function actionCreate()
     {
@@ -89,8 +86,7 @@ class ProductsController extends Controller
                 }
 
                 if ($response['status'])
-                    return $this->redirect(['view', 'id' => $model->id]);
-
+                    return $this->redirect(['index']);
             }
         }
 
@@ -105,11 +101,9 @@ class ProductsController extends Controller
     }
 
     /**
-     * Updates an existing Products model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string|Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -130,7 +124,7 @@ class ProductsController extends Controller
                 }
 
                 if ($response['status'])
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['index']);
 
             }
         }
@@ -146,60 +140,57 @@ class ProductsController extends Controller
     }
 
     /**
-     * Deletes an existing Products model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|Response
+     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {
-        $transaction = Yii::$app->db->beginTransaction();
+        $app = Yii::$app;
         $isDeleted = false;
         $model = $this->findModel($id);
+        $transaction = $app->db->beginTransaction();
         try {
             $model->status_id = BaseModel::STATUS_INACTIVE;
-            if($model->save()){
+            if ($model->save()) {
                 $isDeleted = true;
             }
-            if($isDeleted){
+            if ($isDeleted) {
                 $transaction->commit();
-            }else{
+            } else {
                 $transaction->rollBack();
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             Yii::info('Not saved' . $e, 'save');
         }
-        if(Yii::$app->request->isAjax){
-            Yii::$app->response->format = Response::FORMAT_JSON;
+        if ($app->request->isAjax) {
+            $app->response->format = Response::FORMAT_JSON;
             $response = [];
             $response['status'] = 1;
             $response['message'] = Yii::t('app', 'Hatolik yuz berdi');
-            if($isDeleted){
+            if ($isDeleted) {
                 $response['status'] = 0;
-                $response['message'] = Yii::t('app','Deleted Successfully');
+                $response['message'] = Yii::t('app', 'Deleted Successfully');
             }
             return $response;
         }
-        if($isDeleted){
-            Yii::$app->session->setFlash('success',Yii::t('app','Deleted Successfully'));
+        if ($isDeleted) {
+            $app->session->setFlash('success', Yii::t('app', 'Deleted Successfully'));
             return $this->redirect(['index']);
-        }else{
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Hatolik yuz berdi'));
+        } else {
+            $app->session->setFlash('error', Yii::t('app', 'Hatolik yuz berdi'));
             return $this->redirect(['view', 'id' => $model->id]);
         }
     }
 
     /**
-     * Finds the Products model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Products the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Products|null
+     * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    protected function findModel($id): ?Products
     {
-        if (($model = Products::findOne($id)) !== null) {
+        if (($model = Products::findOne((integer)$id)) !== null) {
             return $model;
         }
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

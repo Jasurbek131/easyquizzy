@@ -17,12 +17,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if(!Yii::$app->request->isAjax){?>
     <div class="pull-right" style="margin-bottom: 15px;">
         <?php if (Yii::$app->user->can('equipments/update')): ?>
-            <?php  if ($model->status < $model::STATUS_SAVED): ?>
+            <?php  if ($model->status_id < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             <?php endif; ?>
         <?php endif; ?>
         <?php if (Yii::$app->user->can('equipments/delete')): ?>
-            <?php  if ($model->status < $model::STATUS_SAVED): ?>
+            <?php  if ($model->status_id < $model::STATUS_SAVED): ?>
                 <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
                     'class' => 'btn btn-danger',
                     'data' => [
@@ -38,9 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            [
-                'attribute' => 'id',
-            ],
             [
                 'attribute' => 'name',
             ],

@@ -4,6 +4,7 @@ use app\models\BaseModel;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\components\PermissionHelper as P;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\references\models\DefectsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -12,12 +13,12 @@ $this->title = Yii::t('app', 'Defects');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card defects-index">
-<!--    --><?php //if (Yii::$app->user->can('defects/create')): ?>
+    <?php if (P::can('defects/create')): ?>
     <div class="card-header pull-right no-print">
         <?= Html::a('<span class="fa fa-plus"></span>', ['create'],
         ['class' => 'create-dialog btn btn-sm btn-success', 'id' => 'buttonAjax']) ?>
     </div>
-<!--    --><?php //endif; ?>
+    <?php endif; ?>
     <div class="card-body">
         <?php Pjax::begin(['id' => 'defects_pjax']); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -37,27 +38,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => $searchModel::getDefectTypeList(),
             ],
-            [
-                'attribute' => 'status_id',
-                'format' => 'raw',
-                'value' => function($model) {
-                    return $model->status_id ? BaseModel::getStatusList($model->status_id): "";
-                },
-                'filter' => BaseModel::getStatusList()
-            ],
+//            [
+//                'attribute' => 'status_id',
+//                'format' => 'raw',
+//                'value' => function($model) {
+//                    return $model->status_id ? BaseModel::getStatusList($model->status_id): "";
+//                },
+//                'filter' => BaseModel::getStatusList()
+//            ],
 
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
                     'contentOptions' => ['class' => 'no-print text-center','style' => 'width:100px;'],
                     'visibleButtons' => [
-//                        'view' => Yii::$app->user->can('defects/view'),
-//                        'update' => function($model) {
-//                            return Yii::$app->user->can('defects/update'); // && $model->status < $model::STATUS_SAVED;
-//                        },
-//                        'delete' => function($model) {
-//                            return Yii::$app->user->can('defects/delete'); // && $model->status < $model::STATUS_SAVED;
-//                        }
+                        'view' => P::can('defects/view'),
+                        'update' => function($model) {
+                            return P::can('defects/update'); // && $model->status < $model::STATUS_SAVED;
+                        },
+                        'delete' => function($model) {
+                            return P::can('defects/delete'); // && $model->status < $model::STATUS_SAVED;
+                        }
                     ],
                     'buttons' => [
                         'update' => function ($url, $model) {

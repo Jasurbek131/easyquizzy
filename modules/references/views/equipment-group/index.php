@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'value',
                 'label' => Yii::t("app","Value"),
                 'value' => function($model) {
-                    return $model->value ?? "";
+                    return $model->value ? number_format($model->value, 2, '.', ' ') : "";
                 },
             ],
             [

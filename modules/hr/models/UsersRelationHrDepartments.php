@@ -4,6 +4,7 @@ namespace app\modules\hr\models;
 
 use app\models\Users;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -17,7 +18,7 @@ use yii\helpers\ArrayHelper;
  * @property HrDepartments $hrDepartments
  * @property Users $users
  */
-class UsersRelationHrDepartments extends \yii\db\ActiveRecord
+class UsersRelationHrDepartments extends ActiveRecord
 {
     /**
      * Agar bo'lim tashkilot bo'lsa root = 1
@@ -81,15 +82,15 @@ class UsersRelationHrDepartments extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array|ActiveRecord[]
      * Foydalanuvchiga tegishli tashkilot id larini qaytaradi
      */
-    public static function getRootByUser(): array
+    public static function getRootByUser($root = self::ROOT): array
     {
         $ids = self::find()
             ->where([
                 "user_id" => Yii::$app->user->identity->id,
-                'is_root' => self::ROOT
+                'is_root' => $root
             ])
             ->asArray()
             ->all();
@@ -103,9 +104,9 @@ class UsersRelationHrDepartments extends \yii\db\ActiveRecord
      * @return array
      * Foydalanuvchiga tegishli tashkilot va uning bo'limlarini id larini qaytaradi
      */
-    public static function getDepartmentByUser(): array
+    public static function getDepartmentByUser($root = self::ROOT): array
     {
-        $user_root = self::getRootByUser();
+        $user_root = self::getRootByUser($root);
         return array_merge($user_root, HrDepartments::getChilds($user_root));
     }
 }

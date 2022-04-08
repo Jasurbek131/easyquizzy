@@ -31,10 +31,7 @@ class PlmSectorRelHrDepartmentSearch extends PlmSectorRelHrDepartment
     }
 
     /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
+     * @param $params
      * @return ActiveDataProvider
      */
     public function search($params)
@@ -62,7 +59,9 @@ class PlmSectorRelHrDepartmentSearch extends PlmSectorRelHrDepartment
         if (!$this->validate()) {
             return $dataProvider;
         }
-        $query->andFilterWhere(['ilike', "hd.name" , $this->hr_department_id])
+        $query
+            ->andFilterWhere(['psrhd.status_id' => $this->status_id])
+            ->andFilterWhere(['ilike', "hd.name" , $this->hr_department_id])
             ->andFilterWhere(['ilike', sprintf("c.name_%s", Yii::$app->language), $this->category_id]);
         return $dataProvider;
     }

@@ -160,10 +160,10 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
      * @param $id
      * @return array|\yii\db\ActiveRecord|null
      */
-    public static  function getStops($id)
+    public static  function getAdditionalData($id)
     {
         $language = Yii::$app->language;
-        return self::find()
+        $data =  self::find()
             ->alias("pdi")
             ->with([
                 'planned_stops' => function ($e) use ($language) {
@@ -203,9 +203,28 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
                             'ps2.status_id' => BaseModel::STATUS_ACTIVE,
                         ]);
                 },
+                'notifications_status' => function($ns){
+                    $ns->from(['pnl' => "plm_notifications_list"])
+                        ->select([
+                            "pnl.id",
+                            "pnl.plm_doc_item_id",
+                            "pnl.status_id",
+                            "pnl.category_id",
+                            "pnl.stop_id",
+                            "c.token",
+                        ])
+                        ->joinWith(["messages"])
+                        ->leftJoin(["c" => "categories"], 'pnl.category_id = c.id');
+//                                    ->where(["NOT IN", "pnl.status_id" , [\app\modules\plm\models\BaseModel::STATUS_REJECTED]]);
+                }
             ])
-            ->where(["pdi.id" => $id])
+            ->where([
+                "pdi.id" => $id,
+                "pdi.status_id" => BaseModel::STATUS_ACTIVE
+            ])
             ->asArray()
             ->one();
+        $data["notifications_status"] = PlmNotificationsList::formatterNotificationStatus($data["notifications_status"] ?? []);
+        return $data;
     }
 }

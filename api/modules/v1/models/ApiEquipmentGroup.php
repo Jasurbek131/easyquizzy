@@ -122,6 +122,7 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                     $existsEquipmentGroup["equipment_type_id"] = $equipmentGroup->equipment_type_id;
                     $equipmentGroup->setAttributes([
                         'name' => $item['name'],
+                        'value' => $item['value'] ?? '',
                         'equipment_type_id' => $item['equipment_type_id'],
                         'status_id' => BaseModel::STATUS_ACTIVE,
                     ]);
@@ -263,6 +264,7 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                 "eg.id as equipment_group_id",
                 "eg.id",
                 "eg.name",
+                "eg.value",
                 "eg.equipment_type_id",
             ])
             ->with([
