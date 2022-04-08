@@ -224,7 +224,7 @@ class PlmSectorRelHrDepartment extends BaseModel
                 ->select([
                     "hrd.id AS id",
                     "hrd.name AS dep_name",
-                    sprintf("ARRAY_TO_STRING(ARRAY_AGG(DISTINCT CONCAT('<span class=".'"badge badge-primary mr-1"'.">',c.name_%s,'</span>')),',') AS category", Yii::$app->language),
+                    sprintf("ARRAY_TO_STRING(ARRAY_AGG(DISTINCT CONCAT('<span class=".'"badge badge-primary mr-1"'.">',c.name_%s,'</span>')),' ') AS category", Yii::$app->language),
                     "MAX(sl.name_uz) as status_name",
                     "MAX(sl.id) as status"
                 ])
