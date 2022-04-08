@@ -75,15 +75,18 @@ class PlmSectorRelHrDepartmentController extends Controller
             "scenario" => PlmSectorRelHrDepartment::SCENARIO_CREATE
         ]);
 
+        $data = Yii::$app->request->get();
         $request = Yii::$app->request;
+        $model->hr_department_id = $data['department_id'];
         if ($request->isPost) {
             if ($model->load($request->post())) {
                 $response = $model->saveRelHrDepartment();
                 if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    if ($response['status'])
+                    if ($response['status']) {
                         $response['status'] = 0;
-                    else
+                        $response['hr_department_id'] = $model->hr_department_id;
+                    }else
                         $response['status'] = 1;
 
                     return $response;
@@ -125,9 +128,10 @@ class PlmSectorRelHrDepartmentController extends Controller
                 $response = $model->saveRelHrDepartment();
                 if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    if ($response['status'])
+                    if ($response['status']) {
                         $response['status'] = 0;
-                    else
+                        $response['hr_department_id'] = $model->hr_department_id;
+                    }else
                         $response['status'] = 1;
 
                     return $response;
