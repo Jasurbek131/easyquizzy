@@ -112,13 +112,30 @@ class PlmStops extends BaseModel
      * @param $type
      * @return int|string
      */
-    public static function getStoppingType($type){
-        if ($type == "planned_stops"){
+    public static function getStoppingType($type)
+    {
+        if ($type == "planned_stops") {
             return BaseModel::PLANNED_STOP;
         }
-        if ($type == "unplanned_stops"){
+        if ($type == "unplanned_stops") {
             return BaseModel::UNPLANNED_STOP;
         }
         return "";
+    }
+
+    public static function getListStop($data, $type)
+    {
+        if (!empty($data)) {
+            $list = [];
+            foreach ($data as $key => $item) {
+                $list[$key] = [
+                    'begin_date' => $item['begin_date'] ? strtotime($item['begin_date']) : 0,
+                    'end_time' => $item['end_time'] ? strtotime($item['end_time']) : 0,
+                    'type' => $type,
+                ];
+            }
+            return $list;
+        }
+        return [];
     }
 }

@@ -30,8 +30,9 @@ export const dateFormat = (date) => {
         (month < 10 ? "0" + month : month) + "." +
         (year) + " " +
         (hour < 10 ? "0" + hour : hour) + ":" +
-        (minute < 10 ? "0" + minute : minute) + ":" +
-        (second < 10 ? "0" + second : second);
+        (minute < 10 ? "0" + minute : minute);
+        // + ":" +
+        // (second < 10 ? "0" + second : second);
 }
 export const loadingContent = () => {
     return (

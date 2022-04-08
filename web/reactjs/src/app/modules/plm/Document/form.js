@@ -16,6 +16,7 @@ import {
     TOKEN_PLANNED,
     TOKEN_UNPLANNED,
 } from "../../../actions/consts";
+import {change} from "react-beautiful-dnd/src/state/auto-scroller/can-scroll";
 
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
@@ -83,7 +84,7 @@ class Form extends React.Component {
             },
             language: 'uz',
             shiftList: [],
-            validateDate: [], //buni korinishi [{begin_date: "", end_date: "", reason_between_dates:{ begin_date: "", end_date: ""}}]
+            validateDate: [], //buni korinishi [{begin_date: "", end_date: "", type:{ begin_date: "", end_date: ""}}]
             timeTypeList: [],
             repairedList: [],
             scrappedList: [],
@@ -382,6 +383,21 @@ class Form extends React.Component {
                 if (name === "category_id") {
                     temporarily.store.category_name = e?.label ?? "";
                 }
+                if (name === "end_time") {
+                    if (temporarily.store.end_time !== "" && temporarily.store.begin_date > temporarily.store.end_time) {
+                        toast.error("«Tugash» vaqti «Boshlanish» vaqtidan ko'p bo'lishi kerak!");
+                    }
+                    temporarily.store.bypass = "";
+                }
+                if (name === "bypass") {
+                    let byp = Math.round((new Date(temporarily.store.end_time) - new Date(temporarily.store.begin_date)) / 60000);
+                    if (byp >= 0 && byp >= v && v >= 0) {
+                        temporarily.store.bypass = v;
+                    } else {
+                        toast.error("«Bypass» qiymati notog'ri! Maksimal qiymat: " + byp);
+                        temporarily.store.bypass = 0;
+                    }
+                }
                 this.setState({temporarily: temporarily});
                 break;
             case "repaired":
@@ -467,17 +483,18 @@ class Form extends React.Component {
     };
 
     onHandleSave = async (e) => {
-        let {temporarily, plm_document_items, plm_document} = this.state;
+        let {temporarily, plm_document_items, plm_document, validateDate} = this.state;
         plm_document_items[temporarily.key]['is_change'] = true;
-
+        let key = temporarily.key;
+        let type = temporarily.type;
         let stored = temporarily.store;
-        if (temporarily.type === 'repaired' || temporarily.type === 'scrapped') {
-            plm_document_items[temporarily.key]['products'][temporarily.itemKey][temporarily.type] = JSON.parse(JSON.stringify(temporarily.store));
+        if (type === 'repaired' || type === 'scrapped') {
+            plm_document_items[key]['products'][temporarily.itemKey][type] = JSON.parse(JSON.stringify(temporarily.store));
             temporarily.display = "none";
             this.setState({temporarily: temporarily, plm_document_items: plm_document_items});
         }
         let isSave = true;
-        if (temporarily.type === 'planned_stops') {
+        if (type === 'planned_stops') {
             if (stored.category_id === "") {
                 isSave = false;
                 $('#category_id').children('div').css("border", "1px solid red");
@@ -492,7 +509,7 @@ class Form extends React.Component {
             }
         }
 
-        if (temporarily.type === 'unplanned_stops') {
+        if (type === 'unplanned_stops') {
             if (stored.bypass === "") {
                 isSave = false;
                 $('#bypass').css("border", "1px solid red");
@@ -511,17 +528,68 @@ class Form extends React.Component {
             }
         }
 
-        if (temporarily.type === 'unplanned_stops' || temporarily.type === 'planned_stops') {
+        if (type === 'unplanned_stops' || type === 'planned_stops') {
             if (isSave) {
-                plm_document_items[temporarily.key][temporarily.type].push(JSON.parse(JSON.stringify(temporarily.store)));
-                plm_document_items[temporarily.key] = this.onPlanSummary(plm_document_items[temporarily.key]);
+                let currentStops = [];
+                let hasElement = false;
+                let currentDate = temporarily.store;
 
-                if (temporarily.type === 'unplanned_stops')
-                    temporarily["store"] = JSON.parse(JSON.stringify(unplanned_stops));
-                if (temporarily.type === 'planned_stops')
-                    temporarily["store"] = JSON.parse(JSON.stringify(planned_stops));
-                this.setState({temporarily, plm_document_items, plm_document});
-                this.setByPassQtyNull();
+                let currentValidateDate = validateDate[key]['planned_stops']??[];
+                let currentValidateDate2 = validateDate[key]['unplanned_stops']??[];
+
+                let endDate = Date.parse(currentDate.end_time) / 1000;
+                let beginDate = Date.parse(currentDate.begin_date) / 1000;
+
+                currentStops = currentValidateDate.concat(currentValidateDate2.filter(item =>
+                    !JSON.stringify(currentValidateDate).includes(JSON.stringify(item))
+                ));
+                if (currentStops) {
+                    if (validateDate[key].start_work <= beginDate && endDate <= validateDate[key].end_work) {
+                        for (const index in currentStops) {
+                            if ((
+                                currentStops[index].begin_date <= beginDate && endDate <= currentStops[index].end_time ||
+                                currentStops[index].begin_date >= beginDate && endDate >= currentStops[index].end_time
+                            )) {
+                                hasElement = true;
+                                toast.error("Bu oraliqni tanlay olmaysiz!");
+                                break;
+                            }
+                        }
+                    } else {
+                        toast.error("Bu oraliqda uskuna ishlamaydi!");
+                    }
+                } else {
+                    if (validateDate[key].start_work <= beginDate && endDate <= validateDate[key].end_work) {
+                        hasElement = false;
+                    } else {
+                        hasElement = true;
+                        toast.error("Bu oraliqda uskuna ishlamaydi!");
+                    }
+                }
+                if (!hasElement) {
+                    if (!Array.isArray(validateDate[key]['unplanned_stops'])) {
+                        validateDate[key]['unplanned_stops'] = [];
+                    }
+                    if(!Array.isArray(validateDate[key]['planned_stops'])){
+                        validateDate[key]['planned_stops'] = [];
+                    }
+                    if(type === 'unplanned_stops'){
+                        validateDate[key]['unplanned_stops'].push({begin_date: beginDate, end_time: endDate, type: type});
+                    }
+                    if(type === 'planned_stops'){
+                        validateDate[key]['planned_stops'].push({begin_date: beginDate, end_time: endDate, type: type});
+                    }
+
+                    plm_document_items[key][type].push(JSON.parse(JSON.stringify(temporarily.store)));
+                    plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
+
+                    if (type === 'unplanned_stops')
+                        temporarily["store"] = JSON.parse(JSON.stringify(unplanned_stops));
+                    if (type === 'planned_stops')
+                        temporarily["store"] = JSON.parse(JSON.stringify(planned_stops));
+                    this.setState({temporarily, plm_document_items, plm_document, validateDate});
+                    this.setByPassQtyNull();
+                }
             }
         }
     };
@@ -551,7 +619,7 @@ class Form extends React.Component {
     };
 
     onPush = async (type, model, key, index, e) => {
-        let {plm_document_items, temporarily} = this.state;
+        let {plm_document_items, temporarily, validateDate} = this.state;
         switch (type) {
             case "add":
                 let newItems = items;
@@ -560,7 +628,6 @@ class Form extends React.Component {
                 plm_document_items.push(JSON.parse(JSON.stringify(newItems)));
                 break;
             case "remove":
-                let {validateDate} = this.state;
                 if (plm_document_items[key]["id"]) {
                     if (confirm("Rostdan ham o'chirmoqchimisiz?")) {
                         let response = await axios.post(API_URL + 'save-properties?type=DELETE_DOCUMENT_ITEM', {
@@ -623,7 +690,8 @@ class Form extends React.Component {
             case "stops-update":
                 temporarily["store"] = model;
                 plm_document_items[temporarily.key][temporarily.type] = removeElement(plm_document_items[temporarily.key][temporarily.type], key);
-                this.setState({plm_document_items: plm_document_items});
+                validateDate[temporarily.key][temporarily.type] = removeElement(validateDate[temporarily.key][temporarily.type], key);
+                this.setState({plm_document_items: plm_document_items, validateDate});
                 this.setByPassQtyNull();
                 break;
         }
@@ -1331,6 +1399,7 @@ class Form extends React.Component {
                                                                     locale={ru}
                                                                     id={"end_time"}
                                                                     className={"form-control"}
+                                                                    readOnly={!temporarily.store.begin_date}
                                                                     selected={temporarily?.store?.end_time ? new Date(temporarily.store.end_time) : ""}
                                                                     autoComplete={'off'}
                                                                     minDate={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
@@ -1357,6 +1426,9 @@ class Form extends React.Component {
                                                                     onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'bypass', '', '', '')}
                                                                     className={"form-control"}
                                                                     type={"number"}
+                                                                    min={0}
+                                                                    max={!temporarily.store.end_time ? 0 : Math.round((new Date(temporarily.store.end_time) - new Date(temporarily.store.begin_date)) / 1000 / 60)}
+                                                                    readOnly={!temporarily.store.end_time}
                                                                     value={temporarily?.store?.bypass} id={"bypass"}/>
                                                             </div>
                                                         </div> : ""

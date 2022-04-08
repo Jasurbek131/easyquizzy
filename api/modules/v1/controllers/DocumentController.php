@@ -5,6 +5,7 @@ namespace app\api\modules\v1\controllers;
 use app\api\modules\v1\models\ApiPlmDocument;
 use app\models\BaseModel;
 use app\modules\hr\models\HrDepartments;
+use app\modules\plm\models\PlmStops;
 use app\modules\references\models\Categories;
 use app\modules\references\models\Defects;
 use app\modules\references\models\Reasons;
@@ -170,6 +171,8 @@ class DocumentController extends ActiveController
                             $validateDate[$index]['start_work'] = strtotime($item['start_work']);
                             $validateDate[$index]['end_work'] = strtotime($item['end_work']);
                             $validateDate[$index]['equipment'] = array_keys(ArrayHelper::index($item['equipments'], 'value'));
+                            $validateDate[$index]['planned_stops'] = !empty($item['planned_stops']) ? PlmStops::getListStop($item['planned_stops'],'planned_stops') : [];
+                            $validateDate[$index]['unplanned_stops'] = !empty($item['unplanned_stops']) ? PlmStops::getListStop($item['unplanned_stops'],'unplanned_stops') : [];
                         }
                     }
                     if (!empty($plm_document)) {
