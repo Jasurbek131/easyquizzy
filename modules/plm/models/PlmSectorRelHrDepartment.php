@@ -216,4 +216,28 @@ class PlmSectorRelHrDepartment extends BaseModel
         }
         return $text;
     }
+    public static function getHrRelDeparea($department_id = null)
+    {
+        if (!empty($department_id)) {
+            $data = self::find()
+                ->alias('psrhd')
+                ->select([
+                    "hrd.id AS id",
+                    "hrd.name AS dep_name",
+                    sprintf("ARRAY_TO_STRING(ARRAY_AGG(DISTINCT CONCAT('<span class=".'"badge badge-primary mr-1"'.">',c.name_%s,'</span>')),' ') AS category", Yii::$app->language),
+                    "MAX(sl.name_uz) as status_name",
+                    "MAX(sl.id) as status"
+                ])
+                ->leftJoin(['c' => 'categories'], 'psrhd.category_id = c.id')
+                ->leftJoin(['hrd' => 'hr_departments'], 'psrhd.hr_department_id = hrd.id')
+                ->leftJoin(['sl' => 'status_list'], 'psrhd.status_id = sl.id')
+                ->where(['psrhd.hr_department_id' => $department_id])
+                ->groupBy(["hrd.id"])
+//                ->orderBy(['psrhd.id' => SORT_DESC, 'psrhd.status_id' => SORT_ASC])
+                ->asArray()
+                ->all();
+            return $data ?? [];
+        }
+        return [];
+    }
 }

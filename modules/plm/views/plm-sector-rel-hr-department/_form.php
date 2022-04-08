@@ -20,6 +20,7 @@ use yii\widgets\ActiveForm;
         'data' => HrDepartments::getList(),
         'options' => ['placeholder' => Yii::t("app","Select ...")],
         'pluginOptions' => [
+            'disabled' => true,
             'allowClear' => true,
         ]
     ]) ?>
@@ -37,10 +38,11 @@ use yii\widgets\ActiveForm;
         ]
     ]) ?>
 
-    <?php echo $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList()) ?>
+    <?php echo $form->field($model, 'status_id')->dropDownList(BaseModel::getStatusList(),[
+        'disabled' => true,]) ?>
 
     <div class="form-group">
-        <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success button-save-form']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

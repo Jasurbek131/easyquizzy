@@ -355,4 +355,5 @@ return [
     '{node} # {id} - \'{name}\': {error}' => '',
     '№' => '',
     'Incorrect username or password.' => 'Foydalanuvchi nomi yoki parol xato',
+    'Types of stops' => 'To\'xtalish turlari',
 ];

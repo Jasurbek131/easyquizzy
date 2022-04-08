@@ -353,4 +353,5 @@ return [
     'welcome' => 'Добро пожаловать',
     '{node} # {id} - \'{name}\': {error}' => '',
     '№' => '',
+    'Types of stops' =>'',
 ];
