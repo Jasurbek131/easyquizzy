@@ -615,7 +615,7 @@ function ajaxSubmit(id){
                         if (item['status'] == 'Active') {
                             td_equipments += '<a href="' + urlEquipmentUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success equipments-update" ><i class="fa fa-pencil-alt"></i></a>';
                         }    
-                        td_equipments += '<a href="' + urlEquipmentDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info equipments-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>' +
+                        td_equipments += '<a href="' + urlEquipmentDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-danger equipments-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>' +
                              '</td>' +
                         '</tr>'; 
                          $('#table-equipments').find('tbody').append(td_equipments);
@@ -636,7 +636,7 @@ function ajaxSubmit(id){
 //                        if (item['status'] == 'Active') {
 //                            td_products += '<a href="' + urlProductUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success products-update" ><i class="fa fa-pencil-alt"></i></a>';
 //                        }    
-//                        td_products += '<a href="' + urlProductDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info products-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>' +
+//                        td_products += '<a href="' + urlProductDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-danger products-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></a>' +
 //                             '</td>' +
 //                         '</tr>'; 
 //                         $('#table-products').find('tbody').append(td_products);
@@ -656,7 +656,7 @@ function ajaxSubmit(id){
                         if (item['status'] == 'Active') {
                             td_defects += '<a href="' + urlDefectsUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success defects-update" ><i class="fa fa-pencil-alt"></i></button>';
                         }    
-                        td_defects += '<a href="' + urlDefectsDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info defects-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></button>' +
+                        td_defects += '<a href="' + urlDefectsDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-danger defects-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></button>' +
                              '</td>' +
                           '</tr>'; 
                          $('#table-defects').find('tbody').append(td_defects);
@@ -675,7 +675,7 @@ function ajaxSubmit(id){
                         if (item['status'] == 'Active') {
                             td_deparea += '<a href="' + urlDepareaUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success deparea-update" ><i class="fa fa-pencil-alt"></i></button>';
                         }    
-                        td_deparea += '<a href="' + urlDepareaDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-info deparea-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></button>' +
+                        td_deparea += '<a href="' + urlDepareaDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-danger deparea-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></button>' +
                              '</td>' +
                           '</tr>'; 
                          $('#table-deparea').find('tbody').append(td_deparea);
