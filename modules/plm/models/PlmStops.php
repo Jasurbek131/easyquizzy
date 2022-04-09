@@ -26,6 +26,8 @@ use Yii;
  * @property Reasons[] $categories
  * @property PlmDocumentItems[] $plmDocumentItems
  * @property PlmDocumentItems[] $plmDocumentItem
+ * @property string $doc_id [integer]
+ * @property string $category_id [integer]
  */
 class PlmStops extends BaseModel
 {

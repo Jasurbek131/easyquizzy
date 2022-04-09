@@ -915,7 +915,7 @@ class Form extends React.Component {
                             <div className={"col-lg-12"}>
                                 <div className={'pull-right'}>
                                     {
-                                        isStatus ? (
+                                        plm_document?.id && isStatus ? (
                                             <button onClick={this.saveAndFinish}
                                                     className={'btn btn-success btn-sm mr-2'}>Kun yopish</button>
                                         ) : ''
