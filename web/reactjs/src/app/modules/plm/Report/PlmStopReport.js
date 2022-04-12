@@ -293,17 +293,17 @@ class PlmStopReport extends Component {
                     {
                         title: "Boshlanish vaqti",
                         style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
-                        width: {hpx: 40, wpx: 70}
+                        width: {hpx: 40, wpx: 100}
                     }, // width in  characcters
                     {
                         title: "Tugash vaqti",
                         style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
-                        width: {hpx: 40, wpx: 70}
+                        width: {hpx: 40, wpx: 100}
                     }, // width in  characcters
                     {
                         title: "To‘xtalish vaqti(min)",
                         style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
-                        width: {hpx: 40, wpx: 70}
+                        width: {hpx: 40, wpx: 120}
                     }, // width in  characcters
 
 
@@ -315,11 +315,13 @@ class PlmStopReport extends Component {
             <div>
                 {search}
                 <div className="card">
-                    <ExcelFile
-                        filename={"To‘xtalishlar"}
-                        element={<button type="button" className="btn btn-info btn-xs float-right m-3"><i className={'fa fa-file-excel-o'}/>Eхсель</button>}>
-                        <ExcelSheet dataSet={DataSet} name="Download"/>
-                    </ExcelFile>
+                    <div>
+                        <ExcelFile
+                            filename={"To‘xtalishlar"}
+                            element={<button type="button" className="btn btn-info btn-xs float-right m-3"><i className={'fa fa-file-excel-o'}/>Excel</button>}>
+                            <ExcelSheet dataSet={DataSet} name="Download"/>
+                        </ExcelFile>
+                    </div>
                     <div className="card-body">
                         <table className={"table table-bordered table-stripped table-hover"}>
                             <thead>
