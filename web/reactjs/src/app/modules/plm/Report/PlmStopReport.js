@@ -121,14 +121,14 @@ class PlmStopReport extends Component {
         />;
 
         dataBody = items?.map((item, index) => {
-            sumDiff +=  1 * (item.diff_date ?? 0);
+            sumDiff +=  1 * (item.diff_date ?? 0)/60;
             return (
                 <tr key={index}>
                     <td>{++iterator}</td>
                     <td>{item.name ?? ""}</td>
                     <td>{item.begin_date ?? ""}</td>
                     <td>{item.end_date ?? ""}</td>
-                    <td>{item.diff_date ?? ""}</td>
+                    <td>{1*item.diff_date/60 ?? ""}</td>
                 </tr>
             );
         });
@@ -145,7 +145,7 @@ class PlmStopReport extends Component {
                                     <th>To'xtalish turi</th>
                                     <th>Boshlanish vaqti</th>
                                     <th>Tugash vaqti</th>
-                                    <th>s</th>
+                                    <th>To‘xtalish vaqti(min)</th>
                                 </tr>
                             </thead>
                             <tbody>
