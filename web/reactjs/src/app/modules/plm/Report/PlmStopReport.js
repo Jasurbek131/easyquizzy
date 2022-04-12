@@ -5,7 +5,9 @@ import {tr} from "react-date-range/dist/locale";
 import ReactPaginate from "react-paginate";
 import {SearchStop} from "./search/SearchStop";
 import {SearchDocument} from "./search/SearchDocument";
-
+import ReactExport from "react-data-export";
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/plm-stop-reports/";
 const initialSearch = {
     language: 'uz',
@@ -98,7 +100,75 @@ class PlmStopReport extends Component {
         });
         this.setState({ searchParams });
     };
-
+    writeSimpleExcelRows = (index, item) => {
+        return [
+            {
+                value: (index + 1),
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                }
+            },
+            {
+                value: item.name ? item.name : '',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                }
+            },
+            {
+                value: item.begin_date ? item.begin_date : '',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                }
+            },
+            {
+                value: item.end_date ? item.end_date : '',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                }
+            },
+            {
+                value: item.diff_date ? 1*item.diff_date/60 : '',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                }
+            },
+        ];
+    }
     render() {
         let {
             items,
@@ -106,10 +176,10 @@ class PlmStopReport extends Component {
             searchParams,
             stop_list,
         } = this.state;
-
         let dataBody = "";
         let iterator = 0;
         let sumDiff = 0;
+        let returnDataExl = [];
         let pageCount = Math.ceil(pagination.totalCount / pagination.defaultPageSize);
 
         const search = <SearchStop
@@ -122,6 +192,7 @@ class PlmStopReport extends Component {
 
         dataBody = items?.map((item, index) => {
             sumDiff +=  1 * (item.diff_date ?? 0)/60;
+            returnDataExl.push(this.writeSimpleExcelRows(index, item));
             return (
                 <tr key={index}>
                     <td>{++iterator}</td>
@@ -133,16 +204,128 @@ class PlmStopReport extends Component {
             );
         });
 
+        returnDataExl.push([
+            {
+                value: 'Jami',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                },
+                width: {hpx: 40}
+            },
+            {
+                value: '',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                },
+                width: {hpx: 40}
+            },
+            {
+                value: '',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                },
+                width: {hpx: 40}
+            },
+            {
+                value: '',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                },
+                width: {hpx: 40}
+            },
+            {
+                value: sumDiff,
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                },
+                width: {hpx: 40}
+            }
+        ]);
+
+        const DataSet = [
+            {
+                columns: [
+                    {
+                        title: "№",
+                        style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
+                        width: {hpx: 40, wpx: 30}
+                    }, // width in  pixcel
+                    {
+                        title: "To‘xtalish turi",
+                        style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
+                        width: {hpx: 40, wpx: 100}
+                    }, // width in  characcters
+                    {
+                        title: "Boshlanish vaqti",
+                        style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
+                        width: {hpx: 40, wpx: 70}
+                    }, // width in  characcters
+                    {
+                        title: "Tugash vaqti",
+                        style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
+                        width: {hpx: 40, wpx: 70}
+                    }, // width in  characcters
+                    {
+                        title: "To‘xtalish vaqti(min)",
+                        style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
+                        width: {hpx: 40, wpx: 70}
+                    }, // width in  characcters
+
+
+                ],
+                data: returnDataExl
+            }
+        ];
         return (
             <div>
                 {search}
                 <div className="card">
+                    <ExcelFile
+                        filename={"To‘xtalishlar"}
+                        element={<button type="button" className="btn btn-info btn-xs float-right m-3"><i className={'fa fa-file-excel-o'}/>Eхсель</button>}>
+                        <ExcelSheet dataSet={DataSet} name="Download"/>
+                    </ExcelFile>
                     <div className="card-body">
                         <table className={"table table-bordered table-stripped table-hover"}>
                             <thead>
                                 <tr>
                                     <th>№</th>
-                                    <th>To'xtalish turi</th>
+                                    <th>To‘xtalish turi</th>
                                     <th>Boshlanish vaqti</th>
                                     <th>Tugash vaqti</th>
                                     <th>To‘xtalish vaqti(min)</th>
