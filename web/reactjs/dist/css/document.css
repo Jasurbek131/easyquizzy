@@ -215,3 +215,6 @@ table{
 .danger{
     background-color: #ffb9b9;
 }
+.hidden{
+    display: none;
+}

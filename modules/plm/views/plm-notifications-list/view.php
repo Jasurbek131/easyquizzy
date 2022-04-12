@@ -67,7 +67,7 @@ $no_defect = (($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED')
                                     <td><?php echo $model['begin_time'] ? date('d.m.Y H:i', strtotime($model['begin_time'])) : ''; ?></td>
                                     <td><?php echo $model['end_time'] ? date('d.m.Y H:i', strtotime($model['end_time'])) : ''; ?></td>
 <!--                                --><?php //endif; ?>
-                                <td><?php echo $model['product']; ?></td>
+                                <td><?php echo $model['product']."<br>".$model['part_number']; ?></td>
                                 <td><?php echo $model['fact_qty']; ?></td>
                                 <td><?php echo $model['add_info']; ?></td>
                             </tr>

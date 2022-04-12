@@ -14,6 +14,7 @@ use app\modules\plm\models\PlmDocumentItems;
 use app\modules\plm\models\PlmDocuments;
 use app\modules\plm\models\PlmNotificationRelDefect;
 use app\modules\plm\models\PlmNotificationsList;
+use app\modules\plm\models\PlmNotificationsListRelReason;
 use app\modules\plm\models\PlmProcessingTime;
 use app\modules\plm\models\PlmSectorList;
 use app\modules\plm\models\PlmStops;
@@ -46,9 +47,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
         try {
 
             $doc = new PlmDocuments();
-            if (isset($document["id"]) && !empty($document['id'])){
+            if (isset($document["id"]) && !empty($document['id'])) {
                 $doc = PlmDocuments::findOne($document['id']);
-                if($doc->status_id != self::STATUS_ACTIVE){
+                if ($doc->status_id != self::STATUS_ACTIVE) {
                     $response = [
                         'status' => false,
                         'message' => Yii::t('app', 'Document not active'),
@@ -56,7 +57,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                         'line' => __LINE__
                     ];
                 }
-            }else{
+            } else {
                 $doc->setAttributes([
                     'reg_date' => date("Y-m-d H:i:s", strtotime($document['reg_date'])),
                     'hr_department_id' => $document['hr_department_id'],
@@ -127,7 +128,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                     ]);
                     if (!$notificationTime || $notificationTime->status_id == BaseModel::STATUS_REJECTED) // Oldin yozilmagan yoki qaytarilgan bo'lsa yangi yozadi
                         $notificationTime = new PlmNotificationsList();
-                    if ($notificationTime->status_id !== BaseModel::STATUS_ACCEPTED){
+                    if ($notificationTime->status_id !== BaseModel::STATUS_ACCEPTED) {
                         $notificationTime->setAttributes([
                             "plm_doc_item_id" => $docItem->id,
                             "begin_time" => date("Y-m-d H:i:s", strtotime($item['start_work'])),
@@ -285,7 +286,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             foreach ($repaired as $repair) {
                                 if ($repair['count']) {
 
-                                    if ($isCreateRepaired){
+                                    if ($isCreateRepaired) {
                                         $notificationRepaired = new PlmNotificationsList([
                                             "plm_doc_item_id" => $docItem->id,
                                             'status_id' => BaseModel::STATUS_ACTIVE,
@@ -345,7 +346,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             $scrapped = $product['scrapped'] ?? [];
                             foreach ($scrapped as $scrap) {
                                 if ($scrap['count']) {
-                                    if ($isCreateScrapped){
+                                    if ($isCreateScrapped) {
                                         $notificationScrapped = new PlmNotificationsList([
                                             "plm_doc_item_id" => $docItem->id,
                                             'status_id' => BaseModel::STATUS_ACTIVE,
@@ -616,7 +617,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                     ])
                                     ->leftJoin(["e" => "equipments"], 'pdie.equipment_id = e.id');
                             },
-                            'notifications_status' => function($ns){
+                            'notifications_status' => function ($ns) {
                                 $ns->from(['pnl' => "plm_notifications_list"])
                                     ->select([
                                         "pnl.id",
@@ -723,7 +724,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             ])->leftJoin('hr_departments hd', 'pd.hr_department_id = hd.id')
             ->leftJoin('shifts sh', 'pd.shift_id = sh.id')
             ->where(['!=', 'pd.status_id', \app\models\BaseModel::STATUS_INACTIVE])
-            ->andWhere(['IN','hd.id', $departmentIds])
+            ->andWhere(['IN', 'hd.id', $departmentIds])
             ->orderBy(["pd.id" => SORT_DESC])
             ->asArray();
 
@@ -810,10 +811,10 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
             'message' => Yii::t('app', 'Saved Successfully'),
         ];
         try {
-            if(!empty($document['id'])) {
+            if (!empty($document['id'])) {
                 $document = PlmDocuments::findOne(['id' => $document['id']]);
                 if (!empty($document)) {
-                    if($document->status_id == BaseModel::STATUS_ACTIVE){
+                    if ($document->status_id == BaseModel::STATUS_ACTIVE) {
                         $documentItems = PlmDocumentItems::find()->where(['document_id' => $document->id])->asArray()->all();
                         $documentItemsId = ArrayHelper::map($documentItems, 'id', 'id');
                         $notifications = PlmNotificationsList::find()
@@ -823,7 +824,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                             ])
                             ->asArray()
                             ->all();
-                        if(!empty($notifications)){
+                        if (!empty($notifications)) {
                             $response = [
                                 'status' => false,
                                 'message' => Yii::t('app', 'Document has active notifications'),
@@ -838,7 +839,7 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                                 ];
                             }
                         }
-                    }else{
+                    } else {
                         $response = [
                             'status' => false,
                             'message' => Yii::t('app', 'Document not active'),
@@ -856,12 +857,12 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                     'message' => Yii::t('app', 'Document not found'),
                 ];
             }
-            if($response['status']){
+            if ($response['status']) {
                 $transaction->commit();
             } else {
                 $transaction->rollBack();
             }
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $transaction->rollBack();
             $response = [
                 'status' => false,
@@ -870,6 +871,47 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
         }
 
 
+        return $response;
+    }
+
+    public static function deleteDate($id)
+    {
+        $response = [
+            'status' => false,
+            'message' => Yii::t('app', 'Deleted Failed'),
+        ];
+        if (!empty($id)) {
+            $document = PlmDocuments::findOne(['id' => $id]);
+            if ($document->status_id == BaseModel::STATUS_ACTIVE) {
+
+                $documentItems = PlmDocumentItems::find()->where(['document_id' => $document->id])->asArray()->all();
+                $documentItemsId = ArrayHelper::map($documentItems, 'id', 'id');
+
+                $plmNotificationsList = PlmNotificationsList::find()->where(['plm_doc_item_id' => $documentItemsId])->asArray()->all();
+                $plmNotificationsListId = ArrayHelper::map($plmNotificationsList, 'id', 'id');
+
+                PlmNotificationsList::updateAll(['status_id' => BaseModel::STATUS_INACTIVE], ['plm_doc_item_id' => $documentItemsId]);
+                PlmNotificationsListRelReason::updateAll(['status_id' => BaseModel::STATUS_INACTIVE], ['plm_notification_list_id' => $plmNotificationsListId]);
+
+                $document->status_id = BaseModel::STATUS_INACTIVE;
+                if ($document->save()) {
+                    $response = [
+                        'status' => true,
+                        'message' => Yii::t('app', 'Document deleted!'),
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app', 'Document not deleted!'),
+                    ];
+                }
+            } else {
+                $response = [
+                    'status' => false,
+                    'message' => Yii::t('app', 'Document not deleted. Document not active!'),
+                ];
+            }
+        }
         return $response;
     }
 }

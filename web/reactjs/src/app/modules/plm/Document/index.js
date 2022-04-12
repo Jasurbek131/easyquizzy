@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {Flip, toast, ToastContainer} from 'react-toastify';
 import axios from "axios";
 import ReactPaginate from "react-paginate";
-import {loadingContent} from "../../../actions/functions";
+import {loadingContent, removeElement} from "../../../actions/functions";
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
 
@@ -47,12 +47,23 @@ class Index extends React.Component {
 
     onPageChange = async (e) => {
         this.setState({isLoadingSearch: true});
-        let page = e?.selected ? + e.selected : 0;
+        let page = e?.selected ? +e.selected : 0;
         let {searchParams} = this.state;
         searchParams.page = page;
-        await this.onChangeItems( searchParams );
+        await this.onChangeItems(searchParams);
     };
 
+    deleteDocument = async (id, key) => {
+        let ids = {id: id};
+        const response = await axios.post(API_URL + 'save-properties?type=DELETE_DOCUMENT', ids);
+        if (response.data.status) {
+            let {documents} = this.state;
+            this.setState({documents: removeElement(documents, key)});
+            toast.success(response.data.message);
+        } else {
+            toast.error(response.data.message);
+        }
+    }
 
     render() {
         const {
@@ -99,10 +110,14 @@ class Index extends React.Component {
                                                 {/*<button className={"btn btn-info btn-xs"}>
                                                     <i className={"fa fa-eye"}/>
                                                 </button>*/}
-                                                &nbsp;
                                                 <Link to={'/update/' + item.id} className={"btn btn-success btn-xs"}>
-                                                    <i className={"fa fa-pencil-alt"}/>
+                                                    <i className={item.status_id == 1 ? 'fa fa-pencil-alt' : 'fa fa-eye'}/>
                                                 </Link>
+                                                &nbsp;
+                                                {item.status_id == 1 ? <button className={'btn btn-danger btn-xs'}
+                                                                               onClick={this.deleteDocument.bind(this, item.id, key)}>
+                                                    <i
+                                                        className={'fa fa-trash'}/></button> : ''}
                                             </td>
                                         </tr>
                                     )

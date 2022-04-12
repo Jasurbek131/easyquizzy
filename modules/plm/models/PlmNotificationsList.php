@@ -128,6 +128,7 @@ class PlmNotificationsList extends BaseModel
                     'defect.defect',
                     'sh.name shift',
                     'product.product',
+                    'product.part_number',
                     'equipment.equipment',
                     'c.id AS category_id',
                     'hd.name AS department',
@@ -156,6 +157,7 @@ class PlmNotificationsList extends BaseModel
                         "pdip.document_item_id",
                         "SUM(pdip.fact_qty) AS fact_qty",
                         "STRING_AGG(DISTINCT p.name,', ') AS product",
+                        "STRING_AGG(DISTINCT p.part_number,', ') AS part_number",
                     ])
                     ->leftJoin(['p' => 'products'],'pdip.product_id = p.id')
                     ->groupBy(['pdip.document_item_id'])

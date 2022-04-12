@@ -534,8 +534,8 @@ class Form extends React.Component {
                 let hasElement = false;
                 let currentDate = temporarily.store;
 
-                let currentValidateDate = validateDate[key]['planned_stops']??[];
-                let currentValidateDate2 = validateDate[key]['unplanned_stops']??[];
+                let currentValidateDate = validateDate[key]['planned_stops'] ?? [];
+                let currentValidateDate2 = validateDate[key]['unplanned_stops'] ?? [];
 
                 let endDate = Date.parse(currentDate.end_time) / 1000;
                 let beginDate = Date.parse(currentDate.begin_date) / 1000;
@@ -570,13 +570,17 @@ class Form extends React.Component {
                     if (!Array.isArray(validateDate[key]['unplanned_stops'])) {
                         validateDate[key]['unplanned_stops'] = [];
                     }
-                    if(!Array.isArray(validateDate[key]['planned_stops'])){
+                    if (!Array.isArray(validateDate[key]['planned_stops'])) {
                         validateDate[key]['planned_stops'] = [];
                     }
-                    if(type === 'unplanned_stops'){
-                        validateDate[key]['unplanned_stops'].push({begin_date: beginDate, end_time: endDate, type: type});
+                    if (type === 'unplanned_stops') {
+                        validateDate[key]['unplanned_stops'].push({
+                            begin_date: beginDate,
+                            end_time: endDate,
+                            type: type
+                        });
                     }
-                    if(type === 'planned_stops'){
+                    if (type === 'planned_stops') {
                         validateDate[key]['planned_stops'].push({begin_date: beginDate, end_time: endDate, type: type});
                     }
 
@@ -932,14 +936,15 @@ class Form extends React.Component {
                                         this.onHandleChange('date', 'plm_document', 'reg_date', '', '', '', new Date(e))
                                     }}
                                                 id={"reg_date"}
-                                                locale={language === "uz" ? uz : ru}
+                                                peekNextMonth
+                                                showYearDropdown
+                                                showMonthDropdown
+                                                autoComplete={'off'}
+                                                readOnly={!isStatus}
                                                 dateFormat="dd.MM.yyyy"
+                                                locale={language === "uz" ? uz : ru}
                                                 className={"form-control aria-required"}
                                                 selected={plm_document?.reg_date ? new Date(plm_document.reg_date) : ""}
-                                                autoComplete={'off'}
-                                                peekNextMonth
-                                                showMonthDropdown
-                                                showYearDropdown
                                     />
                                 </div>
                             </div>
@@ -961,11 +966,12 @@ class Form extends React.Component {
                                     <label className={"control-label"}>Smena</label>
                                     <Select className={"aria-required"}
                                             id={"shift_id"}
-                                            onChange={this.onHandleChange.bind(this, 'select', 'plm_document', 'shift_id', '', '', '')}
-                                            placeholder={"Tanlang ..."}
-                                            value={shiftList.filter(({value}) => +value === +plm_document?.shift_id)}
                                             options={shiftList}
                                             styles={customStyles}
+                                            isDisabled={!isStatus}
+                                            placeholder={"Tanlang ..."}
+                                            value={shiftList.filter(({value}) => +value === +plm_document?.shift_id)}
+                                            onChange={this.onHandleChange.bind(this, 'select', 'plm_document', 'shift_id', '', '', '')}
                                     />
                                 </div>
                             </div>
@@ -973,11 +979,12 @@ class Form extends React.Component {
                                 <div className={'form-group'}>
                                     <label className={"control-label"}>Izoh</label>
                                     <textarea
-                                        onChange={this.onHandleChange.bind(this, 'textarea', 'plm_document', 'add_info', '', '', '')}
+                                        rows={1}
                                         name={'add_info'}
-                                        value={plm_document?.add_info}
                                         className={'form-control'}
-                                        rows={"1"}
+                                        value={plm_document?.add_info}
+                                        readOnly={!isStatus}
+                                        onChange={this.onHandleChange.bind(this, 'textarea', 'plm_document', 'add_info', '', '', '')}
                                     />
                                 </div>
                             </div>
@@ -1043,6 +1050,7 @@ class Form extends React.Component {
                                                                     id={"equipment_group_id_" + key}
                                                                     onChange={this.onHandleChange.bind(this, 'select', 'plm_document_items', 'equipment_group_id', key, '', '')}
                                                                     placeholder={"Qurilmalar guruhi"}
+                                                                    isDisabled={!isStatus}
                                                                     value={equipmentGroupValue}
                                                                     options={equipmentGroupList}
                                                                     styles={customStyles}
@@ -1051,15 +1059,16 @@ class Form extends React.Component {
                                                         <div className="col-lg-12">
                                                             <label htmlFor={"equipments_" + key}>Uskunalar</label>
                                                             <Select
-                                                                styles={customStyles}
                                                                 isMulti
+                                                                isClearable={true}
+                                                                styles={customStyles}
+                                                                isDisabled={!isStatus}
+                                                                placeholder={"Выбрать"}
+                                                                value={item.equipments}
                                                                 id={"equipments_" + key}
                                                                 className={"custom-padding"}
-                                                                onChange={this.onHandleChange.bind(this, 'multi-select', 'plm_document_items', 'equipments', key, '', '')}
-                                                                value={item.equipments}
-                                                                placeholder={"Выбрать"}
-                                                                isClearable={true}
                                                                 options={item?.equipmentGroup?.equipments ?? []}
+                                                                onChange={this.onHandleChange.bind(this, 'multi-select', 'plm_document_items', 'equipments', key, '', '')}
                                                             />
                                                         </div>
                                                     </div>
@@ -1080,7 +1089,7 @@ class Form extends React.Component {
                                                                         onChange={(e) => {
                                                                             this.onHandleChange('date', 'plm_document_items', 'start_work', key, '', '', new Date(e))
                                                                         }}
-                                                                        readOnly={item.equipments.length == 0 || this.statusGenerator(item, TOKEN_WORKING_TIME)}
+                                                                        readOnly={!isStatus || item.equipments.length == 0 || this.statusGenerator(item, TOKEN_WORKING_TIME)}
                                                                         className={"form-control text-center aria-required"}
                                                                         selected={item?.start_work ? new Date(item.start_work) : ""}
                                                                         autoComplete={'off'}
@@ -1106,7 +1115,7 @@ class Form extends React.Component {
                                                                         filterTime={(e) => {
                                                                             return new Date(item?.start_work) < new Date(e);
                                                                         }}
-                                                                        readOnly={item.start_work == false || this.statusGenerator(item, TOKEN_WORKING_TIME)}
+                                                                        readOnly={!isStatus || item.start_work == false || this.statusGenerator(item, TOKEN_WORKING_TIME)}
                                                                         autoComplete={'off'}
                                                                         showTimeSelect
                                                                         minDate={item.start_work}
@@ -1157,6 +1166,7 @@ class Form extends React.Component {
                                                                                     id={"product_id_" + key + "_" + prKey}
                                                                                     onChange={this.onHandleChange.bind(this, 'select', 'products', 'product_id', key, prKey, '')}
                                                                                     placeholder={"Tanlang"}
+                                                                                    isDisabled={!isStatus}
                                                                                     value={item?.equipmentGroup?.product_list.filter(({value}) => +value === +product?.product_id)}
                                                                                     options={item?.equipmentGroup?.product_list ?? []}
                                                                                     styles={customStyles}
@@ -1183,7 +1193,7 @@ class Form extends React.Component {
                                                                                 className={'form-control aria-required'}
                                                                                 id={"qty_" + prKey}
                                                                                 min={0}
-                                                                                readOnly={this.unplannedBypassSum(item) > 0 ? false : true}
+                                                                                readOnly={(!isStatus || !this.unplannedBypassSum(item) > 0)}
                                                                                 value={product?.qty ?? ""}/>
                                                                         </div>
                                                                     </div>
@@ -1225,7 +1235,7 @@ class Form extends React.Component {
                                                                 </div>
 
                                                                 <div className={'button-absolute'}>
-                                                                    {
+                                                                    {isStatus ? (
                                                                         prKey !== 0 ? (
                                                                             <button
                                                                                 onClick={this.onPush.bind(this, 'product-minus', 'products', key, prKey)}
@@ -1241,7 +1251,7 @@ class Form extends React.Component {
                                                                                 </button>
                                                                             ) : (<span></span>)
                                                                         )
-                                                                    }
+                                                                    ) : ""}
 
                                                                 </div>
                                                             </div>
@@ -1331,9 +1341,9 @@ class Form extends React.Component {
                                     <div className={'row'}>
                                         <div className={'col-lg-12'}>
                                             <div className={'pull-left'}>
-                                                <button onClick={this.onHandleSave.bind(this)}
-                                                        className={"btn btn-sm btn-success mr-3"}>Saqlash
-                                                </button>
+                                                {isStatus ? <button onClick={this.onHandleSave.bind(this)}
+                                                                    className={"btn btn-sm btn-success mr-3"}>Saqlash
+                                                </button> : ''}
                                             </div>
                                             <div className={'pull-right'}>
                                                 <b>{temporarily?.type === "repaired" || temporarily?.type === "scrapped" ? "Jami: " + this.onSumma(temporarily?.store) : ""}</b>
@@ -1344,7 +1354,7 @@ class Form extends React.Component {
                                 <div className={'card-body'}>
                                     {
                                         temporarily?.type === "planned_stops" || temporarily?.type === "unplanned_stops" ?
-                                            <div className={'row'}>
+                                            <div className={!isStatus ? 'row hidden' : 'row'}>
                                                 <div className={'col-lg-12'}>
                                                     <div className={"form-group"}>
                                                         <label className={"control-label"}>Sabablar</label>
@@ -1352,6 +1362,7 @@ class Form extends React.Component {
                                                             onChange={this.onHandleChange.bind(this, 'select', 'temporarily', 'category_id', '', '', '')}
                                                             placeholder={"Tanlang ..."}
                                                             id={"category_id"}
+                                                            isDisabled={!isStatus}
                                                             value={categoriesList.filter(({value}) => +value === +temporarily?.store?.category_id)}
                                                             options={categoriesList}
                                                             styles={customStyles}
@@ -1376,6 +1387,7 @@ class Form extends React.Component {
                                                                     selected={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
                                                                     autoComplete={'off'}
                                                                     peekNextMonth
+                                                                    readOnly={!isStatus}
                                                                     minDate={temporarily?.item?.start_work ? new Date(temporarily?.item?.start_work) : ""}
                                                                     maxDate={temporarily?.item?.end_work ? new Date(temporarily?.item?.end_work) : ""}
                                                                     filterTime={(e) => {
@@ -1399,7 +1411,7 @@ class Form extends React.Component {
                                                                     locale={ru}
                                                                     id={"end_time"}
                                                                     className={"form-control"}
-                                                                    readOnly={!temporarily.store.begin_date}
+                                                                    readOnly={!isStatus || !temporarily.store.begin_date}
                                                                     selected={temporarily?.store?.end_time ? new Date(temporarily.store.end_time) : ""}
                                                                     autoComplete={'off'}
                                                                     minDate={temporarily?.store?.begin_date ? new Date(temporarily.store.begin_date) : ""}
@@ -1428,7 +1440,7 @@ class Form extends React.Component {
                                                                     type={"number"}
                                                                     min={0}
                                                                     max={!temporarily.store.end_time ? 0 : Math.round((new Date(temporarily.store.end_time) - new Date(temporarily.store.begin_date)) / 1000 / 60)}
-                                                                    readOnly={!temporarily.store.end_time}
+                                                                    readOnly={!isStatus || !temporarily.store.end_time}
                                                                     value={temporarily?.store?.bypass} id={"bypass"}/>
                                                             </div>
                                                         </div> : ""
@@ -1439,6 +1451,7 @@ class Form extends React.Component {
                                                         <textarea
                                                             onChange={this.onHandleChange.bind(this, 'input', 'temporarily', 'add_info', '', '', '')}
                                                             className={"form-control"} rows={8}
+                                                            readOnly={!isStatus}
                                                             value={temporarily?.store?.add_info} id={"add_info"}/>
                                                     </div>
                                                 </div>
@@ -1459,7 +1472,7 @@ class Form extends React.Component {
                                                                     <div className={"form-group"}>
                                                                         <label>{item?.label}</label>
                                                                         <input
-                                                                            readOnly={statusRepairedOrScrapped}
+                                                                            readOnly={!isStatus || statusRepairedOrScrapped}
                                                                             onChange={this.onHandleChange.bind(this, 'input', temporarily?.type, 'count', temporarily?.key, itemKey, '')}
                                                                             type={"number"} className={"form-control"}
                                                                             value={item?.count ?? 0}/>
@@ -1508,17 +1521,20 @@ class Form extends React.Component {
                                                                     ) : ("")}
                                                                     <td>{item.add_info}</td>
                                                                     <td>
-                                                                        <button
+                                                                        {isStatus ? <button
                                                                             disabled={statusUnplanned}
                                                                             className={"btn btn-sm btn-outline-primary"}
                                                                             onClick={this.onPush.bind(this, 'stops-update', item, index, '')}
-                                                                        ><i className={"fa fa-pencil-alt"}></i></button>
+                                                                        ><i className={"fa fa-pencil-alt"}/>
+                                                                        </button> : ''}
                                                                         &nbsp;
-                                                                        <button
-                                                                            disabled={statusUnplanned}
-                                                                            className={"btn btn-sm btn-outline-danger"}
-                                                                            onClick={this.onPush.bind(this, 'stops-remove', item, index, '')}
-                                                                        ><i className={"fa fa-times"}></i></button>
+                                                                        {isStatus ?
+                                                                            <button
+                                                                                disabled={statusUnplanned}
+                                                                                className={"btn btn-sm btn-outline-danger"}
+                                                                                onClick={this.onPush.bind(this, 'stops-remove', item, index, '')}
+                                                                            ><i className={"fa fa-times"}></i>
+                                                                            </button> : ''}
                                                                         <div className={"status-block"}>
                                                                             {
                                                                                 temporarily?.type === 'unplanned_stops' ? this.iconGenerator(temporarily.item, TOKEN_UNPLANNED, item.id) : ""

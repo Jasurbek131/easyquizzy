@@ -121,6 +121,9 @@ class DocumentController extends ActiveController
             case "SAVE_DOCUMENT":
                 $response = ApiPlmDocument::saveData($post);
                 break;
+            case "DELETE_DOCUMENT":
+                $response = ApiPlmDocument::deleteDate($post['id']);
+                break;
             case "DELETE_DOCUMENT_ITEM":
                 $response = ApiPlmDocument::deleteDocumentItem($post);
                 break;
