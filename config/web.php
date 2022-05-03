@@ -101,7 +101,10 @@ $config = [
                 '' => 'site/index',
             ],
         ],
-
+        'telegram' => [
+            'class' => 'aki\telegram\Telegram',
+            'botToken' => '5268528798:AAErwKMllti1zmkTRQ34FUros2PSOwF4TCo',
+        ]
     ],
     'params' => $params,
 ];
