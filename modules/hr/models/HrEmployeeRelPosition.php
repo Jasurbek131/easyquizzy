@@ -114,8 +114,8 @@ class HrEmployeeRelPosition extends BaseModel
     {
         return $this->hasOne(HrEmployee::class, ['id' => 'hr_employee_id']);
     }
-    public static function getActiveHrDepartment(){
-        $user_id = Yii::$app->user->identity->id;
+    public static function getActiveHrDepartment($user_id=null){
+        $user_id = $user_id ?? Yii::$app->user->identity->id;
             return Users::find()
                 ->alias('u')
                 ->select(['hrerp.*'])

@@ -14,7 +14,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.4",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap4": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
@@ -26,7 +26,8 @@
         "kartik-v/yii2-tree-manager": "^v1.1.2",
         "kartik-v/yii2-widget-datepicker": "dev-master",
         "leandrogehlen/yii2-treegrid": "*",
-        "aki/yii2-bot-telegram": "*"
+        "longman/telegram-bot": "*",
+        "neokyuubi/php-phantomjs": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
@@ -51,11 +52,13 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "yii\\composer\\Installer::postInstall"
+            "yii\\composer\\Installer::postInstall",
+            "PhantomInstaller\\Installer::installPhantomJS"
         ],
         "post-create-project-cmd": [
             "yii\\composer\\Installer::postCreateProject",
-            "yii\\composer\\Installer::postInstall"
+            "yii\\composer\\Installer::postInstall",
+            "PhantomInstaller\\Installer::installPhantomJS"
         ]
     },
     "extra": {

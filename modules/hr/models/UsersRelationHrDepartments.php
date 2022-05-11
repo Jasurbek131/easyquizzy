@@ -85,11 +85,11 @@ class UsersRelationHrDepartments extends ActiveRecord
      * @return array|ActiveRecord[]
      * Foydalanuvchiga tegishli tashkilot id larini qaytaradi
      */
-    public static function getRootByUser($root = self::ROOT): array
+    public static function getRootByUser($root = self::ROOT, $user_id = null): array
     {
         $ids = self::find()
             ->where([
-                "user_id" => Yii::$app->user->identity->id,
+                "user_id" => $user_id ?? Yii::$app->user->identity->id,
                 'is_root' => $root
             ])
             ->asArray()
@@ -104,9 +104,9 @@ class UsersRelationHrDepartments extends ActiveRecord
      * @return array
      * Foydalanuvchiga tegishli tashkilot va uning bo'limlarini id larini qaytaradi
      */
-    public static function getDepartmentByUser($root = self::ROOT): array
+    public static function getDepartmentByUser($root = self::ROOT, $user_id=null): array
     {
-        $user_root = self::getRootByUser($root);
+        $user_root = self::getRootByUser($root,$user_id);
         return array_merge($user_root, HrDepartments::getChilds($user_root));
     }
 }
