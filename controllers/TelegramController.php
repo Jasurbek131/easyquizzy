@@ -27,7 +27,7 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Request;
 use Yii;
 use neokyuubi\PhantomJs\Client;
-use yii\rest\Controller;
+use yii\web\Controller;
 
 class  TelegramController extends Controller
 {
