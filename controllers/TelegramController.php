@@ -43,7 +43,7 @@ class  TelegramController extends Controller
         $top    = 0;
         $left   = 0;
 
-        $request = $client->getMessageFactory()->createCaptureRequest('http://87.237.233.34:5006/uz/plm/plm-notifications-list/view-bot?id=49&user_id=1', 'GET');
+        $request = $client->getMessageFactory()->createCaptureRequest('http://87.237.233.34:5006/uz/plm/plm-notifications-list/view-bot?id=27&user_id=4', 'GET');
         $request->setOutputFile('uploads/file.jpg');
         $request->setViewportSize($width, $height);
         $request->setCaptureDimensions($width, $height, $top, $left);
