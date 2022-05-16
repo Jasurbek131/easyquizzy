@@ -37,7 +37,7 @@ class  TelegramController extends Controller
     public function actionTest()
     {
         $client = Client::getInstance();
-        $client->getEngine()->setPath('/usr/local/bin/phantomjs');
+//        $client->getEngine()->setPath('/usr/local/bin/phantomjs');
         $width  = 800;
         $height = 600;
         $top    = 0;
