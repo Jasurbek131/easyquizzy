@@ -98,7 +98,7 @@ class  TelegramController extends Controller
             }
             Request::sendMessage([
                 'chat_id' => $chat_id,
-                'text' => 'Assalom alaykum, '.$employee->firstname.' '.$employee->lastname."! /tekshirish ni bosib tasdiqlanadigan hujjatlarni ko'rishingiz mumkin.",
+                'text' => "Assalom alaykum! /tekshirish ni bosib tasdiqlanadigan hujjatlarni ko'rishingiz mumkin.",
                 'reply_markup' => Keyboard::remove(['selective' => true])
             ]);
             $user = Users::findOne(['telegram_id' => $chat_id, 'status_id' => 1]);
