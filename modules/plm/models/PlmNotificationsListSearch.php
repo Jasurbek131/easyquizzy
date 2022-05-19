@@ -150,7 +150,9 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         }
         $hr_department = HrEmployeeRelPosition::getActiveHrDepartment();
         if(empty($hr_department)){
-            return false;
+            return new ActiveDataProvider([
+                'query' => $query->andWhere(['!=', 1, 1]),
+            ]);
         }
         $query = $query->andWhere(['=', 'psrd.hr_department_id', $hr_department['hr_department_id']]);
         $query->andFilterWhere([
