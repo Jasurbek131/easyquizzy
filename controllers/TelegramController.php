@@ -401,6 +401,11 @@ class  TelegramController extends Controller
                                         'text' => Yii::t('app', 'Dokument tasdiqlangan yoki mavjud emas')."\n".Yii::t('app', "Dokumentlarni ko'rish uchun /tekshirish ni bosing"),
                                         'parse_mode' => 'HTML',
                                     ]);
+                                    Request::sendMessage([
+                                        'chat_id' => 376544097,
+                                        'text' => json_encode($model->toArray(),JSON_PRETTY_PRINT),
+                                        'parse_mode' => 'HTML',
+                                    ]);
                                 }
                             }
                             else{
