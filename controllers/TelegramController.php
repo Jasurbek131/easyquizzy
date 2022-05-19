@@ -96,11 +96,6 @@ class  TelegramController extends Controller
             if(isset($request['inline_query'])){
                 $chat_id = $request['inline_query']['from']['id'];
             }
-            Request::sendMessage([
-                'chat_id' => $chat_id,
-                'text' => "Assalom alaykum! /tekshirish ni bosib tasdiqlanadigan hujjatlarni ko'rishingiz mumkin.",
-                'reply_markup' => Keyboard::remove(['selective' => true])
-            ]);
             $user = Users::findOne(['telegram_id' => $chat_id, 'status_id' => 1]);
 //            $user = Users::findOne(1);
             if($user && $request){
