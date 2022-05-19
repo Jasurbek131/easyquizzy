@@ -103,7 +103,7 @@ class  TelegramController extends Controller
             ]);
             $user = Users::findOne(['telegram_id' => $chat_id, 'status_id' => 1]);
 //            $user = Users::findOne(1);
-            if($user){
+            if($user && $request){
                 $update_id = $request['update_id'];
                 if(isset($request['message'])) {
                     $text = $request['message']['text'];
