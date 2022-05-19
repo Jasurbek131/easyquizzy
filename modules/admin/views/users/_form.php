@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class' => 'customAjaxForm']]); ?>
 
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-9">
             <?php echo $form->field($model, 'hr_employee_id')->widget(Select2::class, [
                 'data' => HrEmployee::getList(),
                 'options' => [
@@ -31,6 +31,9 @@ use yii\widgets\ActiveForm;
                     'allowClear' => true
                 ],
             ]) ?>
+        </div>
+        <div class="col-lg-3">
+            <?php echo $form->field($model, 'telegram_id')->textInput() ?>
         </div>
     </div>
 
