@@ -638,11 +638,14 @@ class  TelegramController extends Controller
                     ->groupBy(['pdi.id'])
                 ], 'equipment.pdi_id = pdi.id');
             $hr_department = HrEmployeeRelPosition::getActiveHrDepartment($user_id);
+            if(empty($hr_department)){
+                return [];
+            }
             $query = $query->andWhere(['=', 'psrd.hr_department_id', $hr_department['hr_department_id']]);
 
 
             $query = $query->andFilterWhere(['IN', 'hd.id', UsersRelationHrDepartments::getDepartmentByUser(1,$user_id)]);
-            $query = $query->andFilterWhere(['pnl.status_id' => $user_id]);
+            $query = $query->andFilterWhere(['pnl.status_id' => PlmNotificationsList::STATUS_SAVED]);
             return $query->all();
         }
     }
