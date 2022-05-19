@@ -34,7 +34,7 @@ class  TelegramController extends Controller
     public $bot_api_key  = '5268528798:AAErwKMllti1zmkTRQ34FUros2PSOwF4TCo';
     public $bot_username = 'test_uchun_uzbekistan_bot';
 
-    public function actionTest()
+    public function actionTest1()
     {
         $client = Client::getInstance();
         $client->getEngine()->setPath('/usr/local/bin/phantomjs');
@@ -44,6 +44,26 @@ class  TelegramController extends Controller
         $left   = 0;
 
         $request = $client->getMessageFactory()->createCaptureRequest('http://87.237.233.34:5006/uz/plm/plm-notifications-list/view-bot?id=27&user_id=4', 'GET');
+        $request->setOutputFile('uploads/file.jpg');
+        $request->setViewportSize($width, $height);
+        $request->setCaptureDimensions($width, $height, $top, $left);
+
+        $response = $client->getMessageFactory()->createResponse();
+
+// Send the request
+        $client->send($request, $response);
+        \yii\helpers\VarDumper::dump($response,10,true);
+    }
+    public function actionTest()
+    {
+        $client = Client::getInstance();
+        $client->getEngine()->setPath('/usr/local/bin/phantomjs');
+        $width  = 800;
+        $height = 600;
+        $top    = 0;
+        $left   = 0;
+
+        $request = $client->getMessageFactory()->createCaptureRequest('https://plm.uzsmg.uz/uz/plm/plm-notifications-list/view-bot?id=27&user_id=4', 'GET');
         $request->setOutputFile('uploads/file.jpg');
         $request->setViewportSize($width, $height);
         $request->setCaptureDimensions($width, $height, $top, $left);
@@ -76,8 +96,8 @@ class  TelegramController extends Controller
             if(isset($request['inline_query'])){
                 $chat_id = $request['inline_query']['from']['id'];
             }
-//            $user = Users::findOne(['telegram_id' => $chat_id, 'status_id' => 1]);
-            $user = Users::findOne(1);
+            $user = Users::findOne(['telegram_id' => $chat_id, 'status_id' => 1]);
+//            $user = Users::findOne(1);
             if($user){
                 $update_id = $request['update_id'];
                 if(isset($request['message'])) {
