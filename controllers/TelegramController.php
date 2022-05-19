@@ -178,34 +178,33 @@ class  TelegramController extends Controller
                             $doc_id = (int)$array_text[1];
                             if(!empty($doc_id)){
                                 $model = PlmNotificationsList::getViews($doc_id, $user->id);
-                                echo "<pre>";
                                 if(!empty($model)){
-                                    $client = Client::getInstance();
-                                    $client->getEngine()->setPath('/usr/local/bin/phantomjs');
-                                    $width  = 800;
-                                    $height = 400;
-                                    $top    = 0;
-                                    $left   = 0;
-
-                                    $phantomjs = $client->getMessageFactory()->createCaptureRequest("http://plm.ru/uz/plm/plm-notifications-list/view-bot?id={$doc_id}&user_id={$user->id}", 'GET');
-                                    $filename = "file_".time();
-                                    $phantomjs->setOutputFile("uploads/{$filename}.jpg");
-                                    $phantomjs->setViewportSize($width, $height);
-                                    $phantomjs->setCaptureDimensions($width, $height, $top, $left);
-
-                                    $response = $client->getMessageFactory()->createResponse();
-                                    $client->send($phantomjs, $response);
-//                                $url = "http://".$_SERVER['HTTP_HOST']."/uploads/{$filename}.jpg";
-                                    $photo_url = "https://bfab-213-230-116-127.eu.ngrok.io/uploads/{$filename}.jpg";
+//                                    $client = Client::getInstance();
+//                                    $client->getEngine()->setPath('/usr/local/bin/phantomjs');
+//                                    $width  = 800;
+//                                    $height = 400;
+//                                    $top    = 0;
+//                                    $left   = 0;
+//
+//                                    $phantomjs = $client->getMessageFactory()->createCaptureRequest("http://plm.ru/uz/plm/plm-notifications-list/view-bot?id={$doc_id}&user_id={$user->id}", 'GET');
+//                                    $filename = "file_".time();
+//                                    $phantomjs->setOutputFile("uploads/{$filename}.jpg");
+//                                    $phantomjs->setViewportSize($width, $height);
+//                                    $phantomjs->setCaptureDimensions($width, $height, $top, $left);
+//
+//                                    $response = $client->getMessageFactory()->createResponse();
+//                                    $client->send($phantomjs, $response);
+////                                $url = "http://".$_SERVER['HTTP_HOST']."/uploads/{$filename}.jpg";
+//                                    $photo_url = "https://bfab-213-230-116-127.eu.ngrok.io/uploads/{$filename}.jpg";
                                     $keyboard = [
                                         [['text'=> "✅ ".Yii::t('app', "Tasdiqlash"),'callback_data'=> 'confirm_'.$doc_id],
                                             ['text'=> "❌ ".Yii::t('app', 'Rad qilish'),'callback_data'=> 'cancel_'.$doc_id],]
 
                                     ];
-                                    if(is_file(Yii::getAlias('@web').'/uploads/'.$filename.'.jpg')){
-                                        echo "<pre>";
-                                        var_dump($photo_url);die;
-                                    }
+//                                    if(is_file(Yii::getAlias('@web').'/uploads/'.$filename.'.jpg')){
+//                                        echo "<pre>";
+//                                        var_dump($photo_url);die;
+//                                    }
                                     $titleModel =
                                         "<code>Bo'lim:</code> : {$model['department']}\n".
                                         "<code>Hujjat raqami : </code>{$model['doc_number']}\n".
@@ -218,18 +217,18 @@ class  TelegramController extends Controller
                                         "<code>Uskunalar : </code>{$model['equipment']}\n".
                                         "<code>Izoh : </code>{$model['add_info']}\n".
                                         "<code>Miqdori : </code>{$model['fact_qty']}\n";
-                                    $res = Request::sendPhoto([
+                                    $res = Request::sendMessage([
                                         'chat_id' => $chat_id,
-                                        'photo' => $photo_url,
-                                        'caption' => $titleModel,
+//                                        'photo' => $photo_url,
+                                        'text' => $titleModel,
                                         'parse_mode' => 'HTML',
                                         'reply_markup' => json_encode([
                                             'inline_keyboard'=>$keyboard,
                                         ])
                                     ]);
-                                    if(is_file(Yii::$app->basePath . "/web/uploads/{$filename}.jpg")){
-                                        unlink(Yii::$app->basePath . "/web/uploads/{$filename}.jpg");
-                                    }
+//                                    if(is_file(Yii::$app->basePath . "/web/uploads/{$filename}.jpg")){
+//                                        unlink(Yii::$app->basePath . "/web/uploads/{$filename}.jpg");
+//                                    }
                                 }else{
                                     Request::sendMessage([
                                         'chat_id' => $chat_id,
