@@ -150,6 +150,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         }
         $hr_department = HrEmployeeRelPosition::getActiveHrDepartment();
         if(empty($hr_department)){
+            \Yii::$app->session->setFlash('error', Yii::t('app', "Sizga tegishli bo'lim topilmadi"));
             return new ActiveDataProvider([
                 'query' => $query->andWhere(['!=', 1, 1]),
             ]);
