@@ -73,7 +73,7 @@ class HrEmployee extends BaseModel
             [['status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['firstname', 'lastname', 'fathername', 'email'], 'string', 'max' => 255],
             [['phone_number'], 'string', 'max' => 30],
-            [['hr_department_id', 'hr_organisation_id', 'hr_position_id', 'begin_date','firstname', 'lastname', 'fathername'], 'required']
+            [['hr_department_id', 'hr_organisation_id', 'hr_position_id', 'begin_date', 'firstname', 'lastname', 'fathername'], 'required']
         ];
     }
 
@@ -121,7 +121,7 @@ class HrEmployee extends BaseModel
      * @param bool $isMap
      * @return array
      */
-    public static function getList(bool $isMap = true):array
+    public static function getList(bool $isMap = true): array
     {
         $list = self::find()
             ->where([
@@ -130,8 +130,8 @@ class HrEmployee extends BaseModel
             ->asArray()
             ->all();
         if ($isMap && !empty($list))
-            return ArrayHelper::map($list,'id', function ($m){
-                return $m['firstname']." ".$m['lastname']." ".$m['fathername'];
+            return ArrayHelper::map($list, 'id', function ($m) {
+                return $m['firstname'] . " " . $m['lastname'] . " " . $m['fathername'];
             });
 
         return $list;
@@ -143,7 +143,7 @@ class HrEmployee extends BaseModel
      */
     public static function getEmployeeData($id): array
     {
-        return  HrEmployeeRelPosition::find()
+        return HrEmployeeRelPosition::find()
             ->alias('hrerp')
             ->select([
                 'hrd.name AS department_name',
@@ -153,9 +153,9 @@ class HrEmployee extends BaseModel
                 'sl.name_uz status_name',
                 'sl.id status'
             ])
-            ->leftJoin(['hrd'=>'hr_departments'],'hrerp.hr_department_id = hrd.id')
-            ->leftJoin(['hrp'=>'hr_positions'],'hrerp.hr_position_id = hrp.id')
-            ->leftJoin(['sl' => 'status_list'],'hrerp.status_id = sl.id')
+            ->leftJoin(['hrd' => 'hr_departments'], 'hrerp.hr_department_id = hrd.id')
+            ->leftJoin(['hrp' => 'hr_positions'], 'hrerp.hr_position_id = hrp.id')
+            ->leftJoin(['sl' => 'status_list'], 'hrerp.status_id = sl.id')
             ->where(['hr_employee_id' => $id])
             ->orderBy(['hrerp.id' => SORT_DESC])
             ->asArray()
@@ -165,14 +165,14 @@ class HrEmployee extends BaseModel
     /**
      * @return array
      */
-    public function saveEmployee():array
+    public function saveEmployee(): array
     {
         $transaction = Yii::$app->db->beginTransaction();
         $response = [
             'status' => true,
-            'message' => Yii::t('app','Success'),
+            'message' => Yii::t('app', 'Success'),
         ];
-        try{
+        try {
 
             if (!$this->save())
                 $response = [
@@ -182,11 +182,10 @@ class HrEmployee extends BaseModel
                 ];
 
             $newCreatePosition = true;
-            if ($response['status']){
+            if ($response['status']) {
 
-                if ($this->isUpdate && !empty($this->hrEmployeeActivePosition)){
-                    if ($this->hrEmployeeActivePosition->hr_department_id != $this->hr_department_id || $this->hrEmployeeActivePosition->hr_position_id != $this->hr_position_id)
-                    {
+                if ($this->isUpdate && !empty($this->hrEmployeeActivePosition)) {
+                    if ($this->hrEmployeeActivePosition->hr_department_id != $this->hr_department_id || $this->hrEmployeeActivePosition->hr_position_id != $this->hr_position_id) {
                         $this->hrEmployeeActivePosition->end_date = date('Y-m-d H:i:s');
                         $this->hrEmployeeActivePosition->status_id = \app\models\BaseModel::STATUS_INACTIVE;
                         if (!$this->hrEmployeeActivePosition->save())
@@ -195,16 +194,15 @@ class HrEmployee extends BaseModel
                                 'message' => 'Old postion not saved',
                                 'errors' => $this->hrEmployeeActivePosition->getErrors()
                             ];
-                    }else{
+                    } else {
                         $newCreatePosition = false;
                         $position = $this->hrEmployeeActivePosition;
                         $position->begin_date = $this->begin_date;
                     }
                 }
 
-                if ($newCreatePosition && $response['status'])
-                {
-                    $position =  new HrEmployeeRelPosition([
+                if ($newCreatePosition && $response['status']) {
+                    $position = new HrEmployeeRelPosition([
                         'hr_department_id' => $this->hr_department_id,
                         'hr_position_id' => $this->hr_position_id,
                         'hr_organisation_id' => $this->hr_organisation_id,
@@ -213,21 +211,21 @@ class HrEmployee extends BaseModel
                     ]);
                 }
 
-               if ($response['status'])
-                   if (!$position->save())
-                       $response = [
-                           'status' => false,
-                           'message' => 'Hr position not saved',
-                           'errors' => $position->getErrors()
-                       ];
+                if ($response['status'])
+                    if (!$position->save())
+                        $response = [
+                            'status' => false,
+                            'message' => 'Hr position not saved',
+                            'errors' => $position->getErrors()
+                        ];
             }
 
-            if($response['status'])
+            if ($response['status'])
                 $transaction->commit();
             else
                 $transaction->rollBack();
 
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             $transaction->rollBack();
             $response = [
                 'status' => false,
