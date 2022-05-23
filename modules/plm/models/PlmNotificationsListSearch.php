@@ -6,6 +6,7 @@ use app\modules\hr\models\HrEmployeeRelPosition;
 use app\modules\hr\models\UsersRelationHrDepartments;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use Yii;
 
 /**
  * PlmNotificationsListSearch represents the model behind the search form of `app\modules\plm\models\PlmNotificationsList`.
@@ -149,6 +150,12 @@ class PlmNotificationsListSearch extends PlmNotificationsList
             return $dataProvider;
         }
         $hr_department = HrEmployeeRelPosition::getActiveHrDepartment();
+        if(empty($hr_department)){
+            Yii::$app->session->setFlash('error', Yii::t('app', "Sizga tegishli bo'lim topilmadi"));
+            return new ActiveDataProvider([
+                'query' => $query->andWhere(['!=', 1, 1]),
+            ]);
+        }
         $query = $query->andWhere(['=', 'psrd.hr_department_id', $hr_department['hr_department_id']]);
         $query->andFilterWhere([
             'pnl.status_id' => $this->status_id,
