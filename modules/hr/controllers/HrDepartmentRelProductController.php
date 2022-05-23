@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * HrDepartmentRelProductController implements the CRUD actions for HrDepartmentRelProduct model.
  */
-class HrDepartmentRelProductController extends Controller
+class HrDepartmentRelProductController extends BaseController
 {
     /**
      * {@inheritdoc}

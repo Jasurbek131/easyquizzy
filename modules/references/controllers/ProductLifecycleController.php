@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * ProductLifecycleController implements the CRUD actions for ProductLifecycle model.
  */
-class ProductLifecycleController extends Controller
+class ProductLifecycleController extends BaseController
 {
     /**
      * {@inheritdoc}

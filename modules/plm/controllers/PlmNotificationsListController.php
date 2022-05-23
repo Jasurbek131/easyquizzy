@@ -18,7 +18,7 @@ use yii\web\Response;
 /**
  * PlmNotificationsListController implements the CRUD actions for PlmNotificationsList model.
  */
-class PlmNotificationsListController extends Controller
+class PlmNotificationsListController extends BaseController
 {
     /**
      * {@inheritdoc}

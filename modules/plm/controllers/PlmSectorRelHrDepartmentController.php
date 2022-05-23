@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * PlmSectorRelHrDepartmentController implements the CRUD actions for PlmSectorRelHrDepartment model.
  */
-class PlmSectorRelHrDepartmentController extends Controller
+class PlmSectorRelHrDepartmentController extends BaseController
 {
     /**
      * {@inheritdoc}

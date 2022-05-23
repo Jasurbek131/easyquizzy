@@ -1,17 +1,15 @@
 <?php
 
-namespace app\modules\references\controllers;
+namespace app\modules\plm\controllers;
 
-use app\components\PermissionHelper as P;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
-
+use yii\web\BadRequestHttpException;
+use app\components\PermissionHelper as P;
 /**
- * Default controller for the `admin` module
- */
+ * BaseController  */
 class BaseController extends Controller
 {
     /**

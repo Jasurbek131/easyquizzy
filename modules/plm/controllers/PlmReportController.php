@@ -6,7 +6,7 @@ namespace app\modules\plm\controllers;
 
 use yii\web\Controller;
 
-class PlmReportController extends Controller
+class PlmReportController extends BaseController
 {
     /**
      * @return string

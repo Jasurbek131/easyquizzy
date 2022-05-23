@@ -13,7 +13,7 @@ use yii\web\Response;
 /**
  * HrPositionsController implements the CRUD actions for HrPositions model.
  */
-class HrPositionsController extends Controller
+class HrPositionsController extends BaseController
 {
     /**
      * {@inheritdoc}

@@ -16,7 +16,7 @@ use yii\web\Response;
 /**
  * UsersController implements the CRUD actions for Users model.
  */
-class UsersController extends Controller
+class UsersController extends BaseController
 {
     /**
      * {@inheritdoc}

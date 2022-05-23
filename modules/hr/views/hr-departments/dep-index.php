@@ -714,7 +714,7 @@ function ajaxModalSave(formModal,actionUrl){
                  $('#view-modal').modal("hide");
                  call_pnotify('success',response.message);
                  ajaxSubmit(response.hr_department_id);
-                 // window.location.reload();
+                 window.location.reload();
             }else{
                 $('#loading').css('display','none');
                 call_pnotify('fail',response.message);

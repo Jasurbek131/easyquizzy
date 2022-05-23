@@ -3,6 +3,7 @@
 namespace app\modules\hr\controllers;
 
 use app\modules\hr\models\HrEmployeeRelPosition;
+use Exception;
 use Yii;
 use app\modules\hr\models\HrEmployee;
 use app\modules\hr\models\HrEmployeeSearch;
@@ -14,7 +15,7 @@ use yii\web\Response;
 /**
  * HrEmployeeController implements the CRUD actions for HrEmployee model.
  */
-class HrEmployeeController extends Controller
+class HrEmployeeController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -32,9 +33,8 @@ class HrEmployeeController extends Controller
     }
 
     /**
-     * Lists all HrEmployee models.
-     * @return mixed
-     * @throws \Exception
+     * @return string
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -48,10 +48,9 @@ class HrEmployeeController extends Controller
     }
 
     /**
-     * Displays a single HrEmployee model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -66,6 +65,7 @@ class HrEmployeeController extends Controller
 
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'hrEmployeeRel' => $hrEmployeeRel,
         ]);
     }
 
@@ -179,7 +179,7 @@ class HrEmployeeController extends Controller
             }else{
                 $transaction->rollBack();
             }
-        }catch (\Exception $e){
+        }catch (Exception $e){
             Yii::info('Not saved' . $e, 'save');
         }
         if(Yii::$app->request->isAjax){

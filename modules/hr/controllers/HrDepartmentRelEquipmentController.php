@@ -15,7 +15,7 @@ use yii\web\Response;
 /**
  * HrDepartmentRelEquipmentController implements the CRUD actions for HrDepartmentRelEquipment model.
  */
-class HrDepartmentRelEquipmentController extends Controller
+class HrDepartmentRelEquipmentController extends BaseController
 {
     /**
      * {@inheritdoc}

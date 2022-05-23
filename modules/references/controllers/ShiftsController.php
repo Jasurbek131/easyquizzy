@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * ShiftsController implements the CRUD actions for Shifts model.
  */
-class ShiftsController extends Controller
+class ShiftsController extends BaseController
 {
     /**
      * {@inheritdoc}
