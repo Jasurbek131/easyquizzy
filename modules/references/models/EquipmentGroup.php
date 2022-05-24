@@ -6,6 +6,7 @@ use app\models\BaseModel;
 use app\modules\hr\models\HrDepartmentRelEquipment;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -94,7 +95,7 @@ class EquipmentGroup extends BaseModel
      */
     public function getEquipmentType(): ActiveQuery
     {
-        return $this->hasOne(EquipmentTypes::class,  ['equipment_type_id' => 'id']);
+        return $this->hasOne(EquipmentTypes::class,  ['id' => 'equipment_type_id']);
     }
 
     /**
