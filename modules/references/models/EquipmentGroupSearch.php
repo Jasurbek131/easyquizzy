@@ -18,7 +18,7 @@ class EquipmentGroupSearch extends EquipmentGroup
     {
         return [
             [['id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [[ 'repair_is_ok', 'is_plan_quantity_entered_manually'], 'boolean']
+            [[ 'repair_is_ok', 'is_plan_quantity_entered_manually'], 'boolean'],
             [['name', 'value', 'equipments', 'equipment_type_id'], 'safe'],
         ];
     }
