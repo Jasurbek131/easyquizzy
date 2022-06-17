@@ -7,6 +7,7 @@ namespace app\api\modules\v1\controllers;
 use app\api\modules\v1\components\CorsCustom;
 use app\api\modules\v1\models\ApiEquipmentGroup;
 use app\models\BaseModel;
+use app\modules\references\models\Currency;
 use app\modules\references\models\Equipments;
 use app\modules\references\models\EquipmentTypes;
 use app\modules\references\models\Products;
@@ -28,10 +29,7 @@ class ApiEquipmentGroupController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        unset($actions['create']);
-        unset($actions['update']);
-        unset($actions['index']);
-        unset($actions['view']);
+        unset($actions['create'], $actions['update'],$actions['index'], $actions['view']);
         return $actions;
     }
 
@@ -115,6 +113,7 @@ class ApiEquipmentGroupController extends ActiveController
                 $response["status_list"] = BaseModel::getStatusList(null, true);
                 $response["products_list"] = Products::getList(null, true);
                 $response["equipments_type_list"] = EquipmentTypes::getList(null, true);
+                $response["currency_list"] = Currency::getList();
                 $response['messages'] = [
                     'equipments' => Yii::t('app', 'Equipments'),
                     'group_type' => Yii::t('app', 'Equipments type'),
@@ -125,6 +124,16 @@ class ApiEquipmentGroupController extends ActiveController
                     'header' => Yii::t('app', 'Product data & Group equipment'),
                     'back' => Yii::t('app', 'Back'),
                     'products' => Yii::t('app', 'Products'),
+                    'repair_is_ok' => Yii::t('app', 'Repair OK'),
+                    'is_plan_quantity_entered_manually' => Yii::t('app', 'Plan quantity entered manually'),
+//                    'planned_price' => Yii::t('app', 'Planned price'),
+//                    'planned_currency' => Yii::t('app', 'Planned currency'),
+//                    'unplanned_price' => Yii::t('app', 'Unplanned price'),
+//                    'unplanned_currency' => Yii::t('app', 'Unplanned currency'),
+//                    'scrapped_price' => Yii::t('app', 'Scrapped currency'),
+//                    'scrapped_currency' => Yii::t('app', 'Scrapped currency'),
+//                    'repaired_price' => Yii::t('app', 'Repaired currency'),
+//                    'repaired_currency' => Yii::t('app', 'Repaired currency'),
                 ];
                 break;
             case "PRODUCT_SAVE":

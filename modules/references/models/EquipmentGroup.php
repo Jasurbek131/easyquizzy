@@ -6,6 +6,7 @@ use app\models\BaseModel;
 use app\modules\hr\models\HrDepartmentRelEquipment;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -13,6 +14,8 @@ use yii\helpers\ArrayHelper;
  * @property-read ActiveQuery $cycles
  * @property-read ActiveQuery $equipmentType
  * @property string $id [integer]
+ * @property boolean $repair_is_ok [boolean]
+ * @property boolean $is_plan_quantity_entered_manually [boolean]
  * @property string $name [varchar(255)]
  * @property string $status_id [integer]
  * @property string $created_at [integer]
@@ -41,7 +44,7 @@ class EquipmentGroup extends BaseModel
     public function rules()
     {
         return [
-            [['name', 'status_id'], 'required'],
+            [['name', 'status_id','repair_is_ok', 'is_plan_quantity_entered_manually'], 'required'],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'equipments_group_type_id'], 'default', 'value' => null],
             [['status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
@@ -94,8 +97,24 @@ class EquipmentGroup extends BaseModel
      */
     public function getEquipmentType(): ActiveQuery
     {
-        return $this->hasOne(EquipmentTypes::class,  ['equipment_type_id' => 'id']);
+        return $this->hasOne(EquipmentTypes::class,  ['id' => 'equipment_type_id']);
     }
+//
+//    /**
+//     * @return ActiveQuery
+//     */
+//    public function getPlannedCurrency(): ActiveQuery
+//    {
+//        return $this->hasOne(Currency::class,  ['id' => 'planned_currency_id']);
+//    }
+//
+//    /**
+//     * @return ActiveQuery
+//     */
+//    public function getUnplannedCurrency(): ActiveQuery
+//    {
+//        return $this->hasOne(Currency::class,  ['id' => 'unplanned_currency_id']);
+//    }
 
     /**
      * @param null $key
@@ -134,6 +153,8 @@ class EquipmentGroup extends BaseModel
                 'eg.name as label',
                 'eg.id',
                 'eg.equipment_type_id',
+                'eg.repair_is_ok',
+                'eg.is_plan_quantity_entered_manually',
             ])->with([
                 'equipments' => function ($e) {
                     $e->from(['egr' => 'equipment_group_relation_equipment'])

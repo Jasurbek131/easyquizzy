@@ -25,4 +25,7 @@ export const items = {
     lifecycle: "",
     bypass: "",
     target_qty: 0,
+    repair_is_ok: false,
+    is_plan_quantity_entered_manually: false,
+    plan_quantity_entered_manually: 0,
 };

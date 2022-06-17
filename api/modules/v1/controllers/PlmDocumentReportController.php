@@ -30,10 +30,7 @@ class PlmDocumentReportController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        unset($actions['create']);
-        unset($actions['update']);
-        unset($actions['index']);
-        unset($actions['view']);
+        unset($actions['create'], $actions['update'], $actions['index'], $actions['view']);
         return $actions;
     }
 

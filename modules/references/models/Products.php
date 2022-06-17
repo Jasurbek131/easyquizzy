@@ -3,6 +3,7 @@
 namespace app\modules\references\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -17,7 +18,6 @@ use yii\helpers\ArrayHelper;
  * @property int $created_by
  * @property int $updated_at
  * @property int $updated_by
- *
  * @property ProductLifecycle[] $productLifecycles
  * @property int $equipment_group_id [integer]
  */
@@ -79,7 +79,22 @@ class Products extends BaseModel
     {
         return $this->hasMany(ProductLifecycle::class, ['product_id' => 'id']);
     }
-
+//
+//    /**
+//     * @return ActiveQuery
+//     */
+//    public function getRepairedCurrency(): ActiveQuery
+//    {
+//        return $this->hasOne(Currency::class,  ['id' => 'repaired_currency_id']);
+//    }
+//
+//    /**
+//     * @return ActiveQuery
+//     */
+//    public function getScrappedCurrency(): ActiveQuery
+//    {
+//        return $this->hasOne(Currency::class,  ['id' => 'scrapped_currency_id']);
+//    }
     /**
      * @param null $key
      * @param bool $isArray

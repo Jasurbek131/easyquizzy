@@ -4,7 +4,7 @@ import axios from "axios";
 import {tr} from "react-date-range/dist/locale";
 import {SearchDocument} from "./search/SearchDocument";
 import ReactPaginate from "react-paginate";
-import {PieChart, Pie, Sector, Cell, ResponsiveContainer} from 'recharts';
+import {PieChart, Pie, Cell} from 'recharts';
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/plm-document-reports/";
 const initialSearch = {
@@ -193,6 +193,12 @@ class PlmDocumentReport extends Component {
             itemProductLength = item?.products?.length ?? 0;
             let returnDocItemProductData;
 
+            let percentP2 = 0;
+            if(item.target_qty)
+            {
+                percentP2 = (+item.plan_quantity_entered_manually) /  item.target_qty * 100;
+            }
+
             if (itemProductLength > 0) {
                 returnDocItemProductData = item?.products.map((productItem, productIndex) => {
                     if (+productIndex === 0) {
@@ -205,13 +211,29 @@ class PlmDocumentReport extends Component {
                         let sumScrapped = this.sumValue(item?.products, 'scrapped_count');
 
                         let percentA = (finalPlanDate / item.plan_date * 100).toFixed(2);
-                        let percentP = ((sumFactQty + sumQty) / (+item.target_qty) * 100).toFixed(2);
-                        let percentQ = ((sumFactQty + sumQty - sumRepaired - sumScrapped) / (sumFactQty + sumQty) * 100).toFixed(2);
+
+                        let percentP;
+
+                        if (item.is_plan_quantity_entered_manually){//Agar target ni qo'lda kiritgan bo'lsa
+                            percentP = ((sumFactQty + sumQty) / (+item.plan_quantity_entered_manually) * 100).toFixed(2)
+                        }else{
+                            percentP = ((sumFactQty + sumQty) / (+item.target_qty) * 100).toFixed(2)
+                        }
+
+                        let okProductQuantity;
+
+                        if (item.repair_is_ok){//Tamirlangan mahsulot ok o'tsa
+                            okProductQuantity = sumFactQty + sumQty - sumScrapped
+                        }else{
+                            okProductQuantity =  sumFactQty + sumQty - sumRepaired - sumScrapped
+                        }
+
+                        let percentQ = ((okProductQuantity) / (sumFactQty + sumQty) * 100).toFixed(2);
+
                         sumPercentA *= (percentA / 100);
                         sumPercentP *= (percentP / 100);
                         sumPercentQ *= (percentQ / 100);
                         sumPercentOee *= (percentA * percentP * percentQ / 1000000);
-                        console.log(sumPercentA, sumPercentP, sumPercentQ, sumPercentOee);
                         return (
                             <tr key={index + "_" + productIndex}>
                                 <td rowSpan={itemProductLength}>{++iterator}</td>
@@ -228,7 +250,9 @@ class PlmDocumentReport extends Component {
                                 <td rowSpan={itemProductLength} className={"a"}>{(+item.plan_date).toFixed(2)}</td>
                                 <td rowSpan={itemProductLength} className={"a"}>{finalPlanDate}</td>
                                 <td rowSpan={itemProductLength} className={"a"}>{percentA}</td>
+                                <td rowSpan={itemProductLength} className={"p"}>{+item.plan_quantity_entered_manually}</td>
                                 <td rowSpan={itemProductLength} className={"p"}>{+item.target_qty}</td>
+                                <td rowSpan={itemProductLength} className={"p"}>{(percentP2.toFixed(2))}</td>
                                 <td className={"p"}>{+productItem.fact_qty + (+productItem.qty)}</td>
                                 <td rowSpan={itemProductLength} className={"p"}>{percentP}</td>
                                 <td className={"q"}>{+productItem.fact_qty + (+productItem.qty) - (+productItem.repaired_count) - (+productItem.scrapped_count)}</td>
@@ -293,7 +317,7 @@ class PlmDocumentReport extends Component {
                             <th rowSpan={2}>CT (sec)</th>
                             <th rowSpan={2}>By pass CT(sec)</th>
                             <th colSpan={3} className={"a"}>A</th>
-                            <th colSpan={3} className={"p"}>P</th>
+                            <th colSpan={5} className={"p"}>P</th>
                             <th colSpan={4} className={"q"}>Q</th>
                             <th className={"oee"}>OEE</th>
                         </tr>
@@ -301,7 +325,9 @@ class PlmDocumentReport extends Component {
                             <th className={"a"}>Reja</th>
                             <th className={"a"}>Fakt</th>
                             <th className={"a"}>%</th>
-                            <th className={"p"}>Reja</th>
+                            <th className={"p"}>Kiritilgan reja</th>
+                            <th className={"p"}>To'liq imkoniyat</th>
+                            <th className={"p"}>Reja samarasi</th>
                             <th className={"p"}>Fakt</th>
                             <th className={"p"}>%</th>
                             <th className={"q"}>Ok</th>

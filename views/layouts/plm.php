@@ -24,16 +24,12 @@ $app = Yii::$app;
     <title>Dataprizma-Plm <?= Html::encode($this->title) ?></title>
     <noembed><?= Html::encode($this->title) ?></noembed>
     <?php $this->head() ?>
-    <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 </head>
 <body class="hold-transition sidebar-mini skin-blue <?= $this->params['bodyClass'] ?? "" ?>">
-<!--sidebar-mini-expand-feature fixed-->
 <?php $this->beginBody() ?>
-<!-- Site wrapper -->
 <div class="wrapper">
     <div id="loading" <?= $app->request->isAjax ? 'style="display:none"' : '' ?>>
-        <!-- begin overlay tags -->
         <div class="overlay-body show"></div>
         <div class="spanner-body show">
             <div class="center__block">
@@ -41,130 +37,18 @@ $app = Yii::$app;
                 <p class="spanner-text"><?php echo Yii::t('app', 'Iltimos kuting!..') ?></p>
             </div>
         </div>
-        <!-- end overlay tags -->
     </div>
 
-
-    <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-        <!-- Left navbar links -->
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
         </ul>
-
-        <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
-            <!-- Navbar Search -->
-<!--            <li class="nav-item">-->
-<!--                <a class="nav-link" data-widget="navbar-search" href="#" role="button">-->
-<!--                    <i class="fas fa-search"></i>-->
-<!--                </a>-->
-<!--                <div class="navbar-search-block">-->
-<!--                    <form class="form-inline">-->
-<!--                        <div class="input-group input-group-sm">-->
-<!--                            <input class="form-control form-control-navbar" type="search" placeholder="Search"-->
-<!--                                   aria-label="Search">-->
-<!--                            <div class="input-group-append">-->
-<!--                                <button class="btn btn-navbar" type="submit">-->
-<!--                                    <i class="fas fa-search"></i>-->
-<!--                                </button>-->
-<!--                                <button class="btn btn-navbar" type="button" data-widget="navbar-search">-->
-<!--                                    <i class="fas fa-times"></i>-->
-<!--                                </button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </form>-->
-<!--                </div>-->
-<!--            </li>-->
-
-            <!-- Messages Dropdown Menu -->
-<!--            <li class="nav-item dropdown">-->
-<!--                <a class="nav-link" data-toggle="dropdown" href="#">-->
-<!--                    <i class="far fa-comments"></i>-->
-<!--                    <span class="badge badge-danger navbar-badge">3</span>-->
-<!--                </a>-->
-<!--                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">-->
-<!--                    <a href="#" class="dropdown-item">-->
-<!--                        <div class="media">-->
-<!--                            <div class="media-body">-->
-<!--                                <h3 class="dropdown-item-title">-->
-<!--                                    Brad Diesel-->
-<!--                                    <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>-->
-<!--                                </h3>-->
-<!--                                <p class="text-sm">Call me whenever you can...</p>-->
-<!--                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        -->
-<!--                    </a>-->
-<!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a href="#" class="dropdown-item">-->
-<!--                        <div class="media">-->
-<!--                            <div class="media-body">-->
-<!--                                <h3 class="dropdown-item-title">-->
-<!--                                    John Pierce-->
-<!--                                    <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>-->
-<!--                                </h3>-->
-<!--                                <p class="text-sm">I got your message bro</p>-->
-<!--                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </a>-->
-<!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a href="#" class="dropdown-item">-->
-<!--                        -->
-<!--                        <div class="media">-->
-<!--                            <div class="media-body">-->
-<!--                                <h3 class="dropdown-item-title">-->
-<!--                                    Nora Silvester-->
-<!--                                    <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>-->
-<!--                                </h3>-->
-<!--                                <p class="text-sm">The subject goes here</p>-->
-<!--                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </a>-->
-<!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>-->
-<!--                </div>-->
-<!--            </li>-->
-
-            <!-- Notifications Dropdown Menu -->
-<!--            <li class="nav-item dropdown">-->
-<!--                <a class="nav-link" data-toggle="dropdown" href="#">-->
-<!--                    <i class="far fa-bell"></i>-->
-<!--                    <span class="badge badge-warning navbar-badge">15</span>-->
-<!--                </a>-->
-<!--                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">-->
-<!--                    <span class="dropdown-item dropdown-header">15 Notifications</span>-->
-<!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a href="#" class="dropdown-item">-->
-<!--                        <i class="fas fa-envelope mr-2"></i> 4 new messages-->
-<!--                        <span class="float-right text-muted text-sm">3 mins</span>-->
-<!--                    </a>-->
-<!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a href="#" class="dropdown-item">-->
-<!--                        <i class="fas fa-users mr-2"></i> 8 friend requests-->
-<!--                        <span class="float-right text-muted text-sm">12 hours</span>-->
-<!--                    </a>-->
-<!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a href="#" class="dropdown-item">-->
-<!--                        <i class="fas fa-file mr-2"></i> 3 new reports-->
-<!--                        <span class="float-right text-muted text-sm">2 days</span>-->
-<!--                    </a>-->
-<!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>-->
-<!--                </div>-->
-<!--            </li>-->
-
-            <!-- Language Dropdown Menu -->
             <li class="nav-item dropdown">
                 <?= \app\widgets\MultiLang\MultiLang::widget(['cssClass' => 'pull-right language']); ?>
             </li>
-
-            <!-- User Dropdown Menu -->
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="far fa-user"></i>
@@ -199,20 +83,13 @@ $app = Yii::$app;
 
         </ul>
     </nav>
-    <!-- /.navbar -->
 
-    <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
-        <!-- Brand Logo -->
         <a class="brand-link" href="/">
             <img src="/web/img/noimage.png" alt="Logo" class="brand-image img-circle elevation-3">
             <span class="brand-text font-weight-light">PLM</span>
         </a>
-
-        <!-- Sidebar -->
         <div class="sidebar">
-            <!-- Sidebar user panel (optional) -->
-            <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <?php
                 $module = $app->controller->module->id;
@@ -304,6 +181,7 @@ $app = Yii::$app;
                                 P::can("equipments/index") ||
                                 P::can("equipment-group/index") ||
                                 P::can("product-lifecycle/index") ||
+                                P::can("currency/index") ||
                                 P::can("defects/index") ||
                                 P::can("equipment-types/index")
                             ,
@@ -397,6 +275,14 @@ $app = Yii::$app;
                                     'active' => $controller == 'products' && $action  == 'index',
                                     'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-cube nav-icon"></i><p>{label}</p></a>',
                                 ],
+                                [
+                                    'label' => Yii::t('app', 'Currency'),
+                                    'url' => '/references/currency/index',
+                                    'options' => ['class' => 'nav-item'],
+                                    "visible" =>  P::can("currency/index"),
+                                    'active' => $controller == 'currency' && $action  == 'index',
+                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-cube nav-icon"></i><p>{label}</p></a>',
+                                ],
                             ],
                         ],
                         [
@@ -415,23 +301,6 @@ $app = Yii::$app;
                             'active' => $controller == 'plm-notifications-list' && $action == 'index',
                             'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-check-circle nav-icon"></i><p>{label}</p></a>',
                         ],
-//                        [
-//                            'label' => Yii::t('app', 'Settings'),
-//                            'url' => ['#'],
-//                            'options' => ['class' => 'nav-item'],
-//                            'template' => '<a href="{url}" class="{linkClass}"><i class="nav-icon fa fa-cog"></i><p>{label}<i class="fas fa-angle-left right"></i></p></a>',
-//                            'visible' => P::can("plm-sector-rel-hr-department/index"),
-//                            'items' => [
-//                                [
-//                                    'label' => Yii::t('app', 'PlmSectorRelHrDepartment'),
-//                                    'url' => '/plm/plm-sector-rel-hr-department/index',
-//                                    'options' => ['class' => 'nav-item'],
-//                                    'visible' => P::can("plm-sector-rel-hr-department/index"),
-//                                    'active' => $controller == 'plm-sector-rel-hr-department' && $action == 'index',
-//                                    'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-paperclip nav-icon"></i><p>{label}</p></a>',
-//                                ],
-//                            ],
-//                        ],
                         [
                             'label' => Yii::t('app', 'Reports'),
                             'url' => ['#'],

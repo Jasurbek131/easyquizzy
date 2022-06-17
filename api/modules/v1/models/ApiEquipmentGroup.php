@@ -34,11 +34,7 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
             else
                 $product = new Products();
 
-            $product->setAttributes([
-                'name' => $post['name'],
-                'part_number' => $post['part_number'],
-                'status_id' => $post['status_id'],
-            ]);
+            $product->setAttributes($post);
 
             if (!$product->save())
                 $response = [
@@ -104,15 +100,15 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                         EquipmentGroupRelationEquipment::deleteAll(["equipment_group_id" => $item["equipment_group_id"]]);
                         $existsEquipmentGroup = EquipmentGroup::existsGroup($item["equipments"]);
                         if ($existsEquipmentGroup["status"]){
-                            $equipmentGroup =  EquipmentGroup::findOne(['id' => $existsEquipmentGroup['equipment_group_id']]);
+                            $equipmentGroup =  EquipmentGroup::find()->where(['id' => $existsEquipmentGroup['equipment_group_id']])->limit(1)->one();
                         }else{
-                            $equipmentGroup = EquipmentGroup::findOne(['id' => $item['equipment_group_id']]);
+                            $equipmentGroup = EquipmentGroup::find()->where(['id' => $item['equipment_group_id']])->limit(1)->one();
                             $relGroupCreate = true;
                         }
                     }else{
                         $existsEquipmentGroup = EquipmentGroup::existsGroup($item["equipments"]);
                         if ($existsEquipmentGroup["status"]){
-                            $equipmentGroup =  EquipmentGroup::findOne(['id' => $existsEquipmentGroup['equipment_group_id']]);
+                            $equipmentGroup =  EquipmentGroup::find()->where(['id' => $existsEquipmentGroup['equipment_group_id']])->limit(1)->one();
                             $existsEquipmentGroup["equipment_type_id"] = $equipmentGroup->equipment_type_id;
                         }else{
                             $equipmentGroup = new EquipmentGroup();
@@ -123,6 +119,12 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                     $equipmentGroup->setAttributes([
                         'name' => $item['name'],
                         'value' => $item['value'] ?? '',
+                        'repair_is_ok' => $item['repair_is_ok'] ?? false,
+                        'is_plan_quantity_entered_manually' => $item['is_plan_quantity_entered_manually'] ?? false,
+//                        'planned_price' => $item['planned_price'] ?? '',
+//                        'planned_currency_id' => $item['planned_currency_id'] ?? '',
+//                        'unplanned_price' => $item['unplanned_price'] ?? '',
+//                        'unplanned_currency_id' => $item['unplanned_currency_id'] ?? '',
                         'equipment_type_id' => $item['equipment_type_id'],
                         'status_id' => BaseModel::STATUS_ACTIVE,
                     ]);
@@ -265,7 +267,13 @@ class ApiEquipmentGroup extends EquipmentGroup implements ApiEquipmentGroupInter
                 "eg.id",
                 "eg.name",
                 "eg.value",
+//                "eg.planned_price",
+//                "eg.planned_currency_id",
+//                "eg.unplanned_price",
+//                "eg.unplanned_currency_id",
                 "eg.equipment_type_id",
+                "eg.repair_is_ok",
+                "eg.is_plan_quantity_entered_manually",
             ])
             ->with([
                 'equipments' => function($e){

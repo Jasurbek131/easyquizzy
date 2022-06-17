@@ -16,7 +16,6 @@ import {
     TOKEN_PLANNED,
     TOKEN_UNPLANNED,
 } from "../../../actions/consts";
-import {change} from "react-beautiful-dnd/src/state/auto-scroller/can-scroll";
 
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api/v1/documents/";
@@ -152,7 +151,6 @@ class Form extends React.Component {
         }
     };
 
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         $('[data-toggle="tooltip"]').tooltip();
         window.addEventListener('beforeunload', (ev) => {
@@ -245,6 +243,9 @@ class Form extends React.Component {
                         plm_document_items[key]["lifecycle"] = "";
                         plm_document_items[key]["bypass"] = "";
                     }
+                    plm_document_items[key]["repair_is_ok"] = e.repair_is_ok;
+                    plm_document_items[key]["is_plan_quantity_entered_manually"] = e.is_plan_quantity_entered_manually;
+                    plm_document_items[key]["plan_quantity_entered_manually"] = 0;
                     plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                     plm_document_items[key]['equipmentGroup'] = e;
                     plm_document_items[key]['equipments'] = [];
@@ -332,18 +333,17 @@ class Form extends React.Component {
                             if (currentEquipment.length > 0) {
                                 for (const index in validateDate) {
                                     for (const equipment of currentEquipment) {
-                                        if (index !== key && validateDate[index].equipment.includes(equipment.equipment_id)) {
+                                        if (+index !== +key && validateDate[index].equipment.includes(equipment.equipment_id)) {
                                             hasElementEquipment = true;
                                             break;
                                         }
                                     }
                                     if (hasElementEquipment) {
-                                        if (index != key && (validateDate[index]['start_work'] <= date && date <= validateDate[index]['end_work'])) {
+                                        if (+index !== +key && (validateDate[index]['start_work'] <= date && date <= validateDate[index]['end_work'])) {
                                             hasElement = true;
                                             break;
                                         }
-                                        if (index != key && (validateDate[key]['start_work'] <= validateDate[index]['start_work'] && validateDate[index]['end_work'] <= date
-                                        )) {
+                                        if (+index !== +key && (validateDate[key]['start_work'] <= validateDate[index]['start_work'] && validateDate[index]['end_work'] <= date )) {
                                             hasElement = true;
                                             break;
                                         }
@@ -363,7 +363,6 @@ class Form extends React.Component {
                             }
                         } else {
                             toast.error("«Tugash» vaqti «Boshlanish» vaqtidan kata bo'lishi kerak!");
-                            // plm_document_items[key]['end_work']   = "";
                             validateDate[key] = {...validateDate[key], end_work: ''};
                         }
                     } else {
@@ -717,6 +716,10 @@ class Form extends React.Component {
         if (item.equipment_group_id === "") {
             isEmpty = false;
             $("#equipment_group_id_" + key).children('div').css("border", "1px solid red");
+        }
+        if (item.is_plan_quantity_entered_manually && (item.plan_quantity_entered_manually === "" || item.plan_quantity_entered_manually === 0)) {
+            isEmpty = false;
+            $("#plan_quantity_entered_manually_" + key).css("border", "1px solid red");
         }
         if (item.equipments.length <= 0) {
             isEmpty = false;
@@ -1129,13 +1132,25 @@ class Form extends React.Component {
 
                                             <div className={'col-lg-6'}>
                                                 <div className="row">
-                                                    <div className="col-lg-4">
+                                                    <div className={item.is_plan_quantity_entered_manually ? "col-lg-3": "col-lg-4"}>
                                                         <label className={'control-label middle-size'}>Reja </label>
                                                         <input value={item?.target_qty ?? ""}
                                                                readOnly={true}
                                                                className={'form-control plan text-center'}/>
                                                     </div>
-                                                    <div className="col-lg-4">
+                                                    {item.is_plan_quantity_entered_manually ?
+                                                     <div className={"col-lg-3"}>
+                                                         <label className={'control-label middle-size'}>Reja (Qo'lda)</label>
+                                                         <input
+                                                            value={item?.plan_quantity_entered_manually ?? ""}
+                                                            className={'form-control plan_quantity_entered_manually text-center'}
+                                                            onChange={this.onHandleChange.bind(this, 'input', 'plm_document_items', 'plan_quantity_entered_manually', key, '', '')}
+                                                            id={"plan_quantity_entered_manually_" + key}
+                                                            readOnly={!isStatus}
+                                                         />
+                                                     </div>
+                                                    : <div></div>}
+                                                    <div className={item.is_plan_quantity_entered_manually ? "col-lg-3": "col-lg-4"}>
                                                         <label
                                                             className={'control-label middle-size'}>Cycle
                                                             time (s)</label>
@@ -1143,7 +1158,7 @@ class Form extends React.Component {
                                                                readOnly={true}
                                                                className={'form-control text-center'}/>
                                                     </div>
-                                                    <div className="col-lg-4">
+                                                    <div className={item.is_plan_quantity_entered_manually ? "col-lg-3": "col-lg-4"}>
                                                         <label
                                                             className={'control-label middle-size'}>Bypass CT
                                                             (s)</label>
@@ -1297,9 +1312,6 @@ class Form extends React.Component {
                                             <div className={'col-lg-1'}>
                                                 <div className={"align-center"}>
                                                     <div className={'row unplanned_stopped'}>
-                                                        {/*<div className={"status-block"}>*/}
-                                                        {/*    <i className={"fa fa-times-circle status"}></i>*/}
-                                                        {/*</div>*/}
                                                         <div className={'col-lg-12 text-center'}>
                                                             <label className={"control-label middle-size"}>Rejasiz
                                                                 to'xtalishlar</label>

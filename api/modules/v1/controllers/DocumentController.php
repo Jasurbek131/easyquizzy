@@ -8,7 +8,6 @@ use app\modules\hr\models\HrDepartments;
 use app\modules\plm\models\PlmStops;
 use app\modules\references\models\Categories;
 use app\modules\references\models\Defects;
-use app\modules\references\models\Reasons;
 use app\modules\references\models\EquipmentGroup;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -33,10 +32,7 @@ class DocumentController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        unset($actions['create']);
-        unset($actions['update']);
-        unset($actions['index']);
-        unset($actions['view']);
+        unset($actions['create'],$actions['update'],$actions['index'],$actions['view']);
         return $actions;
     }
 

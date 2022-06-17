@@ -47,7 +47,7 @@ foreach ($data['AuthItem']['new_permissions'] as $item){
             $auth = Yii::$app->authManager;
             $role = Yii::$app->authManager->getRole($m->category);
             $permission = Yii::$app->authManager->getPermission($m->name);
-            $auth->addChild($role, $permission);
+//            $auth->addChild($role, $permission);
         }
     }
 }

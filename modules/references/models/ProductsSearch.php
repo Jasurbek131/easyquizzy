@@ -17,8 +17,8 @@ class ProductsSearch extends Products
     public function rules()
     {
         return [
-            [['id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['name', 'code', 'part_number'], 'safe'],
+            [['id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by',], 'integer'],
+            [['name', 'code', 'part_number', ], 'safe'],
         ];
     }
 

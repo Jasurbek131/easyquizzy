@@ -4,7 +4,6 @@
 namespace app\api\modules\v1\models;
 
 
-use app\api\modules\v1\models\ApiPlmDocumentInterface;
 use app\models\BaseModel;
 use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\plm\models\PlmDocItemDefects;
@@ -16,16 +15,12 @@ use app\modules\plm\models\PlmNotificationRelDefect;
 use app\modules\plm\models\PlmNotificationsList;
 use app\modules\plm\models\PlmNotificationsListRelReason;
 use app\modules\plm\models\PlmProcessingTime;
-use app\modules\plm\models\PlmSectorList;
 use app\modules\plm\models\PlmStops;
 use app\modules\references\models\Categories;
-use app\modules\references\models\Defects;
 use app\modules\references\models\EquipmentGroup;
-use app\widgets\Language;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
-use yii\helpers\VarDumper;
 
 class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
 {
@@ -110,6 +105,9 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                         'lifecycle' => $item['lifecycle'],
                         'bypass' => $item['bypass'],
                         'target_qty' => $item['target_qty'],
+                        'repair_is_ok' => $item['repair_is_ok'] ?? false,
+                        'is_plan_quantity_entered_manually' => $item['is_plan_quantity_entered_manually'] ?? false,
+                        'plan_quantity_entered_manually' => $item['plan_quantity_entered_manually'] ?? 0,
                     ]);
                     if (!$docItem->save()) {
                         $response = [
@@ -683,16 +681,16 @@ class ApiPlmDocument extends PlmDocuments implements ApiPlmDocumentInterface
                 'plm_document_items' => function ($q) use ($language) {
                     $q->from(['pdi' => 'plm_document_items'])
                         ->select(['pdi.*', 'ppt.begin_date as start_work', 'ppt.end_date as end_work'])->with([
-                            'planned_stopped' => function ($e) {
-                                $e->from(['ps1' => 'plm_stops'])->select([
-                                    'ps1.id', 'ps1.begin_date', 'ps1.end_time', 'ps1.add_info', 'ps1.reason_id'
-                                ])->where(['ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP]);
-                            },
-                            'unplanned_stopped' => function ($e) {
-                                $e->from(['ps2' => 'plm_stops'])->select([
-                                    'ps2.id', 'ps2.begin_date', 'ps2.end_time', 'ps2.add_info', 'ps2.reason_id', 'ps2.bypass'
-                                ])->where(['ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP]);
-                            },
+//                            'planned_stopped' => function ($e) {
+//                                $e->from(['ps1' => 'plm_stops'])->select([
+//                                    'ps1.id', 'ps1.begin_date', 'ps1.end_time', 'ps1.add_info', 'ps1.reason_id'
+//                                ])->where(['ps1.stopping_type' => \app\modules\plm\models\BaseModel::PLANNED_STOP]);
+//                            },
+//                            'unplanned_stopped' => function ($e) {
+//                                $e->from(['ps2' => 'plm_stops'])->select([
+//                                    'ps2.id', 'ps2.begin_date', 'ps2.end_time', 'ps2.add_info', 'ps2.reason_id', 'ps2.bypass'
+//                                ])->where(['ps2.stopping_type' => \app\modules\plm\models\BaseModel::UNPLANNED_STOP]);
+//                            },
                             'products' => function ($p) use ($language) {
                                 $p->from(['p' => 'plm_doc_item_products'])->select(['p.id', 'p.product_id', 'p.document_item_id'])->with([
                                     'repaired' => function ($r) use ($language) {

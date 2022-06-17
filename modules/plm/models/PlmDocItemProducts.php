@@ -5,6 +5,8 @@ namespace app\modules\plm\models;
 use app\modules\references\models\ProductLifecycle;
 use app\modules\references\models\Products;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "plm_doc_item_products".
@@ -14,16 +16,13 @@ use Yii;
  * @property int $product_id
  * @property int $product_lifecycle_id
  * @property int $qty
- * @property float $target_qty
- * @property float $lifecycle
- * @property float $bypass
  * @property int $fact_qty
  *
  * @property PlmDocumentItems $plmDocumentItems
  * @property Products $products
  * @property PlmDocItemDefects[] $plmDocItemDefects
  */
-class PlmDocItemProducts extends \yii\db\ActiveRecord
+class PlmDocItemProducts extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -38,9 +37,8 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['document_item_id', 'product_id', 'product_lifecycle_id', 'qty', 'fact_qty', 'target_qty', 'lifecycle', 'bypass',], 'default', 'value' => null],
+            [['document_item_id', 'product_id', 'product_lifecycle_id', 'qty', 'fact_qty'], 'default', 'value' => null],
             [['document_item_id', 'product_id', 'product_lifecycle_id', 'qty', 'fact_qty'], 'integer'],
-            [['target_qty', 'lifecycle', 'bypass'], 'number'],
             [['document_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocumentItems::class, 'targetAttribute' => ['document_item_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
             [['product_lifecycle_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductLifecycle::class, 'targetAttribute' => ['product_lifecycle_id' => 'id']],
@@ -63,7 +61,7 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPlmDocumentItems()
     {
@@ -71,7 +69,7 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getProductLifecycle()
     {
@@ -79,7 +77,7 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getProduct()
     {
@@ -87,7 +85,7 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPlmDocItemDefects()
     {
@@ -95,14 +93,14 @@ class PlmDocItemProducts extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRepaired()
     {
         return $this->hasMany(PlmDocItemDefects::class, ['doc_item_product_id' => 'id']);
     }
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getScrapped()
     {

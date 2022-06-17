@@ -10,8 +10,6 @@ use Yii;
  * This is the model class for table "plm_document_items".
  *
  * @property int $id
- * @property int $planned_stop_id
- * @property int $unplanned_stop_id
  * @property int $status_id
  * @property float $lifecycle
  * @property float $bypass
@@ -43,14 +41,13 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id'], 'default', 'value' => null],
-            [['planned_stop_id', 'unplanned_stop_id', 'processing_time_id', 'document_id', 'equipment_group_id', 'status_id'], 'integer'],
-            [[ 'lifecycle', 'bypass', 'target_qty'], 'number'],
+            [['processing_time_id', 'document_id', 'equipment_group_id'], 'default', 'value' => null],
+            [['processing_time_id', 'document_id', 'equipment_group_id', 'status_id'], 'integer'],
+            [[ 'lifecycle', 'bypass', 'target_qty', 'plan_quantity_entered_manually'], 'number'],
+            [['repair_is_ok', 'is_plan_quantity_entered_manually'],'boolean'],
             [['equipment_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentGroup::class, 'targetAttribute' => ['equipment_group_id' => 'id']],
             [['document_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmDocuments::class, 'targetAttribute' => ['document_id' => 'id']],
             [['processing_time_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmProcessingTime::class, 'targetAttribute' => ['processing_time_id' => 'id']],
-            [['planned_stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::class, 'targetAttribute' => ['planned_stop_id' => 'id']],
-            [['unplanned_stop_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlmStops::class, 'targetAttribute' => ['unplanned_stop_id' => 'id']],
         ];
     }
 
@@ -61,8 +58,6 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'planned_stop_id' => Yii::t('app', 'Planned Stop ID'),
-            'unplanned_stop_id' => Yii::t('app', 'Unplanned Stop ID'),
             'processing_time_id' => Yii::t('app', 'Processing Time ID'),
             'document_id' => Yii::t('app', 'Document ID'),
             'equipment_group_id' => Yii::t('app', 'Equipment Group ID'),
@@ -91,21 +86,6 @@ class PlmDocumentItems extends \yii\db\ActiveRecord
     public function getPlmProcessingTime()
     {
         return $this->hasOne(PlmProcessingTime::class, ['id' => 'processing_time_id']);
-    }
-
-    /**
-     * @return yii\db\ActiveQuery
-     */
-    public function getPlanned_stopped()
-    {
-        return $this->hasOne(PlmStops::class, ['id' => 'planned_stop_id']);
-    }
-    /**
-     * @return yii\db\ActiveQuery
-     */
-    public function getUnplanned_stopped()
-    {
-        return $this->hasOne(PlmStops::class, ['id' => 'unplanned_stop_id']);
     }
 
     /**

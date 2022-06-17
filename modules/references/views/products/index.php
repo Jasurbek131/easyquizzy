@@ -1,8 +1,8 @@
 <?php
 
 use app\models\BaseModel;
-use app\modules\references\models\ReferencesProductGroup;
-use app\modules\references\models\ReferencesProductGroupRelProduct;
+use app\modules\references\models\Currency;
+use app\modules\references\models\Products;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -29,25 +29,51 @@ $this->params['breadcrumbs'][] = $this->title;
             'filterModel' => $searchModel,
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-
                 [
                     'attribute' => 'name',
                     'format' => 'raw',
-//                    'value' => function(ReferencesProductGroup $model) {
-//                        return ReferencesProductGroupRelProduct::getProductsByGroup($model->id);
-//                    },
                 ],
                 [
                     'attribute' => 'part_number',
                 ],
 //                [
-//                    'attribute' => 'status_id',
-//                    'format' => 'raw',
+//                    'attribute' => 'scrapped_price',
+//                    'label' => Yii::t("app","Scrapped price"),
 //                    'value' => function($model) {
-//                        return BaseModel::getStatusList($model->status_id);
+//                        return $model->scrapped_price * 1;
 //                    },
-//                    'filter' => BaseModel::getStatusList()
 //                ],
+//                [
+//                    'attribute' => 'scrapped_currency_id',
+//                    'label' => Yii::t("app","Scrapped currency"),
+//                    'value' => function(Products $model) {
+//                        return $model->scrapped_currency_id ? $model->scrappedCurrency->name : "";
+//                    },
+//                    'filter' => Currency::getList(true)
+//                ],
+//                [
+//                    'attribute' => 'repaired_price',
+//                    'label' => Yii::t("app","Repaired price"),
+//                    'value' => function($model) {
+//                        return $model->repaired_price * 1;
+//                    },
+//                ],
+//                [
+//                    'attribute' => 'repaired_currency_id',
+//                    'label' => Yii::t("app","Repaired currency"),
+//                    'value' => function(Products $model) {
+//                        return $model->repaired_currency_id ? $model->repairedCurrency->name : "";
+//                    },
+//                    'filter' => Currency::getList(true)
+//                ],
+                [
+                    'attribute' => 'status_id',
+                    'format' => 'raw',
+                    'value' => function($model) {
+                        return BaseModel::getStatusList($model->status_id);
+                    },
+                    'filter' => BaseModel::getStatusList()
+                ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{view}{delete}',
