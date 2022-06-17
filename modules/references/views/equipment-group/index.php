@@ -3,6 +3,7 @@
 use app\models\BaseModel;
 use app\modules\references\models\Currency;
 use app\modules\references\models\EquipmentGroup;
+use app\modules\references\models\EquipmentGroupRelationEquipment;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
