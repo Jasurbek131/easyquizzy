@@ -61,15 +61,16 @@ class BaseModel extends ActiveRecord
     /**
      * @throws Exception
      */
-    public static function getStatusList($key = null, $isArray = false) {
+    public static function getStatusList($key = null, $isArray = false)
+    {
         $language = Language::widget();
         if (!is_null($key)) {
             $status = StatusList::findOne(['id' => $key]);
             if (!empty($status)) {
                 if ($status['id'] == self::STATUS_INACTIVE) {
-                    return "<span class='badge badge-danger d-block'>".$status[$language]."</span>";
+                    return "<span class='badge badge-danger d-block'>" . $status[$language] . "</span>";
                 }
-                return "<span class='badge badge-success d-block'>".$status[$language]."</span>";
+                return "<span class='badge badge-success d-block'>" . $status[$language] . "</span>";
             }
             return "";
         }
@@ -111,32 +112,32 @@ class BaseModel extends ActiveRecord
             $time2 = new DateTime($time2);
             $diff = $time1->diff($time2);
             $total = 0;
-            switch( $need){
+            switch ($need) {
                 case "y":
                     $total = $diff->y + $diff->m / 12 + $diff->d / 365.25;
                     break;
                 case "m":
-                    $total= $diff->y * 12 + $diff->m + $diff->d/30 + $diff->h / 24;
+                    $total = $diff->y * 12 + $diff->m + $diff->d / 30 + $diff->h / 24;
                     break;
                 case "d":
-                    $total = $diff->y * 365.25 + $diff->m * 30 + $diff->d + $diff->h/24 + $diff->i / 60;
+                    $total = $diff->y * 365.25 + $diff->m * 30 + $diff->d + $diff->h / 24 + $diff->i / 60;
                     break;
                 case "h":
-                    $total = ($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h + $diff->i/60;
+                    $total = ($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h + $diff->i / 60;
                     break;
                 case "i":
-                    $total = (($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i + $diff->s/60;
+                    $total = (($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i + $diff->s / 60;
                     break;
                 case "s":
-                    $total = ((($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i)*60 + $diff->s;
+                    $total = ((($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i) * 60 + $diff->s;
                     break;
             }
-            if($diff->invert)
-                return  -1 * $total;
+            if ($diff->invert)
+                return -1 * $total;
             else
                 return $total;
 
-        }catch (Exception $e){
+        } catch (Exception $e) {
 
         }
     }

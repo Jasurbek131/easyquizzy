@@ -15,7 +15,7 @@ use yii\web\Response;
 /**
  * EquipmentGroupController implements the CRUD actions for EquipmentGroup model.
  */
-class EquipmentGroupController extends Controller
+class EquipmentGroupController extends BaseController
 {
     /**
      * {@inheritdoc}

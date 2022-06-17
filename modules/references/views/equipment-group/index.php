@@ -3,10 +3,10 @@
 use app\models\BaseModel;
 use app\modules\references\models\Currency;
 use app\modules\references\models\EquipmentGroup;
-use app\modules\references\models\EquipmentGroupRelationEquipment;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\references\models\EquipmentGroupSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -35,6 +35,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function($model) {
                     return EquipmentGroupRelationEquipment::getGroupEquipments($model->id);
+                }
+            ],
+            [
+                'attribute' => 'equipment_type_id',
+                'filter' => \app\modules\references\models\EquipmentTypes::getList(null,false),
+                'value' => function ($model) {
+                    return $model->equipmentType->name??'';
                 }
             ],
             [
@@ -116,22 +123,22 @@ $this->params['breadcrumbs'][] = $this->title;
 //                    'delete' => function($model) {
 //                        return Yii::$app->user->can('equipment_group/delete'); // && $model->status < $model::STATUS_SAVED;
 //                    }
-                ],
-                'buttons' => [
-                    'new-update' => function ($url, $model) {
-                        return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
-                            'title' => Yii::t('app', 'Update'),
-                            'class'=> 'update-dialog btn btn-xs btn-success mr1',
-                            'data-form-id' => $model->id,
-                        ]);
-                    },
-                    'view' => function ($url, $model) {
-                        return Html::a('<span class="fa fa-eye"></span>', $url, [
-                            'title' => Yii::t('app', 'View'),
-                            'class'=> 'btn btn-xs btn-primary view-dialog mr1',
-                            'data-form-id' => $model->id,
-                        ]);
-                    },
+                    ],
+                    'buttons' => [
+                        'new-update' => function ($url, $model) {
+                            return Html::a('<span class="fa fa-pencil-alt"></span>', $url, [
+                                'title' => Yii::t('app', 'Update'),
+                                'class' => 'update-dialog btn btn-xs btn-success mr1',
+                                'data-form-id' => $model->id,
+                            ]);
+                        },
+                        'view' => function ($url, $model) {
+                            return Html::a('<span class="fa fa-eye"></span>', $url, [
+                                'title' => Yii::t('app', 'View'),
+                                'class' => 'btn btn-xs btn-primary view-dialog mr1',
+                                'data-form-id' => $model->id,
+                            ]);
+                        },
 //                    'delete' => function ($url, $model) {
 //                        return Html::a('<span class="fa fa-trash-alt"></span>', $url, [
 //                            'title' => Yii::t('app', 'Delete'),
@@ -139,10 +146,10 @@ $this->params['breadcrumbs'][] = $this->title;
 //                            'data-form-id' => $model->id,
 //                        ]);
 //                    },
+                    ],
                 ],
             ],
-        ],
-    ]); ?>
+        ]); ?>
     </div>
 </div>
 

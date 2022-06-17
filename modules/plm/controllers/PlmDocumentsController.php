@@ -9,7 +9,7 @@ use yii\filters\VerbFilter;
 /**
  * PlmProcessingTimeController implements the CRUD actions for PlmProcessingTime model.
  */
-class PlmDocumentsController extends Controller
+class PlmDocumentsController extends BaseController
 {
     /**
      * {@inheritdoc}

@@ -13,7 +13,7 @@ use yii\web\Response;
 /**
  * ReasonsController implements the CRUD actions for Reasons model.
  */
-class ReasonsController extends Controller
+class ReasonsController extends BaseController
 {
     /**
      * {@inheritdoc}

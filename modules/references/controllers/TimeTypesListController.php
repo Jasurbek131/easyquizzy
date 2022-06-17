@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * TimeTypesListController implements the CRUD actions for TimeTypesList model.
  */
-class TimeTypesListController extends Controller
+class TimeTypesListController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -47,10 +47,9 @@ class TimeTypesListController extends Controller
     }
 
     /**
-     * Displays a single TimeTypesList model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {

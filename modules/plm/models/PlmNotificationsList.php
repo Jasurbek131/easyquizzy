@@ -112,10 +112,10 @@ class PlmNotificationsList extends BaseModel
      * @param null $id
      * @return array
      */
-    public static function getViews($id = null):array
+    public static function getViews($id = null, $user_id = null):array
     {
         $query = [];
-        $hr_department = HrEmployeeRelPosition::getActiveHrDepartment(); // foydalanuvchini faol bo'limini olish
+        $hr_department = HrEmployeeRelPosition::getActiveHrDepartment($user_id); // foydalanuvchini faol bo'limini olish
         if(!empty($id)){
             $query = self::find()
                 ->alias('pnl')

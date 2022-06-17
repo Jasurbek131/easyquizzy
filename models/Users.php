@@ -25,6 +25,8 @@ use Yii;
  *
  * @property StatusList $status
  * @property HrEmployeeRelUsers $hrEmployees
+ * @property string $redirect_url_id [integer]
+ * @property int $telegram_id [bigint]
  */
 class Users extends BaseModel implements \yii\web\IdentityInterface
 {
@@ -99,9 +101,9 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
     {
         return [
             [['status_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
-            [['status_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['status_id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'telegram_id'], 'integer'],
             [['username', 'password', 'auth_key'], 'string', 'max' => 255],
-            [['username'], 'unique'],
+            [['username', 'telegram_id'], 'unique'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusList::class, 'targetAttribute' => ['status_id' => 'id']],
             [['redirect_url_id'], 'exist', 'skipOnError' => true, 'targetClass' => RedirectUrlList::class, 'targetAttribute' => ['redirect_url_id' => 'id']],
             [['hr_employee_id', 'username'], 'required'],

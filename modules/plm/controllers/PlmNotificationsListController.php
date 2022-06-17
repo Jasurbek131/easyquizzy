@@ -18,7 +18,7 @@ use yii\web\Response;
 /**
  * PlmNotificationsListController implements the CRUD actions for PlmNotificationsList model.
  */
-class PlmNotificationsListController extends Controller
+class PlmNotificationsListController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -64,7 +64,27 @@ class PlmNotificationsListController extends Controller
         return $this->render('view', [
             'model' => $model,
             'plmNotRelReasons' => $plmNotRelReasons,
-            'plmNotRelDefects' => $plmNotRelDefects
+            'plmNotRelDefects' => $plmNotRelDefects,
+            'is_bot' => false,
+        ]);
+    }
+    /**
+     * Displays a single PlmNotificationsList model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionViewBot($id,$user_id)
+    {
+        $this->layout = '@app/views/layouts/empty';
+        $model = PlmNotificationsList::getViews($id,$user_id);
+        $plmNotRelReasons = PlmNotificationsListRelReason::getReasonList($id);
+        $plmNotRelDefects = PlmNotificationRelDefect::getDefectList($id);
+        return $this->render('view', [
+            'model' => $model,
+            'plmNotRelReasons' => $plmNotRelReasons,
+            'plmNotRelDefects' => $plmNotRelDefects,
+            'is_bot' => true
         ]);
     }
 

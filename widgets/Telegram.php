@@ -1,6 +1,6 @@
 <?php
 
-namespace app\widgets\helpers;
+namespace app\widgets;
 use CURLFile;
 use Exception;
 use Yii;
@@ -10,6 +10,8 @@ class Telegram
     CONST OMADBEK = 64520993;
     CONST FAYZULLO = 673629439;
     CONST MUHAMMADSODIQ = 440310184;
+
+    CONST DOSTON = 376544097;
 
     public static $token = '2068461713:AAH5LImS7JMsssz04dVYAM4C7dM8lCbv9mk';
 

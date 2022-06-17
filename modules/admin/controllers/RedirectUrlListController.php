@@ -13,7 +13,7 @@ use yii\web\Response;
 /**
  * RedirectUrlListController implements the CRUD actions for RedirectUrlList model.
  */
-class RedirectUrlListController extends Controller
+class RedirectUrlListController extends BaseController
 {
     /**
      * {@inheritdoc}

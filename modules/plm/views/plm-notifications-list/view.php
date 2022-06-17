@@ -20,7 +20,7 @@ $no_defect = (($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED')
         <div class="card-body">
             <div class="plm-notifications-list-view">
                 <div class="row">
-                    <?php if (!Yii::$app->request->isAjax): ?>
+                    <?php if (!Yii::$app->request->isAjax && $is_bot != true): ?>
                         <div class="pull-right" style="margin-bottom: 15px;float: right">
                             <?php if ($model['status_id'] < BaseModel::STATUS_SAVED): ?>
                                 <?php echo Html::button(Yii::t('app', 'Accepted'), [

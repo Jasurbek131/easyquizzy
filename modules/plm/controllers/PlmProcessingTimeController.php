@@ -13,7 +13,7 @@ use yii\web\Response;
 /**
  * PlmProcessingTimeController implements the CRUD actions for PlmProcessingTime model.
  */
-class PlmProcessingTimeController extends Controller
+class PlmProcessingTimeController extends BaseController
 {
     /**
      * {@inheritdoc}

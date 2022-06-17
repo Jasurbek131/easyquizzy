@@ -13,19 +13,72 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+
     ],
     'modules' => [
         'admin' => [
             'class' => 'app\modules\admin\Module',
+            'as access' => [
+                'class' => 'yii\filters\AccessControl',
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ]
+                ],
+                'denyCallback' => function($rule, $action) {
+                    Yii::$app->user->setReturnUrl(\yii\helpers\Url::canonical());
+                    return Yii::$app->response->redirect(['/site/login?r='.Yii::$app->getRequest()->getUrl()]);
+                },
+            ],
         ],
         'hr' => [
             'class' => 'app\modules\hr\Module',
+            'as access' => [
+                'class' => 'yii\filters\AccessControl',
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ]
+                ],
+                'denyCallback' => function($rule, $action) {
+                    Yii::$app->user->setReturnUrl(\yii\helpers\Url::canonical());
+                    return Yii::$app->response->redirect(['/site/login?r='.Yii::$app->getRequest()->getUrl()]);
+                },
+            ],
         ],
         'references' => [
             'class' => 'app\modules\references\Module',
+            'as access' => [
+                'class' => 'yii\filters\AccessControl',
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ]
+                ],
+                'denyCallback' => function($rule, $action) {
+                    Yii::$app->user->setReturnUrl(\yii\helpers\Url::canonical());
+                    return Yii::$app->response->redirect(['/site/login?r='.Yii::$app->getRequest()->getUrl()]);
+                },
+            ],
         ],
         'plm' => [
             'class' => 'app\modules\plm\Module',
+            'as access' => [
+                'class' => 'yii\filters\AccessControl',
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ]
+                ],
+                'denyCallback' => function($rule, $action) {
+                    Yii::$app->user->setReturnUrl(\yii\helpers\Url::canonical());
+                    return Yii::$app->response->redirect(['/site/login?r='.Yii::$app->getRequest()->getUrl()]);
+                },
+            ],
         ],
         'treemanager' =>  [
             'class' => '\kartik\tree\Module',
@@ -53,7 +106,7 @@ $config = [
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => '1', // vaqtinchalik
+            'cookieValidationKey' => 'sad2121a2seAczxASDZXc2asca1ascdaxcASA', // vaqtinchalik
             'baseUrl' => '',
         ],
         'cache' => [
@@ -101,7 +154,10 @@ $config = [
                 '' => 'site/index',
             ],
         ],
-
+        'telegram' => [
+            'class' => 'aki\telegram\Telegram',
+            'botToken' => '5268528798:AAErwKMllti1zmkTRQ34FUros2PSOwF4TCo',
+        ]
     ],
     'params' => $params,
 ];

@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * DefectsController implements the CRUD actions for Defects model.
  */
-class DefectsController extends Controller
+class DefectsController extends BaseController
 {
     /**
      * {@inheritdoc}

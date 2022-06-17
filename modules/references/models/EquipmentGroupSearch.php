@@ -4,6 +4,7 @@ namespace app\modules\references\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use app\modules\references\models\EquipmentGroup;
 
 /**
  * EquipmentGroupSearch represents the model behind the search form of `app\modules\references\models\EquipmentGroup`.
@@ -17,8 +18,8 @@ class EquipmentGroupSearch extends EquipmentGroup
     {
         return [
             [['id', 'status_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['name', 'value', 'equipments'], 'safe'],
             [[ 'repair_is_ok', 'is_plan_quantity_entered_manually'], 'boolean']
+            [['name', 'value', 'equipments', 'equipment_type_id'], 'safe'],
         ];
     }
 
@@ -31,10 +32,7 @@ class EquipmentGroupSearch extends EquipmentGroup
     }
 
     /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
+     * @param $params
      * @return ActiveDataProvider
      */
     public function search($params)
@@ -63,6 +61,7 @@ class EquipmentGroupSearch extends EquipmentGroup
 
         $query->andFilterWhere(['ilike', 'eg.name', $this->name]);
         $query->andFilterWhere(['ilike', 'e.name', $this->equipments]);
+        $query->andFilterWhere(['eg.equipment_type_id' => $this->equipment_type_id]);
 
         return $dataProvider;
     }

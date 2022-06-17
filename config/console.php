@@ -12,6 +12,7 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
         '@tests' => '@app/tests',
+        '@adminm' => '@app/modules/admin/migrations',
     ],
     'components' => [
         'authManager' => [

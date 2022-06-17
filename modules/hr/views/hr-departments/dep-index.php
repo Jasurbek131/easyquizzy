@@ -467,6 +467,7 @@ $('body').delegate('.delete-tree', 'click', function(e) {
                     success: function(response){
                         if(response.delete){
                             swal(response.message,'','success');
+                            window.location.reload();
                             // $('#kt_tree_1').jstree(true).settings.core.data = response.result;
                             $('#kt_tree_1').jstree(true).refresh();
                         }               
@@ -699,10 +700,17 @@ $('body').delegate('.button-save-form', 'click', function(e) {
     $('#loading').css('display','block');
     let formModal = $(this).parents('form');
     let actionUrl = formModal.attr('action');
-    ajaxModalSave(formModal, actionUrl);
+    ajaxModalSave(formModal, actionUrl, false);
+});
+$('body').delegate('.button-save-department', 'click', function(e) {
+    e.preventDefault();
+    $('#loading').css('display','block');
+    let formModal = $(this).parents('form');
+    let actionUrl = formModal.attr('action');
+    ajaxModalSave(formModal, actionUrl, true);
 });
     
-function ajaxModalSave(formModal,actionUrl){
+function ajaxModalSave(formModal,actionUrl, reload){
      $.ajax({
         url: actionUrl,
         data: formModal.serialize(),
@@ -714,7 +722,9 @@ function ajaxModalSave(formModal,actionUrl){
                  $('#view-modal').modal("hide");
                  call_pnotify('success',response.message);
                  ajaxSubmit(response.hr_department_id);
-                 // window.location.reload();
+                 if(reload){
+                    window.location.reload();
+                 }
             }else{
                 $('#loading').css('display','none');
                 call_pnotify('fail',response.message);

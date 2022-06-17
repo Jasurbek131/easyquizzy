@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * HrDepartmentRelShiftsController implements the CRUD actions for HrDepartmentRelShifts model.
  */
-class HrDepartmentRelShiftsController extends Controller
+class HrDepartmentRelShiftsController extends BaseController
 {
     /**
      * {@inheritdoc}
