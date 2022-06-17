@@ -10,7 +10,7 @@ use app\components\PermissionHelper as P;
 /* @var $searchModel app\modules\references\models\ReasonsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Reasons');
+$this->title = Yii::t('app', 'Stop type');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card reasons-index">

@@ -242,7 +242,7 @@ $app = Yii::$app;
                                     ,
                                     'items' => [
                                         [
-                                            'label' => Yii::t('app', 'Stop type'),
+                                            'label' => Yii::t('app', 'Stops group'),
                                             'url' => '/references/categories/index',
                                             'options' => ['class' => 'nav-item'],
                                             'visible' => P::can("categories/index"),
@@ -250,7 +250,7 @@ $app = Yii::$app;
                                             'template' => '<a href="{url}" class="{linkClass}"><i class="fa fa-sitemap nav-icon"></i><p>{label}</p></a>',
                                         ],
                                         [
-                                            'label' => Yii::t('app', 'Stops group'),
+                                            'label' => Yii::t('app', 'Stop type'),
                                             'url' => '/references/reasons/index',
                                             'options' => ['class' => 'nav-item'],
                                             'visible' => P::can("reasons/index"),

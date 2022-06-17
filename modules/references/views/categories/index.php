@@ -9,7 +9,7 @@ use app\components\PermissionHelper as P;
 /* @var $searchModel app\modules\references\models\CategoriesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Categories');
+$this->title = Yii::t('app', 'Stops group');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card categories-index">

@@ -48,7 +48,6 @@ return [
     'Cancel' => 'Отмена',
     'Cannot create node. Parent node is not saved or is invalid.' => '',
     'Cannot move this node as the node details are not saved yet.' => '',
-    'Categories' => 'Типы остановок',
     'Categories are empty' => 'Категории пусты',
     'Category' => 'Тип остановки',
     'Category ID' => 'Тип остановки',
@@ -388,4 +387,6 @@ return [
     'welcome' => 'Добро пожаловать',
     '{node} # {id} - \'{name}\': {error}' => '',
     '№' => '',
+    'Repair OK' => 'Предположим, что ремонтный продукт в порядке',
+    'Plan quantity entered manually' => 'Ручной ввод планового количества продукции',
 ];
