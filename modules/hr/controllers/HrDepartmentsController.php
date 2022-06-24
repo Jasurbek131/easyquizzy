@@ -331,7 +331,8 @@ class HrDepartmentsController extends NodeController
             $response['equipments'] = HrDepartmentRelEquipment::getHrRelEquipment($id);
 //            $response['products'] = HrDepartmentRelProduct::getHrRelProduct($id);
             $response['defects'] = HrDepartmentRelDefects::getHrRelDefect($id);
-            $response['deparea'] = PlmSectorRelHrDepartment::getHrRelDeparea($id);
+            $response['deparea'] = PlmSectorRelHrDepartment::getHrRelDeparea( PlmSectorRelHrDepartment::CONFIRM_TYPE, $id);
+            $response['categories'] = PlmSectorRelHrDepartment::getHrRelDeparea(PlmSectorRelHrDepartment::CATEGORIES_TYPE, $id);
             $response['delete'] = false;
             if (!empty($child)) {
                 $response['delete'] = true;

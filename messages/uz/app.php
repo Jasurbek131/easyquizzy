@@ -388,6 +388,7 @@ return [
     'welcome' => 'Xush kelibsiz!',
     '{node} # {id} - \'{name}\': {error}' => '',
     '№' => '',
+    'Confirmations' => 'Tasdiqlashlar',
 //    'Planned price' => 'R.li t.sh narxi',
 //    'Planned currency' => 'R.li t.sh pb',
 //    'Unplanned price' => 'R.siz t.sh narxi',

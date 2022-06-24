@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * PlmSectorRelHrDepartmentController implements the CRUD actions for PlmSectorRelHrDepartment model.
  */
-class PlmSectorRelHrDepartmentController extends BaseController
+class CategoriesRelHrDepartmentController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -80,7 +80,7 @@ class PlmSectorRelHrDepartmentController extends BaseController
         $model->hr_department_id = $data['department_id'];
         if ($request->isPost) {
             if ($model->load($request->post())) {
-                $response = $model->setType(PlmSectorRelHrDepartment::CONFIRM_TYPE)->saveRelHrDepartment();
+                $response = $model->setType(PlmSectorRelHrDepartment::CATEGORIES_TYPE)->saveRelHrDepartment();
                 if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     if ($response['status']) {
@@ -118,7 +118,7 @@ class PlmSectorRelHrDepartmentController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id)
-            ->setType(PlmSectorRelHrDepartment::CONFIRM_TYPE)
+            ->setType(PlmSectorRelHrDepartment::CATEGORIES_TYPE)
             ->getCategoriesIdListByDepartment();
 
         $model->scenario = PlmSectorRelHrDepartment::SCENARIO_CREATE;
@@ -126,7 +126,7 @@ class PlmSectorRelHrDepartmentController extends BaseController
         if ($request->isPost) {
             if ($model->load($request->post())) {
                 $model->isUpdate = true;
-                $response = $model->setType(PlmSectorRelHrDepartment::CONFIRM_TYPE)->saveRelHrDepartment();
+                $response = $model->setType(PlmSectorRelHrDepartment::CATEGORIES_TYPE)->saveRelHrDepartment();
                 if ($request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     if ($response['status']) {

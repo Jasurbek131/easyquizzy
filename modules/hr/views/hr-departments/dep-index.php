@@ -133,8 +133,12 @@ $create = Yii::t('app', 'Create');
                                aria-controls="defects" aria-selected="false"><?php echo Yii::t('app', 'Defects') ?></a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab"
+                               aria-controls="categories" aria-selected="false"><?php echo Yii::t('app', "Categories") ?></a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" id="deparea-tab" data-toggle="tab" href="#deparea" role="tab"
-                               aria-controls="deparea" aria-selected="false"><?php echo Yii::t('app', "Types of stops") ?></a>
+                               aria-controls="deparea" aria-selected="false"><?php echo Yii::t('app', "Confirmations") ?></a>
                         </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
@@ -256,6 +260,36 @@ $create = Yii::t('app', 'Create');
                                 </div>
                             </div>
                         </div>
+
+                        <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button href="<?php echo Url::to(['/plm/categories-rel-hr-department/create']) ?>"
+                                            class="btn btn-xs-button  btn-outline-success text-sm categories-create"
+                                            style="border: 1px solid #1bc84d;padding: 3px 6px; ">
+                                        <i class="fa fa-plus"   style="font-size: 14px">&nbsp;<?php echo $create ?></i>&nbsp;
+                                    </button>
+                                </div>
+                                <div class="col-md-8">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-hover attorney-table table-bordered"
+                                           id="table-categories">
+                                        <thead>
+                                        <tr>
+                                            <th class=""><?php echo Yii::t('app', "№") ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Categories') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="tab-pane fade" id="deparea" role="tabpanel" aria-labelledby="profile-tab">
                             <div class="row">
                                 <div class="col-md-4">
@@ -275,7 +309,7 @@ $create = Yii::t('app', 'Create');
                                         <tr>
                                             <th class=""><?php echo Yii::t('app', "№") ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Hr Department') ?></th>
-                                            <th class=""><?php echo Yii::t('app', 'Categories') ?></th>
+                                            <th class=""><?php echo Yii::t('app', 'Confirmations') ?></th>
                                             <th class=""><?php echo Yii::t('app', 'Permission') ?></th>
                                         </tr>
                                         </thead>
@@ -284,6 +318,7 @@ $create = Yii::t('app', 'Create');
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -334,6 +369,8 @@ $urlDefectUpdate = Url::to(['hr-department-rel-defects/update']);
 $urlDefectDelete = Url::to(['hr-department-rel-defects/delete']);
 $urlDepareaUpdate = Url::to(['/plm/plm-sector-rel-hr-department/update']);
 $urlDepareaDelete = Url::to(['/plm/plm-sector-rel-hr-department/delete']);
+$urlCategoriesUpdate = Url::to(['/plm/categories-rel-hr-department/update']);
+$urlCategoriesDelete = Url::to(['/plm/categories-rel-hr-department/delete']);
 $this->registerJsVar('urlShiftUpdate', $urlShiftUpdate);
 $this->registerJsVar('urlShiftDelete', $urlShiftDelete);
 $this->registerJsVar('urlEquipmentUpdate', $urlEquipmentUpdate);
@@ -344,6 +381,8 @@ $this->registerJsVar('urlDefectsUpdate', $urlDefectUpdate);
 $this->registerJsVar('urlDefectsDelete', $urlDefectDelete);
 $this->registerJsVar('urlDepareaUpdate', $urlDepareaUpdate);
 $this->registerJsVar('urlDepareaDelete', $urlDepareaDelete);
+$this->registerJsVar('urlCategoriesUpdate', $urlCategoriesUpdate);
+$this->registerJsVar('urlCategoriesDelete', $urlCategoriesDelete);
 $this->registerJsVar('tempSelectMenuMessage', Yii::t('app', "Avval bo'lim tanlang"));
 $this->registerJsVar('urlUserGroup', Url::to(['/admin/users-group']));
 $this->registerJsVar('lang', $lang);
@@ -494,7 +533,7 @@ $('body').delegate('.tree-create', 'click', function(e) {
         });
 });
 
-$('body').delegate('.department-create,.department-update,.shifts-create,.shifts-update,.equipments-create,.equipments-update,.defects-create,.defects-update,.deparea-create,.deparea-update', 'click', function(e) {
+$('body').delegate('.categories-create, .categories-update, .department-create,.department-update,.shifts-create,.shifts-update,.equipments-create,.equipments-update,.defects-create,.defects-update,.deparea-create,.deparea-update', 'click', function(e) {
     e.preventDefault();
     $(".tree-create").attr("disabled",true);
     var departmentId = $('.delete-tree').attr('data-id');
@@ -522,7 +561,7 @@ $('body').delegate('.department-create,.department-update,.shifts-create,.shifts
 });
 //Ajax yordamida itemlarni o'chirish
 
-$('body').delegate('.shifts-delete,.equipments-delete,.products-delete,.defects-delete,.deparea-delete','click',function(e){
+$('body').delegate('.shifts-delete,.equipments-delete,.products-delete,.defects-delete,.deparea-delete,.categories-delete','click',function(e){
     var id = $(this).attr('data-form-id');
     let url = $(this).attr('href');
     if(id != undefined){
@@ -572,6 +611,7 @@ function ajaxSubmit(id){
                     // let products = response['products'];
                     let defects = response['defects'];
                     let deparea = response['deparea'];
+                    let categories = response['categories'];
                     let tr_class = "";
                     if ( delete_tree ) {
                         $('.delete-tree').attr('disabled', true);
@@ -661,6 +701,25 @@ function ajaxSubmit(id){
                              '</td>' +
                           '</tr>'; 
                          $('#table-defects').find('tbody').append(td_defects);
+                    });
+                    categories.map(function(item,index) {
+                        if (item['status'] == 1) {
+                            item['status'] = 'Active';
+                        } else {
+                            item['status'] = 'Inactive';
+                        }
+                        let td_deparea = '<tr>' +
+                             '<td>'+ (index*1+1) +'</td>' +
+                             '<td>'+ item['dep_name'] +'</td>' +
+                             '<td>'+ item['category'] +'</td>' +
+                             '<td>';
+                        if (item['status'] == 'Active') {
+                            td_deparea += '<a href="' + urlCategoriesUpdate + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs mr-1 btn-outline-success categories-update" ><i class="fa fa-pencil-alt"></i></button>';
+                        }    
+                        td_deparea += '<a href="' + urlCategoriesDelete + '" data-form-id="'+item['id'] +'" class="btn btn-icon btn-xs btn-outline-danger categories-delete" data-toggle="modal" data-target="#exampleModalCustomScrollable"><i class="fa fa-trash"></i></button>' +
+                             '</td>' +
+                          '</tr>'; 
+                         $('#table-categories').find('tbody').append(td_deparea);
                     });
                     deparea.map(function(item,index) {
                         if (item['status'] == 1) {

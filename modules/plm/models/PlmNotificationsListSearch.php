@@ -141,14 +141,15 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                 ->andFilterWhere(['ilike', 'e.name', $this->equipment])
                 ->groupBy(['pdi.id'])
             ], 'equipment.pdi_id = pdi.id');
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-
         if (!$this->validate()) {
             return $dataProvider;
         }
+
         $hr_department = HrEmployeeRelPosition::getActiveHrDepartment();
         if(empty($hr_department)){
             Yii::$app->session->setFlash('error', Yii::t('app', "Sizga tegishli bo'lim topilmadi"));
@@ -156,7 +157,11 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                 'query' => $query->andWhere(['!=', 1, 1]),
             ]);
         }
-        $query = $query->andWhere(['=', 'psrd.hr_department_id', $hr_department['hr_department_id']]);
+
+        $query = $query->andWhere([
+            'psrd.hr_department_id' =>  $hr_department['hr_department_id'],
+            'psrd.type' => PlmSectorRelHrDepartment::CONFIRM_TYPE,
+        ]);
         $query->andFilterWhere([
             'pnl.status_id' => $this->status_id,
             'category_id' => $this->category_id,

@@ -2,6 +2,7 @@
 
 namespace app\modules\references\models;
 use app\modules\hr\models\HrDepartments;
+use app\modules\plm\models\PlmSectorRelHrDepartment;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -24,6 +25,7 @@ use yii\helpers\ArrayHelper;
  */
 class Categories extends BaseModel
 {
+    const NONE_TYPE = 0;
     const PLANNED_TYPE  = 1; // rejali to'xtalish turi
     const UNPLANNED_TYPE  = 2; // rejasiz to'xtalish turi
 
@@ -138,6 +140,35 @@ class Categories extends BaseModel
             return ArrayHelper::map($query, 'id', 'name');
         }
         return  $query;
+    }
+
+
+    /**
+     * @param [] $department_id
+     * @param [] $where
+     * @return array
+     */
+    public static function  getListByDepartment($department_id, $where = []): array
+    {
+        $language = Yii::$app->language;
+        $query = self::find()
+            ->alias('c')
+            ->select([
+                'c.id',
+                'c.id as value',
+                "c.name_{$language} as label",
+                "c.name_{$language} as name",
+            ])
+            ->leftJoin(["psrhd" => "plm_sector_rel_hr_department"],"psrhd.category_id = c.id")
+            ->where([
+                'c.status_id' => \app\models\BaseModel::STATUS_ACTIVE,
+                "psrhd.hr_department_id" => $department_id,
+                "psrhd.type" => PlmSectorRelHrDepartment::CATEGORIES_TYPE
+            ]);
+        if($where){
+            $query->andFilterWhere($where);
+        }
+        return $query->asArray()->all();
     }
 
     /**

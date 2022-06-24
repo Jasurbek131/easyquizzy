@@ -156,8 +156,12 @@ class DocumentController extends ActiveController
                     'today' => date('D M j G:i:s T Y'),
                     'yesterday' => date('D M j G:i:s T Y', strtotime("-1 days")),
                     'tomorrow' => date('D M j G:i:s T Y', strtotime("+1 day")),
-                    'categoriesPlannedList' => Categories::getList(false, ['type' => Categories::PLANNED_TYPE]),
-                    'categoriesUnPlannedList' => Categories::getList(false, ['type' => Categories::UNPLANNED_TYPE]),
+                    'categoriesPlannedList' => Categories::getListByDepartment($department_id, [
+                        'c.type' => Categories::PLANNED_TYPE,
+                    ]),
+                    'categoriesUnPlannedList' => Categories::getListByDepartment($department_id, [
+                        'c.type' => Categories::UNPLANNED_TYPE
+                    ]),
                     'repaired' => Defects::getListByType(BaseModel::DEFECT_REPAIRED, $department_id),
                     'scrapped' => Defects::getListByType(BaseModel::DEFECT_SCRAPPED, $department_id),
                 ];

@@ -380,6 +380,7 @@ return [
     'Working Time' => 'Рабочее время',
     'Xatolik' => 'Ошибка',
     'Yangilash' => 'Обновлять',
+    'Confirmations' => 'Подтверждения',
     'Yangilash: {name}' => 'Обновлять',
     'You cannot add children under this {node}.' => '',
     'lead-delete' => '',

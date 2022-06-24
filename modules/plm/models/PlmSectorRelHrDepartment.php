@@ -12,6 +12,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property int $id
  * @property int $hr_department_id
+ * @property int $type
  * @property int $status_id
  * @property int $created_by
  * @property int $created_at
@@ -25,6 +26,10 @@ use yii\helpers\ArrayHelper;
  */
 class PlmSectorRelHrDepartment extends BaseModel
 {
+    const CONFIRM_TYPE = 1;
+
+    const CATEGORIES_TYPE = 2;
+
     public $department;
     public $shift;
     public $product;
@@ -35,6 +40,7 @@ class PlmSectorRelHrDepartment extends BaseModel
     public $token;
     public $types;
     public $doc_number;
+
     /**
      * @var array
      */
@@ -71,7 +77,7 @@ class PlmSectorRelHrDepartment extends BaseModel
     {
         return [
             [['hr_department_id','status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
-            [['hr_department_id','status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['hr_department_id','status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'type'], 'integer'],
             [['hr_department_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrDepartments::class, 'targetAttribute' => ['hr_department_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['category_id' => 'id']],
             [['hr_department_id'], 'required'],
@@ -105,6 +111,7 @@ class PlmSectorRelHrDepartment extends BaseModel
     {
         return $this->hasOne(HrDepartments::class, ['id' => 'hr_department_id']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -127,7 +134,10 @@ class PlmSectorRelHrDepartment extends BaseModel
             if ($response['status']) {
                 if (!empty($this->categories)) {
                     if ($this->isUpdate && $this->hr_department_id)
-                        PlmSectorRelHrDepartment::deleteAll(["hr_department_id" => $this->hr_department_id]);
+                        PlmSectorRelHrDepartment::deleteAll([
+                            "hr_department_id" => $this->hr_department_id,
+                            "type" => $this->type
+                        ]);
 
                     foreach ($this->categories as $item) {
                         /**
@@ -137,6 +147,7 @@ class PlmSectorRelHrDepartment extends BaseModel
                             "hr_department_id" => $this->hr_department_id,
                             "category_id" => $item,
                             "status_id" => \app\models\BaseModel::STATUS_ACTIVE,
+                            'type'=> $this->type
                         ]);
                         if (!$rel->save()) {
                             $response = [
@@ -171,6 +182,16 @@ class PlmSectorRelHrDepartment extends BaseModel
     }
 
     /**
+     * @param $type
+     * @return PlmSectorRelHrDepartment
+     */
+    public function setType($type): PlmSectorRelHrDepartment
+    {
+        $new = clone $this;
+        $new->type = $type;
+        return $new;
+    }
+    /**
      * @return $this
      */
     public function getCategoriesIdListByDepartment(): self
@@ -180,6 +201,7 @@ class PlmSectorRelHrDepartment extends BaseModel
                 "category_id"
             ])
             ->where(["hr_department_id" => $this->hr_department_id])
+            ->where(["type" => $this->type])
             ->asArray()
             ->all();
 
@@ -216,7 +238,13 @@ class PlmSectorRelHrDepartment extends BaseModel
         }
         return $text;
     }
-    public static function getHrRelDeparea($department_id = null)
+
+    /**
+     * @param null $department_id
+     * @param  $type
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getHrRelDeparea($type, $department_id = null)
     {
         if (!empty($department_id)) {
             $data = self::find()
@@ -231,7 +259,10 @@ class PlmSectorRelHrDepartment extends BaseModel
                 ->leftJoin(['c' => 'categories'], 'psrhd.category_id = c.id')
                 ->leftJoin(['hrd' => 'hr_departments'], 'psrhd.hr_department_id = hrd.id')
                 ->leftJoin(['sl' => 'status_list'], 'psrhd.status_id = sl.id')
-                ->where(['psrhd.hr_department_id' => $department_id])
+                ->where([
+                    'psrhd.hr_department_id' => $department_id,
+                    'psrhd.type' => $type
+                ])
                 ->groupBy(["hrd.id"])
 //                ->orderBy(['psrhd.id' => SORT_DESC, 'psrhd.status_id' => SORT_ASC])
                 ->asArray()
