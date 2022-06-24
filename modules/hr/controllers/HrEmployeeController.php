@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\controllers;
 
+use app\models\BaseModel;
 use app\modules\hr\models\HrEmployeeRelPosition;
 use Exception;
 use Yii;
@@ -171,7 +172,8 @@ class HrEmployeeController extends BaseController
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->delete()){
+            $model->status_id = BaseModel::STATUS_INACTIVE;
+            if($model->save()){
                 $isDeleted = true;
             }
             if($isDeleted){

@@ -2,6 +2,7 @@
 
 namespace app\modules\hr\controllers;
 
+use app\models\BaseModel;
 use Yii;
 use app\modules\hr\models\HrPositions;
 use app\modules\hr\models\HrPositionsSearch;
@@ -189,7 +190,8 @@ class HrPositionsController extends BaseController
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->delete()){
+            $model->status_id = BaseModel::STATUS_INACTIVE;
+            if($model->save()){
                 $isDeleted = true;
             }
             if($isDeleted){
