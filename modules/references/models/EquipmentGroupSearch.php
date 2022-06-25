@@ -46,7 +46,10 @@ class EquipmentGroupSearch extends EquipmentGroup
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 20
+                'pageSize' => 20,
+                'pageSizeParam' => 20,
+                'defaultPageSize' => 20,
+                'page' => $params['page'] ?? 0
             ]
         ]);
 
