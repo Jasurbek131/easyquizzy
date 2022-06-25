@@ -5,7 +5,6 @@ namespace app\modules\references\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\references\models\EquipmentGroup;
-use yii\data\SqlDataProvider;
 
 /**
  * EquipmentGroupSearch represents the model behind the search form of `app\modules\references\models\EquipmentGroup`.
@@ -34,7 +33,7 @@ class EquipmentGroupSearch extends EquipmentGroup
 
     /**
      * @param $params
-     * @return SqlDataProvider
+     * @return ActiveDataProvider
      */
     public function search($params)
     {
@@ -44,8 +43,8 @@ class EquipmentGroupSearch extends EquipmentGroup
             ->leftJoin(["e" => 'equipments'], 'egre.equipment_id = e.id')
             ->orderBy(["eg.id" => SORT_DESC]);
 
-        $dataProvider = new SqlDataProvider([
-            'sql' => $query->createCommand()->getRawSql(),
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
             'pagination' => [
                 'pageSize' => 20,
                 'pageSizeParam' => 20,
