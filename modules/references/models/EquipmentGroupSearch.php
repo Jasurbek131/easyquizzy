@@ -39,6 +39,9 @@ class EquipmentGroupSearch extends EquipmentGroup
     {
         $query = EquipmentGroup::find()
             ->alias("eg")
+            ->select([
+                "eg.*",
+            ])
             ->leftJoin(["egre" => 'equipment_group_relation_equipment'], 'egre.equipment_group_id = eg.id')
             ->leftJoin(["e" => 'equipments'], 'egre.equipment_id = e.id')
             ->orderBy(["eg.id" => SORT_DESC]);
