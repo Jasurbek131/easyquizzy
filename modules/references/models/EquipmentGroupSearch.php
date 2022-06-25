@@ -49,7 +49,6 @@ class EquipmentGroupSearch extends EquipmentGroup
                 'pageSize' => 20,
                 'pageSizeParam' => 20,
                 'defaultPageSize' => 20,
-                'page' => $params['page'] ?? 0
             ]
         ]);
 
