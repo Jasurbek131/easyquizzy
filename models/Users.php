@@ -85,6 +85,11 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
      */
     public $email;
 
+    /**
+     * @var array
+     * Hodim ishlaydigan bo'limlarni saqlash uchun
+     */
+    public $department_ids = [];
 
     /**
      * {@inheritdoc}
@@ -109,7 +114,7 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
             [['hr_employee_id', 'username'], 'required'],
             [['password', 'password_repeat'], 'required', 'on' => self::SCENARIO_CREATE],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ],
-            [['roles'], 'safe'],
+            [['roles', 'department_ids'], 'safe'],
         ];
     }
 
@@ -145,6 +150,7 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
             'redirect_url_id' => Yii::t('app', 'Redirect Url'),
             'password_repeat' => Yii::t('app', 'Password Repeat'),
             'email' => Yii::t('app', 'Email'),
+            'department_ids' => Yii::t('app', 'Employee\'s department list'),
             'username' => Yii::t('app', 'Username'),
             'password' => Yii::t('app', 'Password'),
             'auth_key' => Yii::t('app', 'Auth Key'),
@@ -353,18 +359,22 @@ class Users extends BaseModel implements \yii\web\IdentityInterface
                         ];
                 }
 
-                if($response['status'] && !empty($relEmployeeDepartment) && $relEmployeeDepartment->hr_department_id){
-                    $userRelDepartments = new UsersRelationHrDepartments([
-                        "user_id" => $this->id,
-                        "hr_department_id" => $relEmployeeDepartment->hr_department_id,
-                        "is_root" => UsersRelationHrDepartments::NOT_ROOT,
-                    ]);
-                    if (!$userRelDepartments->save())
-                        $response = [
-                            'status' => false,
-                            'message' => Yii::t('app', 'User rel department not saved'),
-                            'errors' => $userRelDepartments->getErrors()
-                        ];
+                if($response['status']){
+                    foreach ($this->department_ids as $department_id){
+                        $userRelDepartments = new UsersRelationHrDepartments([
+                            "user_id" => $this->id,
+                            "hr_department_id" => $department_id,
+                            "is_root" => UsersRelationHrDepartments::NOT_ROOT,
+                        ]);
+                        if (!$userRelDepartments->save()){
+                            $response = [
+                                'status' => false,
+                                'message' => Yii::t('app', 'User rel department not saved'),
+                                'errors' => $userRelDepartments->getErrors()
+                            ];
+                            break;
+                        }
+                    }
                 }
             }
 

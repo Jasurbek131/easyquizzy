@@ -5,6 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\BaseModel;
 use app\modules\admin\models\AuthAssignment;
 use app\modules\admin\models\AuthItem;
+use app\modules\hr\models\UsersRelationHrDepartments;
 use Yii;
 use app\models\Users;
 use app\modules\admin\models\search\UsersSearch;
@@ -107,6 +108,7 @@ class UsersController extends BaseController
     {
         $model = $this->findModel($id);
         $model->hr_employee_id = !empty($model->hrEmployees) ? $model->hrEmployees[0]["hr_employee_id"] : "";
+        $model->department_ids = UsersRelationHrDepartments::getRootByUser(false);
         $model->roles = AuthAssignment::getUserRoles($id);
         $model->password = "";
         $request = Yii::$app->request;

@@ -60,6 +60,7 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
+
     <div class="row">
         <?php
         /**
@@ -78,6 +79,22 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="col-lg-3">
             <?php echo $form->field($model, 'email')->textInput(['id' => 'email', 'readonly' => true,  'value' => $employee ? $employee->email : ""]) ?>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <?php echo $form->field($model, 'department_ids')->widget(Select2::class, [
+                'data' => \app\modules\hr\models\HrDepartments::getList(),
+                'options' => [
+                    'placeholder' => Yii::t('app', 'Select'),
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true,
+                    'multiple' => true
+                ],
+            ]) ?>
         </div>
     </div>
 

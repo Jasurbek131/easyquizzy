@@ -400,4 +400,5 @@ return [
     'Currency' => 'Pul birligi',
     'Repair OK' => 'Ta\'mir mahsulotni OK deb hisoblash',
     'Plan quantity entered manually' => 'Mahsulot reja miqdorini qo\'lda kiriitish',
+    'Employee\'s department list' => 'Hodim ishlay oladigan bo\'limlar'
 ];
