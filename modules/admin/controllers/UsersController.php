@@ -108,7 +108,7 @@ class UsersController extends BaseController
     {
         $model = $this->findModel($id);
         $model->hr_employee_id = !empty($model->hrEmployees) ? $model->hrEmployees[0]["hr_employee_id"] : "";
-        $model->department_ids = UsersRelationHrDepartments::getRootByUser(false);
+        $model->department_ids = UsersRelationHrDepartments::getRootByUser(false, $model->id);
         $model->roles = AuthAssignment::getUserRoles($id);
         $model->password = "";
         $request = Yii::$app->request;
