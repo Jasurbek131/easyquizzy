@@ -203,7 +203,7 @@ class PlmDocumentReport extends Component {
                 returnDocItemProductData = item?.products.map((productItem, productIndex) => {
                     if (+productIndex === 0) {
 
-                        let finalPlanDate = +item.plan_date - (+item.plan_stop_date) - (+item.unplan_stop_date);
+                        let finalPlanDate = +item.plan_date - (+item.unplan_stop_date);
 
                         let sumFactQty = this.sumValue(item?.products, 'fact_qty');
                         let sumQty = this.sumValue(item?.products, 'qty');
