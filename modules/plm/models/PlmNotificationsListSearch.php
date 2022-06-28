@@ -158,8 +158,8 @@ class PlmNotificationsListSearch extends PlmNotificationsList
             return $dataProvider;
         }
 
-        $hr_department = HrEmployeeRelPosition::getActiveHrDepartment();
-        if(empty($hr_department)){
+        $department_ids = UsersRelationHrDepartments::getDepartmentByUser(UsersRelationHrDepartments::NOT_ROOT);
+        if(empty($department_ids)){
             Yii::$app->session->setFlash('error', Yii::t('app', "Sizga tegishli bo'lim topilmadi"));
             return new ActiveDataProvider([
                 'query' => $query->andWhere(['!=', 1, 1]),
@@ -167,15 +167,15 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         }
 
         $query = $query->andWhere([
-            'psrd.hr_department_id' =>  $hr_department['hr_department_id'],
+            'hd.id' => $department_ids,
             'psrd.type' => PlmSectorRelHrDepartment::CONFIRM_TYPE,
         ]);
+
         $query->andFilterWhere([
             'pnl.status_id' => $this->status_id,
             'category_id' => $this->category_id,
         ]);
 
-        $query->andFilterWhere(['IN', 'hd.id', UsersRelationHrDepartments::getDepartmentByUser()]);
         $query->andFilterWhere(['ilike', 'hd.name', $this->department]);
         $query->andFilterWhere(['ilike', 'pd.doc_number', $this->doc_number]);
         $query->andFilterWhere(['ilike', 'sh.name', $this->shift]);
