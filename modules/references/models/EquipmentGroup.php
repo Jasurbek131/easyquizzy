@@ -179,7 +179,7 @@ class EquipmentGroup extends BaseModel
                                 ->select([
                                     "rp.product_group_id",
                                     "rp.product_id",
-                                    "p.name as label",
+                                    "CONCAT(p.name, ' (', p.part_number, ')') as label",
                                     "p.id as value",
                                 ])
                                 ->leftJoin('products p', 'rp.product_id = p.id');
