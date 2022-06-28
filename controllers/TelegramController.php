@@ -638,13 +638,13 @@ class  TelegramController extends Controller
                     ->groupBy(['pdi.id'])
                 ], 'equipment.pdi_id = pdi.id');
 
-            $hr_department = HrEmployeeRelPosition::getActiveHrDepartment($user_id);
-            if(empty($hr_department)){
+            $hr_department_ids = UsersRelationHrDepartments::getDepartmentByUser(UsersRelationHrDepartments::NOT_ROOT,$user_id);
+            if(empty($hr_department_ids)){
                 return [];
             }
 
             $query = $query->andWhere([
-                'hd.id' => UsersRelationHrDepartments::getDepartmentByUser(UsersRelationHrDepartments::NOT_ROOT,$user_id),
+                'hd.id' => $hr_department_ids,
                 'psrd.type' => PlmSectorRelHrDepartment::CONFIRM_TYPE,
             ]);
 
