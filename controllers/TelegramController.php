@@ -641,10 +641,7 @@ class  TelegramController extends Controller
                 ], 'equipment.pdi_id = pdi.id');
 
             $hr_department_ids = UsersRelationHrDepartments::getDepartmentByUser(UsersRelationHrDepartments::NOT_ROOT,$user_id);
-            return  [
-                "hr_department_ids" => $hr_department_ids,
-                "user_id" => $user_id,
-            ];
+
             if(empty($hr_department_ids)){
                 return [];
             }
@@ -654,7 +651,7 @@ class  TelegramController extends Controller
                 'psrd.type' => PlmSectorRelHrDepartment::CONFIRM_TYPE,
             ]);
 
-            $query = $query->andFilterWhere(['pnl.status_id' => PlmNotificationsList::STATUS_SAVED]);
+            $query = $query->andFilterWhere(['pnl.status_id' => PlmNotificationsList::STATUS_ACTIVE]);
             return $query->all();
         }
     }
