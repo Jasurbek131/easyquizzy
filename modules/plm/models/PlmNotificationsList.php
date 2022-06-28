@@ -35,6 +35,8 @@ use yii\db\ActiveQuery;
  */
 class PlmNotificationsList extends BaseModel
 {
+    public $equipment_group_name;
+
     /**
      * {@inheritdoc}
      */

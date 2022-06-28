@@ -59,7 +59,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
      * @var
      * Uskunalar guruhi
      */
-    public $equipment_group_name;
+//    public $equipment_group_name;
 
     /**
      * {@inheritdoc}
