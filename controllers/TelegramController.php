@@ -574,7 +574,9 @@ class  TelegramController extends Controller
             }else{
                 $params['Request']::sendMessage([
                     'chat_id' => $params['chat_id'],
-                    'text' => Yii::t('app', 'Tasdiqlanadigan dokumentlar topilmadi'),
+                    'text' => json_encode([
+                        "work" => $work
+                    ], JSON_PRETTY_PRINT),
                 ]);
             }
         }
