@@ -248,7 +248,28 @@ class Form extends React.Component {
                     plm_document_items[key]["plan_quantity_entered_manually"] = 0;
                     plm_document_items[key] = this.onPlanSummary(plm_document_items[key]);
                     plm_document_items[key]['equipmentGroup'] = e;
-                    plm_document_items[key]['equipments'] = [];
+                    plm_document_items[key]['equipments'] = e?.equipments ?? [];
+
+
+                    plm_document_items[key]['start_work'] = "";
+                    plm_document_items[key]['end_work'] = "";
+                    if (validateDate === undefined) {
+                        validateDate = [];
+                        validateDate.push({
+                            start_work: '',
+                            end_work: '',
+                            equipment: equipmentList(plm_document_items[key]["equipments"])
+                        });
+                    } else {
+                        validateDate[key] = {
+                            ...validateDate[key],
+                            start_work: '',
+                            end_work: '',
+                            equipment: equipmentList(plm_document_items[key]["equipments"])
+                        }
+                    }
+
+
                     plm_document_items[key]['products'] = [{
                         label: "",
                         value: "",
@@ -283,7 +304,7 @@ class Form extends React.Component {
                 }
                 if (name === "start_work") {
                     let date = Date.parse(plm_document_items[key]['start_work']) / 1000
-                    if (validateDate.length > 0) {
+                    if (validateDate && validateDate.length > 0) {
                         let hasElement = false;
                         let hasElementEquipment = false;
                         let currentEquipment = plm_document_items[key]['equipments'];
@@ -328,7 +349,7 @@ class Form extends React.Component {
                     let currentEquipment = plm_document_items[key]['equipments'];
                     let hasElement = false;
                     let hasElementEquipment = false;
-                    if (validateDate.length > 0) {
+                    if (validateDate && validateDate.length > 0) {
                         if (validateDate[key]['start_work'] < date) {
                             if (currentEquipment.length > 0) {
                                 for (const index in validateDate) {
