@@ -41,6 +41,7 @@ class PlmSectorRelHrDepartment extends BaseModel
     public $types;
     public $doc_number;
 
+    public $equipment_group_name;
     /**
      * @var array
      */
