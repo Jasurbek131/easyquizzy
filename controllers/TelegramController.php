@@ -551,34 +551,34 @@ class  TelegramController extends Controller
     public function sendWork($params){
         $work = $this->getWork($params['user_id']);
         if($params['Request'] && $params['chat_id']){
-            if(is_iterable($work) && !empty($work)){
-                $keyboard = [];
-                foreach ($work as $item) {
-                    $keyboard[] = [
-                        ['text'=> "{$item['department']} - {$item['doc_number']} - {$item['reg_date']} - {$item['equipment']} - {$item['category_name']} - {$item['department']}",'callback_data'=> 'index_'.$item['id']]
-                    ];
-                }
-                $result = $params['Request']::sendMessage([
-                    'chat_id' => $params['chat_id'],
-                    'text' => Yii::t('app', "Tasdiqlanmagan dokumentlar ro'yxati"),
-                    'reply_markup' => Keyboard::remove()
-                ]);
-                $result = $params['Request']::sendMessage([
-                    'chat_id' => $params['chat_id'],
-                    'text' => Yii::t('app', 'Tasdiqlash uchun tanlang'),
-                    'reply_markup' => Keyboard::remove([
-                        'inline_keyboard' => $keyboard
-                    ])
-                ]);
-                print_r($result);
-            }else{
+//            if(is_iterable($work) && !empty($work)){
+//                $keyboard = [];
+//                foreach ($work as $item) {
+//                    $keyboard[] = [
+//                        ['text'=> "{$item['department']} - {$item['doc_number']} - {$item['reg_date']} - {$item['equipment']} - {$item['category_name']} - {$item['department']}",'callback_data'=> 'index_'.$item['id']]
+//                    ];
+//                }
+//                $result = $params['Request']::sendMessage([
+//                    'chat_id' => $params['chat_id'],
+//                    'text' => Yii::t('app', "Tasdiqlanmagan dokumentlar ro'yxati"),
+//                    'reply_markup' => Keyboard::remove()
+//                ]);
+//                $result = $params['Request']::sendMessage([
+//                    'chat_id' => $params['chat_id'],
+//                    'text' => Yii::t('app', 'Tasdiqlash uchun tanlang'),
+//                    'reply_markup' => Keyboard::remove([
+//                        'inline_keyboard' => $keyboard
+//                    ])
+//                ]);
+//                print_r($result);
+//            }else{
                 $params['Request']::sendMessage([
                     'chat_id' => $params['chat_id'],
                     'text' => json_encode([
                         "work" => $work
                     ], JSON_PRETTY_PRINT),
                 ]);
-            }
+//            }
         }
     }
     public function getWork($user_id)
@@ -641,6 +641,10 @@ class  TelegramController extends Controller
                 ], 'equipment.pdi_id = pdi.id');
 
             $hr_department_ids = UsersRelationHrDepartments::getDepartmentByUser(UsersRelationHrDepartments::NOT_ROOT,$user_id);
+            return  [
+                "hr_department_ids" => $hr_department_ids,
+                "user_id" => $user_id,
+            ];
             if(empty($hr_department_ids)){
                 return [];
             }
