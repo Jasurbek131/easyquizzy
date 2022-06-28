@@ -384,6 +384,7 @@ return [
     'Yangilash: {name}' => 'Обновлять',
     'You cannot add children under this {node}.' => '',
     'lead-delete' => '',
+    'Scrapped Title' => 'Несовместимость',
     'lead-update' => '',
     'welcome' => 'Добро пожаловать',
     '{node} # {id} - \'{name}\': {error}' => '',

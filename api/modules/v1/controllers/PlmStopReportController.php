@@ -76,6 +76,9 @@ class PlmStopReportController extends ActiveController
             case "PLM_STOP_DATA":
                 if ($post['is_search'] == false){
                     $response["stop_list"] = Reasons::getList(false, Categories::TOKEN_UNPLANNED);
+                    $response["category_list"] = Categories::getList(false,[
+                        'token' => Categories::TOKEN_UNPLANNED
+                    ]);
                 }
                 $dataProvider = PlmStopReport::getStopData($post);
                 $response['items'] = $dataProvider->getModels();

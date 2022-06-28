@@ -19,6 +19,7 @@ let other = {
         ignored: '**/node_modules',
     },
     resolve: {
+        extensions: [".ts", ".tsx", ".js", ".jsx"],
         fallback: {
             dgram: false,
             crypto: false,

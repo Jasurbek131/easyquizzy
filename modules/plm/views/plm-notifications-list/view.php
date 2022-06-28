@@ -109,11 +109,11 @@ $no_defect = (($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED')
                             switch ($model['token']) {
                                 case 'REPAIRED':
                                     $title = "Repaired";
-                                    $head = "Repaired Title";
+                                    $head = Yii::t('app', 'Scrapped Title');
                                     break;
                                 case 'SCRAPPED':
                                     $title = "Scrapped";
-                                    $head = "Scrapped Title";
+                                    $head = Yii::t('app', 'Scrapped Title');
                                     break;
                             }
 

@@ -56,13 +56,19 @@ class PlmNotificationsListSearch extends PlmNotificationsList
     public $category_name;
 
     /**
+     * @var
+     * Uskunalar guruhi
+     */
+    public $equipment_group_name;
+
+    /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['id', 'plm_doc_item_id', 'defect_type_id', 'defect_count', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'category_id'], 'integer'],
-            [['begin_time', 'end_time', 'add_info', 'department', 'doc_number', 'reg_date', 'shift', 'equipment', 'categories', 'category_name'], 'safe'],
+            [['begin_time', 'end_time', 'add_info', 'department', 'doc_number', 'reg_date', 'shift', 'equipment', 'categories', 'category_name', 'equipment_group_name'], 'safe'],
         ];
     }
 
@@ -103,10 +109,12 @@ class PlmNotificationsListSearch extends PlmNotificationsList
                 'c.token',
                 'c.name_uz as category_name',
                 'pd.doc_number',
+                "equipment_group_name" => "eg.name",
             ])
             ->leftJoin(['pnl' => 'plm_notifications_list'], 'pnl.category_id = psrd.category_id')
             ->leftJoin(['ps' => 'plm_stops'], 'pnl.stop_id = ps.id')
             ->leftJoin(['pdi' => 'plm_document_items'], 'pnl.plm_doc_item_id = pdi.id')
+            ->leftJoin(['eg' => 'equipment_group'], 'pdi.equipment_group_id = eg.id')
             ->leftJoin(['pd' => 'plm_documents'], 'pdi.document_id = pd.id')
             ->leftJoin(['sh' => 'shifts'], 'pd.shift_id = sh.id')
             ->leftJoin(['hd' => 'hr_departments'], 'pd.hr_department_id = hd.id')
@@ -172,6 +180,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         $query->andFilterWhere(['ilike', 'pd.doc_number', $this->doc_number]);
         $query->andFilterWhere(['ilike', 'sh.name', $this->shift]);
         $query->andFilterWhere(['ilike', 'c.name_uz', $this->category_name]);
+        $query->andFilterWhere(['ilike', 'eg.name', $this->equipment_group_name]);
         $query->andFilterWhere(['!=', 'pnl.status_id', BaseModel::STATUS_INACTIVE]);
         $query->orderBy(['pnl.status_id' => SORT_ASC]);
         return $dataProvider;

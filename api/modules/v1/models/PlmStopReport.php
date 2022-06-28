@@ -21,6 +21,7 @@ class PlmStopReport implements PlmStopReportInterface
             ->select([
                 "pnlrr.id",
                 "r.name_uz as name",
+                "c.name_uz as category_name",
                 "to_char(ps.begin_date, 'DD.MM.YYYY HH24:MI:SS') as begin_date",
                 "to_char(ps.end_time, 'DD.MM.YYYY HH24:MI:SS') as end_date",
                 "EXTRACT(EPOCH FROM (ps.end_time - ps.begin_date)) AS diff_date"
@@ -36,6 +37,7 @@ class PlmStopReport implements PlmStopReportInterface
             ->andFilterWhere([">=", "ps.begin_date", $params["begin_date"]])
             ->andFilterWhere(["<=", "ps.end_time", $params["end_date"]])
             ->andFilterWhere(["r.id" => $params["stop_id"]])
+            ->andFilterWhere(["c.id" => $params["category_id"]])
             ->orderBy(["pnl.id" => SORT_DESC])
             ->asArray();
         return new ActiveDataProvider([

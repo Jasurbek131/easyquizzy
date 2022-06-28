@@ -45,7 +45,19 @@ export function SearchStop(props) {
                     />
                 </div>
                 <div className="col-lg-3">
-                    <label className={"control-label"}>To'xtalishlar</label>
+                    <label className={"control-label"}>To'xtalishlar guruhi</label>
+                    <Select
+                        onChange={props.onHandleChange.bind(this, 'category_id', 'select')}
+                        placeholder={"Tanlang ..."}
+                        id={"category_id"}
+                        value={props.category_list.filter(({value}) => +value === +props?.searchParams?.category_id)}
+                        options={props.category_list}
+                        styles={customStyles}
+                        isClearable={true}
+                    />
+                </div>
+                <div className="col-lg-3">
+                    <label className={"control-label"}>To'xtalishlar turi</label>
                     <Select
                         onChange={props.onHandleChange.bind(this, 'stop_id', 'select')}
                         placeholder={"Tanlang ..."}

@@ -16,6 +16,7 @@ const initialSearch = {
     begin_date: null,
     end_date: null,
     stop_id: '',
+    category_id: '',
 };
 
 class PlmStopReport extends Component {
@@ -25,6 +26,7 @@ class PlmStopReport extends Component {
         this.state = {
             items: [],
             stop_list: [],
+            category_list: [],
             pagination: {
                 totalCount: 0,
                 defaultPageSize: 20,
@@ -43,7 +45,8 @@ class PlmStopReport extends Component {
         if (response.data.status) {
             if (searchParams.is_search === false){
                 this.setState({
-                    stop_list: response.data.stop_list
+                    stop_list: response.data.stop_list,
+                    category_list: response.data.category_list,
                 });
             }
             this.setState({
@@ -116,6 +119,19 @@ class PlmStopReport extends Component {
                 }
             },
             {
+                value: item.category_name ? item.category_name : '',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                }
+            },
+            {
                 value: item.name ? item.name : '',
                 style: {
                     alignment: {horizontal: "center", vertical: "center"},
@@ -175,6 +191,7 @@ class PlmStopReport extends Component {
             pagination,
             searchParams,
             stop_list,
+            category_list,
         } = this.state;
         let dataBody = "";
         let iterator = 0;
@@ -188,6 +205,7 @@ class PlmStopReport extends Component {
             onHandleSearch={this.onHandleSearch}
             onCancelSearch={this.onCancelSearch}
             stop_list={stop_list}
+            category_list={category_list}
         />;
 
         dataBody = items?.map((item, index) => {
@@ -196,6 +214,7 @@ class PlmStopReport extends Component {
             return (
                 <tr key={index}>
                     <td>{++iterator}</td>
+                    <td>{item.category_name ?? ""}</td>
                     <td>{item.name ?? ""}</td>
                     <td>{item.begin_date ?? ""}</td>
                     <td>{item.end_date ?? ""}</td>
@@ -207,6 +226,20 @@ class PlmStopReport extends Component {
         returnDataExl.push([
             {
                 value: 'Jami',
+                style: {
+                    alignment: {horizontal: "center", vertical: "center"},
+                    font: {sz: "8"},
+                    border: {
+                        left: {style: 'thin', color: {rgb: '000000'}},
+                        top: {style: 'thin', color: {rgb: '000000'}},
+                        bottom: {style: 'thin', color: {rgb: '000000'}},
+                        right: {style: 'thin', color: {rgb: '000000'}},
+                    }
+                },
+                width: {hpx: 40}
+            },
+            {
+                value: '',
                 style: {
                     alignment: {horizontal: "center", vertical: "center"},
                     font: {sz: "8"},
@@ -286,6 +319,11 @@ class PlmStopReport extends Component {
                         width: {hpx: 40, wpx: 30}
                     }, // width in  pixcel
                     {
+                        title: "To‘xtalish guruhi",
+                        style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
+                        width: {hpx: 40, wpx: 100}
+                    }, // width in  characcters
+                    {
                         title: "To‘xtalish turi",
                         style: {alignment: {horizontal: "center", vertical: "center"}, font: {sz: "10", bold: true}},
                         width: {hpx: 40, wpx: 100}
@@ -327,6 +365,7 @@ class PlmStopReport extends Component {
                             <thead>
                                 <tr>
                                     <th>№</th>
+                                    <th>To‘xtalish guruhi</th>
                                     <th>To‘xtalish turi</th>
                                     <th>Boshlanish vaqti</th>
                                     <th>Tugash vaqti</th>
@@ -338,7 +377,7 @@ class PlmStopReport extends Component {
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan={4}>Jami</td>
+                                    <td colSpan={5}>Jami</td>
                                     <td>{sumDiff}</td>
                                 </tr>
                             </tfoot>

@@ -93,6 +93,13 @@ $this->params['breadcrumbs'][] = $this->title;
                    }
                ],
                [
+                   'attribute' => 'equipment_group_name',
+                   'label' => Yii::t("app","Equipment Group"),
+                   'value' => function($model){
+                       return $model['equipment_group_name'];
+                   }
+               ],
+               [
                    'attribute' => 'equipment',
                    'label' => Yii::t("app","Equipments"),
                    'value' => function($model){
