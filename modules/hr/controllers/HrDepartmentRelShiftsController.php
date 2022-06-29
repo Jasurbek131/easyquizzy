@@ -135,6 +135,7 @@ class HrDepartmentRelShiftsController extends BaseController
      * Updates an existing HrDepartmentRelShifts model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
+     * @param  $department_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -144,12 +145,15 @@ class HrDepartmentRelShiftsController extends BaseController
         $post = Yii::$app->request->post();
         $data = Yii::$app->request->get();
         if (Yii::$app->request->isPost) {
-            $exists = HrDepartmentRelShifts::findOne([
+            $exists = HrDepartmentRelShifts::find()->where([
                 "hr_department_id" => $data['department_id'],
                 "shift_id" => $post["HrDepartmentRelShifts"]["shift_id"],
-            ]);
+            ])
+            ->andWhere(["<>","id", $id])
+            ->limit(1)
+            ->one();
             if ($exists){
-                $model = clone $exists;
+                $model = $exists;
                 $model->status_id = BaseModel::STATUS_ACTIVE;
             }
             if ($model->load(Yii::$app->request->post())) {
@@ -213,12 +217,11 @@ class HrDepartmentRelShiftsController extends BaseController
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->status_id < BaseModel::STATUS_SAVED){
-                $model->status_id = BaseModel::STATUS_INACTIVE;
-                if($model->save()){
-                    $isDeleted = true;
-                }
+
+            if($model->delete()){
+                $isDeleted = true;
             }
+
             if($isDeleted){
                 $transaction->commit();
             }else{

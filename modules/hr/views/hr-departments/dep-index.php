@@ -562,29 +562,42 @@ $('body').delegate('.categories-create, .categories-update, .department-create,.
 //Ajax yordamida itemlarni o'chirish
 
 $('body').delegate('.shifts-delete,.equipments-delete,.products-delete,.defects-delete,.deparea-delete,.categories-delete','click',function(e){
-    var id = $(this).attr('data-form-id');
-    let url = $(this).attr('href');
-    if(id != undefined){
-        url = url +"?id="+id;
-        $('#loading').css('display','block');
-        $.ajax({
-            url:url,
-            data:{id:id},
-            type:'POST',
-            success: function(response){
-                if(response.status == 0){
-                    $('#loading').css('display','none');
-                    call_pnotify('success',response.message);
-                    window.location.reload();
-                }else {
-                    call_pnotify('fail',response.message);
-                }
-            }
+    
+    var departmentId = $('.delete-tree').attr('data-id');
+    if(departmentId === undefined){
+        swal({
+            icon: 'error',
+            title: notSelectedDepartment,
+            showConfirmButton:false
         });
-    }else{
         $('#loading').css('display','none');
-        alert("Ma'lumot Id si mavjud emas");
+    }else{
+        var id = $(this).attr('data-form-id');
+        let url = $(this).attr('href');
+        if(id != undefined){
+            url = url +"?id="+id;
+            $('#loading').css('display','block');
+            $.ajax({
+                url:url,
+                data:{id:id},
+                type:'POST',
+                success: function(response){
+                    if(response.status == 0){
+                        $('#loading').css('display','none');
+                        call_pnotify('success',response.message);
+                        ajaxSubmit(departmentId);
+                        // window.location.reload();
+                    }else {
+                        call_pnotify('fail',response.message);
+                    }
+                }
+            });
+        }else{
+            $('#loading').css('display','none');
+            alert("Ma'lumot Id si mavjud emas");
+        }
     }
+    
 });
 
 // Ajax yordamida tablelarni toldirish uchun

@@ -152,12 +152,15 @@ class HrDepartmentRelEquipmentController extends BaseController
                 $saved = false;
                 try {
                     if(!empty($post["HrDepartmentRelEquipment"]["equipment_group_id"])){
-                        $exists = HrDepartmentRelEquipment::findOne([
+                        $exists = HrDepartmentRelEquipment::find()->where([
                             "hr_department_id" => $data['department_id'],
-                            "equipment_id" => $post["HrDepartmentRelEquipment"]["equipment_id"],
-                        ]);
+                            "equipment_group_id" => $post["HrDepartmentRelEquipment"]["equipment_group_id"],
+                        ])
+                        ->andWhere(["<>","id",$id])
+                        ->limit(1)
+                        ->one();
                         if ($exists){
-                            $model = clone $exists;
+                            $model = $exists;
                             $model->status_id = BaseModel::STATUS_ACTIVE;
                         }
                         if($model->save()){
@@ -216,11 +219,8 @@ class HrDepartmentRelEquipmentController extends BaseController
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->status_id < BaseModel::STATUS_SAVED){
-                $model->status_id = BaseModel::STATUS_INACTIVE;
-                if($model->save()){
-                    $isDeleted = true;
-                }
+            if($model->delete()){
+                $isDeleted = true;
             }
             if($isDeleted){
                 $transaction->commit();

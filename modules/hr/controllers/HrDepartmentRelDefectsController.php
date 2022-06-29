@@ -145,12 +145,17 @@ class HrDepartmentRelDefectsController extends BaseController
         $data = Yii::$app->request->get();
 
         if (Yii::$app->request->isPost) {
-            $exists = HrDepartmentRelDefects::findOne([
+            $exists = HrDepartmentRelDefects::find()->where([
                 "hr_department_id" => $data['department_id'],
                 "defect_id" => $post["HrDepartmentRelDefects"]["defect_id"],
-            ]);
+            ])
+                ->andWhere([
+                    "<>","id",$id
+                ])
+            ->limit(1)
+            ->one();
             if ($exists){
-                $model = clone $exists;
+                $model = $exists;
                 $model->status_id = BaseModel::STATUS_ACTIVE;
             }
             if ($model->load(Yii::$app->request->post())) {
@@ -214,11 +219,8 @@ class HrDepartmentRelDefectsController extends BaseController
         $isDeleted = false;
         $model = $this->findModel($id);
         try {
-            if($model->status_id < BaseModel::STATUS_SAVED){
-                $model->status_id = BaseModel::STATUS_INACTIVE;
-                if($model->save()){
-                    $isDeleted = true;
-                }
+            if($model->delete()){
+                $isDeleted = true;
             }
             if($isDeleted){
                 $transaction->commit();

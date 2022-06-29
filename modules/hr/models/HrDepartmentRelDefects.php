@@ -93,7 +93,10 @@ class HrDepartmentRelDefects extends BaseModel
                 ->leftJoin(['d' => 'defects'], 'herd.defect_id = d.id')
                 ->leftJoin(['hrd' => 'hr_departments'], 'herd.hr_department_id = hrd.id')
                 ->leftJoin(['sl' => 'status_list'], 'herd.status_id = sl.id')
-                ->where(['herd.hr_department_id' => $department_id])
+                ->where([
+                    'herd.hr_department_id' => $department_id,
+                    "herd.status_id" =>  \app\models\BaseModel::STATUS_ACTIVE
+                ])
                 ->orderBy(['herd.id' => SORT_DESC, 'herd.status_id' => SORT_ASC])
                 ->asArray()
                 ->all();

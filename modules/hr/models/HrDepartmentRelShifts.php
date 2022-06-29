@@ -1,6 +1,7 @@
 <?php
 
 namespace app\modules\hr\models;
+use app\models\StatusList;
 use app\modules\references\models\Shifts;
 use Yii;
 use yii\db\ActiveQuery;
@@ -98,7 +99,10 @@ class HrDepartmentRelShifts extends BaseModel
                 ->leftJoin(['sh' => 'shifts'],'hers.shift_id = sh.id')
                 ->leftJoin(['hrd' => 'hr_departments'],'hers.hr_department_id = hrd.id')
                 ->leftJoin(['sl' => 'status_list'],'hers.status_id = sl.id')
-                ->where(['hers.hr_department_id' => $department_id])
+                ->where([
+                    'hers.hr_department_id' => $department_id,
+                    "hers.status_id" => \app\models\BaseModel::STATUS_ACTIVE
+                ])
                 ->asArray()
                 ->orderBy(['hers.id' => SORT_DESC,'hers.status_id' => SORT_ASC])
                 ->all();
