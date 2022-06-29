@@ -188,6 +188,7 @@ class PlmDocumentReport extends Component {
         let sumPercentP = 1;
         let sumPercentQ = 1;
         let sumPercentOee = 1;
+        let itemsLength = items?.length ?? 1;
         dataBody = items?.map((item, index) => {
 
             itemProductLength = item?.products?.length ?? 0;
@@ -230,10 +231,10 @@ class PlmDocumentReport extends Component {
 
                         let percentQ = ((okProductQuantity) / (sumFactQty + sumQty) * 100).toFixed(2);
 
-                        sumPercentA *= (percentA / 100);
-                        sumPercentP *= (percentP / 100);
-                        sumPercentQ *= (percentQ / 100);
-                        sumPercentOee *= (percentA * percentP * percentQ / 1000000);
+                        sumPercentA += +percentA;
+                        sumPercentP += +percentP;
+                        sumPercentQ += +percentQ;
+                        sumPercentOee += (percentA * percentP * percentQ / 10000);
                         return (
                             <tr key={index + "_" + productIndex}>
                                 <td rowSpan={itemProductLength}>{++iterator}</td>
@@ -278,10 +279,12 @@ class PlmDocumentReport extends Component {
             }
             return (returnDocItemProductData);
         });
-        sumPercentA = sumPercentA*100;
-        sumPercentP = sumPercentP*100;
-        sumPercentQ = sumPercentQ*100;
-        sumPercentOee = sumPercentOee*100;
+
+        sumPercentA = parseInt(sumPercentA/(itemsLength));
+        sumPercentP = parseInt(sumPercentP/(itemsLength));
+        sumPercentQ = parseInt(sumPercentQ/(itemsLength));
+        sumPercentOee = parseInt(sumPercentOee/(itemsLength));
+
         pie_data.a_data = [
             {name: 'Benefit percent', value: sumPercentA},
             {name: 'Loss percent', value: 100 - sumPercentA}
