@@ -645,7 +645,7 @@ class  TelegramController extends Controller
             }
 
             $query = $query->andWhere([
-                'hd.id' => $hr_department_ids,
+                'psrd.hr_department_id' => $hr_department_ids,
                 'psrd.type' => PlmSectorRelHrDepartment::CONFIRM_TYPE,
             ]);
 

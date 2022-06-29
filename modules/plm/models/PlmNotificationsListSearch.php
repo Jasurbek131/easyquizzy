@@ -167,7 +167,7 @@ class PlmNotificationsListSearch extends PlmNotificationsList
         }
 
         $query = $query->andWhere([
-            'hd.id' => $department_ids,
+            'hd.hr_department_id' => $department_ids,
             'psrd.type' => PlmSectorRelHrDepartment::CONFIRM_TYPE,
         ]);
 
