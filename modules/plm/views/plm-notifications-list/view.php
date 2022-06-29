@@ -184,14 +184,21 @@ $no_defect = (($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED')
                                 </button>
                             </div>
                             <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                         <textarea name="PlmNotificationList" id="message_accepted" rows="3"
+                                                   class="form-control"></textarea>
+                                    </div>
+                                </div>
 
-                                <?php
-                                if ($no_defect):
-                                    $reasons = Reasons::getCategoryList($model['category_id']);
-                                    ?>
                                     <form action="" id="reasons-form" name="Reasons" method="POST">
+                                        <br>
                                         <input type="hidden" id="plm_notification_list_id"
                                                value="<?php echo $model['id']; ?>">
+                                        <?php
+                                        if ($no_defect):
+                                            $reasons = Reasons::getCategoryList($model['category_id']);
+                                            ?>
                                         <fieldset>
                                             <div class="container">
                                                 <div class="row checkbox_container">
@@ -219,11 +226,11 @@ $no_defect = (($model['token'] == 'UNPLANNED') || ($model['token'] == 'PLANNED')
                                                 </div>
                                             </div>
                                         </fieldset>
+                                        <?php endif; ?>
+
                                     </form>
-                                    <br>
-                                <?php else: ?>
-                                    <h3>Ishonchingiz komilmi?</h3>
-                                <?php endif; ?>
+                                <br>
+
                                 <div class="col-md-12">
                                     <?php echo Html::submitButton(Yii::t('app', 'Accepted'), ['class' => 'btn btn-sm btn-success save_accepted']) ?>
                                 </div>
@@ -283,12 +290,14 @@ $js = <<< JS
       let list_id = $('#plm_notification_list_id').val();
       let empty_reason = $('#empty_reason').val();
       let form = $('#reasons-form');
+      let message = $('#message_accepted').val();
       $.ajax({
             url: urlAccepted,
             type:"POST",
             data:{
                 plm_notification_list_id:list_id,
                 empty_reason:empty_reason,
+                message: message,
                 form:form.serializeArray(),
             },
             success:function(response) {

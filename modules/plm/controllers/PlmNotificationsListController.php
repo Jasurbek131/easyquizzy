@@ -163,41 +163,87 @@ class PlmNotificationsListController extends BaseController
     public function actionAjaxAccepted(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $response = [];
-        $response['status'] = false;
-        $response['status'] = "Not saved";
         $data = Yii::$app->request->post();
-        $saved = false;
-        if(!empty($data['plm_notification_list_id'])){
-            if(isset($data['form']) && $data['form']){
-                $reasons = $data['form'];
-                foreach ($reasons as $reason){
-                    $plmNotificationRelReason = new PlmNotificationsListRelReason();
-                    $plmNotificationRelReason->plm_notification_list_id = $data['plm_notification_list_id'];
-                    $plmNotificationRelReason->reason_id = $reason['value'];
-                    $plmNotificationRelReason->status_id = BaseModel::STATUS_ACTIVE;
-                    if($plmNotificationRelReason->save()){
-                        $saved = true;
+        $response = [
+            'status' => true,
+            'message' => Yii::t('app', 'Saved successfully'),
+            'errors' => []
+        ];
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if(!empty($data['plm_notification_list_id'])){
+
+                $plmNotificationMessage = new PlmNotificationMessage();
+                $plmNotificationMessage->setAttributes([
+                    'plm_notification_list_id' => $data['plm_notification_list_id'],
+                    'message' => $data['message'],
+                    'status_id' => BaseModel::STATUS_ACTIVE,
+                ]);
+                /**
+                 *  @var  $plmNotificationList PlmNotificationsList
+                 **/
+                if(!$plmNotificationMessage->save()) {
+                    $response = [
+                        'status' => false,
+                        'message' => Yii::t('app', 'Reason item not saved'),
+                        'errors' => $plmNotificationMessage->getErrors()
+                    ];
+                }
+
+                if($response["status"]){
+                    if (isset($data['form']) && $data['form']) {
+                        $reasons = $data['form'];
+                        foreach ($reasons as $reason) {
+                            $plmNotificationRelReason = new PlmNotificationsListRelReason();
+                            $plmNotificationRelReason->plm_notification_list_id = $data['plm_notification_list_id'];
+                            $plmNotificationRelReason->reason_id = $reason['value'];
+                            $plmNotificationRelReason->status_id = BaseModel::STATUS_ACTIVE;
+                            if (!$plmNotificationRelReason->save()) {
+                                $response = [
+                                    'status' => false,
+                                    'message' => Yii::t('app', 'Reason item not saved'),
+                                    'errors' => $plmNotificationRelReason->getErrors()
+                                ];
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if($response["status"]){
+                    $model = $this->findModel($data['plm_notification_list_id']);
+                    if(($model->status_id < BaseModel::STATUS_ACCEPTED) && ($model->status_id != BaseModel::STATUS_INACTIVE)){
+                        $model->status_id = BaseModel::STATUS_ACCEPTED;
+                        if(!$model->save()){
+                            $response = [
+                                'status' => false,
+                                'message' => Yii::t('app', 'Model not saved'),
+                                'errors' => $model->getErrors()
+                            ];
+                        }
                     }
                 }
             }else{
-                if(empty($data['empty_reason'])){
-                    $saved = true;
-                }
+                $response = [
+                    'status' => false,
+                    'message' => Yii::t('app', 'plm_notification_list_id not send'),
+                    'errors' => []
+                ];
             }
-            if($saved){
-                $model = $this->findModel($data['plm_notification_list_id']);
-                if(($model->status_id < BaseModel::STATUS_ACCEPTED) && ($model->status_id != BaseModel::STATUS_INACTIVE)){
-                    $model->status_id = BaseModel::STATUS_ACCEPTED;
-                    if($model->save()){
-                        $saved = true;
-                    }
-                }
+
+            if ($response['status']){
+                $transaction->commit();
+            }else{
+                $transaction->rollBack();
             }
-            if($saved){
-                $response['status'] = true;
-                $response['message'] = Yii::t("app","Saved successfully");
-            }
+
+        }catch (\Exception $e){
+            $transaction->rollBack();
+            $response = [
+                'status' => false,
+                'message' => Yii::t('app', "Catch errors"),
+                'errors' => $e->getMessage()
+            ];
         }
         return $response;
     }
