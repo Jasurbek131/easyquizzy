@@ -166,7 +166,10 @@ class CategoriesRelHrDepartmentController extends BaseController
         $isDeleted = true;
         try {
             if ($id)
-                PlmSectorRelHrDepartment::deleteAll(["hr_department_id" => $id]);
+                PlmSectorRelHrDepartment::deleteAll([
+                    "hr_department_id" => $id,
+                    "type" => PlmSectorRelHrDepartment::CATEGORIES_TYPE
+                ]);
 
         }catch (\Exception $e){
             Yii::info('Not saved' . $e, 'save');
