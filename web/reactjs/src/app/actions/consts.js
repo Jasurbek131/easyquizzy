@@ -1,5 +1,0 @@
-export const TOKEN_WORKING_TIME = "WORKING_TIME";
-export const TOKEN_REPAIRED = "REPAIRED";
-export const TOKEN_SCRAPPED = "SCRAPPED";
-export const TOKEN_PLANNED = "PLANNED";
-export const TOKEN_UNPLANNED = "UNPLANNED";
