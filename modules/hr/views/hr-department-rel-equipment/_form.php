@@ -1,0 +1,52 @@
+<?php
+
+use app\modules\hr\models\HrDepartments;
+use app\modules\references\models\EquipmentGroup;
+use app\modules\references\models\Equipments;
+use kartik\select2\Select2;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
+/* @var $this yii\web\View */
+/* @var $model app\modules\hr\models\HrDepartmentRelEquipment */
+/* @var $form yii\widgets\ActiveForm */
+?>
+
+<div class="hr-department-rel-equipment-form">
+
+    <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true, 'class'=> 'customAjaxForm']]); ?>
+
+    <?php
+    if(!empty($model->hr_department_id)){
+        echo $form->field($model, 'hr_department_id')->widget(Select2::class, [
+            'data' => HrDepartments::getList(),
+            'options' => [
+                'placeholder' => Yii::t("app","Select ..."),
+                'disabled' => true
+            ],
+            'pluginOptions' => [
+                'allowClear' => true,
+            ]
+        ])->label(Yii::t("app","Hr Department"));
+    }
+    ?>
+
+    <?= $form->field($model, 'equipment_group_id')->widget(Select2::class, [
+        'data' => EquipmentGroup::getList(),
+        'options' => [
+            'placeholder' => Yii::t("app","Select ..."),
+        ],
+        'pluginOptions' => [
+            'allowClear' => true,
+        ]
+    ])->label(Yii::t("app","Equipment Group ID")) ?>
+
+    <?= $form->field($model, 'status_id')->dropDownList(\app\models\BaseModel::getStatusList()) ?>
+
+    <div class="form-group">
+        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success  button-save-form']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
+
+</div>
