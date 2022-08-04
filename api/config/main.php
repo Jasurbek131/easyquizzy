@@ -50,27 +50,10 @@ return [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
-                        'v1/document',
-                        'v1/plm-document-report',
-                        'v1/plm-stop-report',
-                        'v1/api-equipment-group',
+
                     ],
                     'extraPatterns' => [
-                        'POST index' => 'index',
-                        'GET index' => 'index',
-                        'OPTIONS index' => 'index',
 
-                        'POST fetch-list' => 'fetch-list',
-                        'GET fetch-list' => 'fetch-list',
-                        'OPTIONS fetch-list' => 'fetch-list',
-
-                        'POST search' => 'search',
-                        'GET search' => 'search',
-                        'OPTIONS search' => 'search',
-
-                        'POST save-properties' => 'save-properties',
-                        'GET save-properties' => 'save-properties',
-                        'OPTIONS save-properties' => 'save-properties',
                     ],
                 ],
                 //  '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
@@ -81,9 +64,6 @@ return [
     'modules' => [
         'v1' => [
             'class' => 'app\api\modules\v1\Module'
-        ],
-        'v2' => [
-            'class' => 'app\api\modules\v2\Module'
         ],
     ],
     'params' => $params,

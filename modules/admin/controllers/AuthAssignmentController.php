@@ -4,7 +4,7 @@ namespace app\modules\admin\controllers;
 
 use Yii;
 use app\modules\admin\models\AuthAssignment;
-use app\modules\admin\models\AuthAssignmentSearch;
+use app\modules\admin\models\search\AuthAssignmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

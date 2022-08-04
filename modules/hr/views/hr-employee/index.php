@@ -9,7 +9,7 @@ use yii\web\View;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\hr\models\HrEmployeeSearch */
+/* @var $searchModel app\modules\hr\models\search\HrEmployeeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', "Hr Employee");

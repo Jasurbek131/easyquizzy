@@ -7,7 +7,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\admin\models\AuthItemSearch */
+/* @var $searchModel app\modules\admin\models\search\AuthItemSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Auth Items');

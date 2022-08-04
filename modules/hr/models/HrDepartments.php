@@ -3,14 +3,11 @@
 namespace app\modules\hr\models;
 
 use app\models\BaseModel;
-use app\modules\references\models\Shifts;
-use kartik\tree\models\Tree;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
-use function Faker\Provider\pt_BR\check_digit;
 
 /**
  * This is the model class for table "hr_departments".

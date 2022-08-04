@@ -42,7 +42,6 @@ class m220201_104202_create_some_tree_column_to_hr_departments_table extends Mig
         $this->createIndex('hr_departments_tree_NK3', self::TABLE_NAME, 'rgt');
         $this->createIndex('hr_departments_tree_NK4', self::TABLE_NAME, 'lvl');
         $this->createIndex('hr_departments_tree_NK5', self::TABLE_NAME, 'active');
-        $this->addColumn('{{%users}}', 'hr_department_id', $this->integer());
 
     }
 
