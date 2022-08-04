@@ -19,7 +19,6 @@ use Yii;
  * @property int $updated_by
  * @property int $updated_at
  *
- * @property HrOrganisations $hrOrganisations
  * @property HrEmployee[] $hrEmployees
  */
 class HrDepartments extends BaseModel
@@ -41,7 +40,6 @@ class HrDepartments extends BaseModel
             [['hr_organisation_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'default', 'value' => null],
             [['hr_organisation_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['name_uz', 'name_ru', 'token'], 'string', 'max' => 255],
-            [['hr_organisation_id'], 'exist', 'skipOnError' => true, 'targetClass' => HrOrganisations::className(), 'targetAttribute' => ['hr_organisation_id' => 'id']],
         ];
     }
 
@@ -52,7 +50,6 @@ class HrDepartments extends BaseModel
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'hr_organisation_id' => Yii::t('app', 'Hr Organisation ID'),
             'name_uz' => Yii::t('app', 'Name Uz'),
             'name_ru' => Yii::t('app', 'Name Ru'),
             'token' => Yii::t('app', 'Token'),
@@ -64,19 +61,12 @@ class HrDepartments extends BaseModel
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getHrOrganisations()
-    {
-        return $this->hasOne(HrOrganisations::className(), ['id' => 'hr_organisation_id']);
-    }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getHrEmployees()
     {
-        return $this->hasMany(HrEmployee::className(), ['hr_department_id' => 'id']);
+        return $this->hasMany(HrEmployee::class, ['hr_department_id' => 'id']);
     }
 }

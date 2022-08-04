@@ -1,15 +1,15 @@
 <?php
 
-namespace app\modules\plm\models;
+namespace app\modules\hr\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\plm\models\PlmProcessingTime;
+use app\modules\hr\models\HrPositions;
 
 /**
- * PlmProcessingTimeSearch represents the model behind the search form of `app\modules\plm\models\PlmProcessingTime`.
+ * HrPositionsSearch represents the model behind the search form of `app\modules\hr\models\HrPositions`.
  */
-class PlmProcessingTimeSearch extends PlmProcessingTime
+class HrPositionsSearch extends HrPositions
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class PlmProcessingTimeSearch extends PlmProcessingTime
     public function rules()
     {
         return [
-            [['id', 'doc_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            [['begin_date', 'end_date', 'add_info'], 'safe'],
+            [['id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['name_uz', 'name_ru'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class PlmProcessingTimeSearch extends PlmProcessingTime
      */
     public function search($params)
     {
-        $query = PlmProcessingTime::find();
+        $query = HrPositions::find();
 
         // add conditions that should always apply here
 
@@ -59,9 +59,6 @@ class PlmProcessingTimeSearch extends PlmProcessingTime
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'doc_id' => $this->doc_id,
-            'begin_date' => $this->begin_date,
-            'end_date' => $this->end_date,
             'status_id' => $this->status_id,
             'created_by' => $this->created_by,
             'created_at' => $this->created_at,
@@ -69,7 +66,8 @@ class PlmProcessingTimeSearch extends PlmProcessingTime
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['ilike', 'add_info', $this->add_info]);
+        $query->andFilterWhere(['ilike', 'name_uz', $this->name_uz])
+            ->andFilterWhere(['ilike', 'name_ru', $this->name_ru]);
 
         return $dataProvider;
     }

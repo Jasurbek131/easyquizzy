@@ -4,6 +4,7 @@ namespace app\modules\hr\models;
 
 use app\models\Users;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "hr_employee_rel_users".
@@ -61,7 +62,7 @@ class HrEmployeeRelUsers extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrEmployee()
     {
@@ -69,7 +70,7 @@ class HrEmployeeRelUsers extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUsers()
     {

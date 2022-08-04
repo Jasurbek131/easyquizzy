@@ -3,6 +3,7 @@
 namespace app\modules\hr\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -73,7 +74,7 @@ class HrEmployee extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrDepartments()
     {
@@ -81,7 +82,7 @@ class HrEmployee extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrPositions()
     {

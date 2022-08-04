@@ -33,9 +33,9 @@ class ReactAsset extends AssetBundle
         parent::init();
         $reactFileName = self::$reactFileName;
         $reactCssFileName = self::$reactCssFileName;
-        $this->js[] = "reactjs/dist/app/{$reactFileName}.bundle.js";
+        $this->js[] = "js/reactjs/dist/app/{$reactFileName}.bundle.js";
         if($reactCssFileName) {
-            $this->css[] = "reactjs/dist/css/{$reactCssFileName}.css";
+            $this->css[] = "js/reactjs/dist/css/{$reactCssFileName}.css";
         }
     }
     public $js = [

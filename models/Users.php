@@ -12,7 +12,6 @@ use Yii;
  * @property int $id
  * @property int $hr_employee_id
  * @property bool $isUpdate
- * @property int $hr_organisation_id
  * @property array $roles
  * @property string|null $username
  * @property string|null $password

@@ -4,7 +4,7 @@ namespace app\modules\hr\controllers;
 
 use Yii;
 use app\modules\hr\models\HrPositions;
-use app\modules\hr\models\HrPositionsSearch;
+use app\modules\hr\models\search\HrPositionsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -220,24 +220,6 @@ class HrPositionsController extends Controller
         }
     }
 
-    public function actionExportExcel(){
-        header('Content-Type: application/vnd.ms-excel');
-        $filename = "hr-positions_".date("d-m-Y-His").".xls";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
-        \moonland\phpexcel\Excel::export([
-            'models' => HrPositions::find()->select([
-                'id',
-            ])->all(),
-            'columns' => [
-                'id',
-            ],
-            'headers' => [
-                'id' => 'Id',
-            ],
-            'autoSize' => true,
-        ]);
-    }
     /**
      * Finds the HrPositions model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

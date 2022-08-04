@@ -21,12 +21,6 @@ $config = [
         'hr' => [
             'class' => 'app\modules\hr\Module',
         ],
-        'references' => [
-            'class' => 'app\modules\references\Module',
-        ],
-        'plm' => [
-            'class' => 'app\modules\plm\Module',
-        ],
         'treemanager' =>  [
             'class' => '\kartik\tree\Module',
         ]

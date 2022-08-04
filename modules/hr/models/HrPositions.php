@@ -3,6 +3,7 @@
 namespace app\modules\hr\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "hr_positions".
@@ -58,10 +59,10 @@ class HrPositions extends BaseModel
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHrEmployees()
     {
-        return $this->hasMany(HrEmployee::className(), ['hr_position_id' => 'id']);
+        return $this->hasMany(HrEmployee::class, ['hr_position_id' => 'id']);
     }
 }
