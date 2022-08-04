@@ -10,7 +10,7 @@ use yii\web\View;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\hr\models\HrDepartmentsSearch */
+/* @var $searchModel app\modules\hr\models\search\HrDepartmentsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $confirmDeleteMessage = Yii::t('app', 'Haqiqatan ham ushbu mahsulotni yo\'q qilmoqchimisiz?');

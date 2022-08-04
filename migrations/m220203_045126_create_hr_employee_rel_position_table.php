@@ -18,8 +18,9 @@ class m220203_045126_create_hr_employee_rel_position_table extends Migration
     {
         $this->createTable('{{%hr_employee_rel_position}}', [
             'id' => $this->primaryKey(),
+            'hr_employee_id' => $this->integer(),
             'hr_department_id' => $this->integer(),
-            'hr_positon_id' => $this->integer(),
+            'hr_position_id' => $this->integer(),
             'begin_date' => $this->datetime(),
             'end_date' => $this->datetime(),
             'status_id' => $this->smallInteger(),
@@ -28,6 +29,23 @@ class m220203_045126_create_hr_employee_rel_position_table extends Migration
             'updated_by' => $this->integer(),
             'updated_at' => $this->integer(),
         ]);
+
+        // creates index for column `hr_employee_id`
+        $this->createIndex(
+            '{{%idx-hr_employee_rel_position-hr_employee_id}}',
+            '{{%hr_employee_rel_position}}',
+            'hr_employee_id'
+        );
+
+        // add foreign key for table `{{%hr_employee}}`
+        $this->addForeignKey(
+            '{{%fk-hr_employee_rel_position-hr_employee_id}}',
+            '{{%hr_employee_rel_position}}',
+            'hr_employee_id',
+            '{{%hr_employee}}',
+            'id',
+            'RESTRICT'
+        );
 
         // creates index for column `hr_department_id`
         $this->createIndex(
@@ -46,18 +64,18 @@ class m220203_045126_create_hr_employee_rel_position_table extends Migration
             'RESTRICT'
         );
 
-        // creates index for column `hr_positon_id`
+        // creates index for column `hr_position_id`
         $this->createIndex(
-            '{{%idx-hr_employee_rel_position-hr_positon_id}}',
+            '{{%idx-hr_employee_rel_position-hr_position_id}}',
             '{{%hr_employee_rel_position}}',
-            'hr_positon_id'
+            'hr_position_id'
         );
 
         // add foreign key for table `{{%hr_positions}}`
         $this->addForeignKey(
-            '{{%fk-hr_employee_rel_position-hr_positon_id}}',
+            '{{%fk-hr_employee_rel_position-hr_position_id}}',
             '{{%hr_employee_rel_position}}',
-            'hr_positon_id',
+            'hr_position_id',
             '{{%hr_positions}}',
             'id',
             'RESTRICT'
@@ -75,6 +93,19 @@ class m220203_045126_create_hr_employee_rel_position_table extends Migration
      */
     public function safeDown()
     {
+
+        // drops foreign key for table `{{%hr_employee}}`
+        $this->dropForeignKey(
+            '{{%fk-hr_employee_rel_position-hr_employee_id}}',
+            '{{%hr_employee_rel_position}}'
+        );
+
+        // drops index for column `hr_employee_id`
+        $this->dropIndex(
+            '{{%idx-hr_employee_rel_position-hr_employee_id}}',
+            '{{%hr_employee_rel_position}}'
+        );
+
         // drops foreign key for table `{{%hr_departments}}`
         $this->dropForeignKey(
             '{{%fk-hr_employee_rel_position-hr_department_id}}',
@@ -89,13 +120,13 @@ class m220203_045126_create_hr_employee_rel_position_table extends Migration
 
         // drops foreign key for table `{{%hr_positions}}`
         $this->dropForeignKey(
-            '{{%fk-hr_employee_rel_position-hr_positon_id}}',
+            '{{%fk-hr_employee_rel_position-hr_position_id}}',
             '{{%hr_employee_rel_position}}'
         );
 
-        // drops index for column `hr_positon_id`
+        // drops index for column `hr_position_id`
         $this->dropIndex(
-            '{{%idx-hr_employee_rel_position-hr_positon_id}}',
+            '{{%idx-hr_employee_rel_position-hr_position_id}}',
             '{{%hr_employee_rel_position}}'
         );
 

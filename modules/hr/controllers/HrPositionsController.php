@@ -5,7 +5,7 @@ namespace app\modules\hr\controllers;
 use app\models\BaseModel;
 use Yii;
 use app\modules\hr\models\HrPositions;
-use app\modules\hr\models\HrPositionsSearch;
+use app\modules\hr\models\search\HrPositionsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

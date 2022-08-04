@@ -7,7 +7,7 @@ use app\modules\hr\models\HrEmployeeRelPosition;
 use Exception;
 use Yii;
 use app\modules\hr\models\HrEmployee;
-use app\modules\hr\models\HrEmployeeSearch;
+use app\modules\hr\models\search\HrEmployeeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

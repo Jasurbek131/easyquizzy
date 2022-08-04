@@ -3,9 +3,6 @@
 namespace app\modules\hr\controllers;
 
 use app\models\BaseModel;
-use app\modules\hr\models\HrDepartmentRelDefects;
-use app\modules\hr\models\HrDepartmentRelEquipment;
-use app\modules\hr\models\HrDepartmentRelProduct;
 use app\modules\hr\models\HrDepartmentRelShifts;
 use app\modules\hr\models\UsersRelationHrDepartments;
 use app\modules\plm\models\PlmSectorRelHrDepartment;
@@ -328,11 +325,11 @@ class HrDepartmentsController extends NodeController
                 ->andWhere(['status_id' => BaseModel::STATUS_ACTIVE])
                 ->all();
             $response['shifts'] = HrDepartmentRelShifts::getHrRelShift($id);
-            $response['equipments'] = HrDepartmentRelEquipment::getHrRelEquipment($id);
+//            $response['equipments'] = HrDepartmentRelEquipment::getHrRelEquipment($id);
 //            $response['products'] = HrDepartmentRelProduct::getHrRelProduct($id);
-            $response['defects'] = HrDepartmentRelDefects::getHrRelDefect($id);
-            $response['deparea'] = PlmSectorRelHrDepartment::getHrRelDeparea( PlmSectorRelHrDepartment::CONFIRM_TYPE, $id);
-            $response['categories'] = PlmSectorRelHrDepartment::getHrRelDeparea(PlmSectorRelHrDepartment::CATEGORIES_TYPE, $id);
+//            $response['defects'] = HrDepartmentRelDefects::getHrRelDefect($id);
+//            $response['deparea'] = PlmSectorRelHrDepartment::getHrRelDeparea( PlmSectorRelHrDepartment::CONFIRM_TYPE, $id);
+//            $response['categories'] = PlmSectorRelHrDepartment::getHrRelDeparea(PlmSectorRelHrDepartment::CATEGORIES_TYPE, $id);
             $response['delete'] = false;
             if (!empty($child)) {
                 $response['delete'] = true;

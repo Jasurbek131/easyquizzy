@@ -3,7 +3,7 @@
 namespace app\modules\admin\controllers;
 
 use app\modules\admin\models\AuthItemChild;
-use app\modules\admin\models\AuthItemSearch;
+use app\modules\admin\models\search\AuthItemSearch;
 use Yii;
 use app\modules\admin\models\AuthItem;
 use yii\helpers\ArrayHelper;

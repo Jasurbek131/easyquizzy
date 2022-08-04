@@ -5,7 +5,7 @@ namespace app\modules\hr\controllers;
 use app\models\BaseModel;
 use Yii;
 use app\modules\hr\models\HrDepartmentRelShifts;
-use app\modules\hr\models\HrDepartmentRelShiftsSearch;
+use app\modules\hr\models\search\HrDepartmentRelShiftsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
